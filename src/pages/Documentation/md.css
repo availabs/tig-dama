@@ -1,0 +1,290 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter&display=swap");
+*,:after,:before{
+    box-sizing:border-box
+}
+*{
+    margin:0
+}
+:root{
+    --default-vertical-spacing:0.75rem;
+    --nav-height:71.594px;
+    --footer-height:61px;
+    --landing-page-max-width:1200px;
+    --sans:-apple-system,BlinkMacSystemFont,Inter,Segoe UI,Helvetica Neue,sans-serif;
+    --serif:Tiempos,serif;
+    --mono:GT America Mono,Consolas,Monaco,"Andale Mono","Ubuntu Mono",monospace;
+    --font-size-0:8px;
+    --font-size-1:12px;
+    --font-size-2:13px;
+    --font-size-3:16px;
+    --font-size-4:18px;
+    --font-size-5:24px;
+    --font-size-6:32px;
+    --font-size-7:38px;
+    --font-size-jumbo:79px;
+    --line-height-1:16px;
+    --line-height-2:20px;
+    --line-height-3:25px;
+    --line-height-4:28px;
+    --line-height-5:32px;
+    --line-height-6:40px;
+    --line-height-7:48px;
+    --line-height-jumbo:90px
+}
+.light,:root{
+    --white:#fff;
+    --black:#18181b;
+    --black-light:#58585f;
+    --black-medium:#2c2c30;
+    --gray-light:#f6f9fc;
+    --gray-medium:#dce6e9;
+    --yellow:#ffd848;
+    --purple:#6e00f5;
+    --green:#0a993e;
+    --blue:#0073e6;
+    --magenta:#dc34dc;
+    --theme:var(--yellow);
+    --stripe:#0a2540;
+    --light:var(--white);
+    --dark:var(--black);
+    --text:var(--dark);
+    --contrast-dark:var(--dark);
+    --code-background:var(--gray-light);
+    --code-border:var(--gray-medium);
+    --toc-border:rgba(0,0,0,.14);
+    --translucent:rgba(0,0,0,.4);
+    --docsearch-primary-color:var(--black-medium)!important;
+    --docsearch-logo-color:var(--black-medium)!important
+}
+.dark{
+    --stripe:var(--white);
+    --light:var(--black);
+    --dark:var(--white);
+    --text:var(--dark);
+    --contrast-dark:var(--black-medium);
+    --code-background:var(--black-medium);
+    --code-border:var(--black-light);
+    --toc-border:var(--black-light);
+    --translucent:hsla(0,0%,100%,.4)
+}
+.dark,.page--landing pre[class*=language-],.sandbox .CodeMirror{
+    --light:var(--black);
+    --dark:var(--white);
+    --text:var(--dark);
+    --purple:var(--yellow);
+    --green:#00d924;
+    --blue:#80e9ff;
+    --magenta:#ff80ff
+}
+#__next,body,html{
+    height:100%;
+    padding:0;
+    margin:0;
+    font-family:var(--sans)
+}
+#__next{
+    isolation:isolate
+}
+body{
+    color:var(--text);
+    background:var(--light);
+    font-family:var(--sans)
+}
+body ::-moz-selection,body.dark ::-moz-selection{
+    color:var(--black)!important;
+    background:var(--theme)!important
+}
+body ::selection,body.dark ::selection{
+    color:var(--black)!important;
+    background:var(--theme)!important
+}
+body.modal-is-active{
+    overflow:hidden
+}
+a{
+    text-decoration:underline;
+    text-decoration-thickness:1px;
+    text-underline-offset:1px;
+    transition:opacity .3s ease
+}
+a:hover{
+    opacity:.75
+}
+.primary a,a.primary{
+    text-decoration:none;
+    font-weight:600;
+    white-space:nowrap
+}
+.primary a:hover,a.primary:hover{
+    opacity:1
+}
+.primary a:after,a.primary:after{
+    content:"\00a0→";
+    position:relative;
+    display:inline-block;
+    transition:transform .3s ease
+}
+.primary a:hover:after,a.primary:hover:after{
+    transform:translateX(3px)
+}
+button{
+    cursor:pointer;
+    -webkit-appearance:none;
+    -moz-appearance:none;
+    appearance:none;
+    border:none;
+    background:none
+}
+button,input,select,textarea{
+    font:inherit
+}
+.heading,.markdoc a,.markdoc code,.markdoc kbd,.markdoc li,.markdoc p,.markdoc span,.markdoc td{
+    -webkit-font-smoothing:antialiased;
+    color:inherit
+}
+.heading,.markdoc blockquote,p{
+    position:relative;
+    padding-bottom:var(--default-vertical-spacing)
+}
+.markdoc p{
+    text-rendering:optimizeLegibility;
+    font-size:var(--font-size-3);
+    line-height:var(--line-height-3)
+}
+.markdoc p:last-child{
+    padding-bottom:0
+}
+
+.h1,.markdoc h1{
+    font-size:var(--font-size-7);
+    line-height:var(--line-height-7)
+}
+.h2,.markdoc h2{
+    font-size:var(--font-size-5);
+    line-height:var(--line-height-5);
+    margin-top:2.5rem
+}
+.h3,.markdoc h3{
+    font-size:var(--font-size-4);
+    line-height:var(--line-height-4);
+    margin-top:2rem
+}
+.h4,h4{
+    margin-top:1rem
+}
+.h4,.h5,h4,h5{
+    font-size:var(--font-size-3);
+    line-height:var(--line-height-3)
+}
+.h5,.jumbo,h5{
+    font-weight:400
+}
+.jumbo{
+    font-family:var(--serif);
+    letter-spacing:-.01em
+}
+h1.jumbo{
+    font-size:var(--font-size-jumbo);
+    line-height:var(--line-height-jumbo)
+}
+h2.jumbo{
+    font-size:72px;
+    line-height:84px;
+    margin-top:0;
+    padding-bottom:1.5rem
+}
+h3.jumbo{
+    font-size:43px;
+    line-height:52px
+}
+blockquote{
+    margin:1.3rem 0 1.1rem
+}
+.markdoc li{
+    margin:10px 0
+}
+.markdoc code{
+    font-size:inherit;
+    font-size:15px;
+    font-family:var(--mono);
+    font-weight:500;
+    padding:1px 2px;
+    background:var(--code-background);
+    border:1px solid var(--code-border);
+    border-radius:3px;
+    white-space:nowrap
+}
+img{
+    max-width:100%
+}
+p a+a>img{
+    margin-left:.75rem
+}
+pre{
+    border-radius:3px;
+    border:1px solid var(--code-border)
+}
+kbd{
+    font-family:var(--mono)
+}
+table{
+    width:100%;
+    border-collapse:separate;
+    border-spacing:0;
+    margin-top:2rem;
+    margin-bottom:2rem;
+    overflow:hidden
+}
+td>strong,th{
+    font-size:var(--font-size-3);
+    line-height:var(--line-height-3);
+    font-family:var(--sans);
+    font-weight:500;
+    text-align:left;
+    padding:0 16px 8px
+}
+td{
+    padding:12px 16px 16px;
+    background-clip:padding-box;
+    border-bottom:1px solid var(--code-border)
+}
+tr:first-child td{
+    border-top:1px solid var(--code-border)
+}
+tr td:first-child{
+    border-left:1px solid var(--code-border)
+}
+tr td:last-child{
+    border-right:1px solid var(--code-border)
+}
+tr:first-child td:first-child{
+    border-top-left-radius:3px
+}
+tr:last-child td:first-child{
+    border-bottom-left-radius:3px
+}
+tr:first-child td:last-child{
+    border-top-right-radius:3px
+}
+tr:last-child td:last-child{
+    border-bottom-right-radius:3px
+}
+article{
+    display:flex;
+    flex-grow:1;
+    flex-direction:column;
+    max-width:100%;
+    min-width:0
+}
+.relative{
+    position:relative
+}
+.flex{
+    display:flex
+}
+.row{
+    flex-direction:row
+}
+.column{
+    flex-direction:column
+}
