@@ -29,9 +29,9 @@ export const FalcorProvider = ({ falcor, children }) => {
     }
   }, [falcor, updateCache]);
 
-  const falcorValue = React.useMemo(() =>
-    ({ falcor, falcorCache })
-  , [falcor, falcorCache]);
+  const falcorValue = React.useMemo(() => {
+    return { falcor, falcorCache };
+  }, [falcor, falcorCache]);
 
   return (
     <FalcorContext.Provider value={ falcorValue }>
@@ -40,17 +40,44 @@ export const FalcorProvider = ({ falcor, children }) => {
   )
 }
 
-const noMap = () => ({});
+export const UPDATE = 'avl-falcor/UPDATE';
+
+export const falcorReducer = (state = {}, action) => {
+  switch (action.type) {
+    case UPDATE:
+      return { ...action.payload };
+    default:
+      return state;
+  }
+}
+
+export const updateFalcor = falcorCache => ({
+  type: UPDATE,
+  payload: falcorCache
+})
+
+const NO_MAP = () => ({});
+const NO_OP = () => {};
 export const avlFalcor = (Component, options = {}) => {
   const {
-    mapCacheToProps = noMap
+    mapCacheToProps = NO_MAP
   } = options
-  return props => (
-    <FalcorContext.Consumer>
-      { falcor =>
-          <Component { ...props } { ...falcor }
-            { ...mapCacheToProps(get(falcor, 'falcorCache', {}), props) }/>
-      }
-    </FalcorContext.Consumer>
-  )
+  return props => {
+    const [ref, setRef] = React.useState();
+
+    const { falcor, falcorCache } = useFalcor();
+
+    React.useEffect(() => {
+      if (!ref) return;
+      if (typeof ref.fetchFalcorDeps !== "function") return;
+      ref.fetchFalcorDeps(falcorCache).then(NO_OP);
+    }, [ref, falcorCache]);
+
+    return (
+      <Component { ...props } ref={ setRef }
+        falcor={ falcor } falcorCache={ falcorCache }
+        { ...mapCacheToProps(falcorCache, props) }
+      />
+    )
+  }
 }

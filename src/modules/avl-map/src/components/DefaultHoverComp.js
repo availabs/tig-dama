@@ -1,9 +1,7 @@
 import React from "react"
 
-import { useTheme } from "@availabs/avl-components"
 
 const DefaultHoverComp = ({ data, layer }) => {
-  const theme = useTheme();
 
   const groups = data.reduce((a, c, i) => {
     if ((i === 0) || (c.length === 1)) {
@@ -16,10 +14,10 @@ const DefaultHoverComp = ({ data, layer }) => {
 
   return (
     <div className={ `
-      ${ theme.menuBg } p-1 rounded relative z-20 grid grid-cols-1 gap-1
+      bg-white p-1 rounded relative z-20 grid grid-cols-1 gap-1
     ` }>
       { groups.map((rows, g) => (
-          <div key={ g } className={ `rounded relative px-1 ${ theme.bg }` }>
+          <div key={ g } className={ `rounded relative px-1 bg-white` }>
             { rows.map((row, i) => (
                 <div key={ i } className="flex">
                   { row.map((d, ii) =>

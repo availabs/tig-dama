@@ -1,21 +1,23 @@
 import React from "react";
-import mapboxgl from "mapbox-gl";
+//import mapboxgl from "mapbox-gl";
+import mapboxgl from 'maplibre-gl'
+
 
 import get from "lodash.get";
+import { useSetSize } from './components/utils'
 
-import { useSetSize, useFalcor } from "modules/avl-components/src";
+// import { useSetSize, useFalcor } from "modules/avl-components/src";
 // import {  } from 'modules/avl-components/src'
 
-import Sidebar from "./components/Sidebar";
 import {
   HoverCompContainer,
   PinnedHoverComp,
 } from "./components/HoverCompContainer";
 import InfoBoxes from "./components/InfoBoxContainer";
-import DraggableModal from "./components/DraggableModal";
-import MapAction from "./components/MapAction";
 
-import 'mapbox-gl/dist/mapbox-gl.css'
+import './maplibre-gl.css'
+
+
 
 export const DefaultStyles = [
   { name: "Dark", style: "mapbox://styles/am3081/ckm85o7hq6d8817nr0y6ute5v" },
@@ -38,14 +40,10 @@ const DefaultMapOptions = {
   // style: "mapbox://styles/am3081/cjqqukuqs29222sqwaabcjy29",
   styles: DefaultStyles,
   attributionControl: false,
+  maplibreLogo: false,
   logoPosition: "bottom-left",
 };
 
-const DefaultSidebar = {
-  tabs: ["layers", "styles"],
-  title: "",
-  togglePosition: "top",
-};
 
 let idCounter = 0;
 const getUniqueId = () => `unique-id-${++idCounter}`;
@@ -356,13 +354,13 @@ const AvlMap = (props) => {
     accessToken,
     mapOptions = EmptyObject,
     layers = EmptyArray,
-    sidebar = EmptyObject,
+    Sidebar = null,
     layerProps = EmptyObject,
     navigationControl = "bottom-right",
-    CustomSidebar = null
+    falcor = () => {},
   } = props;
 
-  const sidebarProps = React.useMemo(() => {
+  /*const sidebarProps = React.useMemo(() => {
     if (typeof sidebar !== "object") {
       return {
         showSidebar: Boolean(sidebar),
@@ -372,9 +370,7 @@ const AvlMap = (props) => {
       showSidebar: true,
       ...sidebar,
     };
-  }, [sidebar]);
-
-  const { falcor } = useFalcor();
+  }, [sidebar]);*/
 
   const [state, dispatch] = React.useReducer(Reducer, InitialState);
 
@@ -435,7 +431,7 @@ const AvlMap = (props) => {
     (layer, update) => {
       if (!get(layer, "legend", null)) return;
 
-      console.log("update Legend", layer.legend, update);
+      // console.log("update Legend", layer.legend, update);
       layer.legend = {
         ...layer.legend,
         ...update,
@@ -534,12 +530,14 @@ const AvlMap = (props) => {
   }, []);
   const addPinnedHoverComp = React.useCallback(
     ({ lngLat, hoverData }) => {
-      const marker = new mapboxgl.Marker().setLngLat(lngLat).addTo(state.map);
-      dispatch({
-        type: "pin-hover-comp",
-        marker,
-        lngLat,
-      });
+      if(hoverData.pinnable){
+        const marker = new mapboxgl.Marker().setLngLat(lngLat).addTo(state.map);
+        dispatch({
+          type: "pin-hover-comp",
+          marker,
+          lngLat,
+        });
+      }
     },
     [state.map]
   );
@@ -655,6 +653,7 @@ const AvlMap = (props) => {
 
     const map = new mapboxgl.Map({
       container: id.current,
+      logoControl: false,
       ...Options,
       style: mapStyles[styleIndex].style,
     });
@@ -746,14 +745,16 @@ const AvlMap = (props) => {
 
   const pinHoverComp = React.useCallback(
     ({ lngLat }) => {
-      const marker = new mapboxgl.Marker().setLngLat(lngLat).addTo(state.map);
-      dispatch({
-        type: "pin-hover-comp",
-        marker,
-        lngLat,
-      });
+      if(state.hoverData.pinnable) {
+        const marker = new mapboxgl.Marker().setLngLat(lngLat).addTo(state.map);
+        dispatch({
+          type: "pin-hover-comp",
+          marker,
+          lngLat,
+        });
+      }
     },
-    [state.map]
+    [state.map,state.hoverData.pinnable]
   );
 
   const hovering = Boolean(state.hoverData.data.size);
@@ -761,7 +762,7 @@ const AvlMap = (props) => {
   // APPLY CLICK LISTENER TO MAP TO ALLOW PINNED HOVER COMPS
   React.useEffect(() => {
     if (!hovering) return;
-
+    
     state.map.on("click", pinHoverComp);
 
     return () => state.map.off("click", pinHoverComp);
@@ -875,33 +876,25 @@ const AvlMap = (props) => {
   const ref = React.useRef(null),
     size = useSetSize(ref);
 
-  const Modals = React.useMemo(() => {
-    return state.modalData.reduce((a, md) => {
-      const { modal, layer } = state.activeLayers.reduce((a, c) => {
-        return c.id === md.layerId
-          ? { modal: get(c, ["modals", md.modalKey]), layer: c }
-          : a;
-      }, {});
-      if (modal) {
-        a.push({ ...modal, modalData: md, layer });
-      }
-      return a;
-    }, []);
-  }, [state.activeLayers, state.modalData]);
+  // const Modals = React.useMemo(() => {
+  //   return state.modalData.reduce((a, md) => {
+  //     const { modal, layer } = state.activeLayers.reduce((a, c) => {
+  //       return c.id === md.layerId
+  //         ? { modal: get(c, ["modals", md.modalKey]), layer: c }
+  //         : a;
+  //     }, {});
+  //     if (modal) {
+  //       a.push({ ...modal, modalData: md, layer });
+  //     }
+  //     return a;
+  //   }, []);
+  // }, [state.activeLayers, state.modalData]);
 
   const AllMapActions = React.useMemo(() => {
     return { ...MapActions, setMapStyle };
   }, [MapActions, setMapStyle]);
 
-  const mapActions = React.useMemo(() => {
-    return state.activeLayers.reduce((a, c) => {
-      const actions = get(c, "mapActions", []).map((action) => ({
-        action,
-        layer: c,
-      }));
-      return [...a, ...actions];
-    }, []);
-  }, [state.activeLayers]);
+  
 
   const getRect = React.useCallback(() => {
     if (ref.current) {
@@ -921,8 +914,8 @@ const AvlMap = (props) => {
     <div ref={ref} className="w-full h-full relative focus:outline-none">
       <div id={id.current} className="w-full h-full relative" />
 
-      {CustomSidebar ?
-        <CustomSidebar
+      {Sidebar ?
+        <Sidebar
           mapboxMap={state.map}
           layerStates={state.layerStates}
           sidebarTabIndex={state.sidebarTabIndex}
@@ -934,41 +927,7 @@ const AvlMap = (props) => {
           loadingLayers={loadingLayers}
           MapActions={AllMapActions}
         />
-      :
-      <Sidebar
-        {...DefaultSidebar}
-        {...sidebarProps}
-        togglePosition={
-          mapActions.length ? "middle" : sidebarProps.togglePosition
-        }
-        mapboxMap={state.map}
-        layerStates={state.layerStates}
-        sidebarTabIndex={state.sidebarTabIndex}
-        mapStyles={state.mapStyles}
-        styleIndex={state.styleIndex}
-        layersLoading={state.layersLoading}
-        inactiveLayers={inactiveLayers}
-        activeLayers={state.activeLayers}
-        loadingLayers={loadingLayers}
-        MapActions={AllMapActions}
-      >
-        <div className="absolute top-0">
-          {mapActions.map(({ action, layer }, i) => (
-            <MapAction
-              key={`${layer.id}-${i}`}
-              layer={layer}
-              {...action}
-              MapActions={AllMapActions}
-              mapboxMap={state.map}
-              layerStates={state.layerStates}
-              layersLoading={state.layersLoading}
-              inactiveLayers={inactiveLayers}
-              activeLayers={state.activeLayers}
-              loadingLayers={loadingLayers}
-            />
-          ))}
-        </div>
-      </Sidebar>
+      : <span />
       }
       <InfoBoxes
         activeLayers={state.activeLayers}
@@ -986,7 +945,7 @@ const AvlMap = (props) => {
         pointer-events-none overflow-hidden
       `}
       >
-        {Modals.map(({ modalData, ...data }) => (
+        {/*{Modals.map(({ modalData, ...data }) => (
           <DraggableModal
             key={`${modalData.layerId}-${modalData.modalKey}`}
             {...data}
@@ -1000,7 +959,7 @@ const AvlMap = (props) => {
             loadingLayers={loadingLayers}
             inactiveLayers={inactiveLayers}
           />
-        ))}
+        ))}*/}
 
         {state.pinnedHoverComps.map(
           ({ HoverComps, data, id, ...hoverData }) => (
@@ -1056,7 +1015,3 @@ const AvlMap = (props) => {
 };
 export { AvlMap };
 
-// const useCheckLayerProps = (activeLayers, layerProps) => {
-//   const prevLayerProps = React.useRef({});
-//   React.useEffect(() => {}, [activeLayers, layerProps]);
-// };

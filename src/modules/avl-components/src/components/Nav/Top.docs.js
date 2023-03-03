@@ -104,7 +104,7 @@ export default {
 			],
 			
 			code: `
-			import {TopNav} from "@availabs/avl-components"; 
+			import {TopNav} from "components/avl-components/src"; 
 				
 			const MyTopBar = (props) => {
 				return (
@@ -158,7 +158,7 @@ export default {
 				},
 			],
 			code: `
-			import {TopNav} from "@availabs/avl-components"; 
+			import {TopNav} from "components/avl-components/src"; 
 				
 			const MyTopBar = (props) => {
 				return (
@@ -235,7 +235,7 @@ export default {
 				},
 			],
 			code: `
-			import {TopNav} from "@availabs/avl-components"; 
+			import {TopNav} from "components/avl-components/src"; 
 				
 			const MyTopBar = (props) => {
 				return (
@@ -312,7 +312,7 @@ export default {
 				},
 			],
 			code: `
-			import {TopNav} from "@availabs/avl-components"; 
+			import {TopNav} from "components/avl-components/src"; 
 				
 			const MyTopBar = (props) => {
 				return (

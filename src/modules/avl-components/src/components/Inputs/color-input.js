@@ -68,7 +68,7 @@ const ColorPicker = ({ showPreview = true,
           } }>
           <div className={ `
               relative h-full cursor-pointer
-              col-span-${ showPreview ? "9" : "12" }
+              ${ showPreview ? "col-span-9" : "col-span-12" }
             ` }>
             <Saturation { ...props }
               style={ {

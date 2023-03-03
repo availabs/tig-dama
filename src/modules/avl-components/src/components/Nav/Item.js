@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import { useRouteMatch, useHistory } from "react-router-dom";
 
 import Icon from "../Icons";
@@ -15,8 +15,10 @@ const NavItem = ({
 	active = false,
 	subMenus = [],
 	themeOptions,
-	subMenuActivate = 'onClick'
+	subMenuActivate = 'onClick',
+	subMenuOpen = false
 }) => {
+	console.log('renderMenu')
 	const theme = useTheme()[type === 'side' ? 'sidenav' : 'topnav'](themeOptions);
 
 	const history = useHistory();
@@ -47,14 +49,26 @@ const NavItem = ({
 
 	const navClass = routeMatch || active ? activeClasses : linkClasses;
 
-	const [showSubMenu, setShowSubMenu] = React.useState(subMenuActivate === 'active');
+	const [showSubMenu, setShowSubMenu] = React.useState(subMenuOpen || routeMatch);
+	
+	useEffect(() => {
+	    // check when the component is loaded
+	    const localStorageToggled = localStorage.getItem(`${to}_toggled`);
+
+	    // If is not null
+	    if (localStorageToggled) {
+	      setShowSubMenu(localStorageToggled === "true" || routeMatch ? true : false);
+	    } else {
+	      // If null set the localStorage key/value as a string.
+	      localStorage.setItem(`${to}_toggled`, `${showSubMenu}`);
+	    }
+	}, []);
 
 	return (
 		<div className={type === "side" ? theme.subMenuParentWrapper : null}>
 			<div
 				className={`${className ? className : navClass}`}
 				onClick={() => {
-					if (subMenuActivate === 'onClick') setShowSubMenu(!showSubMenu);
 
 					if (onClick) return onClick;
 
@@ -75,10 +89,19 @@ const NavItem = ({
 							{children}
 						</div>
 					</div>
-					<div>
+					<div
+						onClick={() => {
+									if (subMenuActivate === 'onClick') {
+										localStorage.setItem(`${to}_toggled`, `${!showSubMenu}`);
+										setShowSubMenu(!showSubMenu);
+									}
+								}}
+					>
 					{
 						subMenus.length ?
-							<Icon icon={showSubMenu ? theme.indicatorIconOpen : theme.indicatorIcon}/> 
+							<Icon 
+
+								icon={showSubMenu ? theme.indicatorIconOpen : theme.indicatorIcon}/> 
 							: null
 					}
 					</div>

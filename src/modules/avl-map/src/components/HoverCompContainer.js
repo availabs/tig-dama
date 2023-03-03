@@ -1,8 +1,25 @@
 import React from "react"
 
-import { useTheme } from "@availabs/avl-components"
-
-import { Icon } from "./LayerPanel"
+export const Icon = ({
+  onClick,
+  cursor = "cursor-pointer",
+  className = "",
+  style = {},
+  children,
+}) => {
+  return (
+    <div
+      onClick={onClick}
+      className={`
+        ${cursor} ${className} transition h-6 w-6
+        hover:text-blue-500 flex items-center justify-center
+      `}
+      style={{ ...style }}
+    >
+      {children}
+    </div>
+  );
+};
 
 const getTranslate = (pos, { width, height }) => {
 
@@ -55,14 +72,13 @@ const getTransform = ({ x }, orientation) => {
 }
 
 const RemoveButton = ({ orientation, children }) => {
-  const theme = useTheme();
   return (
     <div style={ {
         transform: orientation === "left" ?
           "translate(-0.75rem, -0.75rem)" : "translate(0.75rem, -0.75rem)"
       } }
       className={ `
-        ${ theme.bg }
+        bg-white
         rounded absolute inline-block top-0 z-20
         ${ orientation === "left" ? "left-0" : "right-0" }
       ` }>
@@ -84,14 +100,13 @@ export const PinnedHoverComp = ({ children, remove, id, project, lngLat, width }
     };
   }, [pos]);
 
-  const theme = useTheme();
-
+  
   return (
     <div className={ `
         absolute top-0 left-0 z-20 inline-block
         rounded whitespace-nowrap hover-comp
         pointer-events-auto
-         ${ theme.sidebarBg }
+        bg-white
         grid grid-cols-1 gap-1
       ` }
       style={ {
@@ -100,7 +115,7 @@ export const PinnedHoverComp = ({ children, remove, id, project, lngLat, width }
       } }>
 
       <div className={ `
-          absolute w-6 h-6 ${ theme.sidebarBg } rounded-bl rounded-tr
+          absolute w-6 h-6bg-white rounded-bl rounded-tr
           ${ orientation.current === "left" ? "right-0" : "left-0" }
         ` }
         style={ style }/>

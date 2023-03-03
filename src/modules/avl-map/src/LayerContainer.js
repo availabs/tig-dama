@@ -1,13 +1,15 @@
-import mapboxgl from "mapbox-gl"
-
-import { hasValue } from "@availabs/avl-components"
+//import mapboxgl from "mapbox-gl";
+import mapboxgl from 'maplibre-gl'
 
 import DefaultHoverComp from "./components/DefaultHoverComp"
 
 import get from "lodash.get"
 
+import {hasValue} from './components/utils'
+
 let id = -1;
 const getLayerId = () => `avl-layer-${ ++id }`;
+
 
 const DefaultCallback = () => null;
 

@@ -11,6 +11,7 @@ import { ComponentFactory } from "./ComponentFactory"
 import get from "lodash.get"
 
 const DefaultLayout = withTheme(({ component, path, exact, layoutSettings, isAuthenticating, ...props }) => {
+  console.log('DefaultLayout')
   const location = useLocation(),
     Layout = typeof props.layout === 'string' ? 
       get(Layouts, props.layout, Layouts["Fixed"]) :
