@@ -18,7 +18,7 @@ const NavItem = ({
 	subMenuActivate = 'onClick',
 	subMenuOpen = false
 }) => {
-	console.log('renderMenu')
+	// console.log('renderMenu')
 	const theme = useTheme()[type === 'side' ? 'sidenav' : 'topnav'](themeOptions);
 
 	const history = useHistory();
@@ -62,7 +62,7 @@ const NavItem = ({
 	      // If null set the localStorage key/value as a string.
 	      localStorage.setItem(`${to}_toggled`, `${showSubMenu}`);
 	    }
-	}, []);
+	}, [routeMatch,showSubMenu,to]);
 
 	return (
 		<div className={type === "side" ? theme.subMenuParentWrapper : null}>

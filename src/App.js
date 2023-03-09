@@ -2,9 +2,9 @@ import React,  {useMemo} from 'react';
 import { BrowserRouter, Switch } from 'react-router-dom';
 
 import ScrollToTop from 'utils/ScrollToTop'
-import DefaultRoutes from 'Routes';
+import DefaultRoutes from './Routes';
 import Layout from 'layout/ppdaf-layout'
-import get from 'lodash.get'
+import get from 'lodash/get'
 import {/*getDomain,*/getSubdomain} from 'utils'
 
 import {
@@ -12,11 +12,11 @@ import {
   Messages
 } from "modules/avl-components/src"
 
-import transportNY from 'sites/www'
+import tig from 'sites/tig'
 
 
 const Sites = {
-  'hazardata': transportNY,
+  tig
 }
 
 const App = (props) => {
@@ -25,7 +25,7 @@ const App = (props) => {
   // const PROJECT_HOST = getDomain(window.location.host)
 
   const site = useMemo(() => {
-      return get(Sites, SUBDOMAIN, Sites['hazardata'])
+      return get(Sites, SUBDOMAIN, Sites['tig'])
   },[SUBDOMAIN])
 
   const Routes =  useMemo(() => {

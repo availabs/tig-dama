@@ -236,7 +236,8 @@ const avl_design = (colorname, size) => {
         },
 
         table: (opts = {}) => {
-            const {color = 'white', size = 'compact'} = opts
+            console.log('hola', opts)
+            const {color = 'white', size = 'full'} = opts
             let colors = {
                 white: 'bg-white hover:bg-gray-100',
                 gray: 'bg-gray-100 hover:bg-gray-200',

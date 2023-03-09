@@ -146,7 +146,7 @@ export default ({ columns = EMPTY_ARRAY,
     );
 
     const defaultColumn = React.useMemo(
-      () => ({ Filter: DefaultColumnFilter }), []
+      () => ({ Filter: false }), []
     );
 
     const {
