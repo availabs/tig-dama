@@ -206,6 +206,7 @@ export default ({ columns = EMPTY_ARRAY,
     }
 
     return (
+      <div className='w-full'>
       <div className="overflow-auto scrollbar-sm">
         <table { ...getTableProps() } className="w-full">
           <thead>
@@ -305,10 +306,10 @@ export default ({ columns = EMPTY_ARRAY,
             }
 
           </tbody>
-           <tfoot>
+        </table>
+      </div>
+      <div className='w-full p-2'>
               { pageCount <= 1 ? null :
-              <tr className={ theme.tableInfoBar }>
-                <td colSpan={ columns.length } className="px-4">
                   <div className={ `flex items-center ${ theme.textInfo }` }>
                     <div className="flex-0">
                       Page { pageIndex + 1 } of { pageCount }
@@ -346,11 +347,9 @@ export default ({ columns = EMPTY_ARRAY,
                       </Button>
                     </div>
                   </div>
-                </td>
-              </tr>
+              
             }
-            </tfoot>
-        </table>
+            </div>
       </div>
     )
 }

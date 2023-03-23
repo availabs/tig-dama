@@ -3,7 +3,9 @@ import { BrowserRouter, Switch } from 'react-router-dom';
 
 import ScrollToTop from 'utils/ScrollToTop'
 import DefaultRoutes from './Routes';
-import Layout from 'layout/ppdaf-layout'
+//import Layout from 'layout/ppdaf-layout'
+import Layout from 'layout/tig-layout'
+
 import get from 'lodash/get'
 import {/*getDomain,*/getSubdomain} from 'utils'
 

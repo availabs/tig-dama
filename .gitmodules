@@ -2,6 +2,6 @@
 	path = src/modules/avl-components
 	url = git@github.com:availabs/avl-components.git
 
-[submodule "src/pages/DataManager"]
-	path = src/pages/DataManager
-	url = git@github.com:availabs/DataManagerClient.git
+[submodule "src/modules/avl-graph"]
+	path = src/modules/avl-graph
+	url = git@github.com:availabs/avl-graph.git

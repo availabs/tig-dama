@@ -159,7 +159,7 @@ const ppdaf = () => {
 
       let colors = {
         white: {
-          contentBg: `bg-gray-100`,
+          contentBg: `bg-white`,
           accentColor: `${accent}-500`,
           accentBg: `hover:bg-${accent}-500`,
           borderColor: `border-${primary}-100`,
