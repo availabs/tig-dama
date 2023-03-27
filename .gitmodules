@@ -1,10 +1,12 @@
 [submodule "src/modules/avl-components"]
 	path = src/modules/avl-components
 	url = git@github.com:availabs/avl-components.git
-
 [submodule "src/modules/avl-graph"]
 	path = src/modules/avl-graph
 	url = git@github.com:availabs/avl-graph.git
 [submodule "src/modules/avl-maplibre"]
 	path = src/modules/avl-maplibre
 	url = git@github.com:availabs/avl-maplibre.git
+[submodule "src/pages/DataManager"]
+        url = git@github.com:availabs/DataManagerClient.git
+        active = true
