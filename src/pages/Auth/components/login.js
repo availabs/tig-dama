@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 
 const LoginComp = ({ email, password, update, canSubmit, handleSubmit }) => {
   return (
-    <div className="h-full  flex flex-col justify-center sm:px-6 lg:px-8 ">
+    <div className="h-full  flex flex-col justify-center sm:px-6 lg:px-8 mt-32">
       <form className="space-y-6" onSubmit={handleSubmit} >
       <div className=" sm:mx-auto sm:w-full md:w-3/4 px-4 -mt-2">
         <div className="bg-tigGray-50 py-8 px-10 md:px-32 border-t-4 border-[#679d89]  rounded-t">
