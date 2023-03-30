@@ -160,11 +160,11 @@ const ppdaf = () => {
       let colors = {
         white: {
           contentBg: `bg-white`,
-          accentColor: `${accent}-500`,
+          accentColor: `[#679d89]`,
           accentBg: `hover:bg-${accent}-500`,
           borderColor: `border-${primary}-100`,
           textColor: `text-${primary}-500`,
-          highlightColor: `text-${highlight}`,
+          highlightColor: `text-[#679d89]`,
         },
         bright: {
           contentBg: `bg-${accent}-700`,
@@ -191,7 +191,7 @@ const ppdaf = () => {
           sideItem: "flex mx-4 pr-4 py-4 text-base font-base border-b hover:pl-4",
           topItem: `flex px-4 py-2 mx-2 font-medium text-gray-400 border-b-2 ${colors[color].textColor} ${colors[color].borderColor}
           hover:border-gray-300 hover:text-gray-700 border-gray-100 `,
-          activeItem: `flex px-4 py-2 mx-2 font-medium text-blue-600 border-b-2 ${colors[color].textColor} ${colors[color].borderColor} border-blue-600 `,
+          activeItem: `flex px-4 py-2 mx-2 font-medium text-[#679d89] border-b-2 ${colors[color].textColor} ${colors[color].borderColor} border-[#679d89] `,
           icon: "mr-4 text-2xl",
           responsive: 'hidden'
         }
