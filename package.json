@@ -2,7 +2,7 @@
   "name": "tig",
   "version": "0.1.0",
   "private": true,
-  "homepage": ".",
+  "homepage": "/",
   "dependencies": {
     "@availabs/ams": "^1.0.17",
     "@headlessui/react": "^1.7.13",
