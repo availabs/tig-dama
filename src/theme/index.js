@@ -160,11 +160,11 @@ const ppdaf = () => {
       let colors = {
         white: {
           contentBg: `bg-white`,
-          accentColor: `${accent}-500`,
+          accentColor: `[#679d89]`,
           accentBg: `hover:bg-${accent}-500`,
           borderColor: `border-${primary}-100`,
           textColor: `text-${primary}-500`,
-          highlightColor: `text-${highlight}`,
+          highlightColor: `text-[#679d89]`,
         },
         bright: {
           contentBg: `bg-${accent}-700`,
@@ -191,7 +191,7 @@ const ppdaf = () => {
           sideItem: "flex mx-4 pr-4 py-4 text-base font-base border-b hover:pl-4",
           topItem: `flex px-4 py-2 mx-2 font-medium text-gray-400 border-b-2 ${colors[color].textColor} ${colors[color].borderColor}
           hover:border-gray-300 hover:text-gray-700 border-gray-100 `,
-          activeItem: `flex px-4 py-2 mx-2 font-medium text-blue-600 border-b-2 ${colors[color].textColor} ${colors[color].borderColor} border-blue-600 `,
+          activeItem: `flex px-4 py-2 mx-2 font-medium text-[#679d89] border-b-2 ${colors[color].textColor} ${colors[color].borderColor} border-[#679d89] `,
           icon: "mr-4 text-2xl",
           responsive: 'hidden'
         }
@@ -245,7 +245,7 @@ const ppdaf = () => {
       }
     },
 
-    table: (opts = {}) => {
+    /*table: (opts = {}) => {
             const {color = 'white', size = 'full'} = opts
             let colors = {
                 white: 'bg-white hover:bg-blue-50',
@@ -272,8 +272,38 @@ const ppdaf = () => {
                     size: sizes
                 }
             }
-        },
+        },*/
+    table: (opts = {color:'white', size: 'compact'}) => {
+          const {color = 'white', size = 'compact'} = opts
+          let colors = {
+              white: 'bg-white hover:bg-gray-100',
+              gray: 'bg-gray-100 hover:bg-gray-200',
+              transparent: 'gray-100'
+          }
 
+          let sizes = {
+              small: 'px-4 py-1 text-xs',
+              compact: 'px-4 py-1 text-sm',
+              full: 'px-10 py-5'
+          }
+          return {
+              tableHeader:
+                  `${sizes[size]} pb-1 h-8 border border-b-4 border-gray-200 bg-white text-left font-medium text-gray-700 uppercase first:rounded-tl-md last:rounded-tr-md capitalize`,
+              tableInfoBar: "bg-white",
+              tableRow: `${colors[color]} transition ease-in-out duration-150 hover:bg-gray-300`,
+              tableRowStriped: `bg-white odd:bg-tigGray-25 hover:bg-tigGray-100 bg-opacity-25 transition ease-in-out duration-150`,
+              tableCell: `${sizes[size]} break-words border border-gray-200 pl-1 align-top font-light text-sm`,
+              inputSmall: 'w-24',
+              sortIconDown: 'fas fa-sort-amount-down text-tigGray-300 opacity-75',
+              sortIconUp: 'fas fa-sort-amount-up text-tigGray-300 opacity-75',
+              sortIconIdeal: 'fa fa-sort-alt text-tigGray-300 opacity-25',
+              vars: {
+                  color: colors,
+                  size: sizes
+              }
+          }
+         
+      },
     tabpanel: (opts = {}) => {
             const { tabLocation = 'top' } = opts
             

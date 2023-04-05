@@ -1,0 +1,7 @@
+{
+  "host": "lor.availabs.org",
+  "port": 5432,
+  "user": "postgres",
+  "password": "transit",
+  "database": "tig_production"
+}
