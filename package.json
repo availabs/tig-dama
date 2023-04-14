@@ -13,6 +13,7 @@
     "deepequal": "^0.0.1",
     "lodash.flatten": "^4.4.0",
     "lodash.get": "^4.4.2",
+    "maplibre-gl": "^2.4.0",
     "maplibre-gl2": "npm:maplibre-gl@^2.4.0",
     "p-event": "^5.0.1",
     "pretty-bytes": "^6.0.0",
@@ -66,8 +67,10 @@
     "@types/react-router-dom": "^5.3.3",
     "autoprefixer": "^10.4.2",
     "chokidar": "^3.5.1",
+    "pg": "^8.10.0",
     "postcss": "^8.4.5",
     "react-scripts": "^5.0.1",
+    "sql": "^0.78.0",
     "tailwindcss": "^3.0.12"
   }
 }
