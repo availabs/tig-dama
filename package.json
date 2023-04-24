@@ -13,11 +13,7 @@
     "deepequal": "^0.0.1",
     "lodash.flatten": "^4.4.0",
     "lodash.get": "^4.4.2",
-<<<<<<< HEAD
     "maplibre-gl": "^1.15.3",
-=======
-    "maplibre-gl": "^2.4.0",
->>>>>>> 8c750a703acf69316cb673132bc898e8f28d6626
     "maplibre-gl2": "npm:maplibre-gl@^2.4.0",
     "p-event": "^5.0.1",
     "pretty-bytes": "^6.0.0",
