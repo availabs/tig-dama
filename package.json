@@ -4,7 +4,7 @@
   "private": true,
   "homepage": "/",
   "dependencies": {
-    "@availabs/ams": "^1.0.17",
+    "@availabs/ams": "^1.0.20",
     "@headlessui/react": "^1.7.13",
     "@reduxjs/toolkit": "^1.8.0",
     "d3-axis": "^3.0.0",
@@ -13,7 +13,11 @@
     "deepequal": "^0.0.1",
     "lodash.flatten": "^4.4.0",
     "lodash.get": "^4.4.2",
+<<<<<<< HEAD
     "maplibre-gl": "^1.15.3",
+=======
+    "maplibre-gl": "^2.4.0",
+>>>>>>> 8c750a703acf69316cb673132bc898e8f28d6626
     "maplibre-gl2": "npm:maplibre-gl@^2.4.0",
     "p-event": "^5.0.1",
     "pretty-bytes": "^6.0.0",

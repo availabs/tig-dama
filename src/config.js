@@ -1,6 +1,6 @@
 export const PROJECT_NAME = "NPMRDS";
 
-let API_HOST = "https://tig22.nymtc.org/graph/"//"https://graph.availabs.org/";
+let API_HOST = "https://tig22.nymtc.org/graph/"; //"https://graph.availabs.org/";
 let AUTH_HOST = "https://availauth.availabs.org";
 let CLIENT_HOST = "tig22.nymtc.org";
 let DAMA_HOST = "https://tig22.nymtc.org/dama";
