@@ -1,6 +1,9 @@
 const db = require("./db.js");
 var sql = require("sql");
 
+var flatMapDeep = require("lodash").flatMapDeep;
+var keys = require("lodash").keys;
+
 sql.setDialect("postgres");
 
 let vars = {
@@ -99,6 +102,10 @@ SELECT
               features: [],
             };
 
+            const innerKeys = flatMapDeep(res[0]?.value[0], (obj) => keys(obj));
+            let years = innerKeys?.map((k) => Number(k?.split("_")[1]));
+            years = years?.sort();
+
             res.forEach((taz) => {
               let feature = {
                 type: "Feature",
@@ -108,23 +115,22 @@ SELECT
                 },
                 geometry: JSON.parse(taz?.geometry),
               };
-              taz?.value?.forEach((v) => {
-                v?.forEach((col) => {
+              taz?.value?.forEach((v, i) => {
+                v?.forEach((col, j) => {
                   let colName = Object.keys(col)[0];
                   let colValue = Object.values(col)[0];
                   let shortName = Object.keys(vars).filter(
                     (k) => vars[k].name === colName.split("_")[0]
                   );
 
-                  feature.properties[
-                    `${shortName[0]}_${colName.split("_")[1]}`
-                  ] = colValue;
+                  let year = colName.split("_")[1] || 2000;
+                  let indexOfYear = years?.indexOf(Number(year));
+                  feature.properties[`${shortName[0]}_${indexOfYear}`] =
+                    colValue;
                 });
               });
               output.features.push(feature);
             });
-
-            console.log(JSON.stringify(output));
           }),
         Promise.resolve()
       )
