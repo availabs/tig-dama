@@ -129,8 +129,9 @@ SELECT
                     colValue;
                 });
               });
-              output.features.push(feature);
-            });
+              output.features.push(feature)
+            })
+            console.log(JSON.stringify(output))
           }),
         Promise.resolve()
       )
