@@ -16,6 +16,7 @@ let vars = {
   emptot: { name: "Total Employment" },
   empret: { name: "Retail Employment" },
   empoff: { name: "Office Employment" },
+  empprop: { name: "Proprietors Employment"},
   earnwork: { name: "Earnings" },
   unvenrol: { name: "University Enrollment" },
   k_12_etot: { name: "School Enrollment" },
