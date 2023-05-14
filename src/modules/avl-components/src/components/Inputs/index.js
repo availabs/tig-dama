@@ -1,7 +1,7 @@
 import Input from "./input"
 import TextArea from "./textarea"
 import ArrayInput from "./array-input"
-import Select from "./Select"
+import Select from "./select"
 import ObjectInput from "./object-input"
 import BooleanInput from "./boolean-input"
 import MarkdownInput, { MarkdownViewer } from "./markdown"

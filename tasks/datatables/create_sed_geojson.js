@@ -18,7 +18,7 @@ let vars = {
   empoff: { name: "Office Employment" },
   earnwork: { name: "Earnings" },
   unvenrol: { name: "University Enrollment" },
-  k_12_etot: { name: "School Enrollment" },
+  k12etot: { name: "School Enrollment" },
   gqpop: { name: "Group Quarters Population" },
   gqpopins: { name: "Group Quarters Institutional Population" },
   gqpopstr: { name: "Group Quarters Other Population" },
@@ -74,9 +74,7 @@ SELECT
     from s
         group by name, s.area_id
     )
-
-
-    SELECT areas.name as taz, 
+    SELECT areas.name::int as taz, 
         enclosing_name as county, 
         value, 
         st_asgeojson(geom) as geometry 
@@ -91,7 +89,8 @@ SELECT
     JOIN areas
         ON areas.id = enclosing_area_id
     ) enclosing_geoms
-    ON enclosed_area_id = t.area_id        
+    ON enclosed_area_id = t.area_id
+    order by taz asc   
         `;
             // console.log('sql', sql)
             let res = await db.query(sql);

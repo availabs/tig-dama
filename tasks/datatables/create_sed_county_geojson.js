@@ -6,25 +6,40 @@ var keys = require("lodash").keys;
 
 sql.setDialect("postgres");
 
+// let vars = {
+//   tot_pop: { name: "Total Population" },
+//   hh_pop: { name: "Households" },
+//   hh_num: { name: "Household Population" },
+//   hh_size: { name: "Household Size" },
+//   hh_inc: { name: "Household Income" },
+//   elf: { name: "Employed Labor Force" },
+//   emptot: { name: "Total Employment" },
+//   empret: { name: "Retail Employment" },
+//   empoff: { name: "Office Employment" },
+//   empprop: { name: "Proprietors Employment"},
+//   earnwork: { name: "Earnings" },
+//   unvenrol: { name: "University Enrollment" },
+//   k_12_etot: { name: "School Enrollment" },
+//   gqpop: { name: "Group Quarters Population" },
+//   gqpopins: { name: "Group Quarters Institutional Population" },
+//   gqpopstr: { name: "Group Quarters Other Population" },
+//   gqpopoth: { name: "Group Quarters Homeless Population" }
+// };
+
+
+
 let vars = {
-  totpop: { name: "Total Population" },
-  hhpop: { name: "Households" },
-  hhnum: { name: "Household Population" },
-  hhsize: { name: "Household Size" },
-  hhincx: { name: "Household Income" },
-  elf: { name: "Employed Labor Force" },
-  emptot: { name: "Total Employment" },
-  empret: { name: "Retail Employment" },
-  empoff: { name: "Office Employment" },
-  empprop: { name: "Proprietors Employment"},
-  earnwork: { name: "Earnings" },
-  unvenrol: { name: "University Enrollment" },
-  k_12_etot: { name: "School Enrollment" },
-  gqpop: { name: "Group Quarters Population" },
-  gqpopins: { name: "Group Quarters Institutional Population" },
-  gqpopstr: { name: "Group Quarters Other Population" },
-  gqpopoth: { name: "Group Quarters Homeless Population" },
-};
+    "tot_pop": {name: "Total Population"},
+    "tot_emp": {name: 'Total Employment'},
+    "emp_pay": {name: 'Payroll Employment'},
+    "emp_prop": {name: 'Proprietors Employment'},
+    "hh_pop": {name: 'Household Population'},
+    "gq_pop": {name: 'Group Quarters Population'},
+    "hh_num": {name: 'Households'},
+    "hh_size": {name: 'Household Size'},
+    "emplf": {name: 'Employed Labor Force'},
+    "lf": {name: 'Labor Force'}
+}
 
 const fetch = async () => {
   // change sources below, and server in db.js
@@ -32,7 +47,8 @@ const fetch = async () => {
   // const getSourcesSql = `select id from public.sources where datasource_type = 'sed_taz'`
   // let {rows: sources } = await db.query(getSourcesSql);
   // console.log('sources', sources)
-  const sources = [{ id: 45 }];
+  // 45 , 64
+  const sources = [{ id: 64 }];
   return (
     sources
       //.filter(s => s.id === 61)
@@ -77,8 +93,7 @@ SELECT
     )
 
 
-    SELECT areas.name as taz, 
-        enclosing_name as county, 
+    SELECT areas.name as county,
         value
         ,st_asgeojson(geom) as geometry 
     from t
@@ -86,13 +101,7 @@ SELECT
     ON t.area_id = areas.id
     JOIN base_geometries geoms
     ON geoms.id = base_geometry_id
-    JOIN (
-    SELECT name enclosing_name, type enclosing_type, enclosed_area_id
-    FROM public.area_enclosures
-    JOIN areas
-        ON areas.id = enclosing_area_id
-    ) enclosing_geoms
-    ON enclosed_area_id = t.area_id        
+        
         `;
             // console.log('sql', sql)
             let res = await db.query(sql);

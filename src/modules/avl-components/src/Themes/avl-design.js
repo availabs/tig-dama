@@ -42,20 +42,19 @@ const avl_design = (colorname, size) => {
             }
 
             let sizes = {
-
-                compact: {
-                    width: '44',
-                    wrapper: "w-44",
-                    sideItem: "flex mx-2 pr-4 py-2 text-base hover:pl-2",
-                    topItem: "flex items-center text-sm px-4 border-r h-12",
-                    icon: "mr-3 text-lg",
-                },
                 full: {
                     width: "64",
                     wrapper: "w-64",
                     sideItem: "flex mx-4 pr-4 py-4 text-base font-base border-b hover:pl-4",
                     topItem: "flex pr-4 py-2 text-sm font-light",
                     icon: "mr-4 text-2xl",
+                },
+                compact: {
+                    width: '44',
+                    wrapper: "w-44",
+                    sideItem: "flex mx-2 pr-4 py-2 text-base hover:pl-2",
+                    topItem: "flex items-center text-sm px-4 border-r h-12",
+                    icon: "mr-3 text-lg",
                 },
                 mini: {
                     width: "20",
@@ -131,72 +130,82 @@ const avl_design = (colorname, size) => {
         /* -----
          Top Nav Theme Components Minimal
           ------*/
-        topnav: (opts = {}) => {
-            const {color = 'white', size = 'compact'} = opts
+        topnav: ({
+            color='white',
+            size='compact',
+            menu='left'
+        }) => {
 
-            let colors = {
-                white: {
-                    contentBg: `bg-${highlight}`,
-                    accentColor: `${accent}-600`,
-                    accentBg: `hover:bg-${accent}-600`,
-                    borderColor: `border-${primary}-100`,
-                    textColor: `text-${primary}-600`,
-                    highlightColor: `text-${highlight}`,
-                },
-                bright: {
-                    contentBg: `bg-${accent}-700`,
-                    accentColor: `${accent}-400`,
-                    accentBg: `hover:bg-${accent}-400`,
-                    borderColor: `border-${accent}-600`,
-                    textColor: `text-${highlight}`,
-                    highlightColor: `text-${highlight}`,
-                }
+          let colors = {
+            white: {
+              contentBg: `bg-slate-100`,
+              accentColor: `${accent}-500`,
+              accentBg: `hover:bg-${accent}-500`,
+              borderColor: `border-${primary}-100`,
+              textColor: `text-${primary}-500`,
+              highlightColor: `text-${highlight}`,
+            },
+            bright: {
+              contentBg: `bg-${accent}-700`,
+              accentColor: `${accent}-400`,
+              accentBg: `hover:bg-${accent}-400`,
+              borderColor: `border-${accent}-600`,
+              textColor: `text-${highlight}`,
+              highlightColor: `text-${highlight}`,
             }
-            let sizes = {
-                compact: {
-                    wrapper: "h-12",
-                    topItem: "flex items-center text-sm px-4 border-r h-12",
-                    icon: "mr-3 text-lg",
-                },
-                full: {
-                    wrapper: "h-16",
-                    topItem: "flex px-4 py-5 text-base font-light h-16",
-                    icon: "mr-4 -py-2 text-2xl",
-                },
+          }
+          let sizes = {
+            compact: {
+              menu: `hidden md:flex flex-1 ${menu === 'left' ? '' : 'justify-end'}`,
+              sideItem: "flex mx-6 pr-4 py-2 text-sm font-light hover:pl-4",
+              topItem: `flex items-center text-sm px-4 border-r h-12 ${colors[color].textColor} ${colors[color].borderColor}
+                ${colors[color].accentBg} hover:${colors[color].highlightColor}`,
+              activeItem: `flex items-center text-sm px-4 border-r h-12 ${colors[color].textColor} ${colors[color].borderColor}
+                ${colors[color].accentBg} hover:${colors[color].highlightColor}`,
+              icon: "mr-3 text-lg",
+              responsive: 'md:hidden'
+            },
+            inline: {
+              menu: 'flex flex-1',
+              sideItem: "flex mx-4 pr-4 py-4 text-base font-base border-b hover:pl-4",
+              topItem: `flex px-4 py-2 mx-2 font-medium text-gray-400 border-b-2 ${colors[color].textColor} ${colors[color].borderColor}
+              hover:border-gray-300 hover:text-gray-700 border-gray-100 `,
+              activeItem: `flex px-4 py-2 mx-2 font-medium text-blue-600 border-b-2 ${colors[color].textColor} ${colors[color].borderColor} border-blue-600 `,
+              icon: "mr-4 text-2xl",
+              responsive: 'hidden'
             }
 
+          }
 
-            return {
-                topnavWrapper: `w-full ${colors[color].contentBg} ${sizes[size].wrapper} `,
-                topnavContent: `flex w-full h-full`,
-                topnavMenu: `hidden md:flex flex-1 h-full overflow-x-auto overflow-y-hidden scrollbar-sm`,
-                menuIconTop: `text-${colors[color].accentColor} ${sizes[size].icon} group-hover:${colors[color].highlightColor}`,
-                menuOpenIcon: `os-icon os-icon-menu`,
-                menuCloseIcon: `os-icon os-icon-x`,
-                navitemTop: `
-				    group font-sans 
-				    ${sizes[size].topItem} ${colors[color].textColor} ${colors[color].borderColor} 
-				    ${colors[color].accentBg} hover:${colors[color].highlightColor} 
-				    focus:outline-none focus:text-gray-800 focus:bg-gray-50 focus:border-gray-300 
-				    transition cursor-pointer
-				`,
-                //`px-4 text-sm font-medium tracking-widest uppercase inline-flex items-center  border-transparent  leading-5 text-white hover:bg-white hover:text-darkblue-500 border-gray-200 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition duration-150 ease-in-out h-full`,
-                topmenuRightNavContainer: "hidden md:block h-full",
-                navitemTopActive:
-                    `
-					group font-sans
-		    		${sizes[size].topItem} ${colors[color].textColor} ${colors[color].borderColor} 
-		    		${colors[color].accentBg} hover:${colors[color].highlightColor} 
-		    		focus:outline-none focus:text-gray-800 focus:bg-gray-50 focus:border-gray-300 
-		    		transition cursor-pointer
-		    	`,
-                mobileButton:
-                    "md:hidden bg-white inline-flex items-center justify-center p-2  text-gray-400 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-300",
-                vars: {
-                    color: colors,
-                    size: sizes
-                }
-            }
+
+          return {
+            topnavWrapper: `w-full ${colors[color].contentBg} border-b border-gray-200`,
+            topnavContent: `flex w-full h-full`,
+            topnavMenu: `${sizes[size].menu} h-full overflow-x-auto overflow-y-hidden scrollbar-sm`,
+            menuIconTop: `text-${colors[color].accentColor} ${sizes[size].icon} group-hover:${colors[color].highlightColor}`,
+            menuOpenIcon: `fa fa-bars`,
+            menuCloseIcon: `fa fa-xmark fa-fw"`,
+            navitemTop: `
+                group font-sans
+                ${sizes[size].topItem}
+                focus:outline-none focus:text-gray-800 focus:bg-gray-50 focus:border-gray-300
+                transition cursor-pointer
+            `,
+            //`px-4 text-sm font-medium tracking-widest uppercase inline-flex items-center  border-transparent  leading-5 text-white hover:bg-white hover:text-darkblue-500 border-gray-200 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition duration-150 ease-in-out h-full`,
+            topmenuRightNavContainer: "hidden md:block h-full",
+            navitemTopActive:
+              ` group font-sans
+                ${sizes[size].activeItem}
+                focus:outline-none focus:text-gray-800 focus:bg-gray-50 focus:border-gray-300
+                transition cursor-pointer
+              `,
+            mobileButton:
+              `${sizes[size].responsive} ${colors[color].contentBg} inline-flex items-center justify-center p-2  text-gray-400 hover:bg-gray-100 `,
+            vars: {
+                colors,
+                sizes
+              }
+          }
 
         },
 

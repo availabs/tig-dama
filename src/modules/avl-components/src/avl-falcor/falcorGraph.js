@@ -1,13 +1,42 @@
 import { Model } from 'falcor'
 import ModelRoot from "falcor/lib/ModelRoot"
-import HttpDataSource from 'falcor-http-datasource'
-import {Promise} from "bluebird";
+import HttpDataSource from './falcor-http-datasource'
+//import HttpDataSource from 'falcor-http-datasource'
+//import { Promise } from "bluebird";
 
-import throttle from "lodash.throttle"
+Promise.map = function (iterable, mapper, options = {}) {
+  let concurrency = options.concurrency || Infinity
+
+  let index = 0
+  const results = []
+  const pending = []
+  const iterator = iterable[Symbol.iterator]()
+
+  while (concurrency-- > 0) {
+    const thread = wrappedMapper()
+    if (thread) pending.push(thread)
+    else break
+  }
+
+  return Promise.all(pending).then(() => results)
+
+  function wrappedMapper () {
+    const next = iterator.next()
+    if (next.done) return null
+    const i = index++
+    const mapped = mapper(next.value, i)
+    return Promise.resolve(mapped).then(resolved => {
+      results[i] = resolved
+      return wrappedMapper()
+    })
+  }
+}
+
+import throttle from "lodash/throttle"
 
 class CustomSource extends HttpDataSource {
  onBeforeRequest (config) {
-   if (window.localStorage) {
+   if (window && window.localStorage) {
      const userToken = window.localStorage.getItem('userToken');
      if (userToken) {
        config.headers['Authorization'] = userToken;
@@ -76,8 +105,6 @@ const falcorChunker = (requests, options = {}) => {
           throttledCB(++progress, total);
         })
     , { concurrency })
-
-
 }
 
 const getArgs = args =>
@@ -156,9 +183,6 @@ class MyModel extends Model {
  get(...args) {
    return super.get(...args).then(res => res);
  }
- call(...args) {
-   return super.call(...args).then(res => res);
- }
  chunk(...args) {
    const [requests, options] = getArgs(args);
    return falcorChunkerNice(...requests, { falcor: this, ...options });
@@ -179,3 +203,6 @@ export const falcorGraph = API_HOST =>
     },
     cache: cacheFromStorage()
   })//.batch()
+
+
+export const falcor = falcorGraph('https://graph.availabs.org')
