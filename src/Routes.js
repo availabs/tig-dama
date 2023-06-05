@@ -6,7 +6,7 @@ import Documentation from "./pages/Documentation"
 
 const Routes = [
   Auth,
-  ...DataManager('','tig_dama_dev'),
+  ...DataManager('' /*, 'tig_dama_dev' */),
   ...Documentation,
   NoMatch
 ]
