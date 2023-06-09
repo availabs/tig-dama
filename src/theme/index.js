@@ -244,35 +244,6 @@ const ppdaf = () => {
         selectIcon: `fal fa-angle-down text-gray-400 pt-2`
       }
     },
-
-    /*table: (opts = {}) => {
-            const {color = 'white', size = 'full'} = opts
-            let colors = {
-                white: 'bg-white hover:bg-blue-50',
-                gray: 'bg-gray-100 hover:bg-blue-100',
-                transparent: 'gray-100'
-            }
-
-            let sizes = {
-                compact: 'px-2 ',
-                full: 'px-6 py-5'
-            }
-            return {
-                tableHeader:
-                    `${sizes[size]} py-3 pl-4 pr-3 border-b text-xs font-medium uppercase tracking-wide text-gray-500 sm:pl-0`,
-                tableInfoBar: "bg-white border-b-2",
-                tableRow: `${colors[color]} text-gray-600 text-sm transition ease-in-out duration-150 border-b border-gray-100`,
-                tableRowStriped: `bg-gray-100 even:bg-gray-200 hover:bg-gray-300 transition ease-in-out duration-150`,
-                tableCell: `${sizes[size]} whitespace-no-wrap`,
-                inputSmall: 'w-24',
-                sortIconDown: 'px-2 text-sm fa fa-chevron-down',
-                sortIconUp: 'px-2 text-sm fa fa-chevron-up',
-                vars: {
-                    color: colors,
-                    size: sizes
-                }
-            }
-        },*/
     table: (opts = {color:'white', size: 'compact'}) => {
           const {color = 'white', size = 'compact'} = opts
           let colors = {
@@ -303,7 +274,7 @@ const ppdaf = () => {
               }
           }
          
-      },
+    },
     tabpanel: (opts = {}) => {
             const { tabLocation = 'top' } = opts
             

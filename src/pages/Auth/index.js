@@ -1,12 +1,15 @@
 import Login from "./components/login"
+import Signup from "./components/signup"
 
-//import Login from "./components/login"
-import { amsFactory } from "@availabs/ams"
+import  { amsFactory, wrappers } from "@availabs/ams"
 
+
+
+console.log('ams',wrappers)
 const AuthConfig = {
   children: [
     { 
-      type: "ams-login" , 
+      type: wrappers['ams-login'](Login), 
       path: "login",
       props: {title: "NYMTC TIG"}
     },
@@ -26,8 +29,8 @@ const AuthConfig = {
     },
 
     { 
-      type: "ams-signup", 
-      path: "register",
+      type: wrappers['ams-signup'](Signup), 
+      path: "signup",
       props: { addToGroup: "123" },
       props: {title: "NYMTC TIG"}
     },
