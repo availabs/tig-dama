@@ -12,8 +12,6 @@ const Documentation = () => {
 }
 
 
-
-
 const config = [{
   name:'Documentation',
   path: "/docs",

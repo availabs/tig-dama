@@ -6,9 +6,12 @@ import Documentation from "./pages/Documentation"
 
 import List from '~/pages/TigDatamanager/Source/list'
 
+const pgEnv = 'tig_dama_dev' 
+// const pgEnv = 'pan'
+
 const Routes = [
   Auth,
-  ...DataManager('','tig_dama_dev',false, {List}),
+  ...DataManager('',pgEnv,false, {List}),
   // ...DataManager('','pan',false, {List}),
   ...Documentation,
   NoMatch
