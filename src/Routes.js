@@ -8,8 +8,8 @@ import List from '~/pages/TigDatamanager/Source/list'
 
 const Routes = [
   Auth,
-  ...DataManager('','tig_dama_dev',false, {List}),
-  // ...DataManager('','pan',false, {List}),
+  // ...DataManager('','tig_dama_dev',false, {List}),
+  ...DataManager('','pan',false, {List}),
   ...Documentation,
   NoMatch
 ]
