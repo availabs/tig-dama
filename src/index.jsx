@@ -25,11 +25,12 @@ import './index.css';
 
 const AuthEnabledApp = enableAuth(App, { AUTH_HOST, PROJECT_NAME, CLIENT_HOST });
 
+export const falcor = falcorGraph(API_HOST);
 
 ReactDOM.render(
   <React.StrictMode>
    	<Provider store={ store }>
-  		<FalcorProvider falcor={ falcorGraph(API_HOST) }>
+  		<FalcorProvider falcor={ falcor }>
         <ThemeContext.Provider value={PPDAF_THEME}>
           <AuthEnabledApp />
         </ThemeContext.Provider>
