@@ -10,7 +10,9 @@ if (process.env.NODE_ENV === "development") {
   // API_HOST = "https://graph.availabs.org";
   // API_HOST =  "http://localhost:4444";
   // DAMA_HOST = "http://localhost:4444";
-  // PG_ECNT = 'pan'
+  // DAMA_HOST = "http://localhost:3369"
+  // DAMA_HOST = "https://dama-dev.availabs.org";
+  // PG_ENV = 'pan'
   CLIENT_HOST = "localhost:5173";
   
 }
