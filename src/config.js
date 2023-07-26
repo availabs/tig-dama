@@ -7,14 +7,13 @@ let DAMA_HOST = "https://tig22.nymtc.org/dama";
 let PG_ENV = 'tig_dama_dev'
 
 if (process.env.NODE_ENV === "development") {
-  // API_HOST = "https://graph.availabs.org";
-  // API_HOST =  "http://localhost:4444";
+  API_HOST = "https://graph.availabs.org";
+  API_HOST =  "http://localhost:4444";
   // DAMA_HOST = "http://localhost:4444";
-  // DAMA_HOST = "http://localhost:3369"
+  DAMA_HOST = "http://localhost:3369"
   // DAMA_HOST = "https://dama-dev.availabs.org";
-  // PG_ENV = 'pan'
+  PG_ENV = 'pan'
   CLIENT_HOST = "localhost:5173";
-  
 }
 
 export { API_HOST, AUTH_HOST, CLIENT_HOST, DAMA_HOST, PG_ENV };
