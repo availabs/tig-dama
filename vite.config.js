@@ -14,6 +14,8 @@ export default defineConfig({
     ],
   },
   define: {
-      global: {},
-  },
+      //global: {},
+      //global: '({})',
+      'process.env' : {}
+  }
 })
