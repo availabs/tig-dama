@@ -5,7 +5,7 @@ import { PageControls } from './page-controls'
 
 const theme = {
   page: {
-    container: 'flex-1 max-w-3xl mx-auto w-full h-full ',
+    container: 'flex-1 mx-auto w-full h-full ',
     content: '',
   }
 }
@@ -18,9 +18,8 @@ export function PageView ({item, dataItems, attributes}) {
 
   return (
     <div className='flex flex-1 h-full w-full'>
-      <Nav dataItems={dataItems} />
       <div className='border flex-1 bg-white flex'>
-        <div className={theme.page.container}>
+        <div className={theme.page.container + ' max-w-5xl'}>
           <div className='p-6 text-4xl font-semibold'>
             {item['title']} 
           </div>
@@ -34,7 +33,7 @@ export function PageView ({item, dataItems, attributes}) {
         </div>
          
       </div>
-      <PageControls />
+      
     </div>    
   ) 
 }
@@ -50,8 +49,8 @@ export function PageEdit ({item, dataItems, updateAttribute ,attributes, setItem
       let defaultUrl = dataItems
         .sort((a,b) => a.index-b.index)
         .filter(d=> !d.parent && d.url_slug)[0]
-      //console.log('defaultUrl', defaultUrl)
-      defaultUrl && defaultUrl.url_slug && navigate(`edit/${defaultUrl.url_slug}`)
+      console.log('defaultUrl', defaultUrl.url_slug, dataItems)
+      //defaultUrl && defaultUrl.url_slug && navigate(`/docs/edit/${defaultUrl.url_slug}`)
     }
   },[])
 
@@ -60,9 +59,8 @@ export function PageEdit ({item, dataItems, updateAttribute ,attributes, setItem
 
   return (
     <div className='flex flex-1 h-full w-full'>
-      <Nav dataItems={dataItems} edit={true} />
       <div className='border flex-1 bg-white flex '>
-        <div className={theme.page.container}>
+        <div className={theme.page.container + ' max-w-3xl'}>
           {/*{status ? <div>{JSON.stringify(status)}</div> : ''}*/}
           <div className='p-6 text-4xl font-semibold'>
             <TitleEdit 

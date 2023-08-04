@@ -68,6 +68,7 @@ const TigUserMenu = ({user}) => {
     const adminItems = [
         {name:"Data Settings", link: '/settings'},
         {name:"Add Source", link: '/create/source'},
+        {name:"Edit Docs", link: '/docs/edit/docs'},
         {name:"Users", link: '/'},
         {name:"Agencies", link: '/'},
         {name:"All Comments", link: '/'},

@@ -1,5 +1,6 @@
 import React from 'react'
 import { NavLink, Link, useSubmit } from "react-router-dom";
+import SourcesLayout from "~/pages/TigDatamanager/Source/layout";
 
 const theme = {
   layout: {
@@ -11,11 +12,13 @@ const theme = {
 
 export default function SiteLayout ({children, ...props},) {
   return (
-    <div className={theme.layout.page}>
-      <div className={theme.layout.container}> 
-        {children}
+    <SourcesLayout>
+      <div className={theme.layout.page}>
+        <div className={theme.layout.container}> 
+          {children}
+        </div>
       </div>
-    </div>
+    </SourcesLayout>
   )
 }
 
