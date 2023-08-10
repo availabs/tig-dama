@@ -82,7 +82,7 @@ export function PageControls({ item, dataItems, edit, status }) {
                 </span>
               </div>
             </div>
-            <div onClick={insertSubPage}
+            {/*<div onClick={insertSubPage}
               className={theme.pageControls.controlItem}
             >
               {'☲ Insert Subpage'}
@@ -101,7 +101,7 @@ export function PageControls({ item, dataItems, edit, status }) {
                 open={showDelete}
                 setOpen={setShowDelete}
               />
-            </div>
+            </div>*/}
           </div>
         }
       <div>

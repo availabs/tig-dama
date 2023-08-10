@@ -13,7 +13,7 @@ if (process.env.NODE_ENV === "development") {
   // DAMA_HOST = "http://localhost:3369"
   // // DAMA_HOST = "https://dama-dev.availabs.org";
   // PG_ENV = 'pan'
-  // CLIENT_HOST = "localhost:5173";
+  CLIENT_HOST = "localhost:5173";
 }
 
 export { API_HOST, AUTH_HOST, CLIENT_HOST, DAMA_HOST, PG_ENV };
