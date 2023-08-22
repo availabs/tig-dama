@@ -183,6 +183,9 @@ class MyModel extends Model {
  get(...args) {
    return super.get(...args).then(res => res);
  }
+ call(...args) {
+   return super.call(...args).then(res => res);
+ }
  chunk(...args) {
    const [requests, options] = getArgs(args);
    return falcorChunkerNice(...requests, { falcor: this, ...options });
