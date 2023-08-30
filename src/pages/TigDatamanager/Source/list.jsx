@@ -6,6 +6,7 @@ import SourcesLayout from "./layout";
 import { useParams } from "react-router-dom";
 import { DamaContext } from "~/pages/DataManager/store";
 import { SourceAttributes, ViewAttributes, getAttributes } from "~/pages/DataManager/components/attributes";
+import baseUserViewAccess  from "../Utils/authLevel";
 
 const SourceThumb = ({ source }) => {
   const { falcor, falcorCache } = useFalcor();
@@ -53,11 +54,13 @@ const SourceThumb = ({ source }) => {
 
 
 const SourcesList = () => {
-  const { falcor, falcorCache } = useFalcor();
+  // const { falcor, falcorCache } = useFalcor();
   const [layerSearch, setLayerSearch] = useState("");
   const { cat1, cat2 } = useParams();
 
-  const {pgEnv, baseUrl} = React.useContext(DamaContext);
+
+  const {pgEnv, baseUrl, user, falcor, falcorCache} = React.useContext(DamaContext);
+  const userAuthLevel = user.authLevel;
 
   useEffect(() => {
     async function fetchData() {
@@ -78,7 +81,6 @@ const SourcesList = () => {
     return Object.values(get(falcorCache, ["dama", pgEnv, "sources", "byIndex"], {}))
       .map(v => getAttributes(get(falcorCache, v.value, { "attributes": {} })["attributes"]));
   }, [falcorCache, pgEnv]);
-
 
   return (
 
@@ -115,6 +117,11 @@ const SourcesList = () => {
               .filter(source => {
                 let searchTerm = (source.name + " " + get(source, "categories[0]", []).join(" "));
                 return !layerSearch.length > 2 || searchTerm.toLowerCase().includes(layerSearch.toLowerCase());
+              })
+              .filter(source => source?.statistics?.visibility !== "hidden")
+              .filter(source => {
+                const sourceAuthLevel = baseUserViewAccess(source?.statistics?.access || {});
+                return (sourceAuthLevel <= userAuthLevel);
               })
               .map((s, i) => <SourceThumb key={i} source={s} baseUrl={baseUrl} />)
           }

@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import App from './App';
 
 import { API_HOST } from './config'
-import { AUTH_HOST, PROJECT_NAME, CLIENT_HOST } from './config'
+import { AUTH_HOST, PROJECT_NAME, CLIENT_HOST } from '~/config'
 
 import { Provider } from 'react-redux';
 import store from '~/store';
