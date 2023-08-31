@@ -13,6 +13,7 @@ if (process.env.NODE_ENV === "development") {
   DAMA_HOST = "https://tig22.nymtc.org/graph";
   // PG_ENV = 'pan';
   // PG_ENV = "freight_data";
+
   CLIENT_HOST = "localhost:5173";
 }
 
