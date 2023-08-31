@@ -79,6 +79,7 @@ const SourcesList = () => {
       .map(v => getAttributes(get(falcorCache, v.value, { "attributes": {} })["attributes"]));
   }, [falcorCache, pgEnv]);
 
+    console.log('sources', sources)
 
   return (
 
@@ -99,6 +100,7 @@ const SourcesList = () => {
           
           {
             sources
+              .filter(source => source?.statistics?.visibility !== 'hidden')
               .filter(source => {
                 let output = true;
                 if (cat1) {
@@ -116,6 +118,7 @@ const SourcesList = () => {
                 let searchTerm = (source.name + " " + get(source, "categories[0]", []).join(" "));
                 return !layerSearch.length > 2 || searchTerm.toLowerCase().includes(layerSearch.toLowerCase());
               })
+              .sort((a,b) => a.name.localeCompare(b.name))
               .map((s, i) => <SourceThumb key={i} source={s} baseUrl={baseUrl} />)
           }
         </div>

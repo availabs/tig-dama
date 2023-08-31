@@ -13,6 +13,7 @@ module.exports = {
             '200': '#D2D2D2'
           },
           tigGreen: {
+            '50': '#bcd3cb',
             '100': '#679d89'
           }
       },
