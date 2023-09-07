@@ -1,5 +1,6 @@
 import Login from "./components/login"
 import Signup from "./components/signup"
+import ResetPassword from "./components/resetPassword"
 
 import  { amsFactory, wrappers } from "@availabs/ams"
 
@@ -14,7 +15,7 @@ const AuthConfig = {
       props: {title: "NYMTC TIG"}
     },
     { 
-      type: "ams-reset-password", 
+      type: wrappers["ams-reset-password"](ResetPassword), 
       path: "reset-password",
       props: {title: "NYMTC TIG"}
     },

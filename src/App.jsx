@@ -8,9 +8,9 @@ import LayoutWrapper from './layout/LayoutWrapper'
 import get from 'lodash/get'
 import {/*getDomain,*/getSubdomain} from './utils'
 
-import {
+import 
   Messages
-} from "@availabs/ams"
+ from "~/modules/avl-components/src/messages"
 
 import tig from './sites/tig'
 
@@ -36,3 +36,4 @@ const App = (props) => {
 }
 
 export default App;
+
