@@ -61,27 +61,25 @@ const LoginComp = ({ email, password, update, canSubmit, handleSubmit }) => {
                   Remember me
                 </label>
               </div>
-
-              <div className="text-sm">
-                <Link to='/auth/signup' className="font-medium text-blue-600 hover:text-blue-500">
-                  New User?
-                </Link>
-                <br/>
-                <Link to='/auth/reset-password' className="font-medium text-blue-600 hover:text-blue-500">
-                  Forgot your password?
-                </Link>
-
-              </div>
             </div>      
           </div>
           <div>
             <button
               type="submit"
               onClick={handleSubmit}
-              className="my-4 flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium text-gray-800 bg-[#d2d2d2] hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              className="my-4 justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium text-gray-800 bg-[#d2d2d2] hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
               Sign in
             </button>
+            <div className="text-sm mt-3 text-right" style={{float: "right"}}>
+              <Link to='/auth/signup' className="font-medium text-blue-600 hover:text-blue-500">
+                Sign up
+              </Link>
+              <br/>
+              <Link to='/auth/reset-password' className="font-medium text-blue-600 hover:text-blue-500">
+                Forgot your password?
+              </Link>
+            </div>
           </div>
         </div>
       </form>
