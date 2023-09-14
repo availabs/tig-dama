@@ -33,7 +33,7 @@ left join infrastructures as c on a.infrastructure_id = c.id
 left join sponsors as d on a.sponsor_id = d.id
 left join areas as e on a.county_id = e.id
 left join plan_portions as f on a.plan_portion_id = f.id
-where view_id = 141
+where view_id = 53
   `
   let resp = await db.query(sql)
 
