@@ -1,6 +1,7 @@
 import Login from "./components/login"
 import Signup from "./components/signup"
 import ResetPassword from "./components/resetPassword"
+import SetPassword from "./components/setPassword"
 
 import  { amsFactory, wrappers } from "@availabs/ams"
 
@@ -48,7 +49,7 @@ const AuthConfig = {
       path: "verify-email"
     }, 
     { 
-      type: "ams-set-password",
+      type: wrappers["ams-set-password"](SetPassword),
       path: "set-password"
     }, 
     { 
