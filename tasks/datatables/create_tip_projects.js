@@ -18,15 +18,21 @@ const fetch = async () => {
   const views = [{ id: 54 }];
   
 
+
+
   const sql = `SELECT
-            jsonb_build_object(
-              'type',       'Feature',
-              'properties', jsonb_build_object('tip_id',tip_id, 'ptype_id',ptype_id, 'cost',cost, 'mpo_id',mpo_id, 'county_id',county_id, 'sponsor_id',sponsor_id, 'description',description),
-              'geometry',   ST_AsGeoJSON(geography::geometry)::JSON
-            ) AS feature
-          FROM
-        public.tip_projects
-        where view_id = 54
+        jsonb_build_object(
+          'type',       'Feature',
+          'properties', jsonb_build_object('tip_id',tip_id, 'ptype_id',b.name, 'cost',cost, 'mpo_id',c.name, 'county_id',e.name, 'county_fips', e.fips_code,'sponsor_id',d.name, 'description',a.description),
+          'geometry',   ST_AsGeoJSON(geography::geometry)::JSON
+        ) AS feature
+        FROM
+      public.tip_projects as a
+      join project_categories as b on a.ptype_id = b.id
+      join mpos as c on a.mpo_id = c.id
+      join sponsors as d on a.sponsor_id = d.id
+      join areas as e on a.county_id = e.id
+      where view_id = 54
   `
   let resp = await db.query(sql)
 
