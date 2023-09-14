@@ -23,17 +23,17 @@ const fetch = async () => {
   const sql = `SELECT
   jsonb_build_object(
     'type',       'Feature',
-    'properties', jsonb_build_object('rtp_id',rtp_id, 'ptype',b.name, 'cost', estimated_cost, 'infrastructure',c.name, 'county_id',e.name, 'county_fips', e.fips_code,'sponsor_id',d.name, 'plan_portion',f.name,'description',a.description),
+    'properties', jsonb_build_object('rtp_id',rtp_id, 'year',a.year,'ptype',b.name, 'cost', estimated_cost, 'infrastructure',c.name, 'county_id',e.name, 'county_fips', e.fips_code,'sponsor_id',d.name, 'plan_portion',f.name,'description',a.description),
     'geometry',   ST_AsGeoJSON(geography::geometry)::JSON
   ) AS feature
   FROM
 public.rtp_projects as a
-join project_categories as b on a.project_category_id = b.id
-join infrastructures as c on a.infrastructure_id = c.id
-join sponsors as d on a.sponsor_id = d.id
-join areas as e on a.county_id = e.id
-join plan_portions as f on a.plan_portion_id = f.id
-where view_id = 53
+left join ptypes as b on a.ptype_id = b.id
+left join infrastructures as c on a.infrastructure_id = c.id
+left join sponsors as d on a.sponsor_id = d.id
+left join areas as e on a.county_id = e.id
+left join plan_portions as f on a.plan_portion_id = f.id
+where view_id = 141
   `
   let resp = await db.query(sql)
 
