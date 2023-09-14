@@ -50,7 +50,8 @@ const AuthConfig = {
     }, 
     { 
       type: wrappers["ams-set-password"](SetPassword),
-      path: "set-password"
+      path: "set-password/:key",
+      props: {title: "NYMTC TIG"}
     }, 
     { 
       type: "ams-accept-invite",
