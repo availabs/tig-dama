@@ -7,7 +7,7 @@ import  { amsFactory, wrappers } from "@availabs/ams"
 
 
 
-console.log('ams',wrappers)
+// console.log('ams',wrappers)
 const AuthConfig = {
   children: [
     { 

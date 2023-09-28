@@ -34,14 +34,14 @@ const SourceThumb = ({ source }) => {
         <Link to={`${baseUrl}/source/${source.source_id}`} className="text-md font-medium w-full block hover:text-[#E47B44] border-b border-white hover:border-[#E47B44]">
           <span>{source.name}</span>
         </Link>
-        <div>
+        {/*<div>
           {(get(source, "categories", []) || [])
             .map(cat => cat.map((s, i) => (
               <Link key={i} to={`${baseUrl}/cat/${i > 0 ? cat[i - 1] + "/" : ""}${s}`}
                     className="text-xs p-1 px-2 bg-blue-200 text-blue-600 mr-2">{s}</Link>
             )))
           }
-        </div>
+        </div>*/}
 {/*        <Link to={`${baseUrl}/source/${source.source_id}`} className="py-2 block">
           {source.description}
         </Link>*/}

@@ -1,11 +1,13 @@
 import React from "react"
-
+import {useParams} from 'react-router-dom'
 
 
 //import wrapper from "../wrappers/ams-set-password"
 
 export default ({ password, verify, title, update, canSubmit, handleSubmit }) => {
-  console.log('setting password')
+  const params = useParams()
+  console.log('setting password', params)
+  
   return (
  <div className="h-full  flex flex-col justify-center sm:px-6 lg:px-8 mt-32">
       <form className="space-y-6" onSubmit={handleSubmit} >

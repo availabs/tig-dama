@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom/client';
 import App from './App';
 
 import { API_HOST } from './config'
@@ -27,7 +27,7 @@ const AuthEnabledApp = enableAuth(App, { AUTH_HOST, PROJECT_NAME, CLIENT_HOST })
 
 export const falcor = falcorGraph(API_HOST);
 
-ReactDOM.render(
+ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
    	<Provider store={ store }>
   		<FalcorProvider falcor={ falcor }>
@@ -36,8 +36,7 @@ ReactDOM.render(
         </ThemeContext.Provider>
       </FalcorProvider>
   	</Provider>
-  </React.StrictMode>,
-  document.getElementById('root')
+  </React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function
