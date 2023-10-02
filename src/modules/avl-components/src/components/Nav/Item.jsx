@@ -28,7 +28,6 @@ const NavItem = ({
 		}
 		return to;
 	}, [to]);
-
 	const subTos = React.useMemo(() => {
 		const subs = subMenus.reduce((a, c) => {
 			if (Array.isArray(c.path)) {
@@ -41,107 +40,118 @@ const NavItem = ({
 		return [...To, ...subs];
 	}, [To, subMenus]);
 
-	const routeMatch = Boolean(useMatch({ path: subTos[0] || '', end: true }));
+	const routeMatch = Boolean(useMatch({ path: `${subTos[0]}/*` || '', end: true }));
 
 	const linkClasses = type === "side" ? theme.navitemSide : theme.navitemTop;
 	const activeClasses =
 		type === "side" ? theme.navitemSideActive : theme.navitemTopActive;
 
-	const navClass = routeMatch || active ? activeClasses : linkClasses;
+	const isActive = routeMatch || active
+	const navClass = isActive ? activeClasses : linkClasses;
 
 	const [showSubMenu, setShowSubMenu] = React.useState(subMenuOpen || routeMatch);
-	
-	useEffect(() => {
-	    // check when the component is loaded
-	    const localStorageToggled = localStorage.getItem(`${to}_toggled`);
 
-	    // If is not null
-	    if (localStorageToggled) {
-	      setShowSubMenu(localStorageToggled === "true" || routeMatch ? true : false);
-	    } else {
-	      // If null set the localStorage key/value as a string.
-	      localStorage.setItem(`${to}_toggled`, `${showSubMenu}`);
-	    }
+	// when subMenuActivate !== onHover, and submenu needs to flyout for non-active menuItem
+	const [hovering, setHovering] = React.useState(false);
+
+	useEffect(() => {
+	      setShowSubMenu(routeMatch);
 	}, [routeMatch,showSubMenu,to]);
 
 	return (
-		<div className={type === "side" ? theme.subMenuParentWrapper : null}>
-			<div
-				className={`${className ? className : navClass}`}
-				onClick={() => {
+			<div className={type === "side" ? theme.subMenuParentWrapper : null}>
+				<div
+					className={`${className ? className : navClass}`}
+					onClick={(e) => {
+						e.stopPropagation();
+						if (onClick) return onClick(To[0]);
+						if (To[0]) navigate(To[0]);
+					}}
+					onMouseOutCapture={() =>
+						(subMenuActivate === 'onHover' && setShowSubMenu(false)) ||
+						(subMenuActivate !== 'onHover' && setHovering(false) && setShowSubMenu(false))
+					}
+					onMouseMove={() =>
+						(subMenuActivate === 'onHover' && setShowSubMenu(true)) ||
+						(subMenuActivate !== 'onHover' && setHovering(true) && setShowSubMenu(true))
+					}
+				>
+					<div className={'flex'}>
+						<div className='flex-1 flex' >
+							{!icon ? null : (
+								<Icon
+									icon={icon}
+									className={
+										type === "side" ? 
+											(isActive ? theme.menuIconSideActive : theme.menuIconSide)
+											: (isActive ? theme.menuIconTopActive : theme.menuIconTop)
 
-					if (onClick) return onClick;
+									}
+								/>
+							)}
+							<div className={theme.navItemContent}>
+								{children}
+							</div>
+						</div>
+						<div
+							onClick={() => {
+								if (subMenuActivate === 'onClick') {
+									// localStorage.setItem(`${to}_toggled`, `${!showSubMenu}`);
+									setShowSubMenu(!showSubMenu);
+								}
+							}}
+						>
+							{
+								subMenus.length ?
+									<Icon
 
-					if (To[0]) navigate(To[0]);
-				}}
-				onMouseLeave={() => subMenuActivate === 'onHover' ? setShowSubMenu(false) : ''}
-			 	onMouseOver={() => subMenuActivate === 'onHover' ? setShowSubMenu(true) : ''}
-			>
-				<div className={'flex'}>
-					<div className='flex-1 flex'>
-						{!icon ? null : (
-							<Icon
-								icon={icon}
-								className={type === "side" ? theme.menuIconSide : theme.menuIconTop}
-							/>
-						)}
-						<div className={theme.navItemContent}>
-							{children}
+										icon={showSubMenu ? theme.indicatorIconOpen : theme.indicatorIcon}/>
+									: null
+							}
 						</div>
 					</div>
-					<div
-						onClick={() => {
-									if (subMenuActivate === 'onClick') {
-										localStorage.setItem(`${to}_toggled`, `${!showSubMenu}`);
-										setShowSubMenu(!showSubMenu);
-									}
-								}}
-					>
-					{
-						subMenus.length ?
-							<Icon 
-
-								icon={showSubMenu ? theme.indicatorIconOpen : theme.indicatorIcon}/> 
-							: null
+					{	subMenus.length ?
+						<SubMenu
+							showSubMenu={showSubMenu}
+							subMenuActivate={subMenuActivate}
+							active={routeMatch}
+							hovering={hovering}
+							subMenus={subMenus}
+							type={type}
+							themeOptions={themeOptions}
+							className={className}
+						/> : ''
 					}
-					</div>
 				</div>
 			</div>
-			{	subMenus.length ? 
-				<SubMenu 
-					showSubMenu={showSubMenu} 
-					subMenus={subMenus} 
-					type={type} 
-					themeOptions={themeOptions} 
-					className={className}
-				/> : ''
-			}
-		</div>
 	);
 };
 export default NavItem;
 
-const SubMenu = ({ showSubMenu, subMenus, type, themeOptions }) => {
+const SubMenu = ({ showSubMenu, subMenus, type, hovering, subMenuActivate, active, themeOptions }) => {
 	const theme = useTheme()[type === 'side' ? 'sidenav' : 'topnav'](themeOptions);
-	if (!showSubMenu || !subMenus.length) {
+
+	const inactiveHoveing = !active && subMenuActivate !== 'onHover' && hovering;
+	if ((!showSubMenu || !subMenus.length) && !(inactiveHoveing)) {
 		return null;
 	}
 
 	return (
 		<div
-			className={ type === "side" ? theme.subMenuWrapper : theme.subMenuWrapperTop }
+			className={ type === "side" ? theme.subMenuWrapper : inactiveHoveing ? theme.subMenuWrapperInactiveFlyout : theme.subMenuWrapperTop }
 		>
 			
 			<div
 				className={`${theme.contentBg}
-					flex
-					${type === "side" ? "flex-col" : "flex-row"}
+							${inactiveHoveing && theme.subMenuWrapperInactiveFlyoutDirection}
+							${!inactiveHoveing && theme.subMenuWrapperChild}
+					flex ${(type === "side" || inactiveHoveing ? "flex-col" : "flex-row")}
 				`}
 			>
 				{subMenus.map((sm, i) => (
 					<NavItem 
-						key={i} 
-						to={sm.path} 
+						key={i}
+						to={sm.path}
 						icon={sm.icon} 
 						type={type} 
 						className={sm.className}

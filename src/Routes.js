@@ -11,11 +11,14 @@ import { PG_ENV } from '~/config'
 import { useFalcor } from "~/modules/avl-components/src"
 import { useAuth } from "@availabs/ams"
 
+import tigDataTypes from '~/pages/TigDatamanager/DataTypes'
+
 const DAMA_ARGS = {
   baseUrl: "",
   defaultPgEnv: PG_ENV,
   auth: false,
   components: { List },
+  dataTypes: tigDataTypes,
   useFalcor,
   useAuth
 }

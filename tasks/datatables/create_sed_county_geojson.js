@@ -48,7 +48,7 @@ const fetch = async () => {
   // let {rows: sources } = await db.query(getSourcesSql);
   // console.log('sources', sources)
   // 45 , 64
-  const sources = [{ id: 64 }];
+  const sources = [{ id: 45 }];
   return (
     sources
       //.filter(s => s.id === 61)

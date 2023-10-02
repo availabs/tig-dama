@@ -1,11 +1,13 @@
 import Login from "./components/login"
 import Signup from "./components/signup"
+import ResetPassword from "./components/resetPassword"
+import SetPassword from "./components/setPassword"
 
 import  { amsFactory, wrappers } from "@availabs/ams"
 
 
 
-console.log('ams',wrappers)
+// console.log('ams',wrappers)
 const AuthConfig = {
   children: [
     { 
@@ -14,7 +16,7 @@ const AuthConfig = {
       props: {title: "NYMTC TIG"}
     },
     { 
-      type: "ams-reset-password", 
+      type: wrappers["ams-reset-password"](ResetPassword), 
       path: "reset-password",
       props: {title: "NYMTC TIG"}
     },
@@ -47,8 +49,9 @@ const AuthConfig = {
       path: "verify-email"
     }, 
     { 
-      type: "ams-set-password",
-      path: "set-password"
+      type: wrappers["ams-set-password"](SetPassword),
+      path: "set-password/:key",
+      props: {title: "NYMTC TIG"}
     }, 
     { 
       type: "ams-accept-invite",

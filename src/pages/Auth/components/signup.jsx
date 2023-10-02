@@ -61,21 +61,21 @@ const SignUpComp = ({ email, verify, update, canSubmit, handleSubmit, title="" }
                   Remember me
                 </label>
               </div>
-
-              <div className="text-sm">
-                <Link to='/auth/login' className="font-medium text-blue-600 hover:text-blue-500">
-                  Forgot your password?
-                </Link>
-              </div>
             </div>      
           </div>
           <div>
             <button
               type="submit"
-              className="my-4 flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium text-gray-800 bg-[#d2d2d2] hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              onClick={handleSubmit}
+              className="my-4 justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium text-gray-800 bg-[#d2d2d2] hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
               Sign up
             </button>
+            <div className="text-sm mt-3" style={{float: "right"}}>
+              <Link to='/auth/login' className="font-medium text-blue-600 hover:text-blue-500">
+                Sign in
+              </Link>
+            </div>
           </div>
         </div>
       </form>

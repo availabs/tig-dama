@@ -38,17 +38,28 @@ export const FalcorProvider = ({ falcor, children }) => {
   )
 }
 
-const noMap = () => ({});
+const NO_MAP = () => ({});
+const NO_OP = () => {};
 export const avlFalcor = (Component, options = {}) => {
   const {
-    mapCacheToProps = noMap
+    mapCacheToProps = NO_MAP
   } = options
-  return props => (
-    <FalcorContext.Consumer>
-      { falcor =>
-          <Component { ...props } { ...falcor }
-            { ...mapCacheToProps(falcor.falcorCache, props) }/>
-      }
-    </FalcorContext.Consumer>
-  )
+  return props => {
+    const [ref, setRef] = React.useState();
+
+    const { falcor, falcorCache } = useFalcor();
+
+    React.useEffect(() => {
+      if (!ref) return;
+      if (typeof ref.fetchFalcorDeps !== "function") return;
+      ref.fetchFalcorDeps(falcorCache).then(NO_OP);
+    }, [ref, falcorCache]);
+
+    return (
+      <Component { ...props } ref={ setRef }
+        falcor={ falcor } falcorCache={ falcorCache }
+        { ...mapCacheToProps(falcorCache, props) }
+      />
+    )
+  }
 }

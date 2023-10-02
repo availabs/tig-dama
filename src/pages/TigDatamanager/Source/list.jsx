@@ -6,6 +6,7 @@ import SourcesLayout from "./layout";
 import { useParams } from "react-router-dom";
 import { DamaContext } from "~/pages/DataManager/store";
 import { SourceAttributes, ViewAttributes, getAttributes } from "~/pages/DataManager/components/attributes";
+import baseUserViewAccess  from "../Utils/authLevel";
 
 const SourceThumb = ({ source }) => {
   const { falcor, falcorCache } = useFalcor();
@@ -33,14 +34,14 @@ const SourceThumb = ({ source }) => {
         <Link to={`${baseUrl}/source/${source.source_id}`} className="text-md font-medium w-full block hover:text-[#E47B44] border-b border-white hover:border-[#E47B44]">
           <span>{source.name}</span>
         </Link>
-        <div>
+        {/*<div>
           {(get(source, "categories", []) || [])
             .map(cat => cat.map((s, i) => (
               <Link key={i} to={`${baseUrl}/cat/${i > 0 ? cat[i - 1] + "/" : ""}${s}`}
                     className="text-xs p-1 px-2 bg-blue-200 text-blue-600 mr-2">{s}</Link>
             )))
           }
-        </div>
+        </div>*/}
 {/*        <Link to={`${baseUrl}/source/${source.source_id}`} className="py-2 block">
           {source.description}
         </Link>*/}
@@ -53,17 +54,19 @@ const SourceThumb = ({ source }) => {
 
 
 const SourcesList = () => {
-  const { falcor, falcorCache } = useFalcor();
+  // const { falcor, falcorCache } = useFalcor();
   const [layerSearch, setLayerSearch] = useState("");
   const { cat1, cat2 } = useParams();
 
-  const {pgEnv, baseUrl} = React.useContext(DamaContext);
+
+  const {pgEnv, baseUrl, user, falcor, falcorCache} = React.useContext(DamaContext);
+  const userAuthLevel = user.authLevel;
 
   useEffect(() => {
     async function fetchData() {
       const lengthPath = ["dama", pgEnv, "sources", "length"];
       const resp = await falcor.get(lengthPath);
-      console.log(resp)
+      // console.log(resp)
       await falcor.get([
         "dama", pgEnv, "sources", "byIndex",
         { from: 0, to: get(resp.json, lengthPath, 0) - 1 },
@@ -78,7 +81,6 @@ const SourcesList = () => {
     return Object.values(get(falcorCache, ["dama", pgEnv, "sources", "byIndex"], {}))
       .map(v => getAttributes(get(falcorCache, v.value, { "attributes": {} })["attributes"]));
   }, [falcorCache, pgEnv]);
-
 
   return (
 
@@ -116,6 +118,12 @@ const SourcesList = () => {
                 let searchTerm = (source.name + " " + get(source, "categories[0]", []).join(" "));
                 return !layerSearch.length > 2 || searchTerm.toLowerCase().includes(layerSearch.toLowerCase());
               })
+              .filter(source => source?.statistics?.visibility !== "hidden")
+              .filter(source => {
+                const sourceAuthLevel = baseUserViewAccess(source?.statistics?.access || {});
+                return (sourceAuthLevel <= userAuthLevel);
+              })
+              .sort((a,b) => a.name.localeCompare(b.name))
               .map((s, i) => <SourceThumb key={i} source={s} baseUrl={baseUrl} />)
           }
         </div>

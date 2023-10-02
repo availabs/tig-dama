@@ -7,4 +7,10 @@ export default configureStore({
     messages,
   },
 });
+//   middleware: getDefaultMiddleware =>
+//     getDefaultMiddleware({
+//       serializableCheck: false,
+//       // immutableCheck: false
+//     })
+// });
 
