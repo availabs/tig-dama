@@ -84,9 +84,14 @@ const Update = (props) => {
     setSelecteView(viewOptions[0]);
   }
 
+  console.log('views', views)
+
   const [viewDependency, metadata, variables, years] = useMemo(() => {
     const selectedViewData =
       views.find((v) => v.view_id === selectedView?.id) || {};
+
+      console.log('selectedViewData', selectedViewData)
+
     return [
       get(selectedViewData, "view_dependencies", {})?.[0] || [],
       get(selectedViewData, "metadata", {}),

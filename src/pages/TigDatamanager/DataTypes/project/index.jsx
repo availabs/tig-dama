@@ -31,7 +31,7 @@ const GisDatasetConfig = {
     name: "Overview",
     path: "",
     tag: 'test',
-    component: (props) => <TigOverview {...props} getVariables={getVariables}/>
+    component: (props) => <TigOverview {...props} getVariables={getVariables} filterButtons={['Chart']}/>
   },
   meta: {
     name: "Metadata",
@@ -66,11 +66,7 @@ const GisDatasetConfig = {
       />
     )
   },
-  // add_version: {
-  //   name: "Add Version",
-  //   path: "/add_version",
-  //   component: CreatePage,
-  // }
+  
 };
 
 export default GisDatasetConfig;
