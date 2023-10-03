@@ -42,7 +42,7 @@ const ACSMapFilter = ({
   const [activeVar, geometry, year] = useMemo(() => {
     return [
       filters?.activeVar?.value,
-      filters?.geometry?.value || "county",
+      filters?.geometry?.value || "tract",
       filters?.year?.value || 2019,
     ];
   }, [filters]);
@@ -62,13 +62,20 @@ const ACSMapFilter = ({
     [activeView, activeViewId]
   );
 
+  // console.log('activar vars', activeVar,variables)
   const [censusConfig, divisorKeys] = useMemo(
-    () => [
-      (((variables || []).find((d) => d.label === activeVar) || {}).value || {})
-        .censusKeys || [],
-      (((variables || []).find((d) => d.label === activeVar) || {}).value || {})
-        .divisorKeys || [],
-    ],
+    () =>{
+
+      let keys =  (((variables || []).find((d) => d.label === activeVar) || {}).value || {})
+        .censusKeys || []
+      let divisors = (((variables || []).find((d) => d.label === activeVar) || {}).value || {})
+        .divisorKeys || []
+      
+      keys = Array.isArray(keys) ? keys : [keys]
+      divisors = Array.isArray(divisors) ? divisors : [divisors]
+      return [keys,divisors]
+
+    } ,
     [activeVar, variables]
   );
 
@@ -252,6 +259,7 @@ const ACSMapFilter = ({
         divisorVal = 0,
         censusFlag = false,
         divisorFalg = false;
+        
       (censusConfig || []).forEach((cc) => {
         const tmpVal = get(falcorCache, ["acs", c, year, cc], null);
         if (tmpVal !== null) {
@@ -393,7 +401,7 @@ const ACSMapFilter = ({
             });
           }}
         >
-          {["county", "tract"].map((v, i) => (
+          {["tract","county"].map((v, i) => (
             <option key={i} className="ml-2 truncate" value={v}>
               {v?.toUpperCase()}
             </option>
