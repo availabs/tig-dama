@@ -9,7 +9,7 @@ const ACSVariableUpdate = (props) => {
   const setAddNewVariable = () => {
     if (currentVariable) {
       const newVariable = {
-        lable: currentVariable,
+        label: currentVariable,
         value: {
           name: currentVariable,
           censusKeys: "",
@@ -79,10 +79,10 @@ const ACSVariableUpdate = (props) => {
                           <Input
                             type="text"
                             className="p-2 m-2 flex-1 shadow bg-grey-50 focus:bg-blue-100 border-gray-300"
-                            value={v?.value?.censusKeys || ""}
+                            value={(v?.value?.censusKeys || []).join(",") || ""}
                             placeholder="Enter Census Keys"
                             onChange={(val) =>
-                              setUpdateVariable(i, val, "censusKeys")
+                              setUpdateVariable(i, (val || "").split(","), "censusKeys")
                             }
                           />
                         </td>
@@ -90,10 +90,10 @@ const ACSVariableUpdate = (props) => {
                           <Input
                             type="text"
                             className="p-2 m-2 flex-1 shadow bg-grey-50 focus:bg-blue-100 border-gray-300"
-                            value={v?.value?.divisorKeys || ""}
+                            value={(v?.value?.divisorKeys || []).join(",") || ""}
                             placeholder="Enter Divisor Keys"
                             onChange={(val) =>
-                              setUpdateVariable(i, val, "divisorKeys")
+                              setUpdateVariable(i, (val || "").split(","), "divisorKeys")
                             }
                           />
                         </td>
