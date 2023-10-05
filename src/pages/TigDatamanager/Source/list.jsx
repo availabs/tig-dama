@@ -5,7 +5,7 @@ import get from "lodash/get";
 import SourcesLayout from "./layout";
 import { useParams } from "react-router-dom";
 import { DamaContext } from "~/pages/DataManager/store";
-import { SourceAttributes, ViewAttributes, getAttributes } from "~/pages/DataManager/components/attributes";
+import { SourceAttributes, ViewAttributes, getAttributes } from "~/pages/DataManager/Source/attributes";
 import baseUserViewAccess  from "../Utils/authLevel";
 
 const SourceThumb = ({ source }) => {
