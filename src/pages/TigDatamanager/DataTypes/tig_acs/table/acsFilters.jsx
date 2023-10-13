@@ -102,7 +102,7 @@ const AcsTableFilter = ({
       }).join(",")
     })
     mapped.unshift(columns.map(c => c.Header).join(","));
-    download(mapped.join("\n"), `${geometry_year}.csv`, "text/csv");
+    download(mapped.join("\n"), `${geometry}_${year}.csv`, "text/csv");
   }, [data, columns]);
 
   return (

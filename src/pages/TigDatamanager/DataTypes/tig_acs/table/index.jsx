@@ -89,11 +89,13 @@ const TablePage = ({
   const [variablesToCensusKeys, variablesToDivisorKeys] = useMemo(() => {
     return [
       get(activeView, "metadata.variables", []).reduce((acc, cur) => {
-        acc[`${cur?.label}`] = (cur?.value?.censusKeys || []).filter(key => Boolean(key)) || [];
+        acc[`${cur?.label}`] =
+          (cur?.value?.censusKeys || []).filter((key) => Boolean(key)) || [];
         return acc;
       }, {}),
       get(activeView, "metadata.variables", []).reduce((acc, cur) => {
-        acc[`${cur?.label}`] = (cur?.value?.divisorKeys || []).filter(key => Boolean(key)) || null;
+        acc[`${cur?.label}`] =
+          (cur?.value?.divisorKeys || []).filter((key) => Boolean(key)) || null;
         return acc;
       }, {}),
     ];
@@ -190,12 +192,44 @@ const TablePage = ({
     getACSData();
   }, [censusConfig, divisorConfig, year, geometry]);
 
+  useEffect(() => {
+    async function getGeoNames() {
+      if (geometry === "county")
+        falcor.get([
+          "dama",
+          [pgEnv],
+          "tiger",
+          activeView?.view_dependencies,
+          geoids.map(String),
+          [viewYear],
+          ["counties"],
+          "name",
+        ]);
+    }
+    getGeoNames();
+  }, [pgEnv, activeView?.view_dependencies, geoids, viewYear]);
+
   const tableData = useMemo(() => {
     const geos = geometry === "county" ? geoids : acsTractGeoids;
     return (geos || []).reduce((a, c) => {
-      let tableRow = {
-        geoid: c,
-      };
+      let tableRow = {};
+
+      if (geometry === "county") {
+        tableRow["name"] = get(
+          falcorCache,
+          [
+            "dama",
+            pgEnv,
+            "tiger",
+            activeView?.view_dependencies[0],
+            c,
+            viewYear,
+            "counties",
+            "name",
+          ],
+          null
+        );
+      }
       (tableColumns || []).forEach((cc) => {
         let censusVal = 0,
           divisorVal = 0,
@@ -246,10 +280,10 @@ const TablePage = ({
     variablesToCensusKeys,
   ]);
 
-  const { data, columns } = useMemo(
-    () => transform(tableData, ["geoid", ...tableColumns]),
-    [tableData]
-  );
+  const { data, columns } = useMemo(() => {
+    const tempTableColumns = geometry === "county" ? ["name"] : [];
+    return transform(tableData, [...tempTableColumns, ...tableColumns]);
+  }, [tableData]);
 
   return (
     <div>

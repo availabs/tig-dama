@@ -4,7 +4,7 @@ import { get } from "lodash";
 
 import { DamaContext } from "~/pages/DataManager/store";
 import { ResponsiveBar } from "@nivo/bar";
-import { fips2Name, regionalData } from "./../../constants/index";
+import { fips2Name } from "./../../constants/index";
 
 const ViewSelector = ({ views }) => {
   const { viewId } = useParams();
@@ -89,7 +89,12 @@ const ChartPage = ({
   useEffect(() => {
     async function getACSData() {
       if (geoids.length > 0)
-        falcor.chunk(["acs", geoids, activeYear, [...activeCensusKeys, ...activeDivisorKeys]]);
+        falcor.chunk([
+          "acs",
+          geoids,
+          activeYear,
+          [...activeCensusKeys, ...activeDivisorKeys],
+        ]);
     }
     getACSData();
   }, [geoids, activeCensusKeys, activeYear]);
@@ -135,9 +140,16 @@ const ChartPage = ({
   }, [falcorCache, geoids, activeCensusKeys, activeDivisorKeys, activeYear]);
 
   let { data } = useMemo(
-    () => transform({ valueMap, filters, isDivisor: Boolean(activeDivisorKeys.length) }),
+    () =>
+      transform({
+        valueMap,
+        filters,
+        isDivisor: Boolean(activeDivisorKeys.length),
+      }),
     [valueMap, transform, filters]
   );
+
+  const [ref, setRef] = React.useState(null);
   return (
     <div>
       <div className="flex">
@@ -145,11 +157,12 @@ const ChartPage = ({
           filters={filters}
           setFilters={setFilters}
           variables={variables}
-          years={(years||[]).sort()}
+          years={(years || []).sort()}
+          node={ref}
         />
         <ViewSelector views={views} />
       </div>
-      <div style={{ height: "600px" }}>
+      <div style={{ height: "600px" }} ref={setRef}>
         <ResponsiveBar
           data={data}
           keys={["value"]}

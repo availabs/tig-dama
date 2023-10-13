@@ -1,8 +1,10 @@
 import React, { useMemo } from "react";
 import { get, sum, mean } from "lodash";
-
 import { useSearchParams } from "react-router-dom";
+import { toPng } from "html-to-image";
+import download from "downloadjs";
 
+import { Button } from "~/modules/avl-components/src";
 import { fips2Name, regionalData } from "./../../constants";
 
 const summarizeVars = {
@@ -15,7 +17,13 @@ const areas = [
   ...Object.keys(regionalData?.sub_regions || {}),
 ];
 
-export const AcsChartFilters = ({ filters, setFilters, variables, years }) => {
+export const AcsChartFilters = ({
+  filters,
+  setFilters,
+  variables,
+  years,
+  node,
+}) => {
   let activeVar = useMemo(() => get(filters, "activeVar.value", ""), [filters]);
   let area = useMemo(() => get(filters, "area.value", "all"), [filters]);
   let year = useMemo(() => get(filters, "year.value", ""), [filters]);
@@ -49,8 +57,22 @@ export const AcsChartFilters = ({ filters, setFilters, variables, years }) => {
     setFilters(update);
   }, [variables]);
 
+  const downloadImage = React.useCallback(() => {
+    console.log("Called");
+    if (!node) return;
+    toPng(node, { backgroundColor: "#fff" }).then((dataUrl) => {
+      download(dataUrl, `${activeVar}.png`, "image/png");
+    });
+  }, [node, activeVar]);
+
   return (
     <div className="flex border-blue-100">
+      <Button
+        themeOptions={{ size: "sm", color: "primary" }}
+        onClick={downloadImage}
+      >
+        Download
+      </Button>
       <div className="py-2 px-2 text-sm text-gray-400">Area: </div>
       <div className="flex-1" style={{ width: "min-content" }}>
         <select
@@ -196,13 +218,15 @@ export const ACSChartTransform = ({ valueMap, filters, isDivisor }) => {
       id: key,
       name: key,
       value: isDivisor
-        ? `${Math.round(
-            mean(
-              areaToGeos[`${key}`]
-                .map((val) => +valueMap[`${val}`])
-                .filter(Boolean) || []
-            )
-          ) || 0}%`
+        ? `${
+            Math.round(
+              mean(
+                areaToGeos[`${key}`]
+                  .map((val) => +valueMap[`${val}`])
+                  .filter(Boolean) || []
+              )
+            ) || 0
+          }%`
         : sum(
             areaToGeos[`${key}`]
               .map((val) => valueMap[`${val}`])
