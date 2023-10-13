@@ -3,7 +3,7 @@ import { Link, useParams } from 'react-router-dom'
 
 import get from 'lodash/get'
 
-import { getAttributes } from '~/pages/DataManager/components/attributes'
+import { getAttributes } from '~/pages/DataManager/Source/attributes'
 import { DamaContext } from '~/pages/DataManager/store'
 
 
