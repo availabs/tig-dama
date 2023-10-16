@@ -10,6 +10,7 @@ import { Combobox } from '@headlessui/react'
 
 import ProjectHoverComp from './MapHoverComp'
 import ProjectMapFilter from './MapFilterComp'
+import ProjectTableFilter from './TableFilterComp'
 
 import { DamaContext } from "~/pages/DataManager/store"
 import Selector from './Selector'
@@ -54,7 +55,12 @@ const GisDatasetConfig = {
   table: {
     name: "Table",
     path: "/table",
-    component: Table,
+    component: (props) => (
+      <Table
+        {...props}
+        TableFilter={ProjectTableFilter}
+      />
+    ),
   },
   // This key is used to filter in src/pages/DataManager/Source/create.js
   sourceCreate: {
