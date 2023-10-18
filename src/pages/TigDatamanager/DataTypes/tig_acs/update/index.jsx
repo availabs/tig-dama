@@ -9,7 +9,7 @@ import MultiSelect from "./../multiSelect";
 import { Select } from "./../singleSelect";
 import { ACSCustomVariables } from "./../customVariables";
 
-import { API_HOST, DAMA_HOST } from "~/config";
+import { API_HOST, PG_ENV } from "~/config";
 
 import {
   ViewAttributes,
@@ -84,13 +84,9 @@ const Update = (props) => {
     setSelecteView(viewOptions[0]);
   }
 
-  console.log('views', views)
-
   const [viewDependency, metadata, variables, years] = useMemo(() => {
     const selectedViewData =
       views.find((v) => v.view_id === selectedView?.id) || {};
-
-      console.log('selectedViewData', selectedViewData)
 
     return [
       get(selectedViewData, "view_dependencies", {})?.[0] || [],
@@ -174,18 +170,16 @@ const Update = (props) => {
           source_id: params.source_id,
           viewDependency: params.viewDependency,
           ...params.metadata,
+          pgEnv: PG_ENV,
         };
 
-        const res = await fetch(
-          `${DAMA_HOST}/dama-admin/${pgEnv}/hazard_mitigation/cacheAcs`,
-          {
-            method: "POST",
-            body: JSON.stringify(publishData),
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        const res = await fetch(`${API_HOST}/dama-admin/${PG_ENV}/acs/cache`, {
+          method: "POST",
+          body: JSON.stringify(publishData),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
 
         const finalEvent = await res.json();
         const { etl_context_id, source_id } = finalEvent;

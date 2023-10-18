@@ -10,9 +10,11 @@ import {
   unset,
   uniq,
 } from "lodash";
+import { range as d3range } from "d3-array";
+import { download as shpDownload } from "~/pages/DataManager/utils/shp-write";
 
 import ckmeans from "~/pages/DataManager/utils/ckmeans";
-import { getColorRange } from "~/modules/avl-components/src";
+import { Button, getColorRange } from "~/modules/avl-components/src";
 import { useFalcor } from "~/modules/avl-components/src";
 import { DamaContext } from "~/pages/DataManager/store";
 import { DAMA_HOST } from "~/config";
@@ -23,6 +25,89 @@ const getTilehost = (DAMA_HOST) =>
     : DAMA_HOST + "/tiles";
 
 const TILEHOST = getTilehost(DAMA_HOST);
+
+const MapDataDownloader = ({
+  activeViewId,
+  activeVar,
+  variable,
+  year,
+  viewDependency,
+}) => {
+  const { pgEnv, falcor, falcorCache } = React.useContext(DamaContext);
+
+  React.useEffect(() => {
+    if (!(pgEnv && activeViewId && activeVar)) return;
+    falcor
+      .get(["dama", pgEnv, "viewsbyId", activeViewId, "data", "length"])
+      .then((res) => {
+        const length = get(
+          res,
+          ["json", "dama", pgEnv, "viewsbyId", activeViewId, "data", "length"],
+          0
+        );
+        return falcor
+          .get([
+            "dama",
+            pgEnv,
+            "viewsbyId",
+            activeViewId,
+            "databyId",
+            d3range(0, length),
+            [activeVar, "wkb_geometry", "county"],
+          ])
+          .then(() => setLoading(false));
+      });
+  }, [falcor, pgEnv, activeViewId, activeVar]);
+
+  const downloadData = React.useCallback(() => {
+    const length = get(
+      falcorCache,
+      ["dama", pgEnv, "viewsbyId", activeViewId, "data", "length"],
+      0
+    );
+    const path = ["dama", pgEnv, "viewsbyId", activeViewId, "databyId"];
+    const collection = {
+      type: "FeatureCollection",
+      features: d3range(0, length).map((id) => {
+        const data = get(falcorCache, [...path, id], {});
+        const value = get(data, activeVar, null);
+        const county = get(data, "county", "unknown");
+        const geom = get(data, "wkb_geometry", "");
+
+        return {
+          type: "Feature",
+          properties: {
+            [variable]: value,
+            county,
+            year,
+          },
+          geometry: JSON.parse(geom),
+        };
+      }),
+    };
+    const options = {
+      folder: "shapefiles",
+      file: variable,
+      types: {
+        point: "points",
+        polygon: "polygons",
+        line: "lines",
+      },
+    };
+    shpDownload(collection, options);
+  }, [falcorCache, pgEnv, activeViewId, variable, activeVar, year]);
+
+  return (
+    <>
+      <Button
+        themeOptions={{ size: "sm", color: "primary" }}
+        onClick={downloadData}
+      >
+        Download
+      </Button>
+    </>
+  );
+};
 
 const ACSMapFilter = ({
   filters,
@@ -37,7 +122,6 @@ const ACSMapFilter = ({
   const [subGeoids, setSubGeoIds] = useState([]);
 
   const max = new Date().getUTCFullYear();
-  const yearRange = range(2010, max + 1);
 
   const [activeVar, geometry, year] = useMemo(() => {
     return [
@@ -62,22 +146,18 @@ const ACSMapFilter = ({
     [activeView, activeViewId]
   );
 
-  // console.log('activar vars', activeVar,variables)
-  const [censusConfig, divisorKeys] = useMemo(
-    () =>{
+  const [censusConfig, divisorKeys] = useMemo(() => {
+    let keys =
+      (((variables || []).find((d) => d.label === activeVar) || {}).value || {})
+        .censusKeys || [];
+    let divisors =
+      (((variables || []).find((d) => d.label === activeVar) || {}).value || {})
+        .divisorKeys || [];
 
-      let keys =  (((variables || []).find((d) => d.label === activeVar) || {}).value || {})
-        .censusKeys || []
-      let divisors = (((variables || []).find((d) => d.label === activeVar) || {}).value || {})
-        .divisorKeys || []
-      
-      keys = Array.isArray(keys) ? keys : [keys]
-      divisors = Array.isArray(divisors) ? divisors : [divisors]
-      return [keys,divisors]
-
-    } ,
-    [activeVar, variables]
-  );
+    keys = Array.isArray(keys) ? keys : [keys];
+    divisors = Array.isArray(divisors) ? divisors : [divisors];
+    return [keys, divisors];
+  }, [activeVar, variables]);
 
   if (!activeVar) {
     setFilters({
@@ -259,7 +339,7 @@ const ACSMapFilter = ({
         divisorVal = 0,
         censusFlag = false,
         divisorFalg = false;
-        
+
       (censusConfig || []).forEach((cc) => {
         const tmpVal = get(falcorCache, ["acs", c, year, cc], null);
         if (tmpVal !== null) {
@@ -401,7 +481,7 @@ const ACSMapFilter = ({
             });
           }}
         >
-          {["tract","county"].map((v, i) => (
+          {["tract", "county"].map((v, i) => (
             <option key={i} className="ml-2 truncate" value={v}>
               {v?.toUpperCase()}
             </option>
@@ -428,6 +508,16 @@ const ACSMapFilter = ({
             </option>
           ))}
         </select>
+      </div>
+
+      <div className="px-2 text-sm text-gray-400">
+        <MapDataDownloader
+          variable={activeVar}
+          activeViewId={activeViewId}
+          activeVar={activeVar}
+          year={year}
+          viewDependency={activeView?.view_dependencies}
+        />
       </div>
     </div>
   );
