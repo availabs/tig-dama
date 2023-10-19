@@ -35,16 +35,16 @@ export const sedVars = {
   gqpopoth: { name: "Group Quarters Homeless Population", domain: [3,11,50,635,1201], range: defaultRange}
 };
 export const sedVarsCounty = {
-    "tot_pop": {name: 'Total Population (in 000s)', domain: [0,74,213,481,750,1134,2801], range: defaultRange},
-    "tot_emp": {name: 'Total Employment', domain: [0,31,111,243,402,624,3397], range: defaultRange},
-    "emp_pay": {name: 'Payroll Employment', domain: [0,22,74,192,300,483,2997], range: defaultRange},
-    "emp_prop": {name: 'Proprietors Employment', domain: [0,7,33,51,82,161,399], range: defaultRange},
-    "hh_pop": {name: 'Household Population', domain: [0,69,207,473,729,1099,2761], range: defaultRange},
-    "gq_pop": {name: 'Group Quarters Population', domain: [0,1,5,9,20,29,79], range: defaultRange},
-    "hh_num": {name: 'Households', domain: [0,28,86,166,274,398,1044], range: defaultRange},
-    "hh_size": {name: 'Household Size', domain: [0,1.98,2.54,2.69,2.77,2.92,3.26], range: defaultRange},
-    "emplf": {name: 'Employed Labor Force', domain: [0,0,872,2047,3649,6934,14119,28578], range: defaultRange},
-    "lf": {name: 'Labor Force', domain: [0,33,116,237,366,557,1383], range: defaultRange}
+    "tot_pop": {name: 'Total Population (in 000s)', domain: [74,213,481,750,1134,2801], range: defaultRange},
+    "tot_emp": {name: 'Total Employment', domain: [31,111,243,402,624,3397], range: defaultRange},
+    "emp_pay": {name: 'Payroll Employment', domain: [22,74,192,300,483,2997], range: defaultRange},
+    "emp_prop": {name: 'Proprietors Employment', domain: [7,33,51,82,161,399], range: defaultRange},
+    "hh_pop": {name: 'Household Population', domain: [69,207,473,729,1099,2761], range: defaultRange},
+    "gq_pop": {name: 'Group Quarters Population', domain: [1,5,9,20,29,79], range: defaultRange},
+    "hh_num": {name: 'Households', domain: [28,86,166,274,398,1044], range: defaultRange},
+    "hh_size": {name: 'Household Size', domain: [1.98,2.54,2.69,2.77,2.92,3.26], range: defaultRange},
+    "emplf": {name: 'Employed Labor Force', domain: [0,872,2047,3649,6934,14119,28578], range: defaultRange},
+    "lf": {name: 'Labor Force', domain: [33,116,237,366,557,1383], range: defaultRange}
 }
 
 //const years = ["10", "17", "20", "25", "30", "35", "40", "45", "50", "55"];
@@ -424,7 +424,7 @@ const SedHoverComp = ({ data, layer }) => {
   let getAttributes = (typeof attributes?.[0] === 'string' ?
     attributes : attributes.map(d => d.name)).filter(d => !['wkb_geometry'].includes(d))
 
-  //console.log('filters', filters , layer)
+  console.log('hover attributes', getAttributes)
 
   React.useEffect(() => {
     falcor.get([
