@@ -100,7 +100,7 @@ export const BPMMapFilter = ({
   };
   const name2fips = Object.fromEntries(Object.entries(fips2Name).map(([key, value]) => [value, key]));
   const mapData = filteredData.reduce((acc, val) => {
-    
+    //console.log('areas', val.area, name2fips[val.area])
     acc[name2fips[val.area]] = Number(val[variableAccessors[variable]]);
     return acc;
   }, {});
@@ -154,7 +154,7 @@ export const BPMMapFilter = ({
 
     let output = ["coalesce", ["get",["to-string",["get","geoid"]], ["literal", colors]],"rgba(0,0,0,0)"]
 
-    newSymbology = layer.layers.reduce((a, c) => {
+    newSymbology = (layer?.layers || []).reduce((a, c) => {
         a[c.id] = {
           "fill-color": {
             [activeVar]: {
@@ -162,7 +162,7 @@ export const BPMMapFilter = ({
               settings: {
                 range: range,
                 domain: domain,
-                title: 'test'
+                title: activeVar
               },
               value: output
             }
@@ -191,7 +191,7 @@ export const BPMMapFilter = ({
               value={variable}
               onChange={(e) => setFilters({'activeVar' :{ value: e.target.value}})}
             >
-              {variableClasses?.map((v,i) => (
+              {variableClasses?.filter(d => d).map((v,i) => (
                 <option key={i} className="ml-2  truncate" value={v}>
                   {v}
                 </option>
@@ -205,7 +205,7 @@ export const BPMMapFilter = ({
               value={timePeriod}
               onChange={(e) => setFilters({'period' :{ value: e.target.value}})}
             >
-              {allTimePeriods?.map((v,i) => (
+              {allTimePeriods?.filter(d => d && d !== 'null').map((v,i) => (
                 <option key={i} className="ml-2  truncate" value={v}>
                   {v}
                 </option>
@@ -219,7 +219,7 @@ export const BPMMapFilter = ({
               value={functionalClass}
               onChange={(e) => setFilters({'functional_class' :{ value: e.target.value}})}
             >
-              {allFunctionalClasses?.map((v,i) => (
+              {allFunctionalClasses?.filter(d => d && d !== 'null').map((v,i) => (
                 <option key={i} className="ml-2  truncate" value={v}>
                   {v}
                 </option>

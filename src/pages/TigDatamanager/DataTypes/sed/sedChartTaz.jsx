@@ -15,7 +15,7 @@ const sedVars = {
   hhnum: { name: "Household Population" },
   hhsize: { name: "Household Size" },
   hhincx: { name: "Household Income" },
-  elf: { name: "Employed Labor Fouce" },
+  elf: { name: "Employed Labor Force" },
   emptot: { name: "Total Employment" },
   empret: { name: "Retail Employment" },
   empoff: { name: "Office Employment" },

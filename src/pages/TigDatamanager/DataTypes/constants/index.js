@@ -107,7 +107,7 @@ const fips2Name = {
   "36119": "Westchester",
   "09001": "Fairfield",
   "09005": "Litchfield",
-  "09007": "Middlesex",
+  "09007": "Middlesex,ct",
   "09009": "New Haven",
 };
 

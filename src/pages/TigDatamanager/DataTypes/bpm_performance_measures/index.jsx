@@ -24,7 +24,8 @@ const config = {
     name: "Overview",
     path: "",
     tag: 'test',
-    component: (props) => <TigOverview {...props} getVariables={getVariables} filterButtons={[]}/>
+    component: (props) => <TigOverview {...props}
+       getVariables={getVariables}  filterButtons={[]}/>
   },
   meta: {
     name: "Metadata",
@@ -38,6 +39,7 @@ const config = {
     component: (props) => (
       <Table
         {...props}
+        showViewSelector={false}
         transform={BPMTableTransform}
         TableFilter={HBTableFilter}
       />
@@ -49,6 +51,7 @@ const config = {
     component: (props) => (
       <Map
         {...props}
+         showViewSelector={false}
          MapFilter={BPMMapFilter}
       />
     ),

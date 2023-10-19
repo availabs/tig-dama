@@ -17,22 +17,22 @@ import shpwrite from  '@mapbox/shp-write'
 const defaultRange = ['#ffffb2', '#fed976',  '#fd8d3c', '#fc4e2a', '#e31a1c', '#b10026']
 const defaultDomain = [0,872,2047,3649,6934,14119,28578]
 export const sedVars = {
-  totpop: { name: "Total Population", domain: [0,872,2047,3649,6934,14119,28578], range: defaultRange},
-  hhpop: { name: "Households", domain: [0,1112,1588,2112,2958,20000, 56390], range: defaultRange},
-  hhnum: { name: "Household Population", domain: [0,2995,4270,5680,7883,64124,177720], range: defaultRange},
-  hhsize: { name: "Household Size", domain: [0,2.3,2.62,2.83,3.08,7], range: defaultRange},
-  hhincx: { name: "Household Income", domain: [0,44787,61304,80355,113880,1109731], range: defaultRange},
-  elf: { name: "Employed Labor Force", domain: [0,1351,2054,2782,3910,78160], range: defaultRange},
-  emptot: { name: "Total Employment", domain: [0,560,1005,1699,3555,80093], range: defaultRange},
-  empret: { name: "Retail Employment", domain: [0,30,78,167,385,13225], range: defaultRange},
-  empoff: { name: "Office Employment", domain: [0,66,142,276,670,48061], range: defaultRange},
-  earnwork: { name: "Earnings", domain: [0,35696,40620,45755,53519,202112], range: defaultRange},
-  unvenrol: { name: "University Enrollment", domain: [0,670,2586,8143,51583], range: defaultRange},
-  k_12_etot: { name: "School Enrollment", domain: [0,489,791,1119,1632,42294], range: defaultRange},
-  gqpop: { name: "Group Quarters Population", domain: [0,11,40,200,12050], range: defaultRange},
-  gqpopins: { name: "Group Quarters Institutional Population", domain: [0,22,118,253,5613,12050], range: defaultRange},
-  gqpopstr: { name: "Group Quarters Other Population", domain: [0,7,16,56,5613,10503], range: defaultRange},
-  gqpopoth: { name: "Group Quarters Homeless Population", domain: [0,3,11,50,635,1201], range: defaultRange}
+  totpop: { name: "Total Population", domain: [872,2047,3649,6934,14119,28578], range: defaultRange},
+  hhpop: { name: "Households", domain: [1112,1588,2112,2958,20000, 56390], range: defaultRange},
+  hhnum: { name: "Household Population", domain: [2995,4270,5680,7883,64124,177720], range: defaultRange},
+  hhsize: { name: "Household Size", domain: [2.3,2.62,2.83,3.08,7], range: defaultRange},
+  hhincx: { name: "Household Income", domain: [44787,61304,80355,113880,1109731], range: defaultRange},
+  elf: { name: "Employed Labor Force", domain: [1351,2054,2782,3910,78160], range: defaultRange},
+  emptot: { name: "Total Employment", domain: [560,1005,1699,3555,80093], range: defaultRange},
+  empret: { name: "Retail Employment", domain: [30,78,167,385,13225], range: defaultRange},
+  empoff: { name: "Office Employment", domain: [66,142,276,670,48061], range: defaultRange},
+  earnwork: { name: "Earnings", domain: [35696,40620,45755,53519,202112], range: defaultRange},
+  unvenrol: { name: "University Enrollment", domain: [670,2586,8143,51583], range: defaultRange},
+  k_12_etot: { name: "School Enrollment", domain: [489,791,1119,1632,42294], range: defaultRange},
+  gqpop: { name: "Group Quarters Population", domain: [11,40,200,12050], range: defaultRange},
+  gqpopins: { name: "Group Quarters Institutional Population", domain: [22,118,253,5613,12050], range: defaultRange},
+  gqpopstr: { name: "Group Quarters Other Population", domain: [7,16,56,5613,10503], range: defaultRange},
+  gqpopoth: { name: "Group Quarters Homeless Population", domain: [3,11,50,635,1201], range: defaultRange}
 };
 export const sedVarsCounty = {
     "tot_pop": {name: 'Total Population (in 000s)', domain: [0,74,213,481,750,1134,2801], range: defaultRange},
@@ -251,7 +251,7 @@ const MapDataDownloader = ({ activeViewId, activeVar, variable, year }) => {
     falcor.get(['dama', pgEnv, 'viewsbyId' ,activeViewId, 'data', 'length'])
       .then(res => {
         const length = get(res, ['json', 'dama', pgEnv, 'viewsbyId' ,activeViewId, 'data', 'length'], 0)
-        return  falcor.get([
+        return  falcor.chunk([
           'dama',
           pgEnv,
           'viewsbyId',
@@ -277,7 +277,7 @@ const MapDataDownloader = ({ activeViewId, activeVar, variable, year }) => {
           geom.type = 'MultiPolygon'
           geom.coordinates = [geom.coordinates]
         }
-        console.log('geom', county,  geom.type, )
+        // console.log('geom', county,  geom.type, )
         
         return {
           type: "Feature",
@@ -452,7 +452,8 @@ const SedHoverComp = ({ data, layer }) => {
 
 
 
-  let year = years[activeVar.split('_')[2] || 0]
+  let year = years[activeVar.split('_').slice(-1) || 0]
+
   let varName = type === 'tig_sed_taz' ?
     sedVars[activeVar.split('_')[0] || 'tot_pop']?.name || '' :
     sedVarsCounty[activeVar.slice(0,-2) || 'totpop']?.name || ''
