@@ -9,7 +9,9 @@ import * as d3scale from "d3-scale"
 import { range as d3range } from "d3-array"
 import cloneDeep from 'lodash/cloneDeep'
 import download from "downloadjs"
-import { download as shpDownload } from "~/pages/DataManager/utils/shp-write"
+// import { download as shpDownload } from "~/pages/DataManager/utils/shp-write"
+
+import shpwrite from  '@mapbox/shp-write'
 
 // [1112,1588,2112,2958,56390]
 const defaultRange = ['#ffffb2', '#fed976',  '#fd8d3c', '#fc4e2a', '#e31a1c', '#b10026']
@@ -270,8 +272,13 @@ const MapDataDownloader = ({ activeViewId, activeVar, variable, year }) => {
         const data = get(falcorCache, [...path, id], {});
         const value = get(data, activeVar, null);
         const county = get(data, "county", "unknown");
-        const geom = get(data, "wkb_geometry", "");
-        console.log('geom', geom, data)
+        const geom = JSON.parse(get(data, "wkb_geometry", "{}"));
+        if(geom.type === 'Polygon') {
+          geom.type = 'MultiPolygon'
+          geom.coordinates = [geom.coordinates]
+        }
+        console.log('geom', county,  geom.type, )
+        
         return {
           type: "Feature",
           properties: {
@@ -279,20 +286,18 @@ const MapDataDownloader = ({ activeViewId, activeVar, variable, year }) => {
             county,
             year
           },
-          geometry: JSON.parse(geom)
+          geometry: geom
         }
       })
     }
     const options = {
-      folder: "shapefiles",
+      folder: `SED ${variable}`,
       file: variable,
-      types: {
-        point: 'points',
-        polygon: 'polygons',
-        line: 'lines'
-      }
+      outputType: "blob",
+      compression: "DEFLATE",
     }
-    shpDownload(collection, options);
+    shpwrite.download(collection, options)
+    //shpDownload(collection, options);
   }, [falcorCache, pgEnv, activeViewId, variable, activeVar, year]);
 
   return (
@@ -416,6 +421,9 @@ const SedHoverComp = ({ data, layer }) => {
   const id = React.useMemo(() => get(data, '[0]', null), [data])
   let activeVar = useMemo(() => get(filters, "activeVar.value", ""), [filters]);
 
+  let getAttributes = (typeof attributes?.[0] === 'string' ?
+    attributes : attributes.map(d => d.name)).filter(d => !['wkb_geometry'].includes(d))
+
   //console.log('filters', filters , layer)
 
   React.useEffect(() => {
@@ -426,7 +434,7 @@ const SedHoverComp = ({ data, layer }) => {
       activeViewId,
       'databyId',
       id,
-      attributes
+      getAttributes
     ])
   }, [falcor, pgEnv, activeViewId, id, attributes])
 
