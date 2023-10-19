@@ -21,7 +21,7 @@ const sedVars = {
   empoff: { name: "Office Employment" },
   earnwork: { name: "Earnings" },
   unvenrol: { name: "Universirty Enrollment" },
-  k_12_etot: { name: "School Enrollment" },
+  k12etot: { name: "School Enrollment" },
   gqpop: { name: "Group Quarters Population" },
   gqpopins: { name: "Group Quarters Instituional Population" },
   gqpopstr: { name: "Group Quarters Other Population" },

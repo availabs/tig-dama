@@ -28,23 +28,23 @@ export const sedVars = {
   empoff: { name: "Office Employment", domain: [66,142,276,670,48061], range: defaultRange},
   earnwork: { name: "Earnings", domain: [35696,40620,45755,53519,202112], range: defaultRange},
   unvenrol: { name: "University Enrollment", domain: [670,2586,8143,51583], range: defaultRange},
-  k_12_etot: { name: "School Enrollment", domain: [489,791,1119,1632,42294], range: defaultRange},
+  k12etot: { name: "School Enrollment", domain: [489,791,1119,1632,42294,81583], range: defaultRange},
   gqpop: { name: "Group Quarters Population", domain: [11,40,200,12050], range: defaultRange},
   gqpopins: { name: "Group Quarters Institutional Population", domain: [22,118,253,5613,12050], range: defaultRange},
   gqpopstr: { name: "Group Quarters Other Population", domain: [7,16,56,5613,10503], range: defaultRange},
   gqpopoth: { name: "Group Quarters Homeless Population", domain: [3,11,50,635,1201], range: defaultRange}
 };
 export const sedVarsCounty = {
-    "tot_pop": {name: 'Total Population (in 000s)', domain: [74,213,481,750,1134,2801], range: defaultRange},
-    "tot_emp": {name: 'Total Employment', domain: [31,111,243,402,624,3397], range: defaultRange},
-    "emp_pay": {name: 'Payroll Employment', domain: [22,74,192,300,483,2997], range: defaultRange},
-    "emp_prop": {name: 'Proprietors Employment', domain: [7,33,51,82,161,399], range: defaultRange},
-    "hh_pop": {name: 'Household Population', domain: [69,207,473,729,1099,2761], range: defaultRange},
-    "gq_pop": {name: 'Group Quarters Population', domain: [1,5,9,20,29,79], range: defaultRange},
-    "hh_num": {name: 'Households', domain: [28,86,166,274,398,1044], range: defaultRange},
+    "tot_pop": {name: 'Total Population (in 000s)', domain: [79,213,481,750,1134,2801], range: defaultRange},
+    "tot_emp": {name: 'Total Employment (in 000s)', domain: [31,111,243,402,624,3397], range: defaultRange},
+    "emp_pay": {name: 'Payroll Employment (in 000s)', domain: [22,74,192,300,483,2997], range: defaultRange},
+    "emp_prop": {name: 'Proprietors Employment (in 000s)', domain: [7,33,51,82,161,399], range: defaultRange},
+    "hh_pop": {name: 'Household Population (in 000s)', domain: [69,207,473,729,1099,2761], range: defaultRange},
+    "gq_pop": {name: 'Group Quarters Population (in 000s)', domain: [1,5,9,20,29,79], range: defaultRange},
+    "hh_num": {name: 'Households (in 000s)', domain: [28,86,166,274,398,1044], range: defaultRange},
     "hh_size": {name: 'Household Size', domain: [1.98,2.54,2.69,2.77,2.92,3.26], range: defaultRange},
-    "emplf": {name: 'Employed Labor Force', domain: [0,872,2047,3649,6934,14119,28578], range: defaultRange},
-    "lf": {name: 'Labor Force', domain: [33,116,237,366,557,1383], range: defaultRange}
+    "emplf": {name: 'Employed Labor Force (in 000s)', domain: [872,204,364,693,1411,2857], range: defaultRange},
+    "lf": {name: 'Labor Force  (in 000s)', domain: [33,116,237,366,557,1383], range: defaultRange}
 }
 
 //const years = ["10", "17", "20", "25", "30", "35", "40", "45", "50", "55"];
