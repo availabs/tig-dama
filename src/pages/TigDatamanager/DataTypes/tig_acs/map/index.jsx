@@ -4,13 +4,11 @@ import {
   cloneDeep,
   isEqual,
   flattenDeep,
-  range,
   uniqBy,
   set,
   unset,
   uniq,
 } from "lodash";
-import { range as d3range } from "d3-array";
 import { download as shpDownload } from "~/pages/DataManager/utils/shp-write";
 
 import ckmeans from "~/pages/DataManager/utils/ckmeans";
@@ -27,57 +25,58 @@ const getTilehost = (DAMA_HOST) =>
 const TILEHOST = getTilehost(DAMA_HOST);
 
 const MapDataDownloader = ({
-  activeViewId,
   activeVar,
-  variable,
   year,
+  geometry,
+  valueMap,
+  geoids,
   viewDependency,
 }) => {
   const { pgEnv, falcor, falcorCache } = React.useContext(DamaContext);
+  const tempViewId = viewDependency && viewDependency[0];
 
+  const viewYear = year - (year % 10);
   React.useEffect(() => {
-    if (!(pgEnv && activeViewId && activeVar)) return;
-    falcor
-      .get(["dama", pgEnv, "viewsbyId", activeViewId, "data", "length"])
-      .then((res) => {
-        const length = get(
-          res,
-          ["json", "dama", pgEnv, "viewsbyId", activeViewId, "data", "length"],
-          0
-        );
-        return falcor
-          .get([
-            "dama",
-            pgEnv,
-            "viewsbyId",
-            activeViewId,
-            "databyId",
-            d3range(0, length),
-            [activeVar, "wkb_geometry", "county"],
-          ])
-          .then(() => setLoading(false));
-      });
-  }, [falcor, pgEnv, activeViewId, activeVar]);
+    falcor.get([
+      "dama",
+      pgEnv,
+      "tiger",
+      [tempViewId],
+      (geoids || []).map(String),
+      [viewYear],
+      [geometry],
+      "attributes",
+      ["geoid", "wkb_geometry", "name"],
+    ]);
+  }, [falcor, pgEnv, tempViewId, geometry, viewYear, geoids]);
 
   const downloadData = React.useCallback(() => {
-    const length = get(
-      falcorCache,
-      ["dama", pgEnv, "viewsbyId", activeViewId, "data", "length"],
-      0
-    );
-    const path = ["dama", pgEnv, "viewsbyId", activeViewId, "databyId"];
     const collection = {
       type: "FeatureCollection",
-      features: d3range(0, length).map((id) => {
-        const data = get(falcorCache, [...path, id], {});
-        const value = get(data, activeVar, null);
-        const county = get(data, "county", "unknown");
+      features: geoids.map((id) => {
+        const data = get(
+          falcorCache,
+          [
+            "dama",
+            pgEnv,
+            "tiger",
+            tempViewId,
+            id,
+            viewYear,
+            geometry,
+            "attributes",
+          ],
+          {}
+        );
+
+        const value = get(valueMap, id, null);
+        const county = get(data, "name", "unknown");
         const geom = get(data, "wkb_geometry", "");
 
         return {
           type: "Feature",
           properties: {
-            [variable]: value,
+            [activeVar]: value,
             county,
             year,
           },
@@ -87,15 +86,16 @@ const MapDataDownloader = ({
     };
     const options = {
       folder: "shapefiles",
-      file: variable,
+      file: activeVar,
       types: {
         point: "points",
         polygon: "polygons",
         line: "lines",
       },
     };
+
     shpDownload(collection, options);
-  }, [falcorCache, pgEnv, activeViewId, variable, activeVar, year]);
+  }, [falcorCache, pgEnv, tempViewId, activeVar, year]);
 
   return (
     <>
@@ -120,8 +120,6 @@ const ACSMapFilter = ({
   const { pgEnv } = useContext(DamaContext);
   const { falcor, falcorCache } = useFalcor();
   const [subGeoids, setSubGeoIds] = useState([]);
-
-  const max = new Date().getUTCFullYear();
 
   const [activeVar, geometry, year] = useMemo(() => {
     return [
@@ -180,48 +178,6 @@ const ACSMapFilter = ({
     }
     getViewData();
   }, [pgEnv, activeViewId, activeView]);
-
-  // ------ Updated -------
-
-  // const subGeoids = React.useMemo(async () => {
-  //   async function getViewData() {
-  //     falcor
-  //       .get([
-  //         "dama",
-  //         [pgEnv],
-  //         "tiger",
-  //         activeView?.view_dependencies,
-  //         counties.map(String),
-  //         [viewYear],
-  //         ["tracts"],
-  //       ])
-  //       .then(() => {
-  //         const d = (counties || []).reduce((a, c) => {
-  //           a.push(
-  //             ...get(
-  //               falcorCache,
-  //               [
-  //                 "dama",
-  //                 pgEnv,
-  //                 "tiger",
-  //                 activeView?.view_dependencies[0],
-  //                 c,
-  //                 viewYear,
-  //                 "tracts",
-  //                 "value",
-  //               ],
-  //               []
-  //             )
-  //           );
-  //           return a;
-  //         }, []);
-  //         return uniq(d);
-  //       });
-  //   }
-  //   return await getViewData();
-  // }, [falcorCache, pgEnv, activeViewId, activeView, counties, viewYear]);
-
-  // ------ Updated -------
 
   useEffect(() => {
     async function getViewData() {
@@ -310,7 +266,7 @@ const ACSMapFilter = ({
     getACSData();
   }, [counties, subGeoids, censusConfig, divisorKeys, year, geometry]);
 
-  useEffect(() => {
+  const mappedValues = useMemo(() => {
     let geoids;
     let activeLayer = (tempSymbology["layers"] || []).find(
       (v) => v.id === activeLayerId
@@ -319,21 +275,6 @@ const ACSMapFilter = ({
     if (geometry === "county") geoids = counties;
     else if (geometry === "tract") geoids = subGeoids;
 
-    // -------- OLD --------
-    // const valueMap = (geoids || []).reduce((a, c) => {
-    //   let value = (censusConfig || []).reduce((aa, cc) => {
-    //     const v = get(falcorCache, ["acs", c, year, cc], -666666666);
-    //     if (v !== -666666666) {
-    //       aa += v;
-    //     }
-    //     return aa;
-    //   }, 0);
-    //   a[c] = value;
-    //   return a;
-    // }, {});
-    // -------- OLD --------
-
-    // -------- NEW --------
     const valueMap = (geoids || []).reduce((a, c) => {
       let censusVal = 0,
         divisorVal = 0,
@@ -369,7 +310,6 @@ const ACSMapFilter = ({
       }
       return a;
     }, {});
-    // -------- NEW --------
 
     const ckmeansLen = Math.min((Object.values(valueMap) || []).length, 5);
     const values = Object.values(valueMap || {});
@@ -431,6 +371,7 @@ const ACSMapFilter = ({
     if (!isEqual(tempSymbology, newSymbology)) {
       setTempSymbology(newSymbology);
     }
+    return valueMap;
   }, [
     tempSymbology,
     activeLayerId,
@@ -512,10 +453,13 @@ const ACSMapFilter = ({
 
       <div className="px-2 text-sm text-gray-400">
         <MapDataDownloader
-          variable={activeVar}
           activeViewId={activeViewId}
+          variable={activeVar}
           activeVar={activeVar}
           year={year}
+          geometry={geometry}
+          valueMap={mappedValues}
+          geoids={geometry === "county" ? counties : subGeoids}
           viewDependency={activeView?.view_dependencies}
         />
       </div>
