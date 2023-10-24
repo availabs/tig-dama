@@ -1,7 +1,11 @@
 import React, { useContext, useEffect, useState, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { get } from "lodash";
-import { Button, useFalcor } from "~/modules/avl-components/src";
+import {
+  Button,
+  useFalcor,
+  ScalableLoading,
+} from "~/modules/avl-components/src";
 
 import { DamaContext } from "~/pages/DataManager/store";
 import { Select } from "./../singleSelect";
@@ -20,6 +24,7 @@ const Update = () => {
   const navigate = useNavigate();
   const { sourceId } = useParams();
   const { pgEnv } = useContext(DamaContext);
+  const [loading, setLoading] = useState(false);
   const [selectedVariables, setSelecteVariableOptions] = useState(null);
   const [selectedYears, setSelectedYears] = useState(null);
   const [selectedView, setSelecteView] = useState(null);
@@ -136,6 +141,7 @@ const Update = () => {
 
   const runScript = (params, navigate) => {
     const runPublish = async () => {
+      setLoading(true);
       try {
         const publishData = {
           serverUrl: `${API_HOST}/graph`,
@@ -159,7 +165,11 @@ const Update = () => {
         if (etl_context_id && source_id) {
           navigate(`/source/${source_id}/uploads/${etl_context_id}`);
         }
-      } catch (err) {}
+      } catch (err) {
+        setLoading(false);
+      } finally {
+        setLoading(false);
+      }
     };
     runPublish();
   };
@@ -237,7 +247,16 @@ const Update = () => {
           }}
         >
           {" "}
-          Save{" "}
+          {loading ? (
+            <div style={{ display: "flex" }}>
+              <div className="mr-2">Saving</div>
+              <div>
+                <ScalableLoading scale={0.25} color={"#fefefe"} />
+              </div>
+            </div>
+          ) : (
+            <>Save </>
+          )}
         </Button>
       </div>
     </>

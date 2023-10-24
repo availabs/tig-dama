@@ -2,6 +2,7 @@ import React, { useContext, useMemo, useEffect, useState } from "react";
 import {
   get,
   cloneDeep,
+  chunk,
   isEqual,
   flattenDeep,
   uniqBy,
@@ -39,17 +40,19 @@ const MapDataDownloader = ({
 
   const viewYear = year - (year % 10);
   React.useEffect(() => {
-    falcor.get([
-      "dama",
-      pgEnv,
-      "tiger",
-      [tempViewId],
-      (geoids || []).map(String),
-      [viewYear],
-      [geometry],
-      "attributes",
-      ["geoid", "wkb_geometry", "name"],
-    ]);
+    (chunk((geoids || []).map(String), 250) || []).forEach(elem => {
+      falcor.get([
+        "dama",
+        pgEnv,
+        "tiger",
+        [tempViewId],
+        elem,
+        [viewYear],
+        [geometry],
+        "attributes",
+        ["geoid", "wkb_geometry", "name"],
+      ]);
+    });
   }, [falcor, pgEnv, tempViewId, geometry, viewYear, geoids]);
 
   const downloadData = React.useCallback(() => {
