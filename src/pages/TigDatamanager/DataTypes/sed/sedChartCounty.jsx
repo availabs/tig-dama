@@ -213,6 +213,7 @@ const SedChartTransformCounty = (tableData, attributes, filters, years, flag) =>
     (columns || []).push({
       Header: `20${y}`,
       accessor: `${activeVar}_${i}`,
+      groupFunction: sedVars[activeVar].groupFunction || sumBy
     });
   });
 

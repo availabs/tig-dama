@@ -4,11 +4,7 @@ import { get } from "lodash";
 import { Button, useFalcor } from "~/modules/avl-components/src";
 
 import { DamaContext } from "~/pages/DataManager/store";
-
-import MultiSelect from "./../multiSelect";
 import { Select } from "./../singleSelect";
-import { ACSCustomVariables } from "./../customVariables";
-
 import { API_HOST, PG_ENV } from "~/config";
 
 import {
@@ -19,7 +15,7 @@ import {
 import ACSVariableUpdate from "./variables";
 import ACSYearsUpdate from "./years";
 
-const Update = (props) => {
+const Update = () => {
   const { falcor, falcorCache } = useFalcor();
   const navigate = useNavigate();
   const { sourceId } = useParams();
@@ -108,58 +104,35 @@ const Update = (props) => {
     }
   }, [years]);
 
-  const addNewVariable = (newVariable) =>
-    setSelecteVariableOptions([...selectedVariables, newVariable]);
-
   const UpdateView = (attr, value) => {
     if (selectedView && selectedView.id) {
       const { id: view_id } = selectedView;
       try {
-        falcor
-          .set({
-            paths: [
-              [
-                "dama",
-                pgEnv,
-                "views",
-                "byId",
-                view_id,
-                "attributes",
-                "metadata",
-              ],
-            ],
-            jsonGraph: {
-              dama: {
-                [pgEnv]: {
-                  views: {
-                    byId: {
-                      [view_id]: {
-                        attributes: {
-                          ["metadata"]: JSON.stringify(value),
-                        },
+        falcor.set({
+          paths: [
+            ["dama", pgEnv, "views", "byId", view_id, "attributes", "metadata"],
+          ],
+          jsonGraph: {
+            dama: {
+              [pgEnv]: {
+                views: {
+                  byId: {
+                    [view_id]: {
+                      attributes: {
+                        ["metadata"]: JSON.stringify(value),
                       },
                     },
                   },
                 },
               },
             },
-          })
-          .then((d) => {
-            console.log("d", d);
-          });
+          },
+        });
       } catch (error) {
         console.log("error", error);
       }
     }
   };
-
-  const yearsOptions = Array.from(
-    Array(new Date().getFullYear() - 2009),
-    (_, i) => i + 2010
-  ).map((year) => ({
-    label: year,
-    value: Number(year),
-  }));
 
   const runScript = (params, navigate) => {
     const runPublish = async () => {
@@ -216,29 +189,6 @@ const Update = (props) => {
         >
           Years
         </label>
-
-        {/* <MultiSelect
-              value={(selectedYears || [])
-                ?.map((values) =>
-                  (yearsOptions || []).find(
-                    (prod) => prod.value === Number(values)
-                  )
-                )
-                .filter((prod) => prod && prod.value && prod.label)
-                .map((prod) => ({
-                  label: prod?.label,
-                  value: prod?.value,
-                }))}
-              closeMenuOnSelect={false}
-              options={yearsOptions}
-              onChange={(value) => setSelectedYears(value.map((v) => v.value))}
-              selectMessage={"Years"}
-              isSearchable
-            />
-
-            <p className="text-gray-600 text-xs italic">
-              Select Years for the view
-            </p> */}
       </div>
 
       <div className="flex-wrap">
@@ -252,19 +202,6 @@ const Update = (props) => {
         >
           Variables
         </label>
-        {/* <MultiSelect
-              value={selectedVariables || []}
-              closeMenuOnSelect={false}
-              options={[]}
-              onChange={(value) => {
-                setSelecteVariableOptions(value);
-              }}
-              selectMessage={"Variables"}
-              isSearchable
-            />
-            <p className="text-gray-600 text-xs italic">
-              Select Variables for the view
-            </p> */}
       </div>
 
       <div className="flex-wrap">
@@ -273,7 +210,6 @@ const Update = (props) => {
           setVariables={setSelecteVariableOptions}
         />
       </div>
-      {/* <ACSCustomVariables addNewVariable={addNewVariable} /> */}
 
       <div className="mt-6 mb-6">
         <Button

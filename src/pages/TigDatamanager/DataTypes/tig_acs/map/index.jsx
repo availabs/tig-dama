@@ -9,7 +9,9 @@ import {
   unset,
   uniq,
 } from "lodash";
-import { download as shpDownload } from "~/pages/DataManager/utils/shp-write";
+
+// import { download as shpDownload } from "~/pages/DataManager/utils/shp-write";
+import shpwrite from  '@mapbox/shp-write';
 
 import ckmeans from "~/pages/DataManager/utils/ckmeans";
 import { Button, getColorRange } from "~/modules/avl-components/src";
@@ -71,7 +73,7 @@ const MapDataDownloader = ({
 
         const value = get(valueMap, id, null);
         const county = get(data, "name", "unknown");
-        const geom = get(data, "wkb_geometry", "");
+        const geom = get(data, "wkb_geometry", {});
 
         return {
           type: "Feature",
@@ -87,6 +89,8 @@ const MapDataDownloader = ({
     const options = {
       folder: "shapefiles",
       file: activeVar,
+      outputType: "blob",
+      compression: "DEFLATE",
       types: {
         point: "points",
         polygon: "polygons",
@@ -94,7 +98,7 @@ const MapDataDownloader = ({
       },
     };
 
-    shpDownload(collection, options);
+    shpwrite.download(collection, options);
   }, [falcorCache, pgEnv, tempViewId, activeVar, year]);
 
   return (
