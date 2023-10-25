@@ -25,7 +25,8 @@ export const BPMMapFilter = ({
   }) => { 
 
   const { falcor, falcorCache, pgEnv } = React.useContext(DamaContext);
-  let newSymbology  = cloneDeep(tempSymbology)
+  let newSymbology  = cloneDeep(tempSymbology);
+  const name2fips = Object.fromEntries(Object.entries(fips2Name).map(([key, value]) => [value, key]));
  
   React.useEffect(() => {
     const loadSourceData = async () => {
@@ -66,7 +67,7 @@ export const BPMMapFilter = ({
 
   const allTimePeriods = data?.map((val, i) => val.period).filter(onlyUnique);
   const allFunctionalClasses = data?.map((val, i) => val.functional_class).filter(onlyUnique);
-  const variableClasses = ["VMT", "VHT", "Avg. Speed"];
+  const variableClasses = ["VMT", "VHT", "AvgSpeed"];
   
   useEffect(() => {
     if(!timePeriod)
@@ -80,6 +81,11 @@ export const BPMMapFilter = ({
   }, []);
 
   let filteredData = data;
+  const alGeoIdColor = data.reduce((acc, key) => {
+    acc[name2fips[key.area]] = 0;
+    return acc;
+  }, {});
+
   const filterKeys = Object.keys(filters);
 
   filterKeys.forEach((key, i) => {
@@ -96,16 +102,13 @@ export const BPMMapFilter = ({
   const variableAccessors = {
     "VMT" : "vehicle_miles_traveled",
     "VHT" : "vehicle_hours_traveled",
-    "Avg. Speed": "ave_speed"
+    "AvgSpeed": "ave_speed"
   };
-  const name2fips = Object.fromEntries(Object.entries(fips2Name).map(([key, value]) => [value, key]));
+
   const mapData = filteredData.reduce((acc, val) => {
-    //console.log('areas', val.area, name2fips[val.area])
     acc[name2fips[val.area]] = Number(val[variableAccessors[variable]]);
     return acc;
   }, {});
-
-  console.log("what is the final mapData: ", mapData);
 
   React.useEffect(() => {
     // const CountyValues = Object.values(filteredData)
@@ -118,7 +121,6 @@ export const BPMMapFilter = ({
       }
   
     */
-    console.log('map data updated running color stuff',filters)
     let activeVar = filters?.activeVar?.value || 'default'
     const ckmeansLen = Math.min((Object.values(mapData) || []).length, 5);
     const values = Object.values(mapData || {});
@@ -146,41 +148,35 @@ export const BPMMapFilter = ({
     }
 
     const colors = {};
-    Object.keys(mapData).forEach((geoid) => {
+    Object.keys({...alGeoIdColor, ...mapData}).forEach((geoid) => {
       colors[geoid] = colorScale(domain, mapData[geoid]);
     });
-
-    console.log('active_var', activeVar);
 
     let output = ["coalesce", ["get",["to-string",["get","geoid"]], ["literal", colors]],"rgba(0,0,0,0)"]
 
     newSymbology = (layer?.layers || []).reduce((a, c) => {
-        a[c.id] = {
-          "fill-color": {
-            [activeVar]: {
-              type: 'threshold',
-              settings: {
-                range: range,
-                domain: domain,
-                title: activeVar
-              },
-              value: output
-            }
+      a[c.id] = {
+        "fill-color": {
+          [variable]: {
+            type: 'threshold',
+            settings: {
+              range: range,
+              domain: domain,
+              title: variable
+            },
+            value: output
           }
-        };
-        return a;
-      }, {});
-      console.log('new symbology', newSymbology)
-      if(!isEqual(newSymbology, tempSymbology)){
-        console.log('setting new newSymbology')
-        setTempSymbology(newSymbology)
-      }
+        }
+      };
+      return a;
+    }, {});
 
-  },[mapData]);
+    if(!isEqual(newSymbology, tempSymbology)){
+      console.log('setting new newSymbology: ', activeVar)
+      setTempSymbology(newSymbology)
+    }
 
-  // console.log("what is the value of the new symbology: ", newSymbology);
-
-  
+  },[mapData, filters, timePeriod, functionalClass, variable]);
 
   return (
     <div className='flex flex-1'>
