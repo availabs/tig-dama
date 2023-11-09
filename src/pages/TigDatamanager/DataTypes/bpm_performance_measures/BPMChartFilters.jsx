@@ -264,8 +264,8 @@ export const BPMChartTransform = ({ valueMap, filters }) => {
   
  console.log('valueMap', filters, valueMap)
   let data = valueMap.filter(d => {
-    return d['functional_class'] == filters['functional_class']?.value || 'total' && 
-    d['period'] == filters['period']?.value || 'total'
+    return d['functional_class'] == filters['functional_class']?.value  && 
+    d['period'] == filters['period']?.value
   })
 
   console.log('filtered data', data)
@@ -297,7 +297,7 @@ export const BPMChartTransform = ({ valueMap, filters }) => {
 
 
   const getRegions = (summarize, county) => {
-    console.log('what is my key', summarize)
+    //console.log('what is my key', summarize)
     if(summarize === 'county') {
       return [county]
     }
@@ -337,7 +337,7 @@ export const BPMChartTransform = ({ valueMap, filters }) => {
     },{}))
     .sort((a,b) => a.value - b.value);
 
-  console.log('finalchartData', finalchartData)
+  //console.log('finalchartData', finalchartData)
   return {
     data: finalchartData,
   };
