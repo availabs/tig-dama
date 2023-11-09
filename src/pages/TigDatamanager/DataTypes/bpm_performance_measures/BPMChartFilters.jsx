@@ -331,7 +331,7 @@ export const BPMChartTransform = ({ valueMap, filters }) => {
             value: 0
           }
         }
-        out[region].value +=  +d[accessor] || 0
+        out[region].value +=  Math.round(+d[accessor] || 0)
       })
       return out
     },{}))
