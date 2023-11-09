@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-
+import { Button } from "~/modules/avl-components/src"
+import download from "downloadjs"
 
 export const HBTableFilter = ({ source, filters, setFilters, data, columns }) => {
     const timePeriod = filters['period']?.value || null;
@@ -19,6 +20,16 @@ export const HBTableFilter = ({ source, filters, setFilters, data, columns }) =>
       if(!functionalClass)
       setFilters({'functional_class' : { value: 'total'}});
     }, []);
+
+    const downloadData = React.useCallback(() => {
+      const mapped = data.map(d => {
+        return columns.map(c => {
+          return d[c.accessor];
+        }).join(",")
+      })
+      mapped.unshift(columns.map(c => c.Header).join(","));
+      download(mapped.join("\n"), `tig_bpm_measures_${timePeriod}_${functionalClass}.csv`, "text/csv");
+    }, [data, columns]);
 
     return (
       <div className='flex flex-1'>
@@ -50,6 +61,14 @@ export const HBTableFilter = ({ source, filters, setFilters, data, columns }) =>
               ))}
           </select>
         </div>
+        <div>
+        <Button themeOptions={{size:'sm', color: 'primary'}}
+          onClick={ downloadData }
+        >
+          Download
+        </Button>
+      </div>
+
       </div>
     )
 }

@@ -40,7 +40,6 @@ const GisDatasetConfig = {
     hidden: false,
     component: TigMetadata,
   },
-
   map: {
     name: "Map",
     path: "/map",
@@ -69,6 +68,7 @@ const GisDatasetConfig = {
       <CreatePage
         {...props}
         tippecanoeOptions={{flags: ['-b0']}}
+        defaultTilesColumns={['ptype']}
       />
     )
   },

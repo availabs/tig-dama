@@ -136,7 +136,7 @@ const TablePage = ({
       <div className="flex">
         <TableFilter filters={filters} setFilters={setFilters}
           node={ ref }/>
-        <ViewSelector views={views} />
+        {/*<ViewSelector views={views} />*/}
       </div>
       <div style={{ height: "600px" }} ref={ setRef }>
         {data?.length ? (

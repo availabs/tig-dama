@@ -9,6 +9,10 @@ import TigMetadata from '../TigMetadata'
 import {BPMTableTransform, HBTableFilter} from './BPMTableFilter'
 import {BPMMapFilter} from './BPMMapFilter'
 
+import {BPMChartFilters, BPMChartTransform } from './BPMChartFilters'
+
+import Chart from './BPMChart'
+
 
 
 
@@ -53,6 +57,17 @@ const config = {
         {...props}
          showViewSelector={false}
          MapFilter={BPMMapFilter}
+      />
+    ),
+  },
+  chart: {
+    name: "Chart",
+    path: "/chart",
+    component: (props) => (
+      <Chart
+        {...props}
+        ChartFilter={BPMChartFilters}
+        transform={BPMChartTransform}
       />
     ),
   },

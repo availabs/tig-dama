@@ -13,6 +13,100 @@ import { Combobox } from '@headlessui/react'
 import { DamaContext } from "~/pages/DataManager/store"
 import { fips2Name } from '../constants';
 
+import { Button } from "~/modules/avl-components/src"
+import shpwrite from  '@mapbox/shp-write'
+
+
+const MapDataDownloader = ({ activeViewId, activeVar,functionalClass,timePeriod,mapData  }) => {
+  
+  const { pgEnv, falcor, falcorCache  } = React.useContext(DamaContext);
+
+  const [loading, setLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    setLoading(true);
+    // console.log('load geoms',pgEnv,mapData)
+    if (!pgEnv || !Object.keys(mapData).length ) return;
+    const geoids = Object.keys(mapData)
+    falcor.get([
+        "dama",
+        pgEnv,
+        "tiger",
+        [311],
+        geoids,
+        ['2020'],
+        ['county'],
+        "attributes",
+        ["geoid", "wkb_geometry", "name"],
+      ])
+    .then((d) => {
+      // console.log('geom response', d)
+      setLoading(false)
+    })
+  }, [falcor, pgEnv, mapData])
+
+  const downloadData = () => {
+    const length = get(falcorCache, ['dama', pgEnv, 'viewsbyId', activeViewId, 'data', 'length'], 0);
+    const path = ["dama", pgEnv, "viewsbyId", activeViewId, "databyId"];
+    
+    const collection = {
+      type: "FeatureCollection",
+      //features: []
+      features: Object.keys(mapData).map(geoid => {
+        const properties = { 
+          geoid, 
+          county: fips2Name[geoid], 
+          [activeVar] : mapData[geoid] 
+        }
+        //const value = get(data, activeVar, null);
+        //const county = get(data, "county", "unknown");
+        const geometry = JSON.parse(get(falcorCache, [
+          "dama",
+          pgEnv,
+          "tiger",
+          [311],
+          geoid,
+          ['2020'],
+          ['county'],
+          "attributes",
+          "wkb_geometry"
+        ], "{}"));
+        if(geometry.type === 'Polygon') {
+          geometry.type = 'MultiPolygon'
+          geometry.coordinates = [geometry.coordinates]
+        }
+        
+        return {
+          type: "Feature",
+          properties,
+          geometry
+        }
+      })
+    }
+
+    const options = {
+      folder: `tig_bpm_measures_${activeVar}_${timePeriod}_${functionalClass}`,
+      file: `tig_bpm_measures_${activeVar}_${timePeriod}_${functionalClass}`,
+      outputType: "blob",
+      compression: "DEFLATE",
+    }
+    shpwrite.download(collection, options)
+    //shpDownload(collection, options);
+  };
+
+  return (
+    <div>
+      <Button themeOptions={{size:'sm', color: 'primary'}}
+        onClick={ downloadData }
+        disabled={ loading }
+      >
+        Download
+      </Button>
+    </div>
+  )
+}
+
+
 export const BPMMapFilter = ({
     source,
     metaData,
@@ -172,7 +266,7 @@ export const BPMMapFilter = ({
     }, {});
 
     if(!isEqual(newSymbology, tempSymbology)){
-      console.log('setting new newSymbology: ', activeVar)
+      //console.log('setting new newSymbology: ', activeVar)
       setTempSymbology(newSymbology)
     }
 
@@ -184,7 +278,7 @@ export const BPMMapFilter = ({
         <div className='flex-1'>
           <select
               className="pl-3 pr-4 py-2.5 border border-blue-100 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
-              value={variable}
+              value={variable || ''}
               onChange={(e) => setFilters({'activeVar' :{ value: e.target.value}})}
             >
               {variableClasses?.filter(d => d).map((v,i) => (
@@ -198,7 +292,7 @@ export const BPMMapFilter = ({
         <div className='flex-1'>
           <select
               className="pl-3 pr-4 py-2.5 border border-blue-100 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
-              value={timePeriod}
+              value={timePeriod || ''}
               onChange={(e) => setFilters({'period' :{ value: e.target.value}})}
             >
               {allTimePeriods?.filter(d => d && d !== 'null').map((v,i) => (
@@ -212,7 +306,7 @@ export const BPMMapFilter = ({
         <div className='flex-1'>
           <select
               className="pl-3 pr-4 py-2.5 border border-blue-100 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
-              value={functionalClass}
+              value={functionalClass || ''}
               onChange={(e) => setFilters({'functional_class' :{ value: e.target.value}})}
             >
               {allFunctionalClasses?.filter(d => d && d !== 'null').map((v,i) => (
@@ -222,6 +316,13 @@ export const BPMMapFilter = ({
               ))}
           </select>
         </div>
+        <MapDataDownloader
+          timePeriod={timePeriod}
+          functionalClass={functionalClass}
+          mapData={mapData}
+          activeViewId={ activeViewId }
+          activeVar={ variable }
+        />
       </div>
   )
 
