@@ -192,7 +192,7 @@ export const BPMMapFilter = ({
       }, []);
     }
   });
-
+console.log("filteredData", filteredData)
   const variableAccessors = {
     "VMT" : "vehicle_miles_traveled",
     "VHT" : "vehicle_hours_traveled",

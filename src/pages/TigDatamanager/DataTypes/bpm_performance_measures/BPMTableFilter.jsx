@@ -74,7 +74,7 @@ export const HBTableFilter = ({ source, filters, setFilters, data, columns }) =>
 }
 
 export const BPMTableTransform = (tableData, attributes, filters) => {
-    
+
   const filterKeys = Object.keys(filters);
   
   let data = tableData;
@@ -86,7 +86,7 @@ export const BPMTableTransform = (tableData, attributes, filters) => {
       return acc;
     }, []);
   });
-
+  console.log("tableData between", tableData)
   const sumAll = {};
   data.reduce((i, data) => {
     if(data?.functional_class != "total")
@@ -103,7 +103,7 @@ export const BPMTableTransform = (tableData, attributes, filters) => {
   }, []);
 
   console.log('what is the value of the data: ', data);
-  // console.log("what is the values of sumAll: ", sumAll);
+  console.log("what is the values of sumAll: ", sumAll);
   const columns = [
       {
         Header: 'County',
