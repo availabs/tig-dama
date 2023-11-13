@@ -6,12 +6,9 @@ import get from 'lodash/get'
 import ckmeans from "~/pages/DataManager/utils/ckmeans";
 import { getColorRange } from "~/modules/avl-components/src";
 
-import { Combobox } from '@headlessui/react'
-
-//import ProjectHoverComp from './MapHoverComp'
-
 import { DamaContext } from "~/pages/DataManager/store"
 import { fips2Name } from '../constants';
+import { variableAccessors } from "./BPMConstants";
 
 import { Button } from "~/modules/avl-components/src"
 import shpwrite from  '@mapbox/shp-write'
@@ -25,7 +22,7 @@ const MapDataDownloader = ({ activeViewId, activeVar,functionalClass,timePeriod,
 
   React.useEffect(() => {
     setLoading(true);
-    // console.log('load geoms',pgEnv,mapData)
+
     if (!pgEnv || !Object.keys(mapData).length ) return;
     const geoids = Object.keys(mapData)
     falcor.get([
@@ -40,7 +37,6 @@ const MapDataDownloader = ({ activeViewId, activeVar,functionalClass,timePeriod,
         ["geoid", "wkb_geometry", "name"],
       ])
     .then((d) => {
-      // console.log('geom response', d)
       setLoading(false)
     })
   }, [falcor, pgEnv, mapData])
@@ -51,15 +47,13 @@ const MapDataDownloader = ({ activeViewId, activeVar,functionalClass,timePeriod,
     
     const collection = {
       type: "FeatureCollection",
-      //features: []
       features: Object.keys(mapData).map(geoid => {
         const properties = { 
           geoid, 
           county: fips2Name[geoid], 
           [activeVar] : mapData[geoid] 
         }
-        //const value = get(data, activeVar, null);
-        //const county = get(data, "county", "unknown");
+
         const geometry = JSON.parse(get(falcorCache, [
           "dama",
           pgEnv,
@@ -71,6 +65,7 @@ const MapDataDownloader = ({ activeViewId, activeVar,functionalClass,timePeriod,
           "attributes",
           "wkb_geometry"
         ], "{}"));
+
         if(geometry.type === 'Polygon') {
           geometry.type = 'MultiPolygon'
           geometry.coordinates = [geometry.coordinates]
@@ -91,7 +86,6 @@ const MapDataDownloader = ({ activeViewId, activeVar,functionalClass,timePeriod,
       compression: "DEFLATE",
     }
     shpwrite.download(collection, options)
-    //shpDownload(collection, options);
   };
 
   return (
@@ -193,16 +187,41 @@ export const BPMMapFilter = ({
     }
   });
 
-  const variableAccessors = {
-    "VMT" : "vehicle_miles_traveled",
-    "VHT" : "vehicle_hours_traveled",
-    "AvgSpeed": "ave_speed"
-  };
+  //For a given area + period + functional_class, there may be more than 1 row of data
+  //We need to sum or average the data together
+  const sumAll = filteredData.reduce((sumAll, d) => {
+    const countyName = name2fips[d?.area];
+    if(!sumAll[countyName]){
+      sumAll[countyName] = {
+        ogc_fid: d.ogc_fid,
+        [variableAccessors.VMT]: 0,
+        [variableAccessors.VHT]: 0,
+        total_speed: 0,
+        count: 0
+      }
+    }
 
-  const mapData = filteredData.reduce((acc, val) => {
-    acc[name2fips[val.area]] = Number(val[variableAccessors[variable]]);
-    return acc;
+    sumAll[countyName] = {
+      [variableAccessors.VMT]: Number(d?.[variableAccessors.VMT]) + sumAll[countyName][variableAccessors.VMT] || 0,
+      [variableAccessors.VHT]: Number(d?.[variableAccessors.VHT]) + sumAll[countyName][variableAccessors.VHT] || 0,
+      total_speed: d?.ave_speed + sumAll[countyName].total_speed || 0,
+      count: 1+sumAll[countyName]?.count || 0
+    }
+    return sumAll
   }, {});
+
+  
+  Object.values(sumAll).forEach(area => {
+    area[variableAccessors.AvgSpeed] =  area.total_speed/area.count
+  })
+
+  const formattedData = {};
+
+  Object.keys(sumAll).forEach(areaId => {
+    formattedData[areaId] = sumAll[areaId][variableAccessors[variable]]
+  })
+
+  const mapData = formattedData
 
   React.useEffect(() => {
     // const CountyValues = Object.values(filteredData)
@@ -215,13 +234,13 @@ export const BPMMapFilter = ({
       }
   
     */
-    let activeVar = filters?.activeVar?.value || 'default'
     const ckmeansLen = Math.min((Object.values(mapData) || []).length, 5);
     const values = Object.values(mapData || {});
     let domain = [0, 10, 25, 50, 75, 100];
     if (ckmeansLen <= values.length) {
       domain = ckmeans(values, ckmeansLen) || [];
     }
+
     const range = getColorRange(5, "YlOrRd", false);
 
     if (!(domain && domain?.length > 5)) {
@@ -231,10 +250,10 @@ export const BPMMapFilter = ({
       }
     }
 
-    function colorScale(domain, value) {
+    function colorScale(domain, areaValue) {
       let color = range[0];//"rgba(0,0,0,0)";
-      (domain || []).forEach((v, i) => {
-        if (value >= v && value <= domain[i + 1]) {
+      (domain || []).forEach((domainValue, i) => {
+        if (areaValue >= domainValue && (!domain[i+1] || areaValue <= domain[i + 1])) {
           color = range[i];
         }
       });
@@ -266,7 +285,6 @@ export const BPMMapFilter = ({
     }, {});
 
     if(!isEqual(newSymbology, tempSymbology)){
-      //console.log('setting new newSymbology: ', activeVar)
       setTempSymbology(newSymbology)
     }
 

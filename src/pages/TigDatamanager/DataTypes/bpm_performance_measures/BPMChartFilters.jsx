@@ -6,6 +6,7 @@ import download from "downloadjs";
 
 import { Button } from "~/modules/avl-components/src";
 import { fips2Name, regionalData } from "../constants";
+import { variableAccessors } from './BPMConstants'
 import { DamaContext } from "~/pages/DataManager/store"
 
 const summarizeVars = {
@@ -288,11 +289,7 @@ export const BPMChartTransform = ({ valueMap, filters }) => {
 
   let finalchartData = [];
   let keys = [];
-  const variableAccessors = {
-    "VMT" : "vehicle_miles_traveled",
-    "VHT" : "vehicle_hours_traveled",
-    "AvgSpeed": "ave_speed"
-  };
+
   const accessor = variableAccessors?.[filters?.activeVar?.value] || 'vehicle_miles_traveled'
 
 
