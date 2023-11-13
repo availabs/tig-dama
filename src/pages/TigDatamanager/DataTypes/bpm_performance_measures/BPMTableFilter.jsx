@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Button } from "~/modules/avl-components/src"
 import download from "downloadjs"
-import { variableAccessors } from "./BPMConstants";
+import { variableAccessors, BPM_DISPLAY_DIVISOR, variableLabels } from "./BPMConstants";
 
-export const HBTableFilter = ({ source, filters, setFilters, data, columns }) => {
+export const HBTableFilter = ({ filters, setFilters, data, columns }) => {
     const timePeriod = filters['period']?.value || null;
     const functionalClass = filters['functional_class']?.value || null;
 
@@ -99,8 +99,8 @@ export const BPMTableTransform = (tableData, attributes, filters) => {
     }
 
     sumAll[d?.area] = {
-      [variableAccessors.VMT]: Number(d?.vehicle_miles_traveled) + sumAll[d?.area][variableAccessors.VMT] || 0,
-      [variableAccessors.VHT]: Number(d?.vehicle_hours_traveled) + sumAll[d?.area][variableAccessors.VHT] || 0,
+      [variableAccessors.VMT]: Number(d?.[variableAccessors.VMT]) + sumAll[d?.area][variableAccessors.VMT] || 0,
+      [variableAccessors.VHT]: Number(d?.[variableAccessors.VHT]) + sumAll[d?.area][variableAccessors.VHT] || 0,
       total_speed: d?.ave_speed + sumAll[d?.area].total_speed || 0,
       count: 1+sumAll[d?.area]?.count || 0
     }
@@ -123,17 +123,17 @@ export const BPMTableTransform = (tableData, attributes, filters) => {
         accessor: 'area'
       },
       {
-        Header: 'VMT (in Thousands)',
+        Header: variableLabels.VMT,
         accessor: variableAccessors.VMT,
-        Cell: (d) => <div>{Math.round(d.value/1000).toLocaleString()}</div>
+        Cell: (d) => <div>{Math.round(d.value/BPM_DISPLAY_DIVISOR).toLocaleString()}</div>
       },
       {
-        Header: 'VHT (in Thousands)',
+        Header: variableLabels.VHT,
         accessor: variableAccessors.VHT,
-        Cell: (d) => <div>{Math.round(d.value/1000).toLocaleString()}</div>
+        Cell: (d) => <div>{Math.round(d.value/BPM_DISPLAY_DIVISOR).toLocaleString()}</div>
       },
       {
-        Header: 'Avg. Speed (Miles/Hr)',
+        Header: variableLabels.AvgSpeed,
         accessor: variableAccessors.AvgSpeed,
         Cell: (d) => <div>{(d.value).toFixed(2).toLocaleString()}</div>
       }

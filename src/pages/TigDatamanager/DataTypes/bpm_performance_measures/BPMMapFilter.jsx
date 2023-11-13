@@ -190,8 +190,9 @@ export const BPMMapFilter = ({
   //For a given area + period + functional_class, there may be more than 1 row of data
   //We need to sum or average the data together
   const sumAll = filteredData.reduce((sumAll, d) => {
-    if(!sumAll[  name2fips[d?.area]]){
-      sumAll[  name2fips[d?.area]] = {
+    const countyName = name2fips[d?.area];
+    if(!sumAll[countyName]){
+      sumAll[countyName] = {
         ogc_fid: d.ogc_fid,
         [variableAccessors.VMT]: 0,
         [variableAccessors.VHT]: 0,
@@ -200,11 +201,11 @@ export const BPMMapFilter = ({
       }
     }
 
-    sumAll[name2fips[d?.area]] = {
-      [variableAccessors.VMT]: Number(d?.vehicle_miles_traveled) + sumAll[  name2fips[d?.area]][variableAccessors.VMT] || 0,
-      [variableAccessors.VHT]: Number(d?.vehicle_hours_traveled) + sumAll[  name2fips[d?.area]][variableAccessors.VHT] || 0,
-      total_speed: d?.ave_speed + sumAll[  name2fips[d?.area]].total_speed || 0,
-      count: 1+sumAll[  name2fips[d?.area]]?.count || 0
+    sumAll[countyName] = {
+      [variableAccessors.VMT]: Number(d?.[variableAccessors.VMT]) + sumAll[countyName][variableAccessors.VMT] || 0,
+      [variableAccessors.VHT]: Number(d?.[variableAccessors.VHT]) + sumAll[countyName][variableAccessors.VHT] || 0,
+      total_speed: d?.ave_speed + sumAll[countyName].total_speed || 0,
+      count: 1+sumAll[countyName]?.count || 0
     }
     return sumAll
   }, {});
@@ -219,7 +220,6 @@ export const BPMMapFilter = ({
   Object.keys(sumAll).forEach(areaId => {
     formattedData[areaId] = sumAll[areaId][variableAccessors[variable]]
   })
-
 
   const mapData = formattedData
 
