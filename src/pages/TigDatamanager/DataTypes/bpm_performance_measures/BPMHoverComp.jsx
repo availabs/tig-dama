@@ -114,4 +114,4 @@ export const BPMHoverComp = (props) => {
   
       </div>
     )
-  }
+}
