@@ -86,40 +86,34 @@ export const BPMTableTransform = (tableData, attributes, filters) => {
       return acc;
     }, []);
   });
-  
-  //For a given area + period + functional_class, there may be more than 1 row of data
-  //We need to sum or average the data together
+
   const sumAll = data.reduce((sumAll, d) => {
     if(!sumAll[d?.area]){
       sumAll[d?.area] = {
         ogc_fid: d.ogc_fid,
-        total_vehicle_miles_traveled: 0,
-        total_vehicle_hours_traveled: 0,
+        [variableAccessors.VMT]: 0,
+        [variableAccessors.VHT]: 0,
         total_speed: 0,
         count: 0
       }
     }
 
     sumAll[d?.area] = {
-      total_vehicle_miles_traveled: Number(d?.vehicle_miles_traveled) + sumAll[d.area].total_vehicle_miles_traveled || 0,
-      total_vehicle_hours_traveled: Number(d?.vehicle_hours_traveled) + sumAll[d.area].total_vehicle_hours_traveled || 0,
-      total_speed: d?.ave_speed + sumAll[d.area].total_speed || 0,
+      [variableAccessors.VMT]: Number(d?.vehicle_miles_traveled) + sumAll[d?.area][variableAccessors.VMT] || 0,
+      [variableAccessors.VHT]: Number(d?.vehicle_hours_traveled) + sumAll[d?.area][variableAccessors.VHT] || 0,
+      total_speed: d?.ave_speed + sumAll[d?.area].total_speed || 0,
       count: 1+sumAll[d?.area]?.count || 0
     }
     return sumAll
   }, {});
 
-
-
-  const outputData = Object.keys(sumAll).map((countyName) => {
-    const countyData = sumAll[countyName];
+  const outputData = Object.keys(sumAll).map((area) => {
+    const countyData = sumAll[area];
 
     return {
-      [variableAccessors.VMT]: countyData['total_vehicle_miles_traveled'],
-      [variableAccessors.VHT]: countyData['total_vehicle_hours_traveled'],
+      ...countyData,
+      area,
       [variableAccessors.AvgSpeed]: countyData.total_speed/countyData.count,
-      area: countyName,
-      ogc_fid: countyData['ogc_fid']
     }
   });
 
@@ -131,12 +125,12 @@ export const BPMTableTransform = (tableData, attributes, filters) => {
       {
         Header: 'VMT (in Thousands)',
         accessor: variableAccessors.VMT,
-        Cell: (d) => <div>{Math.round(d.value).toLocaleString()}</div>
+        Cell: (d) => <div>{Math.round(d.value/1000).toLocaleString()}</div>
       },
       {
         Header: 'VHT (in Thousands)',
         accessor: variableAccessors.VHT,
-        Cell: (d) => <div>{Math.round(d.value).toLocaleString()}</div>
+        Cell: (d) => <div>{Math.round(d.value/1000).toLocaleString()}</div>
       },
       {
         Header: 'Avg. Speed (Miles/Hr)',
