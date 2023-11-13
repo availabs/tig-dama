@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "~/modules/avl-components/src"
 import download from "downloadjs"
+import { variableAccessors } from "./BPMConstants";
 
 export const HBTableFilter = ({ source, filters, setFilters, data, columns }) => {
     const timePeriod = filters['period']?.value || null;
@@ -62,22 +63,21 @@ export const HBTableFilter = ({ source, filters, setFilters, data, columns }) =>
           </select>
         </div>
         <div>
-        <Button themeOptions={{size:'sm', color: 'primary'}}
-          onClick={ downloadData }
-        >
-          Download
-        </Button>
-      </div>
-
+          <Button themeOptions={{size:'sm', color: 'primary'}}
+            onClick={ downloadData }
+          >
+            Download
+          </Button>
+        </div>
       </div>
     )
 }
 
 export const BPMTableTransform = (tableData, attributes, filters) => {
-
   const filterKeys = Object.keys(filters);
-  
   let data = tableData;
+
+  //Filter out any data that does not match our filters (time period and functional class)
   filterKeys.forEach((key, i) => {
     data = data.reduce((acc, val) => {
       if(filters[key].value == val[key]) {
@@ -86,24 +86,44 @@ export const BPMTableTransform = (tableData, attributes, filters) => {
       return acc;
     }, []);
   });
-  console.log("tableData between", tableData)
-  const sumAll = {};
-  data.reduce((i, data) => {
-    if(data?.functional_class != "total")
-    sumAll[data?.area] = {
-      total_vehicle_miles_traveled: Number(data.vehicle_miles_traveled) + sumAll[data.area]?.total_vehicle_miles_traveled || 0,
-      total_vehicle_hours_traveled: Number(data.vehicle_hours_traveled) + sumAll[data.area]?.total_vehicle_hours_traveled || 0,
-      total_speed: data.ave_speed + sumAll[data.area]?.total_speed || 0,
-      count: 1+sumAll[data?.area]?.count || 0
+  
+  //For a given area + period + functional_class, there may be more than 1 row of data
+  //We need to sum or average the data together
+  const sumAll = data.reduce((sumAll, d) => {
+    if(!sumAll[d?.area]){
+      sumAll[d?.area] = {
+        ogc_fid: d.ogc_fid,
+        total_vehicle_miles_traveled: 0,
+        total_vehicle_hours_traveled: 0,
+        total_speed: 0,
+        count: 0
+      }
     }
+
+    sumAll[d?.area] = {
+      total_vehicle_miles_traveled: Number(d?.vehicle_miles_traveled) + sumAll[d.area].total_vehicle_miles_traveled || 0,
+      total_vehicle_hours_traveled: Number(d?.vehicle_hours_traveled) + sumAll[d.area].total_vehicle_hours_traveled || 0,
+      total_speed: d?.ave_speed + sumAll[d.area].total_speed || 0,
+      count: 1+sumAll[d?.area]?.count || 0
+    }
+    return sumAll
   }, {});
 
-  Object.keys(sumAll).reduce((i, key) => {
-    sumAll[key].avg_speed = sumAll[key].total_speed/sumAll[key].count;
-  }, []);
 
-  console.log('what is the value of the data: ', data);
-  console.log("what is the values of sumAll: ", sumAll);
+
+  const outputData = Object.keys(sumAll).map((countyName) => {
+    const countyData = sumAll[countyName];
+
+    return {
+      [variableAccessors.VMT]: countyData['total_vehicle_miles_traveled'],
+      [variableAccessors.VHT]: countyData['total_vehicle_hours_traveled'],
+      [variableAccessors.AvgSpeed]: countyData.total_speed/countyData.count,
+      area: countyName,
+      ogc_fid: countyData['ogc_fid']
+    }
+      
+  });
+
   const columns = [
       {
         Header: 'County',
@@ -111,37 +131,24 @@ export const BPMTableTransform = (tableData, attributes, filters) => {
       },
       {
         Header: 'VMT (in Thousands)',
-        accessor: 'vehicle_miles_traveled',
+        accessor: variableAccessors.VMT,
         Cell: (d) => <div>{Math.round(d.value).toLocaleString()}</div>
       },
       {
         Header: 'VHT (in Thousands)',
-        accessor: 'vehicle_hours_traveled',
+        accessor: variableAccessors.VHT,
         Cell: (d) => <div>{Math.round(d.value).toLocaleString()}</div>
       },
       {
         Header: 'Avg. Speed (Miles/Hr)',
-        accessor: 'ave_speed',
+        accessor: variableAccessors.AvgSpeed,
         Cell: (d) => <div>{(d.value).toFixed(2).toLocaleString()}</div>
       }
     ]
 
   
     return {
-      data: data,
+      data: outputData,
       columns: columns,
-      // attributes
-      //   //?.filter(d => ['area','vehicle_miles_traveled'].includes(d))
-      //   ?.map((d) => ({
-      //     Header: d,
-      //     accessor: d,
-      //   })),
     };
 };
-
-
-/*
-    transform={HBTableTransform}
-    TableFilter={HBTableFilter}
-*/
-
