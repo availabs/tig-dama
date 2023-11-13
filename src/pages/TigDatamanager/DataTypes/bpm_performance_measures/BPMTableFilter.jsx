@@ -121,7 +121,6 @@ export const BPMTableTransform = (tableData, attributes, filters) => {
       area: countyName,
       ogc_fid: countyData['ogc_fid']
     }
-      
   });
 
   const columns = [
