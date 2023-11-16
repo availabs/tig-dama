@@ -14,10 +14,7 @@ import {BPMChartFilters, BPMChartTransform } from './BPMChartFilters'
 import Chart from './BPMChart'
 
 
-
-
 const getVariables = (source,views,activeViewId) =>  {
-    
     let currentView = (views || []).filter(d => d.view_id === +activeViewId)?.[0] || views?.[0]
     return views.map(d => ({key: d.view_id, name: d.version || d.view_id , type: 'view'}))
 }
@@ -28,8 +25,11 @@ const config = {
     name: "Overview",
     path: "",
     tag: 'test',
-    component: (props) => <TigOverview {...props}
-       getVariables={getVariables}  filterButtons={[]}/>
+    component: (props) => <TigOverview 
+        {...props}
+        getVariables={getVariables}  
+        filterButtons={[]}
+      />
   },
   meta: {
     name: "Metadata",

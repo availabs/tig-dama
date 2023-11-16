@@ -32,7 +32,11 @@ const GisDatasetConfig = {
     name: "Overview",
     path: "",
     tag: 'test',
-    component: (props) => <TigOverview {...props} getVariables={getVariables} filterButtons={['Chart']}/>
+    component: (props) => <TigOverview 
+    {...props} 
+    getVariables={getVariables} 
+    filterButtons={['Chart']}
+    />
   },
   meta: {
     name: "Metadata",
