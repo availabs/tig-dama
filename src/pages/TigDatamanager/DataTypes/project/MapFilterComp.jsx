@@ -1,13 +1,10 @@
-import React, {useMemo} from 'react'
+import React from 'react'
 import { DamaContext } from "~/pages/DataManager/store"
 import get from 'lodash/get'
 import cloneDeep from 'lodash/cloneDeep'
 import isEqual from 'lodash/isEqual'
-import { download as shpDownload } from "~/pages/DataManager/utils/shp-write"
 import Selector from './Selector'
 import { Button } from "~/modules/avl-components/src"
-
-
 // const ptypes_colors= {
 //   "Study": "#004C73",
 //   "Highway": "#A80000",
@@ -44,6 +41,22 @@ const ptypes_colors = {
 "": "rgba(0,0,0,0)"
 }
 
+
+const images = [
+  {'id': 'BIKE', url: '/mapIcons/bike.png'},
+  {'id': 'BUS', url: '/mapIcons/transit.png'},
+  {'id': 'HIGHWAY', url: '/mapIcons/highway.png'},
+  {'id': 'BRIDGE', url: '/mapIcons/highway.png'},
+  {'id': 'FERRY', url: '/mapIcons/ferry.png'},
+  {'id': 'RAIL', url: '/mapIcons/rail.png'},
+  {'id': 'STATIONS', url: '/mapIcons/rail.png'},
+  {'id': 'TRUCK', url: '/mapIcons/truck.png'},
+  {'id': 'PEDESTRIAN', url: '/mapIcons/pedestrian.png'},
+  {'id': 'ITS', url: '/mapIcons/its.png'},
+  {'id': 'PARKING', url: '/mapIcons/parking.png'},
+  {'id': 'FREIGHT', url: '/mapIcons/truck.png'},
+  {'id': 'TRANSIT', url: '/mapIcons/transit.png'}
+]
 
 const styles = {
    "line": {
@@ -107,22 +120,6 @@ const styles = {
 }
 
 
-const images = [
-    {'id': 'BIKE', url: '/mapIcons/bike.png'},
-    {'id': 'BUS', url: '/mapIcons/transit.png'},
-    {'id': 'HIGHWAY', url: '/mapIcons/highway.png'},
-    {'id': 'BRIDGE', url: '/mapIcons/highway.png'},
-    {'id': 'FERRY', url: '/mapIcons/ferry.png'},
-    {'id': 'RAIL', url: '/mapIcons/rail.png'},
-    {'id': 'STATIONS', url: '/mapIcons/rail.png'},
-    {'id': 'TRUCK', url: '/mapIcons/truck.png'},
-    {'id': 'PEDESTRIAN', url: '/mapIcons/pedestrian.png'},
-    {'id': 'ITS', url: '/mapIcons/its.png'},
-    {'id': 'PARKING', url: '/mapIcons/parking.png'},
-    {'id': 'FREIGHT', url: '/mapIcons/truck.png'},
-    {'id': 'TRANSIT', url: '/mapIcons/transit.png'}
-]
-
 const ProjectMapFilter = ({
     source,
     metaData,
@@ -136,7 +133,8 @@ const ProjectMapFilter = ({
 
   const { falcor, falcorCache, pgEnv } = React.useContext(DamaContext)
 
-  let projectKey = (source?.metadata || []).map(d => d.name).includes('rtp_id') ? 'rtp_id' : 'tip_id'
+  //Suddenly got errors about the structure here... beforehand, it never complained.
+  let projectKey = source?.name.includes('RTP') ? 'rtp_id' : 'tip_id' // TODO RYAN CHECK to make sure this was OK
   let newSymbology  = cloneDeep(tempSymbology)
  
   React.useEffect(() => {
@@ -175,7 +173,6 @@ const ProjectMapFilter = ({
     }
   },[falcorCache])
       
-  console.log(filterData)
 
   if(!newSymbology?.source) {
     newSymbology.sources = metaData?.tiles?.sources || []
@@ -191,10 +188,40 @@ const ProjectMapFilter = ({
         }
       })
       //loadSourceData()
-  }
+  }  
 
   if(!newSymbology.images) {
     newSymbology.images = images
+  }
+  console.log("newSymbology",newSymbology)
+  
+
+  const totalDomain = images.concat(Object.keys(ptypes_colors).map(ptype => ({id: ptype, color: ptypes_colors[ptype]}))).filter(domainElement => domainElement.id !== "" && domainElement.id !== "NULL")
+  const domainRangeMap = {};
+
+  totalDomain.forEach(domainElement => {
+    const { id } = domainElement
+    if(!domainRangeMap[id]){
+      domainRangeMap[id] = {
+        id
+      };
+    }
+    if(domainElement['color']){
+      domainRangeMap[id]['color'] = domainElement.color;
+    }
+    if(domainElement['url']){
+      domainRangeMap[id]['url'] = domainElement.url
+    }
+
+  })
+
+  newSymbology.legend = {
+    type: "ordinal",
+    rangeType: "image",
+    customLegendScale: domainRangeMap,
+    name: "TIP RTP RYAN LEGEND updated again",
+    isActive: false,
+    format: ""
   }
 
   if(!isEqual(newSymbology, tempSymbology)){
