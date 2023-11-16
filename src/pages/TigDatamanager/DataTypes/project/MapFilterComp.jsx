@@ -43,19 +43,23 @@ const ptypes_colors = {
 
 
 const images = [
-  {'id': 'BIKE', url: '/mapIcons/bike.png'},
-  {'id': 'BUS', url: '/mapIcons/transit.png'},
-  {'id': 'HIGHWAY', url: '/mapIcons/highway.png'},
-  {'id': 'BRIDGE', url: '/mapIcons/highway.png'},
-  {'id': 'FERRY', url: '/mapIcons/ferry.png'},
-  {'id': 'RAIL', url: '/mapIcons/rail.png'},
-  {'id': 'STATIONS', url: '/mapIcons/rail.png'},
-  {'id': 'TRUCK', url: '/mapIcons/truck.png'},
-  {'id': 'PEDESTRIAN', url: '/mapIcons/pedestrian.png'},
-  {'id': 'ITS', url: '/mapIcons/its.png'},
-  {'id': 'PARKING', url: '/mapIcons/parking.png'},
-  {'id': 'FREIGHT', url: '/mapIcons/truck.png'},
-  {'id': 'TRANSIT', url: '/mapIcons/transit.png'}
+  {'id': 'BIKE', url: '/mapIcons/bike.png', color: '#38A800', type: 'both'},
+  {'id': 'BUS', url: '/mapIcons/transit.png', color: '#0070FF', type: 'both'},
+  {'id': 'HIGHWAY', url: '/mapIcons/highway.png', color: '#fff', type: 'both'},
+  {'id': 'BRIDGE', url: '/mapIcons/highway.png', color: '#fff', type: 'none'},
+  {'id': 'FERRY', url: '/mapIcons/ferry.png', color: '#D79E9E', type: 'both'},
+  {'id': 'RAIL', url: '/mapIcons/rail.png', color: '#9C9C9C', type: 'both'},
+  {'id': 'STATIONS', url: '/mapIcons/rail.png', color: '#fff', type: 'none'},
+  {'id': 'TRUCK', url: '/mapIcons/truck.png', color: '#fff', type: 'both'},
+  {'id': 'PEDESTRIAN', url: '/mapIcons/pedestrian.png', color: '#B1FF00', type: 'both'},
+  {'id': 'ITS', url: '/mapIcons/its.png', color: '#FF00C5', type: 'both'},
+  {'id': 'PARKING', url: '/mapIcons/parking.png', color: '#496bff', type: 'both'},
+  {'id': 'FREIGHT', url: '/mapIcons/truck.png', color: '#fff', type: 'both'},
+  {'id': 'TRANSIT', url: '/mapIcons/transit.png', color: '#fff', type: 'both'},
+  {'id': 'HISTORIC', url:'', color: '#ffeb3b', type: 'both'},
+  {'id': 'STUDY', url:'', color: '#FFAA00', type: 'both'},
+  {'id': 'MOBILITY', url:'', color: '#B1FF00', type: 'both'}
+
 ]
 
 function onlyUnique(value, index, array) {
@@ -255,12 +259,13 @@ console.log("filterData***",filterData)
   })
 
   newSymbology.legend = {
-    type: "ordinal",
-    rangeType: "image",
+    height: 8,
+    type: "custom",
     customLegendScale: domainRangeMap,
     name: "TIP RTP RYAN LEGEND updated again",
     isActive: false,
-    format: ""
+    format: "",
+    height: 12
   }
 
   if(!isEqual(newSymbology, tempSymbology)){

@@ -19,7 +19,6 @@ import { ColorBar, ColorRanges } from "../utils/color-ranges"
 const ColorSteps = Object.keys(ColorRanges).sort((a, b) => +a - +b);
 
 export const Legend = ({ type, domain, range, format, ...props }) => {
-console.log("rest of legend props",props)
   const scale = React.useMemo(() => {
     return getScale(type, domain, range);
   }, [type, domain, range]);
@@ -36,6 +35,8 @@ console.log("rest of legend props",props)
         <OrdinalScale scale={ scale } format={ Format } { ...props }/> :
         type === "quantize" || type === "quantile" || type === "threshold" ?
         <QuantizleScale scale={ scale } format={ Format } { ...props }/> :
+        type === "custom" ?
+        <CustomScale format={ Format } { ...props }/> :
         <div>Unknown scale type "{ type }."</div>
       }
     </div>
@@ -231,15 +232,44 @@ const LinearScale = ({ scale, format, size, ticks = 5 }) => {
     </div>
   )
 }
+
+const CustomScale = ({ format, height = 3, customLegendScale }) => {
+  const domain = Object.keys(customLegendScale);
+
+  return (
+    <div className="flex">
+      { domain.reduce((a, c, i) => {
+        if (i % height === 0) {
+          a.push([]);
+        }
+        a[a.length - 1].push(c);
+        return a;
+      }, []).map((d, i) =>
+          <div key={ i }
+            className={ `${ i > 0 ? "ml-6" : "" } flex-1` }>
+            { d.map(dd =>
+                {
+                  const color = customLegendScale[dd].color || null;
+                  return (
+                    <div className="flex items-center" key={ dd }>
+                        <div className="h-6 w-6 rounded mr-1 mb-1"
+                          style={{ backgroundColor: color }}/>
+                      <div className="h-6 w-6 rounded mr-1 mb-1">
+                        <img src={customLegendScale[dd].url}/>
+                      </div>
+                      <div>{ format(dd) }</div>
+                    </div>)
+                }
+              )
+            }
+          </div>
+        )
+      }
+    </div>
+  )
+}
+
 const OrdinalScale = ({ scale, format, height = 3, direction = "vertical", customLegendScale }) => {
-  let domain;
-  if(customLegendScale){
-    console.log("ordinal scale, customLegendScale", customLegendScale)
-    domain = Object.keys(customLegendScale);
-  }
-  else{
-    domain = scale.domain();
-  }
   const range = scale.range();
 
   return (
@@ -254,7 +284,7 @@ const OrdinalScale = ({ scale, format, height = 3, direction = "vertical", custo
             }
           </div>
           <div className={ `flex` }>
-            { domain.map(d =>
+            { scale.domain().map(d =>
                 <div className="flex-1 text-center" key={ d }>
                   { format(d) }
                 </div>
@@ -263,7 +293,7 @@ const OrdinalScale = ({ scale, format, height = 3, direction = "vertical", custo
           </div>
         </> :
         <div className="flex">
-          { domain.reduce((a, c, i) => {
+          { scale.domain().reduce((a, c, i) => {
               if (i % height === 0) {
                 a.push([]);
               }
@@ -275,28 +305,14 @@ const OrdinalScale = ({ scale, format, height = 3, direction = "vertical", custo
                 className={ `${ i > 0 ? "ml-6" : "" } flex-1` }>
                 { d.map(dd =>
                     {
-                      if(customLegendScale){
-                        const color = customLegendScale[dd].color || null;
-                        return (
-                          <div className="flex items-center" key={ dd }>
-                              <div className="h-6 w-6 rounded mr-1 mb-1"
-                                style={{ backgroundColor: color }}/>
-                            <div className="h-6 w-6 rounded mr-1 mb-1">
-                              <img src={customLegendScale[dd].url}/>
-                            </div>
-                            <div>{ format(dd) }</div>
-                          </div>)
-                      }
-                      else {
-                        return  (
-                          <div className="flex items-center" key={ dd }>
-                            <div className="h-6 w-6 rounded mr-1 mb-1"
-                              style={ {
-                                backgroundColor: scale(dd)
-                              }}/>
-                            <div>{ format(dd) }</div>
-                          </div>)
-                      }
+                      return  (
+                        <div className="flex items-center" key={ dd }>
+                          <div className="h-6 w-6 rounded mr-1 mb-1"
+                            style={ {
+                              backgroundColor: scale(dd)
+                            }}/>
+                          <div>{ format(dd) }</div>
+                        </div>)
                     }
                   )
                 }
