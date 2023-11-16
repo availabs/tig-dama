@@ -105,7 +105,7 @@ export default ({
             disableFilters,
             disableSortBy,
             initialState: {
-                pageSize: pageSize || initialPageSize,
+                pageSize: +pageSize || +initialPageSize,
                 sortBy: [{id: sortBy, desc: sortOrder.toLowerCase() === "desc"}]
             }
         },
@@ -118,7 +118,7 @@ export default ({
 
     React.useEffect(() => {
         if ((pageSize !== null) && (pageSize !== statePageSize)) {
-            setPageSize(pageSize);
+            setPageSize(+pageSize);
         }
     }, [pageSize, statePageSize, setPageSize]);
 

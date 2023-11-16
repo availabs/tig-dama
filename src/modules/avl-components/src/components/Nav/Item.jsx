@@ -1,5 +1,5 @@
 import React, {useEffect} from "react";
-import { useMatch, useNavigate } from "react-router-dom";
+import { useMatch, useNavigate, Link } from "react-router-dom";
 
 import Icon from "../Icons";
 
@@ -60,8 +60,10 @@ const NavItem = ({
 
 	return (
 			<div className={type === "side" ? theme.subMenuParentWrapper : null}>
-				<div
+				
+				<Link
 					className={`${className ? className : navClass}`}
+					
 					onClick={(e) => {
 						e.stopPropagation();
 						if (onClick) return onClick(To[0]);
@@ -122,7 +124,7 @@ const NavItem = ({
 							className={className}
 						/> : ''
 					}
-				</div>
+				</Link>
 			</div>
 	);
 };
@@ -142,7 +144,7 @@ const SubMenu = ({ showSubMenu, subMenus, type, hovering, subMenuActivate, activ
 		>
 			
 			<div
-				className={`${theme.contentBg}
+				className={`
 							${inactiveHoveing && theme.subMenuWrapperInactiveFlyoutDirection}
 							${!inactiveHoveing && theme.subMenuWrapperChild}
 					flex ${(type === "side" || inactiveHoveing ? "flex-col" : "flex-row")}

@@ -1,11 +1,11 @@
 import React from "react";
 
-export const DefaultExpandedRow = ({values}) =>
-    <div className="flex">
+export const DefaultExpandedRow = ({values, theme}) =>
+    <div className="flex flex-col divide-y">
         {values.map(({key, value}, i) =>
             <div key={key || `key-${i}`} className="flex-1">
-                {key ? <b>{key}:</b> : null}
-                <span className="ml-1">{value}</span>
+                {key ? <div className={'font-semibold'}>{key}:</div> : null}
+                <span className>{value}</span>
             </div>
         )
         }

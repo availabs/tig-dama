@@ -9,6 +9,7 @@ import Table from './Table'
 import GridTable from "./Table/grid-table"
 import SideNav from './Nav/Side'
 import TopNav from './Nav/Top'
+import AwesomeTopNav from './Nav/awesomeNav/Top'
 import Layouts from "./Layouts"
 import Loading, { ScalableLoading } from "./Loading"
 import Scrollspy from "./Sidebar/scrollSpy/scrollspy";
@@ -69,6 +70,7 @@ export {
 	GridTable,
 	SideNav,
 	TopNav,
+	AwesomeTopNav,
 	NavItem,
 	NavMenu,
 	NavMenuItem,
