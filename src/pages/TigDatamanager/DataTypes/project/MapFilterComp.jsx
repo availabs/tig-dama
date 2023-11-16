@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { DamaContext } from "~/pages/DataManager/store"
 import get from 'lodash/get'
 import cloneDeep from 'lodash/cloneDeep'
@@ -57,6 +57,10 @@ const images = [
   {'id': 'FREIGHT', url: '/mapIcons/truck.png'},
   {'id': 'TRANSIT', url: '/mapIcons/transit.png'}
 ]
+
+function onlyUnique(value, index, array) {
+  return array.indexOf(value) === index;
+}
 
 const styles = {
    "line": {
@@ -133,8 +137,7 @@ const ProjectMapFilter = ({
 
   const { falcor, falcorCache, pgEnv } = React.useContext(DamaContext)
 
-  //Suddenly got errors about the structure here... beforehand, it never complained.
-  let projectKey = source?.name.includes('RTP') ? 'rtp_id' : 'tip_id' // TODO RYAN CHECK to make sure this was OK
+  let projectKey = source?.name.includes('RTP') ? 'rtp_id' : 'tip_id'
   let newSymbology  = cloneDeep(tempSymbology)
  
   React.useEffect(() => {
@@ -145,8 +148,8 @@ const ProjectMapFilter = ({
       let length = get(d,
         ['json', 'dama', pgEnv, 'viewsbyId' ,activeViewId, 'data', 'length'],
       0)
+      const metadata =  (source?.metadata?.columns || source?.metadata || []).map(d => d.name);
 
-          // console.log('length',length)
       await falcor.get([
         'dama',
         pgEnv,
@@ -154,30 +157,67 @@ const ProjectMapFilter = ({
         activeViewId,
         'databyIndex',
         [...Array(length).keys()],
-        ['ogc_fid',projectKey,'wkb_geometry']
+        metadata
       ])
     
     }
     loadSourceData()
   },[pgEnv,activeViewId,source])
 
-  const filterData = React.useMemo(() => {
-    const dataById = get(falcorCache,
-      ['dama', pgEnv, 'viewsbyId', activeViewId, 'databyId'],
-    {})
+  const dataById = get(falcorCache,
+    ['dama', pgEnv, 'viewsbyId', activeViewId, 'databyId'],
+  {})
+  console.log("data by Id**", Object.values(dataById))
 
+  const filterData = React.useMemo(() => {
     return {
-      [projectKey] :  ['', ...new Set(Object.values(dataById || {})
-        .map(d => d?.[projectKey] )
-        .filter(d => d))]
+      [projectKey] :  ['', ...new Set(Object.values(dataById || {}))]
     }
-  },[falcorCache])
-      
+  },[falcorCache, filters])
+  const allProjectIds = filterData[projectKey].map(d => d[projectKey]);
+console.log("filterData***",filterData)
+  //FILTERS NEEDED:
+  //projectId
+  //year -- maybe??
+  //projectType
+  //planPortion
+  //sponsor
+
+  // Examples for how to have specific filter fields
+
+  //To Populate menu/select/dropdown menu stuffs
+  const allProjectTypes = Object.values(dataById)?.map((val, i) => val.ptype).filter(onlyUnique);
+  allProjectTypes.unshift('');
+  // const allFunctionalClasses = data?.map((val, i) => val.functional_class).filter(onlyUnique);
+  // const variableClasses = ["VMT", "VHT", "AvgSpeed"];
+
+  const projectIdFilterValue = filters['projectId']?.value || null;
+  const projectTypeFilterValue = filters['ptype']?.value || null;
+  const planPortionFilterValue = filters['planPortion']?.value || null;
+  const sponsorFilterValue = filters['sponsor']?.value || null;
+
+  // //Example of how to filter data to only include good data
+  // const filterKeys = Object.keys(filters);
+
+  // filterKeys.forEach((key, i) => {
+  //   if(key !== 'activeVar') {
+  //     filteredData = filteredData.reduce((acc, val) => {
+  //       if(filters[key].value == val[key]) {
+  //           acc.push(val);
+  //       } 
+  //       return acc;
+  //     }, []);
+  //   }
+  // });
+
+
+
 
   if(!newSymbology?.source) {
     newSymbology.sources = metaData?.tiles?.sources || []
     const source_id = newSymbology?.sources?.[0]?.id || '0'
     const source_layer = `s${source.source_id}_v${activeViewId}` 
+
     newSymbology.layers = ['line','circle','fill']
       .map(type => {
         return {
@@ -187,7 +227,6 @@ const ProjectMapFilter = ({
           "source-layer": source_layer
         }
       })
-      //loadSourceData()
   }  
 
   if(!newSymbology.images) {
@@ -195,7 +234,7 @@ const ProjectMapFilter = ({
   }
   console.log("newSymbology",newSymbology)
   
-
+  //Custom legend stuff
   const totalDomain = images.concat(Object.keys(ptypes_colors).map(ptype => ({id: ptype, color: ptypes_colors[ptype]}))).filter(domainElement => domainElement.id !== "" && domainElement.id !== "NULL")
   const domainRangeMap = {};
 
@@ -229,13 +268,37 @@ const ProjectMapFilter = ({
     setTempSymbology(newSymbology)
   }
 
-
   return (
-    <div>
-      <Selector 
-        onChange={() => console.log('changed')} 
-        options={filterData[projectKey]}
-      />
+    <div className='flex flex-1'>
+      <div className='py-3.5 px-2 text-sm text-gray-400'>{projectKey === 'rtp_id' ? 'RTP' : 'TIP'} ID : </div>
+      <div className='flex-1'>
+        <select
+              className="pl-3 pr-4 py-2.5 border border-blue-100 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
+              value={projectIdFilterValue || ''}
+              onChange={(e) => setFilters({'projectId' :{ value: e.target.value}})}
+            >
+              {allProjectIds.map((v,i) => (
+                <option key={i} className="ml-2  truncate" value={v}>
+                  {v}
+                </option>
+              ))}
+        </select>
+      </div>
+      <div className='py-3.5 px-2 text-sm text-gray-400'>Project Type: </div>
+      <div className='flex-1'>
+
+          <select
+              className="pl-3 pr-4 py-2.5 border border-blue-100 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
+              value={projectTypeFilterValue || ''}
+              onChange={(e) => setFilters({'ptype' :{ value: e.target.value}})}
+            >
+              {allProjectTypes?.map((v,i) => (
+                <option key={i} className="ml-2  truncate" value={v}>
+                  {v}
+                </option>
+              ))}
+          </select>
+      </div>
     </div>
   )
 
