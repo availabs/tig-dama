@@ -8,6 +8,8 @@ import TigMetadata from '../TigMetadata'
 
 import {BPMTableTransform, HBTableFilter} from './BPMTableFilter'
 import {BPMMapFilter} from './BPMMapFilter'
+import {BPMHoverComp} from './BPMHoverComp'
+
 
 import {BPMChartFilters, BPMChartTransform } from './BPMChartFilters'
 
@@ -57,6 +59,7 @@ const config = {
         {...props}
          showViewSelector={false}
          MapFilter={BPMMapFilter}
+         HoverComp={{Component: BPMHoverComp, isPinnable: true}}
       />
     ),
   },
