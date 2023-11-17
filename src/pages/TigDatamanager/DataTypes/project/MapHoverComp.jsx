@@ -63,7 +63,7 @@ const TipHoverComp = ({ data, layer }) => {
      
       
       {cols.map(k => (
-      <div className='flex border-b pt-1' >
+      <div className='flex border-b pt-1' key={`col-${k.name}`}>
         <div className='flex-1 font-medium text-sm pl-1'>{k.name}</div>
         <div className='flex-1 text-right font-thin pl-4 pr-1'>{k.display(attrInfo?.[k.col])}</div>
       </div>

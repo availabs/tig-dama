@@ -171,15 +171,18 @@ const ProjectMapFilter = ({
   const dataById = get(falcorCache,
     ['dama', pgEnv, 'viewsbyId', activeViewId, 'databyId'],
   {})
-  console.log("data by Id**", Object.values(dataById))
+
 
   const filterData = React.useMemo(() => {
     return {
-      [projectKey] :  ['', ...new Set(Object.values(dataById || {}))]
+      [projectKey] :  ['', ...new Set(Object.values(dataById || {})
+        .map(d => d?.[projectKey] )
+        .filter(d => d))]
     }
-  },[falcorCache, filters])
-  const allProjectIds = filterData[projectKey].map(d => d[projectKey]);
-console.log("filterData***",filterData)
+  },[falcorCache])
+      
+  const allProjectIds = filterData[projectKey];
+
   //FILTERS NEEDED:
   //projectId
   //year -- maybe??
@@ -192,13 +195,16 @@ console.log("filterData***",filterData)
   //To Populate menu/select/dropdown menu stuffs
   const allProjectTypes = Object.values(dataById)?.map((val, i) => val.ptype).filter(onlyUnique);
   allProjectTypes.unshift('');
-  // const allFunctionalClasses = data?.map((val, i) => val.functional_class).filter(onlyUnique);
-  // const variableClasses = ["VMT", "VHT", "AvgSpeed"];
-
   const projectIdFilterValue = filters['projectId']?.value || null;
+
+  const allSponsors = Object.values(dataById)?.map((val, i) => val.sponsor).filter(onlyUnique);
+  allSponsors.unshift('');
+  const sponsorFilterValue = filters['sponsor']?.value || null;
+
+
   const projectTypeFilterValue = filters['ptype']?.value || null;
   const planPortionFilterValue = filters['planPortion']?.value || null;
-  const sponsorFilterValue = filters['sponsor']?.value || null;
+
 
   // //Example of how to filter data to only include good data
   // const filterKeys = Object.keys(filters);
@@ -213,9 +219,6 @@ console.log("filterData***",filterData)
   //     }, []);
   //   }
   // });
-
-
-
 
   if(!newSymbology?.source) {
     newSymbology.sources = metaData?.tiles?.sources || []
@@ -240,20 +243,21 @@ console.log("filterData***",filterData)
   
   //Custom legend stuff
   const totalDomain = images.concat(Object.keys(ptypes_colors).map(ptype => ({id: ptype, color: ptypes_colors[ptype]}))).filter(domainElement => domainElement.id !== "" && domainElement.id !== "NULL")
-  const domainRangeMap = {};
+  const idToUrlColorMap = {};
 
   totalDomain.forEach(domainElement => {
-    const { id } = domainElement
-    if(!domainRangeMap[id]){
-      domainRangeMap[id] = {
-        id
+    const { id, type } = domainElement
+    if(!idToUrlColorMap[id]){
+      idToUrlColorMap[id] = {
+        id,
+        type
       };
     }
     if(domainElement['color']){
-      domainRangeMap[id]['color'] = domainElement.color;
+      idToUrlColorMap[id]['color'] = domainElement.color;
     }
     if(domainElement['url']){
-      domainRangeMap[id]['url'] = domainElement.url
+      idToUrlColorMap[id]['url'] = domainElement.url
     }
 
   })
@@ -261,8 +265,8 @@ console.log("filterData***",filterData)
   newSymbology.legend = {
     height: 8,
     type: "custom",
-    customLegendScale: domainRangeMap,
-    name: "TIP RTP RYAN LEGEND updated again",
+    customLegendScale: idToUrlColorMap,
+    name: projectKey === "rtp_id" ? "RTP Mappable Projects" : "TIP Mappable Projects",
     isActive: false,
     format: "",
     height: 12
@@ -298,6 +302,21 @@ console.log("filterData***",filterData)
               onChange={(e) => setFilters({'ptype' :{ value: e.target.value}})}
             >
               {allProjectTypes?.map((v,i) => (
+                <option key={i} className="ml-2  truncate" value={v}>
+                  {v}
+                </option>
+              ))}
+          </select>
+      </div>
+      <div className='py-3.5 px-2 text-sm text-gray-400'>Sponsor: </div>
+      <div className='flex-1'>
+
+          <select
+              className="pl-3 pr-4 py-2.5 border border-blue-100 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
+              value={sponsorFilterValue || ''}
+              onChange={(e) => setFilters({'sponsor' :{ value: e.target.value}})}
+            >
+              {allSponsors?.map((v,i) => (
                 <option key={i} className="ml-2  truncate" value={v}>
                   {v}
                 </option>
