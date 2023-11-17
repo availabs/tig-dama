@@ -238,7 +238,7 @@ const CustomScale = ({ format, height = 3, customLegendScale }) => {
 
   return (
     <div className="flex">
-      { domain.reduce((a, c, i) => {
+      { domain.filter(d => customLegendScale[d].type !== "none").reduce((a, c, i) => {
         if (i % height === 0) {
           a.push([]);
         }
@@ -252,11 +252,11 @@ const CustomScale = ({ format, height = 3, customLegendScale }) => {
                   const color = customLegendScale[dd].color || null;
                   return (
                     <div className="flex items-center" key={ dd }>
-                        <div className="h-6 w-6 rounded mr-1 mb-1"
-                          style={{ backgroundColor: color }}/>
                       <div className="h-6 w-6 rounded mr-1 mb-1">
                         <img src={customLegendScale[dd].url}/>
                       </div>
+                        <div className="h-6 w-6 rounded mr-1 mb-1"
+                          style={{ backgroundColor: color, border: '1px solid black' }}/>
                       <div>{ format(dd) }</div>
                     </div>)
                 }
