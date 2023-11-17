@@ -171,7 +171,7 @@ const ProjectMapFilter = ({
   const dataById = get(falcorCache,
     ['dama', pgEnv, 'viewsbyId', activeViewId, 'databyId'],
   {})
-
+  
 
   const filterData = React.useMemo(() => {
     return {
@@ -182,6 +182,7 @@ const ProjectMapFilter = ({
   },[falcorCache])
       
   const allProjectIds = filterData[projectKey];
+  const projectIdFilterValue = filters['projectId']?.value || null;
 
   //FILTERS NEEDED:
   //projectId
@@ -195,14 +196,14 @@ const ProjectMapFilter = ({
   //To Populate menu/select/dropdown menu stuffs
   const allProjectTypes = Object.values(dataById)?.map((val, i) => val.ptype).filter(onlyUnique);
   allProjectTypes.unshift('');
-  const projectIdFilterValue = filters['projectId']?.value || null;
+  const projectTypeFilterValue = filters['ptype']?.value || null;
 
-  const allSponsors = Object.values(dataById)?.map((val, i) => val.sponsor).filter(onlyUnique);
+  const allSponsors = Object.values(dataById)?.map((val, i) => val.sponsor).filter(onlyUnique).filter(val => val !== "null");
   allSponsors.unshift('');
   const sponsorFilterValue = filters['sponsor']?.value || null;
 
-
-  const projectTypeFilterValue = filters['ptype']?.value || null;
+  const allPlanPortions = Object.values(dataById)?.map((val, i) => val['plan_portion']).filter(onlyUnique).filter(val => val !== "null");
+  allPlanPortions.unshift('');
   const planPortionFilterValue = filters['planPortion']?.value || null;
 
 
@@ -323,6 +324,28 @@ const ProjectMapFilter = ({
               ))}
           </select>
       </div>
+     { 
+      projectKey === 'rtp_id' && (
+          <> 
+            <div className='py-3.5 px-2 text-sm text-gray-400'>Plan Portion: </div>
+            <div className='flex-1'>
+                <select
+                    className="pl-3 pr-4 py-2.5 border border-blue-100 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
+                    value={planPortionFilterValue || ''}
+                    onChange={(e) => setFilters({'planPortion' :{ value: e.target.value}})}
+                  >
+                    {allPlanPortions?.map((v,i) => (
+                      <option key={i} className="ml-2  truncate" value={v}>
+                        {v}
+                      </option>
+                    ))}
+                </select>
+            </div>
+          </>)
+        }
+
+
+      
     </div>
   )
 
