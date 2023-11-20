@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useMemo, useEffect } from 'react'
 import { DamaContext } from "~/pages/DataManager/store"
 import get from 'lodash/get'
 import cloneDeep from 'lodash/cloneDeep'
@@ -80,7 +80,7 @@ function onlyUnique(value, index, array) {
   return array.indexOf(value) === index;
 }
 
-const styles = {
+const tipRtpMapStyles = {
   line: {
     type: "line",
     paint: {
@@ -91,22 +91,8 @@ const styles = {
       ],
       "line-width": 3,
     },
-    filter: ["==", ["geometry-type"], "LineString"],
+    filter: ["all", ["==", ["geometry-type"], "LineString"]],
   },
-  // "circle":{
-  //    "type": "circle",
-  //    'paint': {
-  //      'circle-color': ["get", ["to-string", ["get", "ptype_id"]], ["literal", ptypes_colors]], // reference the image
-  //      'circle-radius': 4
-  //    },
-  //    "filter": [
-  //       "==",
-  //       [
-  //          "geometry-type"
-  //       ],
-  //       "Point"
-  //    ],
-  // },
   circle: {
     type: "symbol",
     layout: {
@@ -114,7 +100,7 @@ const styles = {
       "icon-size": 0.1,
       "icon-allow-overlap": true,
     },
-    filter: ["==", ["geometry-type"], "Point"],
+    filter: ["all", ["==", ["geometry-type"], "Point"]],
   },
   fill: {
     type: "fill",
@@ -126,7 +112,7 @@ const styles = {
       ],
       "fill-opacity": 0.5,
     },
-    filter: ["==", ["geometry-type"], "Polygon"],
+    filter: ["all", ["==", ["geometry-type"], "Polygon"]],
   },
 };
 
@@ -191,7 +177,7 @@ const ProjectMapFilter = ({
   //   .filter(onlyUnique);
   // console.log("geomtypes", geomtypes);
 
-  const filterData = React.useMemo(() => {
+  const dataIds = React.useMemo(() => {
     return {
       [projectKey]: [
         "",
@@ -204,7 +190,7 @@ const ProjectMapFilter = ({
     };
   }, [falcorCache]);
 
-  const allProjectIds = filterData[projectKey];
+  const allProjectIds = dataIds[projectKey];
   const projectIdFilterValue = filters["projectId"]?.value || null;
 
   let projectCalculatedBounds;
@@ -213,25 +199,18 @@ const ProjectMapFilter = ({
       (d) => d[projectKey] === projectIdFilterValue
     );
     const projectGeom = JSON.parse(project.wkb_geometry);
-    console.log("projectGeom", projectGeom);
-
     if (projectGeom.type === GEOM_TYPES["Point"]) {
-      console.log("point feature");
-
       const coordinates = projectGeom.coordinates;
       projectCalculatedBounds = new mapboxgl.LngLatBounds(
         coordinates,
         coordinates
       );
     } else if (projectGeom.type === GEOM_TYPES["MultiLineString"]) {
-      console.log("multi line string feature");
-
       const coordinates = projectGeom.coordinates[0];
       projectCalculatedBounds = coordinates.reduce((bounds, coord) => {
         return bounds.extend(coord);
       }, new mapboxgl.LngLatBounds(coordinates[0], coordinates[0]));
     } else if (projectGeom.type === GEOM_TYPES["MultiPolygon"]) {
-      console.log("multi ploygon feature");
       //ryan todo -- can't tell if this is always [0][0], or if we need to nested-reduce these bounds
       const coordinates = projectGeom.coordinates[0][0];
 
@@ -240,15 +219,6 @@ const ProjectMapFilter = ({
       }, new mapboxgl.LngLatBounds(coordinates[0], coordinates[0]));
     }
   }
-  console.log({ projectFilteredCalculatedBounds: projectCalculatedBounds });
-  //FILTERS NEEDED:
-  //projectId
-  //year -- maybe??
-  //projectType
-  //planPortion
-  //sponsor
-
-  // Examples for how to have specific filter fields
 
   //To Populate menu/select/dropdown menu stuffs
   const allProjectTypes = Object.values(dataById)
@@ -270,7 +240,43 @@ const ProjectMapFilter = ({
     .filter(onlyUnique)
     .filter((val) => val !== "null");
   allPlanPortions.unshift("");
-  const planPortionFilterValue = filters["planPortion"]?.value || null;
+  const planPortionFilterValue = filters["plan_portion"]?.value || null;
+
+  //Initialize filters
+  useEffect(() => {
+    const updateFilter = {};
+
+    if (!projectIdFilterValue) {
+      updateFilter.projectId = { value: "" };
+    }
+    if (!projectTypeFilterValue) {
+      updateFilter.ptype = { value: "" };
+    }
+    if (!sponsorFilterValue) {
+      updateFilter.sponsor = { value: "" };
+    }
+    if (!planPortionFilterValue) {
+      updateFilter["plan_portion"] = { value: "" };
+    }
+
+    setFilters(updateFilter);
+  }, []);
+
+  let filteredData;
+
+  //Determine which filters are active;
+  const activeFilterKeys = Object.keys(filters).filter(
+    (filterKey) => filterKey !== "projectId" && !!filters[filterKey].value
+  );
+
+  filteredData = Object.values(dataById).filter((val) => {
+    const shouldKeep = activeFilterKeys.every((filterKey) => {
+      return filters[filterKey].value === val[filterKey];
+    });
+    return shouldKeep;
+  });
+
+  const filteredIds = filteredData.map((d) => d.ogc_fid);
 
   if (!newSymbology?.source) {
     newSymbology.sources = metaData?.tiles?.sources || [];
@@ -280,7 +286,7 @@ const ProjectMapFilter = ({
     newSymbology.layers = ["line", "circle", "fill"].map((type) => {
       return {
         id: `source_layer_${type}`,
-        ...styles[type],
+        ...tipRtpMapStyles[type],
         source: source_id,
         "source-layer": source_layer,
       };
@@ -291,10 +297,14 @@ const ProjectMapFilter = ({
     newSymbology.images = images;
   }
 
+  if (activeFilterKeys.length) {
+    newSymbology.filter = filteredIds;
+  } else {
+    newSymbology.filter = null;
+  }
   if (projectCalculatedBounds) {
     newSymbology.fitToBounds = projectCalculatedBounds;
   }
-  console.log("newSymbology", newSymbology);
 
   //Custom legend stuff
   const totalDomain = images
@@ -399,7 +409,7 @@ const ProjectMapFilter = ({
               className="pl-3 pr-4 py-2.5 border border-blue-100 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
               value={planPortionFilterValue || ""}
               onChange={(e) =>
-                setFilters({ planPortion: { value: e.target.value } })
+                setFilters({ plan_portion: { value: e.target.value } })
               }
             >
               {allPlanPortions?.map((v, i) => (
@@ -416,8 +426,8 @@ const ProjectMapFilter = ({
 };
 
 const MapDataDownloader = ({ activeViewId, year }) => {
-  
-  const { pgEnv, falcor, falcorCache  } = React.useContext(DamaContext);
+
+const { pgEnv, falcor, falcorCache  } = React.useContext(DamaContext);
 
   const [loading, setLoading] = React.useState(true);
 
@@ -446,7 +456,7 @@ const MapDataDownloader = ({ activeViewId, year }) => {
     ['dama', pgEnv, 'viewsbyId', activeViewId, 'databyId'],
   {})
 
-  
+
   const downloadData = React.useCallback(() => {
     // const length = get(falcorCache, ['dama', pgEnv, 'viewsbyId', activeViewId, 'data', 'length'], 0);
     // const path = ["dama", pgEnv, "viewsbyId", activeViewId, "databyId"];
