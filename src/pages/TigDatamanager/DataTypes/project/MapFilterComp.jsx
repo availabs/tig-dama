@@ -140,7 +140,6 @@ const ProjectMapFilter = ({
         0
       );
 
-
       await falcor.get([
         "dama",
         pgEnv,
@@ -159,11 +158,6 @@ const ProjectMapFilter = ({
     ["dama", pgEnv, "viewsbyId", activeViewId, "databyId"],
     {}
   );
-
-  // const geomtypes = Object.values(dataById)
-  //   .map((d) => JSON.parse(d?.wkb_geometry)?.type)
-  //   .filter(onlyUnique);
-  // console.log("geomtypes", geomtypes);
 
   const dataIds = React.useMemo(() => {
     return {
@@ -295,16 +289,15 @@ const ProjectMapFilter = ({
   }
 
   //Custom legend stuff
-  const totalDomain = images
-    .concat(
-      Object.keys(ptypes_colors).map((ptype) => ({
-        id: ptype,
-        color: ptypes_colors[ptype],
-      }))
-    )
-    .filter(
-      (domainElement) => domainElement.id !== "" && domainElement.id !== "NULL"
-    );
+  const totalDomain = Object.values(dataById).map(d => d.ptype).filter(onlyUnique).map(ptype => {
+    const legendInfo = images.find(img => img.id === ptype.toUpperCase());
+    return ({
+      id: ptype.toUpperCase(),
+      color: legendInfo?.color,
+      url: legendInfo?.url
+    })
+  });
+
   const idToUrlColorMap = {};
 
   totalDomain.forEach((domainElement) => {
