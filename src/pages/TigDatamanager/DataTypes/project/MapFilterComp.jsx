@@ -5,22 +5,8 @@ import cloneDeep from 'lodash/cloneDeep'
 import isEqual from 'lodash/isEqual'
 import mapboxgl from "maplibre-gl";
 import { Button } from "~/modules/avl-components/src";
-// const ptypes_colors= {
-//   "Study": "#004C73",
-//   "Highway": "#A80000",
-//   "Bridge": "#A80000",
-//   "Ferry": "#D79E9E",
-//   "Transit": "#C19A6B",
-//   "Rail": "#9C9C9C",
-//   "Stations": "#9C9C9C",
-//   "Truck": "#149ECE",
-//   "Pedestrian": "#70A800",
-//   "Bike": "#267300",
-//   "Bus": "#C19A6B",
-//   "ITS": "#FC921F",
-//   "Parking":  "Parking",
-//   "Freight":  "#149ECE",
-// }
+import shpwrite from  '@mapbox/shp-write'
+import { range as d3range } from "d3-array"
 
 const ptypes_colors = {
   BIKE: "#38A800",
@@ -131,6 +117,12 @@ const ProjectMapFilter = ({
   let projectKey = source?.name.includes("RTP") ? "rtp_id" : "tip_id";
   let newSymbology = cloneDeep(tempSymbology);
 
+  const metadataColumns = (
+    source?.metadata?.columns ||
+    source?.metadata ||
+    []
+  ).map((d) => d.name);
+
   React.useEffect(() => {
     const loadSourceData = async () => {
       const d = await falcor.get([
@@ -147,11 +139,7 @@ const ProjectMapFilter = ({
         ["json", "dama", pgEnv, "viewsbyId", activeViewId, "data", "length"],
         0
       );
-      const metadata = (
-        source?.metadata?.columns ||
-        source?.metadata ||
-        []
-      ).map((d) => d.name);
+
 
       await falcor.get([
         "dama",
@@ -160,7 +148,7 @@ const ProjectMapFilter = ({
         activeViewId,
         "databyIndex",
         [...Array(length).keys()],
-        metadata,
+        metadataColumns,
       ]);
     };
     loadSourceData();
@@ -421,76 +409,110 @@ const ProjectMapFilter = ({
           </div>
         </>
       )}
+      <MapDataDownloader activeViewId={activeViewId} projectKey={projectKey} metadataColumns={metadataColumns}/>
     </div>
   );
 };
 
-const MapDataDownloader = ({ activeViewId, year }) => {
-
-const { pgEnv, falcor, falcorCache  } = React.useContext(DamaContext);
-
+const MapDataDownloader = ({ activeViewId, projectKey, metadataColumns }) => {
+  const { pgEnv, falcor, falcorCache  } = React.useContext(DamaContext);
   const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
-    
-    const loadData = async () => {
-      await falcor.chunk([
-        'dama',
-        pgEnv,
-        'viewsbyId',
-        activeViewId,
-        'databyIndex',
-        [...Array(length).keys()],
-        ['ogc_fid',projectKey,'mpo', 'sponsor', 'ptype', 'wkb_geometry']
-      ]);
-    }
-
-    loadData();
-
     setLoading(true);
+    const loadSourceData = async () => {
+      const d = await falcor.get([
+        "dama",
+        pgEnv,
+        "viewsbyId",
+        activeViewId,
+        "data",
+        "length",
+      ]);
 
-    if (!(pgEnv && activeViewId)) return;
-  }, [falcor, pgEnv, activeViewId]);
+      let length = get(
+        d,
+        ["json", "dama", pgEnv, "viewsbyId", activeViewId, "data", "length"],
+        0
+      );
 
-  const data = get(falcorCache,
-    ['dama', pgEnv, 'viewsbyId', activeViewId, 'databyId'],
-  {})
 
+      await falcor.get([
+        "dama",
+        pgEnv,
+        "viewsbyId",
+        activeViewId,
+        "databyIndex",
+        [...Array(length).keys()],
+        metadataColumns,
+      ]);
+      setLoading(false);
+    };
+    loadSourceData();
+  }, [pgEnv, activeViewId, metadataColumns]);
+
+  const dataById = get(
+    falcorCache,
+    ["dama", pgEnv, "viewsbyId", activeViewId, "databyId"],
+    {}
+  );
+
+  console.log({loading})
 
   const downloadData = React.useCallback(() => {
-    // const length = get(falcorCache, ['dama', pgEnv, 'viewsbyId', activeViewId, 'data', 'length'], 0);
-    // const path = ["dama", pgEnv, "viewsbyId", activeViewId, "databyId"];
-    // const collection = {
-    //   type: "FeatureCollection",
-    //   features: d3range(0, length).map(id => {
-    //     const data = get(falcorCache, [...path, id], {});
-    //     console.log("what is the value of data: ", data);
-    //     const value = get(data, null);
-    //     const county = get(data, "county", "unknown");
-    //     const geom = get(data, "wkb_geometry", "");
-    //     console.log('geom', geom, data)
-    //     return {
-    //       type: "Feature",
-    //       properties: {
-    //         [variable]: value,
-    //         county,
-    //         year
-    //       },
-    //       geometry: JSON.parse(geom)
-    //     }
-    //   })
-    // }
-    // const options = {
-    //   folder: "shapefiles",
-    //   file: variable,
-    //   types: {
-    //     point: 'points',
-    //     polygon: 'polygons',
-    //     line: 'lines'
-    //   }
-    // }
-    // shpDownload(collection, options);
-  }, [falcorCache, pgEnv, activeViewId, year]);
+    const length = Object.values(dataById).length;
+    const path = ["dama", pgEnv, "viewsbyId", activeViewId, "databyId"];
+    const collection = {
+      type: "FeatureCollection",
+      features: d3range(0, length).reduce((acc, id) => {
+        const data = get(falcorCache, [...path, id], {});
+        //console.log("what is the value of data: ", data);
+
+        const {
+          cost,
+          description,
+          infrastructure,
+          ogc_fid,
+          plan_portion,
+          ptype,
+          sponsor,
+        } = data;
+        const geom = JSON.parse(get(data, "wkb_geometry", ""));
+        //console.log('geom**', geom,)
+
+        if (!geom?.coordinates) {
+          console.log("MISSING GEOM RYAN, data: ", data);
+        } else {
+          acc.push({
+            type: "Feature",
+            properties: {
+              cost,
+              description,
+              infrastructure,
+              ogc_fid,
+              plan_portion,
+              ptype,
+              sponsor,
+              [projectKey]: data[projectKey],
+            },
+            geometry: geom,
+          });
+        }
+        return acc;
+      }, []),
+    };
+    console.log({collection})
+    const options = {
+      folder: "shapefiles",
+      file: projectKey,
+      types: {
+        point: 'points',
+        polygon: 'polygons',
+        line: 'lines'
+      }
+    }
+    shpwrite.download(collection, options)
+  }, [falcorCache, pgEnv, activeViewId, projectKey]);
 
   return (
     <div>
