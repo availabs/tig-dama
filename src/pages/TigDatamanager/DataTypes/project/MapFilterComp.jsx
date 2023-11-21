@@ -36,23 +36,13 @@ const images = [
   { id: "RAIL", url: "/mapIcons/rail.png", color: "#9C9C9C", type: "both" },
   { id: "STATIONS", url: "/mapIcons/rail.png", color: "#fff", type: "none" },
   { id: "TRUCK", url: "/mapIcons/truck.png", color: "#fff", type: "both" },
-  {
-    id: "PEDESTRIAN",
-    url: "/mapIcons/pedestrian.png",
-    color: "#B1FF00",
-    type: "both",
-  },
+  { id: "PEDESTRIAN", url: "/mapIcons/pedestrian.png", color: "#B1FF00", type: "both" },
   { id: "ITS", url: "/mapIcons/its.png", color: "#FF00C5", type: "both" },
-  {
-    id: "PARKING",
-    url: "/mapIcons/parking.png",
-    color: "#496bff",
-    type: "both",
-  },
+  { id: "PARKING", url: "/mapIcons/parking.png", color: "#496bff", type: "both" },
   { id: "FREIGHT", url: "/mapIcons/truck.png", color: "#fff", type: "both" },
   { id: "TRANSIT", url: "/mapIcons/transit.png", color: "#fff", type: "both" },
-  { id: "HISTORIC", url: "", color: "#ffeb3b", type: "both" },
-  { id: "STUDY", url: "", color: "#FFAA00", type: "both" },
+  { id: "HISTORIC", url: "/mapIcons/historic.png", color: "#ffeb3b", type: "both" },
+  { id: "STUDY", url: "/mapIcons/study.png", color: "#FFAA00", type: "both" },
   { id: "MOBILITY", url: "", color: "#B1FF00", type: "both" },
 ];
 
@@ -289,35 +279,21 @@ const ProjectMapFilter = ({
   }
 
   //Custom legend stuff
-  const totalDomain = Object.values(dataById).map(d => d.ptype).filter(onlyUnique).map(ptype => {
-    const legendInfo = images.find(img => img.id === ptype.toUpperCase());
-    return ({
-      id: ptype.toUpperCase(),
-      color: legendInfo?.color,
-      url: legendInfo?.url
-    })
-  });
-
-  const idToUrlColorMap = {};
-
-  totalDomain.forEach((domainElement) => {
-    const { id, type } = domainElement;
-    if (!idToUrlColorMap[id]) {
-      idToUrlColorMap[id] = {
-        id,
-        type,
-      };
-    }
-    if (domainElement["color"]) {
-      idToUrlColorMap[id]["color"] = domainElement.color;
-    }
-    if (domainElement["url"]) {
-      idToUrlColorMap[id]["url"] = domainElement.url;
-    }
-  });
+  const idToUrlColorMap = Object.values(dataById)
+    .map(d => d.ptype)
+    .filter(onlyUnique)
+    .filter(d => d !== "null")
+    .reduce((acc, ptype) => {
+      const legendInfo = images.find(img => img.id === ptype.toUpperCase());
+      acc[ptype.toUpperCase()] = {
+        id: ptype.toUpperCase(),
+        color: legendInfo?.color,
+        url: legendInfo?.url
+      }
+      return acc
+  },{});
 
   newSymbology.legend = {
-    height: 8,
     type: "custom",
     customLegendScale: idToUrlColorMap,
     name:
