@@ -302,7 +302,7 @@ const ProjectMapFilter = ({
         : "TIP Mappable Projects",
     isActive: false,
     format: "",
-    height: 12,
+    height: 6
   };
 
   if (!isEqual(newSymbology, tempSymbology)) {
