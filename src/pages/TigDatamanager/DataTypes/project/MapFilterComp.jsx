@@ -415,7 +415,7 @@ const ProjectMapFilter = ({
 };
 
 const MapDataDownloader = ({ activeViewId, projectKey, metadataColumns }) => {
-  const { pgEnv, falcor, falcorCache  } = React.useContext(DamaContext);
+  const { pgEnv, falcor, falcorCache } = React.useContext(DamaContext);
   const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
@@ -435,7 +435,6 @@ const MapDataDownloader = ({ activeViewId, projectKey, metadataColumns }) => {
         ["json", "dama", pgEnv, "viewsbyId", activeViewId, "data", "length"],
         0
       );
-
 
       await falcor.get([
         "dama",
@@ -457,8 +456,6 @@ const MapDataDownloader = ({ activeViewId, projectKey, metadataColumns }) => {
     {}
   );
 
-  console.log({loading})
-
   const downloadData = React.useCallback(() => {
     const length = Object.values(dataById).length;
     const path = ["dama", pgEnv, "viewsbyId", activeViewId, "databyId"];
@@ -466,7 +463,6 @@ const MapDataDownloader = ({ activeViewId, projectKey, metadataColumns }) => {
       type: "FeatureCollection",
       features: d3range(0, length).reduce((acc, id) => {
         const data = get(falcorCache, [...path, id], {});
-        //console.log("what is the value of data: ", data);
 
         const {
           cost,
@@ -478,11 +474,8 @@ const MapDataDownloader = ({ activeViewId, projectKey, metadataColumns }) => {
           sponsor,
         } = data;
         const geom = JSON.parse(get(data, "wkb_geometry", ""));
-        //console.log('geom**', geom,)
 
-        if (!geom?.coordinates) {
-          console.log("MISSING GEOM RYAN, data: ", data);
-        } else {
+        if (geom?.coordinates) {
           acc.push({
             type: "Feature",
             properties: {
@@ -501,30 +494,33 @@ const MapDataDownloader = ({ activeViewId, projectKey, metadataColumns }) => {
         return acc;
       }, []),
     };
-    console.log({collection})
+
     const options = {
       folder: "shapefiles",
       file: projectKey,
       types: {
-        point: 'points',
-        polygon: 'polygons',
-        line: 'lines'
-      }
-    }
-    shpwrite.download(collection, options)
+        point: "points",
+        polygon: "polygons",
+        line: "lines",
+      },
+      outputType: "blob",
+      compression: "DEFLATE",
+    };
+    shpwrite.download(collection, options);
   }, [falcorCache, pgEnv, activeViewId, projectKey]);
 
   return (
     <div>
-      <Button themeOptions={{size:'sm', color: 'primary'}}
-        onClick={ downloadData }
-        disabled={ loading }
+      <Button
+        themeOptions={{ size: "sm", color: "primary" }}
+        onClick={downloadData}
+        disabled={loading}
       >
         Download
       </Button>
     </div>
-  )
-}
+  );
+};
 
 
 export default ProjectMapFilter
