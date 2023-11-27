@@ -1,5 +1,5 @@
-import React, {useMemo} from 'react'
-import { useSearchParams } from "react-router-dom";
+import React from 'react'
+import { useSearchParams, Link, useNavigate } from "react-router-dom";
 import download from "downloadjs"
 import { Button } from "~/modules/avl-components/src"
 
@@ -47,7 +47,7 @@ const ProjectTableFilter = (
         <div className="px-2">
           <select
             className="pl-3 pr-4 py-2.5 border border-blue-100 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
-            value={projectIdFilterValue}
+            value={projectIdFilterValue || ""}
             onChange={(e) =>
               setFilters({ projectId: { value: e.target.value } })
             }
@@ -72,7 +72,7 @@ const ProjectTableFilter = (
   )
 };
 
-export const ProjectTableTransform = (tableData, attributes, filters, years,source) => {
+export const ProjectTableTransform = (tableData, attributes, filters, years, source) => {
   let filteredData;
   let projectKey = source?.name?.includes("RTP") ? "rtp_id" : "tip_id";
 
@@ -87,19 +87,35 @@ export const ProjectTableTransform = (tableData, attributes, filters, years,sour
     return shouldKeep;
   });
 
-  const columns = attributes.map(attr => {
-    return {
+  const columns = attributes
+    .map((attr) => ({
       Header: attr,
-      accessor: attr
-    }
-  });
+      accessor: attr,
+    }));
 
-  columns.push({Header: 'Actions', accessor: "link", Cell: (d) => <div>Map link coming soon</div>})
+  columns.push({
+    Header: "Actions",
+    accessor: projectKey,
+    id:"map_link",
+    Cell: ({ value }) => {
+      return <LinkCell feature={value} sourceId={source.source_id} />;
+    },
+  });
 
   return {
     data: filteredData,
     columns: columns,
   };
+}
+
+const LinkCell = ({feature, sourceId}) => {
+  const navigate = useNavigate()
+  const [searchParams] = useSearchParams();
+  const variable = searchParams.get("variable")
+
+  return (<div>
+    <Link onClick={(e) => navigate(`/source/${sourceId}/map?variable=${variable}&featureId=${feature}`)}> Link to map </Link>
+  </div>)
 }
 
 
