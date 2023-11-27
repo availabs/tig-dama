@@ -1,4 +1,5 @@
 import React, { useMemo, useEffect } from 'react'
+import { useSearchParams } from "react-router-dom";
 import { DamaContext } from "~/pages/DataManager/store"
 import get from 'lodash/get'
 import cloneDeep from 'lodash/cloneDeep'
@@ -103,7 +104,8 @@ const ProjectMapFilter = ({
   layer,
 }) => {
   const { falcor, falcorCache, pgEnv } = React.useContext(DamaContext);
-
+  const [searchParams] = useSearchParams();
+  
   let projectKey = source?.name.includes("RTP") ? "rtp_id" : "tip_id";
   let newSymbology = cloneDeep(tempSymbology);
 
@@ -165,25 +167,36 @@ const ProjectMapFilter = ({
   const allProjectIds = dataIds[projectKey];
   const projectIdFilterValue = filters["projectId"]?.value || null;
 
+  const featureId = searchParams.get("featureId")
+
+  React.useEffect(() => {
+    if (!projectIdFilterValue) {
+      if (featureId) {
+        setFilters({
+          projectId: { value: featureId },
+        });
+      }
+    }
+  }, []);
+
   let projectCalculatedBounds;
   if (projectIdFilterValue) {
     const project = Object.values(dataById).find(
       (d) => d[projectKey] === projectIdFilterValue
     );
-    const projectGeom = JSON.parse(project.wkb_geometry);
-    if (projectGeom.type === GEOM_TYPES["Point"]) {
+    const projectGeom = !!project?.wkb_geometry ? JSON.parse(project.wkb_geometry) : null;
+    if (projectGeom?.type === GEOM_TYPES["Point"]) {
       const coordinates = projectGeom.coordinates;
       projectCalculatedBounds = new mapboxgl.LngLatBounds(
         coordinates,
         coordinates
       );
-    } else if (projectGeom.type === GEOM_TYPES["MultiLineString"]) {
+    } else if (projectGeom?.type === GEOM_TYPES["MultiLineString"]) {
       const coordinates = projectGeom.coordinates[0];
       projectCalculatedBounds = coordinates.reduce((bounds, coord) => {
         return bounds.extend(coord);
       }, new mapboxgl.LngLatBounds(coordinates[0], coordinates[0]));
-    } else if (projectGeom.type === GEOM_TYPES["MultiPolygon"]) {
-      //ryan todo -- can't tell if this is always [0][0], or if we need to nested-reduce these bounds
+    } else if (projectGeom?.type === GEOM_TYPES["MultiPolygon"]) {
       const coordinates = projectGeom.coordinates[0][0];
 
       projectCalculatedBounds = coordinates.reduce((bounds, coord) => {
@@ -213,26 +226,6 @@ const ProjectMapFilter = ({
     .filter((val) => val !== "null");
   allPlanPortions.unshift("");
   const planPortionFilterValue = filters["plan_portion"]?.value || null;
-
-  //Initialize filters
-  useEffect(() => {
-    const updateFilter = {};
-
-    if (!projectIdFilterValue) {
-      updateFilter.projectId = { value: "" };
-    }
-    if (!projectTypeFilterValue) {
-      updateFilter.ptype = { value: "" };
-    }
-    if (!sponsorFilterValue) {
-      updateFilter.sponsor = { value: "" };
-    }
-    if (!planPortionFilterValue) {
-      updateFilter["plan_portion"] = { value: "" };
-    }
-
-    setFilters(updateFilter);
-  }, []);
 
   let filteredData;
 
