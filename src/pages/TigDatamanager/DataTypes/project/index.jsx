@@ -2,21 +2,9 @@ import React from 'react'
 import MapPage from "~/pages/DataManager/DataTypes/gis_dataset/pages/Map";
 import CreatePage from "~/pages/DataManager/DataTypes/gis_dataset/pages/Create";
 import Table from "~/pages/DataManager/DataTypes/gis_dataset/pages/Table";
-import cloneDeep from 'lodash/cloneDeep'
-import isEqual from 'lodash/isEqual'
-import get from 'lodash/get'
-
-import { Combobox } from '@headlessui/react'
-
 import ProjectHoverComp from './MapHoverComp'
 import ProjectMapFilter from './MapFilterComp'
-import ProjectTableFilter from './TableFilterComp'
-
-import { DamaContext } from "~/pages/DataManager/store"
-import Selector from './Selector'
-// import Uploads from "./pages/Uploads";
-
-// import { getAttributes } from 'pages/DataManager/components/attributes'
+import ProjectTableFilter, { ProjectTableTransform } from './TableFilterComp'
 
 import TigOverview from '../TigOverview'
 import TigMetadata from '../TigMetadata'
@@ -62,6 +50,7 @@ const GisDatasetConfig = {
       <Table
         {...props}
         TableFilter={ProjectTableFilter}
+        transform={ProjectTableTransform}
       />
     ),
   },
