@@ -164,7 +164,9 @@ const ProjectMapFilter = ({
     };
   }, [falcorCache]);
 
-  const allProjectIds = dataIds[projectKey];
+  const allProjectIds = dataIds[projectKey]
+    .filter(onlyUnique)
+    .filter((val) => val !== "");
   const projectIdFilterValue = filters["projectId"]?.value || null;
 
   const featureId = searchParams.get("featureId")
@@ -210,21 +212,18 @@ const ProjectMapFilter = ({
     ?.map((val, i) => val.ptype)
     .filter(onlyUnique)
     .filter((val) => val !== "null");
-  allProjectTypes.unshift("");
   const projectTypeFilterValue = filters["ptype"]?.value || null;
 
   const allSponsors = Object.values(dataById)
     ?.map((val, i) => val.sponsor)
     .filter(onlyUnique)
     .filter((val) => val !== "null");
-  allSponsors.unshift("");
   const sponsorFilterValue = filters["sponsor"]?.value || null;
 
   const allPlanPortions = Object.values(dataById)
     ?.map((val, i) => val["plan_portion"])
     .filter(onlyUnique)
     .filter((val) => val !== "null");
-  allPlanPortions.unshift("");
   const planPortionFilterValue = filters["plan_portion"]?.value || null;
 
   let filteredData;
@@ -267,8 +266,12 @@ const ProjectMapFilter = ({
   } else {
     newSymbology.filter = null;
   }
+
   if (projectCalculatedBounds) {
     newSymbology.fitToBounds = projectCalculatedBounds;
+  }
+  else{
+    newSymbology.fitToBounds = null;
   }
 
   //Custom legend stuff
@@ -314,6 +317,9 @@ const ProjectMapFilter = ({
           value={projectIdFilterValue || ""}
           onChange={(e) => setFilters({ projectId: { value: e.target.value } })}
         >
+          <option className="ml-2  truncate" value={null}>
+            None
+          </option>
           {allProjectIds.map((v, i) => (
             <option key={i} className="ml-2  truncate" value={v}>
               {v}
@@ -328,6 +334,9 @@ const ProjectMapFilter = ({
           value={projectTypeFilterValue || ""}
           onChange={(e) => setFilters({ ptype: { value: e.target.value } })}
         >
+          <option className="ml-2  truncate" value={null}>
+            None
+          </option>
           {allProjectTypes?.map((v, i) => (
             <option key={i} className="ml-2  truncate" value={v}>
               {v}
@@ -342,6 +351,9 @@ const ProjectMapFilter = ({
           value={sponsorFilterValue || ""}
           onChange={(e) => setFilters({ sponsor: { value: e.target.value } })}
         >
+          <option className="ml-2  truncate" value={null}>
+            None
+          </option>
           {allSponsors?.map((v, i) => (
             <option key={i} className="ml-2  truncate" value={v}>
               {v}
@@ -362,6 +374,9 @@ const ProjectMapFilter = ({
                 setFilters({ plan_portion: { value: e.target.value } })
               }
             >
+            <option className="ml-2  truncate" value={null}>
+              None
+            </option>
               {allPlanPortions?.map((v, i) => (
                 <option key={i} className="ml-2  truncate" value={v}>
                   {v}
