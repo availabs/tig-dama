@@ -317,7 +317,7 @@ const ProjectMapFilter = ({
           value={projectIdFilterValue || ""}
           onChange={(e) => setFilters({ projectId: { value: e.target.value } })}
         >
-          <option className="ml-2  truncate" value={null}>
+          <option className="ml-2  truncate" value={""}>
             None
           </option>
           {allProjectIds.map((v, i) => (
@@ -334,7 +334,7 @@ const ProjectMapFilter = ({
           value={projectTypeFilterValue || ""}
           onChange={(e) => setFilters({ ptype: { value: e.target.value } })}
         >
-          <option className="ml-2  truncate" value={null}>
+          <option className="ml-2  truncate" value={""}>
             None
           </option>
           {allProjectTypes?.map((v, i) => (
@@ -351,7 +351,7 @@ const ProjectMapFilter = ({
           value={sponsorFilterValue || ""}
           onChange={(e) => setFilters({ sponsor: { value: e.target.value } })}
         >
-          <option className="ml-2  truncate" value={null}>
+          <option className="ml-2  truncate" value={""}>
             None
           </option>
           {allSponsors?.map((v, i) => (
@@ -374,7 +374,7 @@ const ProjectMapFilter = ({
                 setFilters({ plan_portion: { value: e.target.value } })
               }
             >
-            <option className="ml-2  truncate" value={null}>
+            <option className="ml-2  truncate" value={""}>
               None
             </option>
               {allPlanPortions?.map((v, i) => (
