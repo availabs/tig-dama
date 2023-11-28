@@ -24,7 +24,6 @@ const ProjectTableFilter = (
   }, []);
 
   const allProjectIds = data.map(d => d[projectKey]);
-  allProjectIds.unshift("");
 
   const columns = source?.columns;
 
@@ -52,6 +51,9 @@ const ProjectTableFilter = (
               setFilters({ projectId: { value: e.target.value } })
             }
           >
+            <option className="ml-2  truncate" value={""}>
+              None
+            </option>
             {allProjectIds.map((k, i) => (
               <option key={i} className="ml-2  truncate" value={k}>
                 {k}
