@@ -452,7 +452,7 @@ const MapDataDownloader = ({ activeViewId, projectKey, metadataColumns }) => {
         } = data;
         const geom = JSON.parse(get(data, "wkb_geometry", ""));
 
-        if (geom?.coordinates) {
+        if (geom?.coordinates && geom.coordinates.length) {
           acc.push({
             type: "Feature",
             properties: {
