@@ -25,18 +25,24 @@ const ProjectTableFilter = (
 
   const allProjectIds = data.map(d => d[projectKey]);
 
-  const columns = source?.columns;
+  const columns = source?.metadata?.columns;
+  const downloadColumns = columns.filter((c) => c.name !== "wkb_geometry");
 
   const TableDataDownloader = React.useCallback(() => {
-    const mapped = data.map(d => {
-      return columns.map(c => {
-        return d[c.accessor];
-      }).join(";")
-    })
+    const mapped = data.map((d) => {
+      return downloadColumns
+        .map((c) => {
+          return d[c.name];
+        })
+        .join(",");
+    });
 
-    mapped.unshift(columns.map(c => c.Header).join(";"));
-    download(mapped.join("\n"), `Tip_project.csv`, "text/csv");
-  }, [data, columns]);
+    mapped.unshift(downloadColumns.map((c) => c.name).join(","));
+
+    const csvName =
+      projectKey === "rtp_id" ? "rtp_project.csv" : "tip_project.csv";
+    download(mapped.join("\n"), csvName, "text/csv");
+  }, [data, downloadColumns]);
     
   return (
     <div className="flex flex-1 border-blue-100">
