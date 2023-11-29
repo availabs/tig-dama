@@ -1,10 +1,9 @@
-import React, { useEffect, useState, useMemo, useCallback } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { get } from "lodash";
 
 import { DamaContext } from "~/pages/DataManager/store";
 import { ResponsiveBar } from "@nivo/bar";
-import { fips2Name } from "../constants/index";
 
 const ViewSelector = ({ views }) => {
   const { viewId } = useParams();
@@ -163,9 +162,26 @@ const ChartPage = ({
             legendPosition: "middle",
             legendOffset: 36,
           }}
+          tooltip={({ value, color, data } ) => {
+            return <div
+                style={{
+                    padding: 12,
+                    color,
+                    background: '#FFFFFF',
+                    border: '1px solid black'
+                }}
+            >
+                {data?.id}
+                <br />
+                <strong>
+                  {data.variable}: {value?.toLocaleString()}
+                </strong>
+            </div>
+          }}
           enableGridX={true}
           enableGridY={false}
           enableLabel={true}
+          label={({value}) => <>{value.toLocaleString()}</>}
           labelSkipWidth={12}
           labelSkipHeight={12}
           labelTextColor={{

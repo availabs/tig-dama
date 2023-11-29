@@ -315,26 +315,34 @@ export const BPMChartTransform = ({ valueMap, filters }) => {
       },[])
     }
   }
+  const activeVar = get(filters, "activeVar.value");
 
-    console.log('access', filters, variableAccessors?.[filters?.activeVar?.value])
-    finalchartData = Object.values(data.reduce((out,d) =>  {
-      let regions = getRegions(filters?.summarize?.value || 'region', d.area)
-      //console.log('region', region, d.area)
-      regions.forEach((region) => {
-         if(!out[region]) { 
-          out[region] = {
-            id:  region,
-            name: region,
-            value: 0
-          }
+  finalchartData = Object.values(data.reduce((out,d) =>  {
+    let regions = getRegions(filters?.summarize?.value || 'region', d.area)
+    regions.forEach((region) => {
+        if(!out[region]) { 
+        out[region] = {
+          id:  region,
+          name: region,
+          value: 0,
+          count: 0,
+          variable: activeVar
         }
-        out[region].value +=  Math.round(+d[accessor] || 0)
-      })
-      return out
-    },{}))
-    .sort((a,b) => a.value - b.value);
+      }
+      out[region].value +=  Math.round(+d[accessor] || 0)
+      out[region].count++;
+    })
+    return out
+  },{}))
 
-  //console.log('finalchartData', finalchartData)
+  if(activeVar === 'AvgSpeed'){
+    finalchartData.forEach(bar => {
+      bar.value = bar.value / bar.count
+    })
+  }
+
+  finalchartData.sort((a,b) => a.value - b.value);
+
   return {
     data: finalchartData,
   };
