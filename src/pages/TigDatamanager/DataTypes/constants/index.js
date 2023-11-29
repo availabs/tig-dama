@@ -1,6 +1,6 @@
 const regionalData = {
   regions: {
-    "NYBPM Coounties": [
+    "NYBPM Counties": [
       "Bergen",
       "Bronx",
       "Dutchess",
