@@ -6,6 +6,8 @@ import tig_bpm_perfomance_measures from './bpm_performance_measures'
 import upwp_projects from './upwp_projects';
 import tig_project from './project'
 
+import tiger_2017_full from './tiger_2017_full'
+
 
 const tigDataTypes = {
   //TIG
@@ -16,7 +18,10 @@ const tigDataTypes = {
   tig_acs,
   tig_bpm_perfomance_measures,
   tig_project,
-  upwp_projects
+  upwp_projects,
+
+  //ACS
+  tiger_2017_full
 
 };
 

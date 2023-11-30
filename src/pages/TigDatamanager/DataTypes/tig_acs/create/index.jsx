@@ -299,7 +299,7 @@ const Create = (props) => {
               className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
               for="grid-view-dependency"
             >
-              View Dependency
+              Tiger Geometry Source
             </label>
 
             <Select
@@ -350,7 +350,7 @@ const Create = (props) => {
 
         {selectedView ? (
           <div className="flex flex-wrap -mx-3 mb-6">
-            <div className="w-full px-3">
+            <div className="w-full px-3 z-20">
               <label
                 className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                 for="grid-counties"

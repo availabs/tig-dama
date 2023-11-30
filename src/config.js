@@ -8,11 +8,11 @@ let PG_ENV = 'tig_dama_dev'
 
 if (process.env.NODE_ENV === "development") {
 
-  //API_HOST =  "https://graph.availabs.org";
-  //DAMA_HOST = "https://graph.availabs.org";
+  API_HOST =  "https://graph.availabs.org";
+  DAMA_HOST = "https://graph.availabs.org";
   // API_HOST = "http://localhost:4444";
   // DAMA_HOST = "http://localhost:4444";
-  //PG_ENV = 'pan';
+  PG_ENV = 'pan';
   // // PG_ENV = "freight_data";
   
 }
