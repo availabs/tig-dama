@@ -211,7 +211,7 @@ const TablePage = ({
 
   const tableData = useMemo(() => {
     const geos = geometry === "county" ? geoids : acsTractGeoids;
-    return (geos || []).reduce((a, c) => {
+    return (geos || []).reduce((acc, geoid) => {
       let tableRow = {};
 
       if (geometry === "county") {
@@ -222,7 +222,7 @@ const TablePage = ({
             pgEnv,
             "tiger",
             activeView?.view_dependencies[0],
-            c,
+            geoid,
             viewYear,
             "counties",
             "name",
@@ -230,13 +230,13 @@ const TablePage = ({
           null
         );
       }
-      (tableColumns || []).forEach((cc) => {
+      (tableColumns || []).forEach((columnName) => {
         let censusVal = 0,
           divisorVal = 0,
           censusFlag = false,
           divisorFalg = false;
-        (variablesToCensusKeys[cc] || []).forEach((v) => {
-          const tmpVal = get(falcorCache, ["acs", c, year, v], null);
+        (variablesToCensusKeys[columnName] || []).forEach((censusKey) => {
+          const tmpVal = get(falcorCache, ["acs", geoid, year, censusKey], null);
           if (tmpVal !== null) {
             censusFlag = true;
             censusVal += tmpVal;
@@ -244,13 +244,13 @@ const TablePage = ({
         });
 
         let tempFlag = Boolean(
-          variablesToDivisorKeys[cc] && variablesToDivisorKeys[cc].length
+          variablesToDivisorKeys[columnName] && variablesToDivisorKeys[columnName].length
         );
 
         if (tempFlag) {
-          (variablesToDivisorKeys[cc] || []).forEach((v) => {
-            if (v.length > 0) {
-              const tmpVal = get(falcorCache, ["acs", c, year, v], null);
+          (variablesToDivisorKeys[columnName] || []).forEach((divisorKey) => {
+            if (divisorKey.length > 0) {
+              const tmpVal = get(falcorCache, ["acs", geoid, year, divisorKey], null);
               if (tmpVal !== null) {
                 divisorFalg = true;
                 divisorVal += tmpVal;
@@ -260,16 +260,16 @@ const TablePage = ({
         }
 
         if (tempFlag) {
-          tableRow[`${cc}`] = divisorFalg
+          tableRow[`${columnName}`] = divisorFalg
             ? `${Math.round((censusVal / divisorVal) * 100)}%`
             : null;
         } else {
-          tableRow[`${cc}`] = censusFlag ? censusVal.toLocaleString() : null;
+          tableRow[`${columnName}`] = censusFlag ? censusVal.toLocaleString() : null;
         }
       });
 
-      a.push(tableRow);
-      return a;
+      acc.push(tableRow);
+      return acc;
     }, []);
   }, [
     activeViewId,
