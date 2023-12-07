@@ -1,7 +1,9 @@
-import React from "react";
 import Create from "./create";
 import Table from "~/pages/DataManager/DataTypes/gis_dataset/pages/Table";
 import Map from "~/pages/DataManager/DataTypes/gis_dataset/pages/Map";
+
+import { TigerMapFilter } from "./TigerMapFilter";
+import { TigerTableFilter, TigerTableTransform } from "./TigerTableFilter";
 
 const tigerFull2017Config = {
   sourceCreate: {
@@ -11,12 +13,26 @@ const tigerFull2017Config = {
   table: {
     name: "Table",
     path: "/table",
-    component: Table
+    component: (props) => (
+      <Table
+        {...props}
+        showViewSelector={false}
+        TableFilter={TigerTableFilter}
+        transform={TigerTableTransform}
+      />
+    ),
   },
   map: {
     name: "Map",
     path: "/map",
-    component: Map
+    component: (props) => (
+      <Map
+        {...props}
+        showViewSelector={false}
+        MapFilter={TigerMapFilter}
+      />
+    ),
+    
   },
 };
 

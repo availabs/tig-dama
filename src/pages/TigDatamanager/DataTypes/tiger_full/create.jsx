@@ -31,7 +31,7 @@ const Create = ({ source, newVersion, baseUrl }) => {
   const navigate = useNavigate();
   const { pgEnv } = useContext(DamaContext);
 
-  const rtPfx = `${DAMA_HOST}/dama-admin/:pgEnv/` //getDamaApiRoutePrefix(pgEnv);
+  const rtPfx = `${DAMA_HOST}/dama-admin/${pgEnv}` //getDamaApiRoutePrefix(pgEnv);
 
   return (
     <div className="w-full">
