@@ -88,7 +88,7 @@ export const TigerMapFilter = ({
       newSymbology.layers = layer.layers;
   }
 
-  if (activeFilterKeys.length) {
+  if (activeFilterKeys.length && filteredIds.length) {
       newSymbology.filter = filteredIds;
   }
 
