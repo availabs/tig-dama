@@ -60,7 +60,6 @@ export const TigerMapFilter = ({
   const year = filters['year']?.value || null;
   const tiger_type = filters['tiger_type']?.value || null;
 
-
   const allYears = data?.map((val, i) => val.year).filter(onlyUnique);
   const allTigerTypes = data?.map((val, i) => val.tiger_type).filter(onlyUnique);
 
@@ -76,72 +75,26 @@ export const TigerMapFilter = ({
     setFilters(initialFilters);
   }, []);
 
-//   let filteredData = data;
-//   const alGeoIdColor = data.reduce((acc, key) => {
-//     acc[name2fips[key.area]] = 0;
-//     return acc;
-//   }, {});
+  const activeFilterKeys = Object.keys(filters).filter(
+      (filterKey) => !!filters[filterKey].value
+  );
+  const filteredData = data.filter((val) => {
+      return +val['year'] === +year && val['tiger_type'] === tiger_type
+  });
+  const filteredIds = filteredData.map((d) => d.ogc_fid);
 
-//   const filterKeys = Object.keys(filters);
+  if (!newSymbology?.source) {
+      newSymbology.sources = metaData?.tiles?.sources || [];
+      newSymbology.layers = layer.layers;
+  }
 
-//   filterKeys.forEach((key, i) => {
-//     if(key !== 'activeVar') {
-//       filteredData = filteredData.reduce((acc, val) => {
-//         if(filters[key].value == val[key]) {
-//             acc.push(val);
-//         } 
-//         return acc;
-//       }, []);
-//     }
-//   });
+  if (activeFilterKeys.length) {
+      newSymbology.filter = filteredIds;
+  }
 
-console.log("ryan checking data",data);
-  React.useEffect(() => {
-    console.log("in use effect, layer", layer)
-
-
-    console.log("new sym inside use efect",newSymbology)
-
-    // const CountyValues = Object.values(filteredData)
-     // filteredData should be shaped like
-    /*
-      {
-        '36001': 55.44,
-        '36036': 57.67
-        ...
-      }
-  
-          
-
-    */
-      newSymbology = (layer?.layers || []).reduce((acc, currentLayer) => {
-        const [layerType, layerYear] = currentLayer['source-layer'].split('_');
-        const shouldDisplay = layerType === tiger_type && layerYear === year;
-
-        acc[currentLayer.id] = {
-            ...currentLayer,
-            // 'filter': ['in', ["literal", year], ["get", "source-layer"]],
-            paint: {...currentLayer.paint, visibility: 'none', "fill-color":"#ffffff"},
-            layout: {'visibility' : 'none'},
-            // year: layerYear,
-            // tiger_type: layerType,
-            //filter:  ["==", ["literal", year], ["to-string", ["get", "year"]] ]
-            // filter: ["all", ["==", ["to-string",["year"]], "2010"]]
-        };
-
-        // acc[currentLayer.id]['visibility'] = shouldDisplay ? 'visible' : 'none';
-        return acc;
-      }, {});
-
-      console.log("newSymbology",newSymbology)
-    if(!isEqual(newSymbology, tempSymbology)){
-
+  if(!isEqual(newSymbology, tempSymbology)){
       setTempSymbology(newSymbology)
-    }
-
-  },[data, layer, filters, year, tiger_type]);
-console.log("**old layer", layer)
-console.log("*tiger full filters", filters)
+  }
 
   return (
     <div className='flex flex-1'>
