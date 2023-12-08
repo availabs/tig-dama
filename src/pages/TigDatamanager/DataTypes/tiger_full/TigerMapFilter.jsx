@@ -28,27 +28,27 @@ export const TigerMapFilter = ({
   const { falcor, falcorCache, pgEnv } = React.useContext(DamaContext);
   let newSymbology  = cloneDeep(tempSymbology);
  
-  React.useEffect(() => {
-    const loadSourceData = async () => {
+  useEffect(() => {
+//     const loadSourceData = async () => {
     
-      const d = await falcor.get(['dama',pgEnv, 'viewsbyId' ,activeViewId, 'data', 'length']);
-      let length = get(d,
-        ['json', 'dama', pgEnv, 'viewsbyId' ,activeViewId, 'data', 'length'],
-      0)
-      const metadata =  (source?.metadata?.columns || source?.metadata || []).map(d => d.name);
-
-      await falcor.get([
-        'dama',
-        pgEnv,
-        'viewsbyId',
-        activeViewId,
-        'databyIndex',
-        [...Array(length).keys()],
-        metadata
-      ])
+//       const d = await falcor.get(['dama',pgEnv, 'viewsbyId' ,activeViewId, 'data', 'length']);
+//       let length = get(d,
+//         ['json', 'dama', pgEnv, 'viewsbyId' ,activeViewId, 'data', 'length'],
+//       0)
+//       const metadata =  (source?.metadata?.columns || source?.metadata || []).map(d => d.name);
+// console.log("length",length)
+//       await falcor.get([
+//         'dama',
+//         pgEnv,
+//         'viewsbyId',
+//         activeViewId,
+//         'databyIndex',
+//         [...Array(length).keys()],
+//         metadata
+//       ])
     
-    }
-    loadSourceData()
+//     }
+//     loadSourceData()
   },[pgEnv,activeViewId,source]);
 
   const data = Object.values(React.useMemo(() => {
@@ -75,26 +75,41 @@ export const TigerMapFilter = ({
     setFilters(initialFilters);
   }, []);
 
-  const activeFilterKeys = Object.keys(filters).filter(
+
+  useEffect(() => {
+    console.log("use effect updating symbology")
+    const activeFilterKeys = Object.keys(filters).filter(
       (filterKey) => !!filters[filterKey].value
-  );
-  const filteredData = data.filter((val) => {
-      return +val['year'] === +year && val['tiger_type'] === tiger_type
-  });
-  const filteredIds = filteredData.map((d) => d.ogc_fid);
+    );
+    const filteredData = data.filter((val) => {
+        return +val['year'] === +year && val['tiger_type'] === tiger_type
+    });
+    const filteredIds = filteredData.map((d) => d.ogc_fid);
+    console.log("filteredIds", filteredIds)
+    if (!newSymbology?.source) {
+        newSymbology.sources = metaData?.tiles?.sources || [];
+        newSymbology.layers = layer.layers;
+    }
 
-  if (!newSymbology?.source) {
-      newSymbology.sources = metaData?.tiles?.sources || [];
-      newSymbology.layers = layer.layers;
-  }
+    if (activeFilterKeys.length && filteredIds.length) {
+        newSymbology.filter = filteredIds;
+    }
+    else {
+      newSymbology.filter = null;
+    }
 
-  if (activeFilterKeys.length && filteredIds.length) {
-      newSymbology.filter = filteredIds;
-  }
+    if(!isEqual(newSymbology, tempSymbology)){
+      console.log("about to set new sumbolyogy")
+        setTempSymbology(newSymbology)
+    }
+  }, [data, filters, year, tiger_type, source])
 
-  if(!isEqual(newSymbology, tempSymbology)){
-      setTempSymbology(newSymbology)
-  }
+console.log("ry test print filters",filters)
+
+
+
+
+
 
   return (
     <div className='flex flex-1'>
