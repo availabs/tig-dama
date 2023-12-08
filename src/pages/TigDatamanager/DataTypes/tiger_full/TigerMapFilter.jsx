@@ -1,115 +1,63 @@
 import React, {useEffect} from 'react'
 import cloneDeep from 'lodash/cloneDeep'
 import isEqual from 'lodash/isEqual'
-import get from 'lodash/get'
-
-import { DamaContext } from "~/pages/DataManager/store"
-import { fips2Name } from '../constants';
-
-
-function onlyUnique(value, index, array) {
-    return array.indexOf(value) === index;
-}
 
 const INITIAL_TIGER_YEAR = '2010';
 const INITIAL_TIGER_TYPE = 'state';
 
 export const TigerMapFilter = ({
-    source,
     metaData,
     filters,
     setFilters,
     setTempSymbology,
     tempSymbology,
-    activeViewId,
     layer
   }) => { 
 
-  const { falcor, falcorCache, pgEnv } = React.useContext(DamaContext);
   let newSymbology  = cloneDeep(tempSymbology);
  
-  useEffect(() => {
-//     const loadSourceData = async () => {
-    
-//       const d = await falcor.get(['dama',pgEnv, 'viewsbyId' ,activeViewId, 'data', 'length']);
-//       let length = get(d,
-//         ['json', 'dama', pgEnv, 'viewsbyId' ,activeViewId, 'data', 'length'],
-//       0)
-//       const metadata =  (source?.metadata?.columns || source?.metadata || []).map(d => d.name);
-// console.log("length",length)
-//       await falcor.get([
-//         'dama',
-//         pgEnv,
-//         'viewsbyId',
-//         activeViewId,
-//         'databyIndex',
-//         [...Array(length).keys()],
-//         metadata
-//       ])
-    
-//     }
-//     loadSourceData()
-  },[pgEnv,activeViewId,source]);
 
-  const data = Object.values(React.useMemo(() => {
-    return get(falcorCache,
-      ['dama', pgEnv, 'viewsbyId', activeViewId, 'databyId'],
-    {})
-  },[falcorCache, filters]));  
+  const year = filters['year']?.value || INITIAL_TIGER_YEAR;
+  const tiger_type = filters['tiger_type']?.value || INITIAL_TIGER_TYPE;
+  // const allYears = data?.map((val, i) => val.year).filter(onlyUnique);
+  // const allTigerTypes = data?.map((val, i) => val.tiger_type).filter(onlyUnique);
 
-  const year = filters['year']?.value || null;
-  const tiger_type = filters['tiger_type']?.value || null;
-
-  const allYears = data?.map((val, i) => val.year).filter(onlyUnique);
-  const allTigerTypes = data?.map((val, i) => val.tiger_type).filter(onlyUnique);
+  const allYears = [2010, 2020];
+  const allTigerTypes = ['state', 'county', 'tract'];
 
   useEffect(() => {
     const initialFilters = {}
-    if(!year){
+    if(!filters['year']?.value){
         initialFilters.year = { value: INITIAL_TIGER_YEAR}
     }
-    if(!tiger_type){
+    if(!filters['tiger_type']?.value){
         initialFilters.tiger_type = { value: INITIAL_TIGER_TYPE}
     }
 
     setFilters(initialFilters);
   }, []);
 
-
   useEffect(() => {
-    console.log("use effect updating symbology")
-    const activeFilterKeys = Object.keys(filters).filter(
-      (filterKey) => !!filters[filterKey].value
-    );
-    const filteredData = data.filter((val) => {
-        return +val['year'] === +year && val['tiger_type'] === tiger_type
-    });
-    const filteredIds = filteredData.map((d) => d.ogc_fid);
-    console.log("filteredIds", filteredIds)
     if (!newSymbology?.source) {
-        newSymbology.sources = metaData?.tiles?.sources || [];
-        newSymbology.layers = layer.layers;
-    }
+      newSymbology.sources = metaData?.tiles?.sources || [];
+      newSymbology.layers = layer.layers.map(curLayer => {
+        const [layer_type, layer_year] = curLayer['source-layer'].split('_')
+        const shouldDisplay = +layer_year === +year && layer_type === tiger_type
 
-    if (activeFilterKeys.length && filteredIds.length) {
-        newSymbology.filter = filteredIds;
+        return {
+          ...curLayer,
+          layout: {
+            visibility: shouldDisplay ? 'visible' : 'none'
+          }
+        }
+      });
     }
-    else {
-      newSymbology.filter = null;
-    }
-
+  
     if(!isEqual(newSymbology, tempSymbology)){
-      console.log("about to set new sumbolyogy")
-        setTempSymbology(newSymbology)
+      console.log("about to set new tempSymbology")
+      setTempSymbology(newSymbology)
     }
-  }, [data, filters, year, tiger_type, source])
-
-console.log("ry test print filters",filters)
-
-
-
-
-
+  }, [filters, year, tiger_type])
 
   return (
     <div className='flex flex-1'>
