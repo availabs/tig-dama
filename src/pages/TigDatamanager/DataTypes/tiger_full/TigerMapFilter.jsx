@@ -40,7 +40,7 @@ export const TigerMapFilter = ({
   useEffect(() => {
     if (!newSymbology?.source) {
       newSymbology.sources = metaData?.tiles?.sources || [];
-      newSymbology.layers = layer.layers.map(curLayer => {
+      newSymbology.layers = layer?.layers?.map(curLayer => {
         const [layer_type, layer_year] = curLayer['source-layer'].split('_')
         const shouldDisplay = +layer_year === +year && layer_type === tiger_type
 

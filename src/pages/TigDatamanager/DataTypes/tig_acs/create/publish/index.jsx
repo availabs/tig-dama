@@ -16,9 +16,10 @@ const submitUpload = (props, navigate, pgEnv) => {
         viewMetadata: props?.viewMetadata,
         viewDependency: props?.viewDependency,
         etlContextId: props?.etlContextId,
+        source_name: props?.source?.name
       };
 
-      const res = await fetch(`${props?.damaServerPath}/gis-dataset/publish`, {
+      const res = await fetch(`${DAMA_HOST}/dama-admin/${pgEnv}/acs/new_source`, {
         method: "POST",
         body: JSON.stringify(publishData),
         headers: {

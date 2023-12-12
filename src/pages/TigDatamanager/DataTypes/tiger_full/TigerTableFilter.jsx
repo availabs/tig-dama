@@ -12,19 +12,22 @@ export const TigerTableFilter = (
   { source, filters, setFilters, data }
 ) => {
 
-  const year = filters['year']?.value || null;
-  const tiger_type = filters['tiger_type']?.value || null;
+  const year = filters['year']?.value || INITIAL_TIGER_YEAR;
+  const tiger_type = filters['tiger_type']?.value || INITIAL_TIGER_TYPE;
 
-  const allYears = data?.map((val, i) => val.year).filter(onlyUnique);
-  const allTigerTypes = data?.map((val, i) => val.tiger_type).filter(onlyUnique);
+  // const allYears = data?.map((val, i) => val.year).filter(onlyUnique);
+  // const allTigerTypes = data?.map((val, i) => val.tiger_type).filter(onlyUnique);
+
+  const allYears = [2010, 2020];
+  const allTigerTypes = ['state', 'county', 'tract'];
 
   useEffect(() => {
     const initialFilters = {}
-    if(!year){
-        initialFilters.year = { value: INITIAL_TIGER_YEAR}
+    if(!filters['year']?.value){
+      initialFilters.year = { value: INITIAL_TIGER_YEAR}
     }
-    if(!tiger_type){
-        initialFilters.tiger_type = { value: INITIAL_TIGER_TYPE}
+    if(!filters['tiger_type']?.value){
+      initialFilters.tiger_type = { value: INITIAL_TIGER_TYPE}
     }
 
     setFilters(initialFilters);
