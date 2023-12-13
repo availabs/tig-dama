@@ -107,7 +107,7 @@ const Create = (props) => {
             get(falcorCache, v.value, { attributes: {} })["attributes"]
           )
         )
-        .filter((source) => source?.type?.indexOf("tl_") !== -1)
+        .filter((source) => source?.type?.indexOf("tiger_full") !== -1)
         .reduce((acc, source) => {
           const { source_id, type } = source;
           acc[type] = acc[type] ?? [];
@@ -187,7 +187,7 @@ const Create = (props) => {
   }, [falcorCache, sourceGroup, pgEnv]);
 
   const views = useMemo(() => {
-    return viewGroup && flattenDeep(viewGroup["tl_full"] || []);
+    return viewGroup && flattenDeep(viewGroup["tiger_full"] || []);
   }, [viewGroup]);
 
   const viewOptions = useMemo(() => {
