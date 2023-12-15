@@ -123,6 +123,7 @@ const ACSMapFilter = ({
   tempSymbology,
   activeView,
   activeViewId,
+  source
 }) => {
   const { pgEnv } = useContext(DamaContext);
   const { falcor, falcorCache } = useFalcor();
@@ -232,7 +233,7 @@ const ACSMapFilter = ({
         ["metadata", "value", "tiles"],
         {}
       );
-
+      console.log("sources and layers", sources, layers)
       if (sources && sources.length) {
         (sources || []).forEach((s) => {
           if (s && s.source)
@@ -267,7 +268,7 @@ const ACSMapFilter = ({
     async function getACSData() {
       const geoids = geometry === "county" ? counties : subGeoids;
       if (geoids.length > 0) {
-        falcor.chunk(["acs", geoids, year, [...censusConfig, ...divisorKeys]]);
+        falcor.chunk(["dama", pgEnv, "acs", activeViewId, geoids, year, [...censusConfig, ...divisorKeys]]);
       }
     }
     getACSData();
