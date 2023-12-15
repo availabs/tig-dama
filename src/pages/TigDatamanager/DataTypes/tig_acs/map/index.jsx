@@ -290,7 +290,7 @@ const ACSMapFilter = ({
         divisorFalg = false;
 
       (censusConfig || []).forEach((cc) => {
-        const tmpVal = get(falcorCache, ["acs", c, year, cc], null);
+        const tmpVal = get(falcorCache, ["dama", pgEnv, "acs", activeViewId, c, year, cc], null);
         if (tmpVal !== null) {
           censusFlag = true;
           censusVal += tmpVal;
