@@ -165,12 +165,27 @@ const ACSMapFilter = ({
     return [keys, divisors];
   }, [activeVar, variables]);
 
-  if (!activeVar) {
-    setFilters({
-      ...filters,
-      activeVar: { value: variables[0]?.label || null },
-    });
-  }
+  useEffect(() => {
+    const updatedFilters = { ...filters };
+
+    if (!filters?.activeVar) {
+      updatedFilters.activeVar = { value: variables[0]?.label || null };
+    }
+    if (!filters?.activeCounties?.length) {
+      let geoids;
+      if (geometry === "county") {
+        geoids = counties;
+      } else if (geometry === "tract") {
+        geoids = subGeoids;
+      }
+      updatedFilters.activeCounties = { value: geoids };
+    }
+    if (!filters?.geometry?.value) {
+      updatedFilters.geometry = { activeValue: geometry };
+    }
+
+    setFilters(updatedFilters);
+  }, [geometry, activeVar, counties, subGeoids]);
 
   useEffect(() => {
     async function getViewData() {
@@ -233,11 +248,11 @@ const ACSMapFilter = ({
         ["metadata", "value", "tiles"],
         {}
       );
-      console.log("sources and layers", sources, layers)
       if (sources && sources.length) {
         (sources || []).forEach((s) => {
           if (s && s.source)
             s.source.url = s?.source?.url?.replace("$HOST", TILEHOST);
+            s.source.url = s.source.url.replace("http://", "pmtiles://")
         });
       }
 

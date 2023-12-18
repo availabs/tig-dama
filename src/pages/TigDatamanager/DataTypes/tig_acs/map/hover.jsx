@@ -1,6 +1,7 @@
 import React, { useMemo, useEffect } from "react";
 import { get, find, filter } from "lodash";
 import { DamaContext } from "~/pages/DataManager/store";
+import { fips2Name } from "../../constants";
 
 const typeToLength = {
   state: 2,
@@ -10,9 +11,10 @@ const typeToLength = {
   tract: 11,
   blockgroup: 12,
 };
-var TEMPGEOID = "";
-const ACSHoverComp = ({ data, layer }) => {
-  const { falcor, falcorCache } = React.useContext(DamaContext);
+let TEMPGEOID = "";
+const ACSHoverComp = (props) => {
+  const { data, layer } = props
+  const { pgEnv, falcor, falcorCache } = React.useContext(DamaContext);
   const {
     props: {
       filters,
@@ -21,9 +23,6 @@ const ACSHoverComp = ({ data, layer }) => {
       },
     },
   } = layer;
-
-  //console.log('hover', layer)
-
   const lId = data && data[1];
 
   const activeVar = useMemo(
@@ -32,7 +31,7 @@ const ACSHoverComp = ({ data, layer }) => {
   );
   const year = useMemo(() => get(filters, "year.value", "2019"), [filters]);
   const geometry = useMemo(
-    () => get(filters, "geometry.value", "county"),
+    () => get(filters, "geometry.value", "tract"),
     [filters]
   );
   const activeLayerId = useMemo(
@@ -46,6 +45,7 @@ const ACSHoverComp = ({ data, layer }) => {
     return "";
   }
   let geoid = TEMPGEOID;
+
 
   const censusConfig = get(
     find(variables, { label: activeVar }),
@@ -64,9 +64,13 @@ const ACSHoverComp = ({ data, layer }) => {
   );
 
   geoid = geoid.slice(0, typeToLength[`${geometry}`]);
+  const hoverTooltipShouldRender = filters.activeCounties.value.includes(geoid);
+
   useEffect(() => {
     async function getACSData() {
-      falcor.chunk(["acs", geoid, year, censusConfig]);
+      if(hoverTooltipShouldRender){
+        falcor.chunk(["dama", pgEnv, "acs", [layer.activeViewId], geoid, year, [...censusConfig]])
+      }
     }
     getACSData();
   }, [geoid, censusConfig, year, geometry]);
@@ -74,7 +78,7 @@ const ACSHoverComp = ({ data, layer }) => {
   const value = useMemo(
     () =>
       (censusConfig || []).reduce((aa, cc) => {
-        const v = get(falcorCache, ["acs", geoid, year, cc], -666666666);
+        const v = get(falcorCache, ["dama", pgEnv, "acs", [layer.activeViewId], geoid, year, cc], -666666666);
         if (v !== -666666666) {
           aa += v;
         }
@@ -95,11 +99,17 @@ const ACSHoverComp = ({ data, layer }) => {
     [falcorCache, divisorConfig, geoid, year]
   );
 
+  if (!hoverTooltipShouldRender) {
+    //console.log(`geoid ${geoid} not in list of filtered geoms`)
+    return;
+  }
+
+  const displayGeoId = geometry === 'county' && fips2Name[geoid] ? fips2Name[geoid] : geoid;
   return (
     <div className="bg-white p-4 max-h-64 scrollbar-xs overflow-y-scroll">
       <div className="flex border-b pt-1">
         <div className="flex-1 font-medium text-sm pl-1">{"geoid"}</div>
-        <div className="flex-1 text-right font-thin pl-4 pr-1">{geoid}</div>
+        <div className="flex-1 text-right font-thin pl-4 pr-1">{displayGeoId}</div>
       </div>
 
       <div className="flex border-t pt-1">
