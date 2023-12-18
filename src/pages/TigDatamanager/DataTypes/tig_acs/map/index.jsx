@@ -252,7 +252,10 @@ const ACSMapFilter = ({
         (sources || []).forEach((s) => {
           if (s && s.source)
             s.source.url = s?.source?.url?.replace("$HOST", TILEHOST);
-            s.source.url = s.source.url.replace("http://", "pmtiles://")
+            s.source.url = s.source.url
+              .replace('https://', 'pmtiles://')
+              .replace('http://', 'pmtiles://')
+
         });
       }
 
