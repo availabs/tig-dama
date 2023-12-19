@@ -352,10 +352,10 @@ const ACSMapFilter = ({
       }
     }
 
-    function colorScale(domain, value) {
-      let color = "rgba(0,0,0,0)";
-      (domain || []).forEach((v, i) => {
-        if (value >= v && value <= domain[i + 1]) {
+    function colorScale(domain, areaValue) {
+      let color = range[0];
+      (domain || []).forEach((domainValue, i) => {
+        if (areaValue >= domainValue && (!domain[i+1] || areaValue <= domain[i + 1])) {
           color = range[i];
         }
       });
