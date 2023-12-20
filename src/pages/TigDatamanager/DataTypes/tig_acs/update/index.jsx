@@ -152,7 +152,7 @@ const Update = () => {
           pgEnv: PG_ENV,
         };
 
-        const res = await fetch(`${API_HOST}/dama-admin/${PG_ENV}/acs/cache`, {
+        const res = await fetch(`${API_HOST}/dama-admin/${PG_ENV}/acs/cache/${params.id}`, {
           method: "POST",
           body: JSON.stringify(publishData),
           headers: {
