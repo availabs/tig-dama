@@ -8,6 +8,7 @@ const submitUpload = (props, navigate, pgEnv) => {
   const runPublish = async () => {
     try {
       const publishData = {
+        serverUrl: DAMA_HOST,
         source_id: props?.source?.source_id || null,
         source_values: {
           name: props?.source?.name || "New Source",
