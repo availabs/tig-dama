@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { cloneDeep, set } from "lodash";
-import { Input } from "~/modules/avl-components/src";
+import { Input, Select } from "~/modules/avl-components/src";
 
 const ACSVariableUpdate = (props) => {
   const [currentVariable, setCurrentVarialble] = useState(null);
@@ -14,6 +14,7 @@ const ACSVariableUpdate = (props) => {
           name: currentVariable,
           censusKeys: "",
           divisorKeys: "",
+          colorScale:"",
         },
       };
       const tempVars = [...variables, newVariable];
@@ -54,16 +55,19 @@ const ACSVariableUpdate = (props) => {
               <table class="min-w-full text-left text-sm font-light">
                 <thead class="border-b font-medium ">
                   <tr>
-                    <th scope="col" class="p-3">
+                    <th scope="col" class="px-6 py-4">
                       Name
                     </th>
-                    <th scope="col" class="p-3">
+                    <th scope="col" class="px-6 py-4">
                       Census Keys
                     </th>
-                    <th scope="col" class="p-3">
+                    <th scope="col" class="px-6 py-4">
                       Divisor Keys
                     </th>
-                    <th scope="col" class="p-3">
+                    <th scope="col" class="px-6 py-4">
+                      Color scale
+                    </th>
+                    <th scope="col" class="px-6 py-4">
                       Delete
                     </th>
                   </tr>
@@ -72,13 +76,13 @@ const ACSVariableUpdate = (props) => {
                   {variables && variables.length > 0 ? (
                     variables.map((v, i) => (
                       <tr class="transition duration-300 ease-in-out ">
-                        <td class="whitespace-nowrap p-3 font-medium">
+                        <td class="whitespace-nowrap  px-6 py-4 font-medium">
                           {v?.value?.name || ""}
                         </td>
-                        <td class="whitespace-nowrap p-3">
+                        <td class="whitespace-nowrap  px-6 py-4">
                           <Input
                             type="text"
-                            className="p-2 m-2 flex-1 shadow bg-grey-50 focus:bg-blue-100 border-gray-300"
+                            className="p-2  flex-1 shadow bg-grey-50 focus:bg-blue-100 border-gray-300"
                             value={(v?.value?.censusKeys || []).join(",") || ""}
                             placeholder="Enter Census Keys"
                             onChange={(val) =>
@@ -89,7 +93,7 @@ const ACSVariableUpdate = (props) => {
                         <td class="whitespace-nowrap px-6 py-4">
                           <Input
                             type="text"
-                            className="p-2 m-2 flex-1 shadow bg-grey-50 focus:bg-blue-100 border-gray-300"
+                            className="p-2 flex-1 shadow bg-grey-50 focus:bg-blue-100 border-gray-300"
                             value={(v?.value?.divisorKeys || []).join(",") || ""}
                             placeholder="Enter Divisor Keys"
                             onChange={(val) =>
@@ -98,6 +102,21 @@ const ACSVariableUpdate = (props) => {
                           />
                         </td>
                         <td class="whitespace-nowrap px-6 py-4">
+                          <select
+
+                            type="text"
+                            className="p-2 flex-1 shadow bg-grey-50 focus:bg-blue-100 border-gray-300"
+                            value={(v?.value?.divisorKeys || []).join(",") || ""}
+                            placeholder="Ryan new box"
+                            onChange={(val) =>
+                              setUpdateVariable(i, (val || "").split(","), "divisorKeys")
+                            }
+                          >
+                            <option>Item 1</option>
+                            <option>Item 2</option>
+                          </select>
+                        </td>
+                        <td class="whitespace-nowrap">
                           <div
                             onClick={() => setDeleteColumn(i)}
                             className="mx-3 my-2 text-red-200 hover:text-red-400 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-sm px-5 py-2.5 text-center "
