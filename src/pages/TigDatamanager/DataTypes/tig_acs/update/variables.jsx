@@ -1,10 +1,26 @@
 import React, { useState } from "react";
 import { cloneDeep, set } from "lodash";
 import { Input, Select } from "~/modules/avl-components/src";
+import {  ColorRanges, ColorBar } from "~/modules/avl-components/src"
+
+const ColorSchemeOption = ({ colorScheme }) => {
+  return (
+    <ColorBar colors={colorScheme.colors} size={8}/>
+  );
+};
+
 
 const ACSVariableUpdate = (props) => {
   const [currentVariable, setCurrentVarialble] = useState(null);
   const { variables = [], setVariables } = props;
+
+  const colorSchemeOptions = ColorRanges[5].filter(colorScheme => colorScheme.type === 'Sequential');
+
+  const emptyColorOption = (
+    <div className={`flex`} value={""}>
+      <span className={`flex`}>None Selected</span>
+    </div>
+  );
 
   const setAddNewVariable = () => {
     if (currentVariable) {
@@ -14,7 +30,7 @@ const ACSVariableUpdate = (props) => {
           name: currentVariable,
           censusKeys: "",
           divisorKeys: "",
-          colorScale:"",
+          colorScale:colorSchemeOptions[0].colors,
         },
       };
       const tempVars = [...variables, newVariable];
@@ -33,7 +49,7 @@ const ACSVariableUpdate = (props) => {
     setVariables(cloneDeep(variables));
   };
 
-  const colorScaleOptions = ["First Item", "Second Item", "Third Item"];
+  console.log("colorSchemeOptions:",colorSchemeOptions)
 
 
   console.log("ryan testing variables component, variables:", variables)
@@ -106,28 +122,22 @@ const ACSVariableUpdate = (props) => {
                           />
                         </td>
                         <td className="whitespace-nowrap px-6 py-4">
-                          <select
-
-                            type="text"
-                            className="p-2 flex-1 shadow bg-grey-50 focus:bg-blue-100 border-gray-300"
-                            value={(v?.value?.colorScale || '')}
-                            placeholder="Ryan new box"
+                          <Select
+                            value={v?.value?.colorScale || ""}
                             onChange={(e) => {
-                                console.log("ryan testing onChange, val:", e)
-                                setUpdateVariable(i, (e.target.value), "colorScale")
-                              }
-                            }
-                          >
-                            {
-                              colorScaleOptions.map(scaleOption => {
-                                return (
-                                  <option value={scaleOption} key={`${v.value.name}_colorScale_${scaleOption}`}>
-                                    {scaleOption}
-                                  </option>
-                                )
-                              })
-                            }
-                          </select>
+                              console.log("new color scheme picked:", e.props.value)
+                              setUpdateVariable(i, e.props.value, "colorScale");
+                            }}
+                            options={[emptyColorOption].concat(colorSchemeOptions.map((colorScheme) => {
+                              return (
+                                <ColorSchemeOption
+                                  value={colorScheme.colors}
+                                  colorScheme={colorScheme}
+                                  key={`${v?.value?.name}_colorScale_${JSON.stringify(colorScheme.colors)}`}
+                                />
+                              );
+                            }))}
+                          />
                         </td>
                         <td className="whitespace-nowrap">
                           <div
