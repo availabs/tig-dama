@@ -49,10 +49,6 @@ const ACSVariableUpdate = (props) => {
     setVariables(cloneDeep(variables));
   };
 
-  console.log("colorSchemeOptions:",colorSchemeOptions)
-
-
-  console.log("ryan testing variables component, variables:", variables)
   return (
     <>
       <Input

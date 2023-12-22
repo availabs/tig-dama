@@ -348,7 +348,7 @@ const ACSMapFilter = ({
 
     const fullActiveVar = activeView.metadata.variables.find(variable => variable.label === activeVar);
     if (fullActiveVar) {
-      if (fullActiveVar?.value?.colorScale !== "") {
+      if (fullActiveVar?.value?.colorScale && fullActiveVar.value.colorScale !== "") {
         range = fullActiveVar.value.colorScale;
       }
     }
