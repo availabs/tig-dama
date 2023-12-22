@@ -83,7 +83,7 @@ const ACSYearsUpdate = (props) => {
       <div className="grid grid-cols-4 gap-2 my-2">
         {years &&
           (years || []).map((year, i) => (
-            <>
+            <span key={`${year}`}>
               <div key={i} className="pt-2 pr-8">
                 <span className="py-3 px-5 flex-1 shadow bg-grey-50 focus:bg-blue-100 border-gray-300">
                   {year}
@@ -100,7 +100,7 @@ const ACSYearsUpdate = (props) => {
                 </>
                 <br />
               </div>
-            </>
+            </span>
           ))}
       </div>
     </>
