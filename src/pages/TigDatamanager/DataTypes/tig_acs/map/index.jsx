@@ -343,7 +343,15 @@ const ACSMapFilter = ({
     if (ckmeansLen <= values.length) {
       domain = ckmeans(values, ckmeansLen) || [];
     }
-    const range = getColorRange(5, "YlOrRd", false);
+
+    let range = getColorRange(5, "YlOrRd", false);
+
+    const fullActiveVar = activeView.metadata.variables.find(variable => variable.label === activeVar);
+    if (fullActiveVar) {
+      if (fullActiveVar?.value?.colorScale !== "") {
+        range = fullActiveVar.value.colorScale;
+      }
+    }
 
     if (!(domain && domain?.length > 5)) {
       const n = domain?.length || 0;
