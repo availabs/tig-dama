@@ -3,9 +3,31 @@ import { cloneDeep, set } from "lodash";
 import { Input, Select } from "~/modules/avl-components/src";
 import {  ColorRanges, ColorBar } from "~/modules/avl-components/src"
 
-const ColorSchemeOption = ({ colorScheme }) => {
+const areColorScalesEqual = (scaleOne, scaleTwo) => {
+  if (
+    !scaleOne ||
+    !scaleTwo ||
+    scaleOne.length === 0 ||
+    scaleTwo.length === 0
+  ) {
+    return false;
+  }
+  for (let i = 0; i < scaleOne?.length; i++) {
+    if (scaleOne[i] !== scaleTwo[i]) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+const ColorSchemeOption = ({ colorScheme, isActiveOption }) => {
+  const optionStyle = isActiveOption ? { backgroundColor: "chartreuse" } : {};
+
   return (
-    <ColorBar colors={colorScheme.colors} size={8}/>
+    <div className="p-3" style={optionStyle}>
+      <ColorBar colors={colorScheme.colors} size={8}/>
+    </div>
   );
 };
 
@@ -65,9 +87,9 @@ const ACSVariableUpdate = (props) => {
         Add a new Variable{" "}
       </button>
       <div className="flex flex-col px-5 mx-3">
-        <div className="overflow-x-auto sm:-mx-6 lg:-mx-8">
+        <div className="sm:-mx-6 lg:-mx-8">
           <div className="inline-block min-w-full py-2 sm:px-6 lg:px-8">
-            <div className="overflow-hidden">
+            <div>
               <table className="min-w-full text-left text-sm font-light">
                 <thead className="border-b font-medium ">
                   <tr>
@@ -91,7 +113,10 @@ const ACSVariableUpdate = (props) => {
                 <tbody>
                   {variables && variables.length > 0 ? (
                     variables.map((v, i) => (
-                      <tr className="transition duration-300 ease-in-out " key={`${v?.value?.name}_row`}>
+                      <tr
+                        className="transition duration-300 ease-in-out "
+                        key={`${v?.value?.name}_row`}
+                      >
                         <td className="whitespace-nowrap  px-6 py-4 font-medium">
                           {v?.value?.name || ""}
                         </td>
@@ -121,18 +146,21 @@ const ACSVariableUpdate = (props) => {
                           <Select
                             value={v?.value?.colorScale || ""}
                             onChange={(e) => {
-                              console.log("new color scheme picked:", e.props.value)
                               setUpdateVariable(i, e.props.value, "colorScale");
                             }}
-                            options={[emptyColorOption].concat(colorSchemeOptions.map((colorScheme) => {
-                              return (
+                            options={[emptyColorOption].concat(
+                              colorSchemeOptions.map((colorScheme) => (
                                 <ColorSchemeOption
+                                  isActiveOption={areColorScalesEqual(
+                                    v.value.colorScale,
+                                    colorScheme.colors
+                                  )}
                                   value={colorScheme.colors}
                                   colorScheme={colorScheme}
                                   key={`${v?.value?.name}_colorScale_${JSON.stringify(colorScheme.colors)}`}
                                 />
-                              );
-                            }))}
+                              ))
+                            )}
                           />
                         </td>
                         <td className="whitespace-nowrap">
