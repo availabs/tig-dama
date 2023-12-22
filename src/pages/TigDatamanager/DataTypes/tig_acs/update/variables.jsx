@@ -33,6 +33,10 @@ const ACSVariableUpdate = (props) => {
     setVariables(cloneDeep(variables));
   };
 
+  const colorScaleOptions = ["First Item", "Second Item", "Third Item"];
+
+
+  console.log("ryan testing variables component, variables:", variables)
   return (
     <>
       <Input
@@ -48,26 +52,26 @@ const ACSVariableUpdate = (props) => {
       >
         Add a new Variable{" "}
       </button>
-      <div class="flex flex-col px-5 mx-3">
-        <div class="overflow-x-auto sm:-mx-6 lg:-mx-8">
-          <div class="inline-block min-w-full py-2 sm:px-6 lg:px-8">
-            <div class="overflow-hidden">
-              <table class="min-w-full text-left text-sm font-light">
-                <thead class="border-b font-medium ">
+      <div className="flex flex-col px-5 mx-3">
+        <div className="overflow-x-auto sm:-mx-6 lg:-mx-8">
+          <div className="inline-block min-w-full py-2 sm:px-6 lg:px-8">
+            <div className="overflow-hidden">
+              <table className="min-w-full text-left text-sm font-light">
+                <thead className="border-b font-medium ">
                   <tr>
-                    <th scope="col" class="px-6 py-4">
+                    <th scope="col" className="px-6 py-4">
                       Name
                     </th>
-                    <th scope="col" class="px-6 py-4">
+                    <th scope="col" className="px-6 py-4">
                       Census Keys
                     </th>
-                    <th scope="col" class="px-6 py-4">
+                    <th scope="col" className="px-6 py-4">
                       Divisor Keys
                     </th>
-                    <th scope="col" class="px-6 py-4">
+                    <th scope="col" className="px-6 py-4">
                       Color scale
                     </th>
-                    <th scope="col" class="px-6 py-4">
+                    <th scope="col" className="px-6 py-4">
                       Delete
                     </th>
                   </tr>
@@ -75,11 +79,11 @@ const ACSVariableUpdate = (props) => {
                 <tbody>
                   {variables && variables.length > 0 ? (
                     variables.map((v, i) => (
-                      <tr class="transition duration-300 ease-in-out ">
-                        <td class="whitespace-nowrap  px-6 py-4 font-medium">
+                      <tr className="transition duration-300 ease-in-out " key={`${v?.value?.name}_row`}>
+                        <td className="whitespace-nowrap  px-6 py-4 font-medium">
                           {v?.value?.name || ""}
                         </td>
-                        <td class="whitespace-nowrap  px-6 py-4">
+                        <td className="whitespace-nowrap  px-6 py-4">
                           <Input
                             type="text"
                             className="p-2  flex-1 shadow bg-grey-50 focus:bg-blue-100 border-gray-300"
@@ -90,7 +94,7 @@ const ACSVariableUpdate = (props) => {
                             }
                           />
                         </td>
-                        <td class="whitespace-nowrap px-6 py-4">
+                        <td className="whitespace-nowrap px-6 py-4">
                           <Input
                             type="text"
                             className="p-2 flex-1 shadow bg-grey-50 focus:bg-blue-100 border-gray-300"
@@ -101,22 +105,31 @@ const ACSVariableUpdate = (props) => {
                             }
                           />
                         </td>
-                        <td class="whitespace-nowrap px-6 py-4">
+                        <td className="whitespace-nowrap px-6 py-4">
                           <select
 
                             type="text"
                             className="p-2 flex-1 shadow bg-grey-50 focus:bg-blue-100 border-gray-300"
-                            value={(v?.value?.divisorKeys || []).join(",") || ""}
+                            value={(v?.value?.colorScale || '')}
                             placeholder="Ryan new box"
-                            onChange={(val) =>
-                              setUpdateVariable(i, (val || "").split(","), "divisorKeys")
+                            onChange={(e) => {
+                                console.log("ryan testing onChange, val:", e)
+                                setUpdateVariable(i, (e.target.value), "colorScale")
+                              }
                             }
                           >
-                            <option>Item 1</option>
-                            <option>Item 2</option>
+                            {
+                              colorScaleOptions.map(scaleOption => {
+                                return (
+                                  <option value={scaleOption} key={`${v.value.name}_colorScale_${scaleOption}`}>
+                                    {scaleOption}
+                                  </option>
+                                )
+                              })
+                            }
                           </select>
                         </td>
-                        <td class="whitespace-nowrap">
+                        <td className="whitespace-nowrap">
                           <div
                             onClick={() => setDeleteColumn(i)}
                             className="mx-3 my-2 text-red-200 hover:text-red-400 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-sm px-5 py-2.5 text-center "
@@ -129,8 +142,8 @@ const ACSVariableUpdate = (props) => {
                       </tr>
                     ))
                   ) : (
-                    <tr class="border-b transition duration-300 ease-in-out ">
-                      No Variables Availables
+                    <tr className="border-b transition duration-300 ease-in-out ">
+                      <td>No Variables Available</td>
                     </tr>
                   )}
                 </tbody>
