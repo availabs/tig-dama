@@ -90,7 +90,13 @@ const SedMapFilter = (props) => {
   );
 
   const allProjectIds = Object.keys(dataById);
+  const { attributes } = layer;
 
+  let getAttributes = (typeof attributes?.[0] === 'string' ?
+    attributes : attributes.map(d => d.name)).filter(d => !['wkb_geometry'].includes(d))
+
+  //RYAN TODO -- this technically fixes the "re-zoom" bug for zoom-to-feature
+  //But it does so by loading all the data upfront, which is bigly and kinda slow.
   React.useEffect(() => {
     falcor.get([
       "dama",
@@ -99,7 +105,7 @@ const SedMapFilter = (props) => {
       activeViewId,
       "databyId",
       allProjectIds,
-      ["ogc_fid","taz","county"],
+      getAttributes,
     ]);
   }, [falcor, pgEnv, activeViewId, allProjectIds]);
 
@@ -190,6 +196,13 @@ const SedMapFilter = (props) => {
               return a;
             }, {});
 
+            if (projectCalculatedBounds) {
+              newSymbology.fitToBounds = projectCalculatedBounds;
+            }
+            else {
+              newSymbology.fitToBounds = null;
+            }
+
             if (!isEqual(newSymbology, tempSymbology)) {
               console.log("setting new newSymbology");
               setTempSymbology(newSymbology);
@@ -199,22 +212,7 @@ const SedMapFilter = (props) => {
     if(activeVar.length > 0){
       updateSymbology()
     }
-  },[activeVar, varType, year,falcorCache])
-
-  React.useEffect(() => {
-    const newSymbology = cloneDeep(tempSymbology);
-    if (projectCalculatedBounds) {
-      newSymbology.fitToBounds = projectCalculatedBounds;
-    }
-    else{
-      newSymbology.fitToBounds = null;
-    }
-
-    if (!isEqual(newSymbology, tempSymbology)) {
-      console.log("setting new newSymbology, projectCalculatedBounds useEffect");
-      setTempSymbology(newSymbology);
-    }
-  },[projectCalculatedBounds])
+  },[activeVar, varType, year,falcorCache, projectCalculatedBounds])
 
   const [searchParams] = useSearchParams();
   const searchVar = searchParams.get("variable")
@@ -236,19 +234,19 @@ const SedMapFilter = (props) => {
 
   //console.log('mapFilter', metaData.years, activeVar)
   const idFilterOptions = Object.values(dataById).sort((a,b) => {
-    if(a.taz < b.taz){
+    if (a.taz < b.taz) {
       return -1;
     }
-    else if (b.taz < a.taz){
+    else if (b.taz < a.taz) {
       return 1;
     }
-    else{
-      if(a.county < b.county){
+    else {
+      if (a.county < b.county) {
         return -1
       }
       else if (b.county < a.county) {
         return 1
-      } 
+      }
     }
   }).map((v, i) => (
     <option key={`taz_filter_option_${i}`} className="ml-2  truncate" value={v?.taz}>
