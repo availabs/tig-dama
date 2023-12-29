@@ -1,13 +1,13 @@
 import React, { useMemo, useEffect} from "react";
 import get from "lodash/get";
-
+import mapboxgl from "maplibre-gl";
 import { useSearchParams } from "react-router-dom";
-
+import isEqual from 'lodash/isEqual'
+import cloneDeep from 'lodash/cloneDeep'
 import { DamaContext } from "~/pages/DataManager/store"
 import { Button } from "~/modules/avl-components/src"
 import * as d3scale from "d3-scale"
 import { range as d3range } from "d3-array"
-import cloneDeep from 'lodash/cloneDeep'
 import download from "downloadjs"
 // import { download as shpDownload } from "~/pages/DataManager/utils/shp-write"
 
@@ -46,10 +46,15 @@ export const sedVarsCounty = {
     "emplf": {name: 'Employed Labor Force (in 000s)', domain: [872,204,364,693,1411,2857], range: defaultRange},
     "lf": {name: 'Labor Force  (in 000s)', domain: [33,116,237,366,557,1383], range: defaultRange}
 }
-
+const GEOM_TYPES = {
+  Point: "Point",
+  MultiLineString: "MultiLineString",
+  MultiPolygon: "MultiPolygon",
+};
 //const years = ["10", "17", "20", "25", "30", "35", "40", "45", "50", "55"];
 
-const SedMapFilter = ({
+const SedMapFilter = (props) => {
+  const {
     source,
     metaData,
     filters,
@@ -57,8 +62,8 @@ const SedMapFilter = ({
     setTempSymbology,
     tempSymbology,
     activeViewId,
-    layer
-  }) => {
+    layer,
+  } = props;
   const { falcor, falcorCache, pgEnv } = React.useContext(DamaContext)
   let activeVar = useMemo(() => get(filters, "activeVar.value", ""), [filters]);
   let varType = useMemo(
@@ -77,8 +82,56 @@ const SedMapFilter = ({
     return source.type === 'tig_sed_county' ? sedVarsCounty : sedVars
   },[source.type])
 
+  const projectIdFilterValue = filters["projectId"]?.value || null;
+  const dataById = get(
+    falcorCache,
+    ["dama", pgEnv, "viewsbyId", activeViewId, "databyId"],
+    {}
+  );
+
+  const allProjectIds = Object.keys(dataById);
+
+  React.useEffect(() => {
+    falcor.get([
+      "dama",
+      pgEnv,
+      "viewsbyId",
+      activeViewId,
+      "databyId",
+      allProjectIds,
+      ["ogc_fid","taz","county"],
+    ]);
+  }, [falcor, pgEnv, activeViewId, allProjectIds]);
+
+  const projectCalculatedBounds = useMemo(() => {
+    if (projectIdFilterValue) {
+      const project = Object.values(dataById).find(geo => geo.taz === parseInt(projectIdFilterValue));
+
+      console.log("filtered to project::", project);
+      const projectGeom = !!project?.wkb_geometry
+        ? JSON.parse(project.wkb_geometry)
+        : null;
+      if (projectGeom?.type === GEOM_TYPES["Point"]) {
+        const coordinates = projectGeom.coordinates;
+        return new mapboxgl.LngLatBounds(coordinates, coordinates);
+      } else if (projectGeom?.type === GEOM_TYPES["MultiLineString"]) {
+        const coordinates = projectGeom.coordinates[0];
+        return coordinates.reduce((bounds, coord) => {
+          return bounds.extend(coord);
+        }, new mapboxgl.LngLatBounds(coordinates[0], coordinates[0]));
+      } else if (projectGeom?.type === GEOM_TYPES["MultiPolygon"]) {
+        const coordinates = projectGeom.coordinates[0][0];
+
+        return coordinates.reduce((bounds, coord) => {
+          return bounds.extend(coord);
+        }, new mapboxgl.LngLatBounds(coordinates[0], coordinates[0]));
+      }
+    } else {
+      return undefined;
+    }
+  }, [projectIdFilterValue, dataById]);
+
   useEffect(() => {
-    //console.log('calculate the tempSymbology',activeVar)
     const updateSymbology = () => {
       falcor.get(['dama',pgEnv, 'viewsbyId' ,activeViewId, 'data', 'length'])
         .then(d => {
@@ -86,7 +139,6 @@ const SedMapFilter = ({
             ['json', 'dama', pgEnv, 'viewsbyId' ,activeViewId, 'data', 'length'],
           0)
 
-          // console.log('length',length)
           return falcor.chunk([
             'dama',
             pgEnv,
@@ -101,11 +153,18 @@ const SedMapFilter = ({
               ['dama', pgEnv, 'viewsbyId', activeViewId, 'databyId'],
             {})
 
-            //console.log('getColorScale', dataById, falcorCache)
+            const varScale = varList[varType];
+            const maxScaleLength =
+              varScale.domain.length > varScale.range.length
+                ? varScale.range.length
+                : varScale.domain.length;
+
+            const colorDomain = varScale.domain.slice(0,maxScaleLength)
+            const colorRange = varScale.range.slice(0,maxScaleLength);
 
             const colorScale = d3scale.scaleThreshold()
-              .domain(varList[varType].domain)
-              .range(varList[varType].range);
+              .domain(colorDomain)
+              .range(colorRange);
 
             let colors = Object.keys(dataById).reduce((out, id) => {
               out[+id] = colorScale(dataById[+id][activeVar]) || "#000"
@@ -113,49 +172,49 @@ const SedMapFilter = ({
             },{})
             let output = ["get",["to-string",["get","ogc_fid"]], ["literal", colors]]
 
-
-
             const newSymbology = layer.layers.reduce((a, c) => {
               a[c.id] = {
                 "fill-color": {
                   [activeVar]: {
                     type: 'threshold',
                     settings: {
-                      range: varList[varType].range,
-                      domain: varList[varType].domain,
-                      title: varList[varType].name
+                      range: colorRange,
+                      domain: colorDomain,
+                      title: varScale.name
                     },
                     value: output
                   }
-                }
+                },
+                
               };
               return a;
             }, {});
 
-            // let newSymbology = cloneDeep(tempSymbology) || {'fill-color':{}}
-            // if(!newSymbology['fill-color']) {
-            //   newSymbology['fill-color'] = {}
-            // }
-            // newSymbology['fill-color'][activeVar] = {
-            //   type: 'scale-threshold',
-            //   settings: {
-            //     range: varList[varType].range,
-            //     domain: varList[varType].domain,
-            //     title: varList[varType].name
-            //   },
-            //   value: output
-            // }
-
-            //console.log('newSymbology', newSymbology)
-
-            setTempSymbology(newSymbology)
-
+            if (!isEqual(newSymbology, tempSymbology)) {
+              console.log("setting new newSymbology");
+              setTempSymbology(newSymbology);
+            }
         })
     }
     if(activeVar.length > 0){
       updateSymbology()
     }
   },[activeVar, varType, year,falcorCache])
+
+  React.useEffect(() => {
+    const newSymbology = cloneDeep(tempSymbology);
+    if (projectCalculatedBounds) {
+      newSymbology.fitToBounds = projectCalculatedBounds;
+    }
+    else{
+      newSymbology.fitToBounds = null;
+    }
+
+    if (!isEqual(newSymbology, tempSymbology)) {
+      console.log("setting new newSymbology, projectCalculatedBounds useEffect");
+      setTempSymbology(newSymbology);
+    }
+  },[projectCalculatedBounds])
 
   const [searchParams] = useSearchParams();
   const searchVar = searchParams.get("variable")
@@ -176,9 +235,42 @@ const SedMapFilter = ({
   }, [activeVar, setFilters, searchVar]);
 
   //console.log('mapFilter', metaData.years, activeVar)
+  const idFilterOptions = Object.values(dataById).sort((a,b) => {
+    if(a.taz < b.taz){
+      return -1;
+    }
+    else if (b.taz < a.taz){
+      return 1;
+    }
+    else{
+      if(a.county < b.county){
+        return -1
+      }
+      else if (b.county < a.county) {
+        return 1
+      } 
+    }
+  }).map((v, i) => (
+    <option key={`taz_filter_option_${i}`} className="ml-2  truncate" value={v?.taz}>
+      {v.taz} -- {v.county}
+    </option>
+  ))
 
   return (
     <div className="flex flex-1 border-blue-100">
+    <div className="py-3.5 px-2 text-sm text-gray-400">ID :</div>
+    <div className="flex-1">
+      <select
+        className="pl-3 pr-4 py-2.5 border border-blue-100 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
+        value={projectIdFilterValue || ""}
+        onChange={(e) => setFilters({ projectId: { value: e.target.value } })}
+      >
+        <option className="ml-2  truncate" value={""}>
+          None
+        </option>
+        {idFilterOptions}
+      </select>
+    </div>
       <div className="py-3.5 px-2 text-sm text-gray-400">Year:</div>
         <div className="flex-1">
           <div className='px-6'>
@@ -424,7 +516,7 @@ const SedHoverComp = ({ data, layer }) => {
   let getAttributes = (typeof attributes?.[0] === 'string' ?
     attributes : attributes.map(d => d.name)).filter(d => !['wkb_geometry'].includes(d))
 
-  console.log('hover attributes', getAttributes)
+  //console.log('hover attributes', getAttributes)
 
   React.useEffect(() => {
     falcor.get([
