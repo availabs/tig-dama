@@ -43,12 +43,12 @@ export const BPMHoverComp = (props) => {
           ['dama', pgEnv, 'viewsbyId', activeViewId, 'databyId'],
         {})
     },[falcorCache, filters]));  
-  
+
     const filterKeys = Object.keys(filters);
 
     let filteredData = mapData;
     filterKeys.forEach((key, i) => {
-        if(key !== 'activeVar') {
+        if(key !== 'activeVar' && key !== 'projectId') {
           filteredData = filteredData.reduce((acc, val) => {
             if(filters[key].value == val[key]) {
                 acc.push(val);

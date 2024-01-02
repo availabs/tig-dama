@@ -2,7 +2,7 @@ import React, {useEffect} from 'react'
 import cloneDeep from 'lodash/cloneDeep'
 import isEqual from 'lodash/isEqual'
 import get from 'lodash/get'
-
+import mapboxgl from "maplibre-gl";
 import ckmeans from "~/pages/DataManager/utils/ckmeans";
 import { getColorRange } from "~/modules/avl-components/src";
 
@@ -12,7 +12,14 @@ import { variableAccessors } from "./BPMConstants";
 
 import { Button } from "~/modules/avl-components/src"
 import shpwrite from  '@mapbox/shp-write'
+const GEOM_TYPES = {
+  Point: "Point",
+  MultiLineString: "MultiLineString",
+  MultiPolygon: "MultiPolygon",
+};
 
+const MAP_GEOM_VIEW_ID = 311; //prod value
+// const MAP_GEOM_VIEW_ID = 1374; // replace with appropriate ${viewId} for environment
 
 const MapDataDownloader = ({ activeViewId, activeVar,functionalClass,timePeriod,mapData  }) => {
   
@@ -29,7 +36,7 @@ const MapDataDownloader = ({ activeViewId, activeVar,functionalClass,timePeriod,
         "dama",
         pgEnv,
         "tiger",
-        [311],
+        [MAP_GEOM_VIEW_ID],
         geoids,
         ['2020'],
         ['county'],
@@ -58,7 +65,7 @@ const MapDataDownloader = ({ activeViewId, activeVar,functionalClass,timePeriod,
           "dama",
           pgEnv,
           "tiger",
-          [311],
+          [MAP_GEOM_VIEW_ID],
           geoid,
           ['2020'],
           ['county'],
@@ -177,7 +184,7 @@ export const BPMMapFilter = ({
   const filterKeys = Object.keys(filters);
 
   filterKeys.forEach((key, i) => {
-    if(key !== 'activeVar') {
+    if(key !== 'activeVar' && key !== 'projectId') {
       filteredData = filteredData.reduce((acc, val) => {
         if(filters[key].value == val[key]) {
             acc.push(val);
@@ -222,6 +229,71 @@ export const BPMMapFilter = ({
   })
 
   const mapData = formattedData
+
+  const geoids = Object.keys(mapData)
+  React.useEffect(() => {
+    const loadMapGeoms = async () => {
+     await falcor.get([
+        "dama",
+        pgEnv,
+        "tiger",
+        [MAP_GEOM_VIEW_ID],
+        geoids,
+        ['2020'],
+        ['county'],
+        "attributes",
+        ["geoid", "wkb_geometry", "name"],
+      ])
+    }
+
+    loadMapGeoms()
+  },[pgEnv, geoids]);
+
+  const areaOptions = Object.keys(formattedData); 
+
+  /**
+   * 
+   * TODO reanme `projectIdFilterValue` here and in SED
+   */
+
+  const projectIdFilterValue = filters["projectId"]?.value || null;
+
+  const projectCalculatedBounds = React.useMemo(() => {
+    if (projectIdFilterValue) {
+      const countyMetadata = get(falcorCache, [
+        "dama",
+        pgEnv,
+        "tiger",
+        MAP_GEOM_VIEW_ID,
+        projectIdFilterValue,
+        ['2020'],
+        ['county'],
+        "attributes"
+      ], "{}");
+
+      console.log("filtered to countyMetadata::", countyMetadata);
+      const projectGeom = !!countyMetadata?.wkb_geometry
+        ? JSON.parse(countyMetadata.wkb_geometry)
+        : null;
+      if (projectGeom?.type === GEOM_TYPES["Point"]) {
+        const coordinates = projectGeom.coordinates;
+        return new mapboxgl.LngLatBounds(coordinates, coordinates);
+      } else if (projectGeom?.type === GEOM_TYPES["MultiLineString"]) {
+        const coordinates = projectGeom.coordinates[0];
+        return coordinates.reduce((bounds, coord) => {
+          return bounds.extend(coord);
+        }, new mapboxgl.LngLatBounds(coordinates[0], coordinates[0]));
+      } else if (projectGeom?.type === GEOM_TYPES["MultiPolygon"]) {
+        const coordinates = projectGeom.coordinates[0][0];
+
+        return coordinates.reduce((bounds, coord) => {
+          return bounds.extend(coord);
+        }, new mapboxgl.LngLatBounds(coordinates[0], coordinates[0]));
+      }
+    } else {
+      return undefined;
+    }
+  }, [projectIdFilterValue, data]);
 
   React.useEffect(() => {
     // const CountyValues = Object.values(filteredData)
@@ -284,14 +356,51 @@ export const BPMMapFilter = ({
       return a;
     }, {});
 
+    if (projectCalculatedBounds) {
+      newSymbology.fitToBounds = projectCalculatedBounds;
+      newSymbology.fitZoom = 9.5;
+    }
+    else {
+      newSymbology.fitToBounds = null;
+      newSymbology.fitZoom = null;
+    }
+
+
     if(!isEqual(newSymbology, tempSymbology)){
       setTempSymbology(newSymbology)
     }
 
-  },[mapData, filters, timePeriod, functionalClass, variable]);
+  },[mapData, filters, timePeriod, functionalClass, variable, projectCalculatedBounds]);
+
+  const idFilterOptions = areaOptions.map(fips => ({name: fips2Name[fips], id: fips})).sort((a,b) => {
+    if (a.name < b.name) {
+      return -1;
+    }
+    else if (b.name < a.name) {
+      return 1;
+    }
+  }).map((v, i) => (
+    <option key={`bpm_filter_option_${i}`} className="ml-2  truncate" value={v?.id}>
+      {v.name} -- {v.id}
+    </option>
+  ))
+
 
   return (
     <div className='flex flex-1'>
+        <div className="py-3.5 px-2 text-sm text-gray-400">ID :</div>
+        <div className="flex-1">
+          <select
+            className="pl-3 pr-4 py-2.5 border border-blue-100 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
+            value={projectIdFilterValue || ""}
+            onChange={(e) => setFilters({ projectId: { value: e.target.value } })}
+          >
+            <option className="ml-2  truncate" value={""}>
+              None
+            </option>
+            {idFilterOptions}
+          </select>
+        </div>
         <div className='py-3.5 px-2 text-sm text-gray-400'>Variable : </div>
         <div className='flex-1'>
           <select
