@@ -95,8 +95,8 @@ const SedMapFilter = (props) => {
   let getAttributes = (typeof attributes?.[0] === 'string' ?
     attributes : attributes.map(d => d.name)).filter(d => !['wkb_geometry'].includes(d))
 
-  //RYAN TODO -- this technically fixes the "re-zoom" bug for zoom-to-feature
-  //But it does so by loading all the data upfront, which is bigly and kinda slow.
+  //RYAN TODO -- this technically fixes the "constantly-re-zooming" bug for zoom-to-feature
+  //But it does so by loading all the data upfront, which is bigly and kinda slow for the TAZ datasets.
   React.useEffect(() => {
     falcor.get([
       "dama",
@@ -109,9 +109,12 @@ const SedMapFilter = (props) => {
     ]);
   }, [falcor, pgEnv, activeViewId, allProjectIds]);
 
+  const geomKeyName = getAttributes.includes('taz') ? 'taz' : 'county';
   const projectCalculatedBounds = useMemo(() => {
     if (projectIdFilterValue) {
-      const project = Object.values(dataById).find(geo => geo.taz === parseInt(projectIdFilterValue));
+      const formattedFilterValue = geomKeyName === "taz" ? parseInt(projectIdFilterValue) : projectIdFilterValue
+
+      const project = Object.values(dataById).find(geo => geo[geomKeyName] === formattedFilterValue);
 
       console.log("filtered to project::", project);
       const projectGeom = !!project?.wkb_geometry
@@ -198,6 +201,10 @@ const SedMapFilter = (props) => {
 
             if (projectCalculatedBounds) {
               newSymbology.fitToBounds = projectCalculatedBounds;
+
+              if(geomKeyName === 'county'){
+                newSymbology.fitZoom = 9.5;
+              }
             }
             else {
               newSymbology.fitToBounds = null;
@@ -232,27 +239,37 @@ const SedMapFilter = (props) => {
     }
   }, [activeVar, setFilters, searchVar]);
 
-  //console.log('mapFilter', metaData.years, activeVar)
-  const idFilterOptions = Object.values(dataById).sort((a,b) => {
-    if (a.taz < b.taz) {
-      return -1;
-    }
-    else if (b.taz < a.taz) {
-      return 1;
-    }
-    else {
-      if (a.county < b.county) {
-        return -1
+  const idFilterOptions = Object.values(dataById)
+    .sort((a, b) => {
+      if (a.taz < b.taz) {
+        return -1;
+      } else if (b.taz < a.taz) {
+        return 1;
+      } else {
+        if (a.county < b.county) {
+          return -1;
+        } else if (b.county < a.county) {
+          return 1;
+        }
       }
-      else if (b.county < a.county) {
-        return 1
-      }
-    }
-  }).map((v, i) => (
-    <option key={`taz_filter_option_${i}`} className="ml-2  truncate" value={v?.taz}>
-      TAZ {v.taz} -- {v.county} County
-    </option>
-  ))
+    })
+    .map((v, i) => {
+      const optionValue = geomKeyName === "taz" ? v.taz : v.county;
+      const optionDisplay =
+        geomKeyName === "taz"
+          ? `TAZ ${optionValue} -- ${v.county} County`
+          : `${v.county} County`;
+
+      return (
+        <option
+          key={`sed_geom_filter_option_${i}`}
+          className="ml-2  truncate"
+          value={optionValue}
+        >
+          {optionDisplay}
+        </option>
+      );
+    });
 
   return (
     <div className="flex flex-1 border-blue-100">
