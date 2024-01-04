@@ -381,7 +381,7 @@ export const BPMMapFilter = ({
     }
   }).map((v, i) => (
     <option key={`bpm_filter_option_${i}`} className="ml-2  truncate" value={v?.id}>
-      {v.name} -- {v.id}
+      {v.name} County -- {v.id}
     </option>
   ))
 

@@ -250,7 +250,7 @@ const SedMapFilter = (props) => {
     }
   }).map((v, i) => (
     <option key={`taz_filter_option_${i}`} className="ml-2  truncate" value={v?.taz}>
-      {v.taz} -- {v.county}
+      TAZ {v.taz} -- {v.county} County
     </option>
   ))
 
@@ -504,7 +504,6 @@ const SedTableTransform = (tableData, attributes, filters, years,source) => {
 };
 
 const SedHoverComp = ({ data, layer }) => {
-
   const { pgEnv, falcor, falcorCache } = React.useContext(DamaContext);
   const { source: { type }, attributes, activeViewId, props: { filters, activeView: {metadata: { years } } }  } = layer
 
