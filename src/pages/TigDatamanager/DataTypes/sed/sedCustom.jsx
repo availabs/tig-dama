@@ -50,6 +50,7 @@ const GEOM_TYPES = {
   Point: "Point",
   MultiLineString: "MultiLineString",
   MultiPolygon: "MultiPolygon",
+  Polygon: "Polygon"
 };
 //const years = ["10", "17", "20", "25", "30", "35", "40", "45", "50", "55"];
 
@@ -120,6 +121,11 @@ const SedMapFilter = (props) => {
       const projectGeom = !!project?.wkb_geometry
         ? JSON.parse(project.wkb_geometry)
         : null;
+
+      if (projectGeom?.type === GEOM_TYPES["POLYGON"]) {
+        projectGeom.type = GEOM_TYPES['MultiPolygon']
+        projectGeom.coordinates = [projectGeom.coordinates]
+      }
       if (projectGeom?.type === GEOM_TYPES["Point"]) {
         const coordinates = projectGeom.coordinates;
         return new mapboxgl.LngLatBounds(coordinates, coordinates);
@@ -128,7 +134,8 @@ const SedMapFilter = (props) => {
         return coordinates.reduce((bounds, coord) => {
           return bounds.extend(coord);
         }, new mapboxgl.LngLatBounds(coordinates[0], coordinates[0]));
-      } else if (projectGeom?.type === GEOM_TYPES["MultiPolygon"]) {
+      } 
+      else if (projectGeom?.type === GEOM_TYPES["MultiPolygon"]) {
         const coordinates = projectGeom.coordinates[0][0];
 
         return coordinates.reduce((bounds, coord) => {
@@ -380,8 +387,8 @@ const MapDataDownloader = ({ activeViewId, activeVar, variable, year }) => {
         const value = get(data, activeVar, null);
         const county = get(data, "county", "unknown");
         const geom = JSON.parse(get(data, "wkb_geometry", "{}"));
-        if(geom.type === 'Polygon') {
-          geom.type = 'MultiPolygon'
+        if(geom.type === GEOM_TYPES['Polygon']) {
+          geom.type = GEOM_TYPES['MultiPolygon']
           geom.coordinates = [geom.coordinates]
         }
         // console.log('geom', county,  geom.type, )
