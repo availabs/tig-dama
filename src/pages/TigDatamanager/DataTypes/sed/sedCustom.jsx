@@ -90,25 +90,9 @@ const SedMapFilter = (props) => {
     {}
   );
 
-  const allProjectIds = Object.keys(dataById);
   const { attributes } = layer;
-
-  let getAttributes = (typeof attributes?.[0] === 'string' ?
+  const getAttributes = (typeof attributes?.[0] === 'string' ?
     attributes : attributes.map(d => d.name)).filter(d => !['wkb_geometry'].includes(d))
-
-  //RYAN TODO -- this technically fixes the "constantly-re-zooming" bug for zoom-to-feature
-  //But it does so by loading all the data upfront, which is bigly and kinda slow for the TAZ datasets.
-  React.useEffect(() => {
-    falcor.get([
-      "dama",
-      pgEnv,
-      "viewsbyId",
-      activeViewId,
-      "databyId",
-      allProjectIds,
-      getAttributes,
-    ]);
-  }, [falcor, pgEnv, activeViewId, allProjectIds]);
 
   const geomKeyName = getAttributes.includes('taz') ? 'taz' : 'county';
   const projectCalculatedBounds = useMemo(() => {
@@ -162,7 +146,7 @@ const SedMapFilter = (props) => {
             activeViewId,
             'databyIndex',
             [...Array(length).keys()],
-            activeVar
+            [activeVar, geomKeyName]
           ])
         }).then(() => {
             const dataById = get(falcorCache,
@@ -572,17 +556,6 @@ const SedHoverComp = ({ data, layer }) => {
 
   //console.log('hover attributes', getAttributes)
 
-  React.useEffect(() => {
-    falcor.get([
-      'dama',
-      pgEnv,
-      'viewsbyId',
-      activeViewId,
-      'databyId',
-      id,
-      getAttributes
-    ])
-  }, [falcor, pgEnv, activeViewId, id, attributes])
 
 
   const attrInfo = React.useMemo(() => {
