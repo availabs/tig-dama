@@ -223,7 +223,7 @@ const LinearScale = ({ scale, format, size, ticks = 5 }) => {
       <ColorBar size={ size } colors={ scaleTicks.map(t => scale(t)) }/>
       <div className={ `text-sm flex` }>
         { scaleTicks.map(t =>
-            <div className="col-span-1 text-right pr-1 flex-1" key={ t }>
+            <div className="col-span-1 text-left pr-1 flex-1" key={ t }>
               { format(t) }
             </div>
           )
@@ -331,7 +331,7 @@ const QuantizleScale = ({ scale, format, size }) => {
       <ColorBar size={ size } colors={ range }/>
       <div className={ `text-sm flex` }>
         { range.map(r =>
-            <div className="flex-1 text-right pr-1" key={ r }>
+            <div className="flex-1 text-left pr-1" key={ r }>
               { format(scale.invertExtent(r)[1]) }
             </div>
           )
