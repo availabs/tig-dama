@@ -3,7 +3,18 @@ import { useSearchParams, Link, useNavigate } from "react-router-dom";
 import download from "downloadjs"
 import { Button } from "~/modules/avl-components/src"
 
-const COLUMNS_TO_EXCLUDE = ['ogc_fid', 'county_fips']
+const VARIABLE_LABELS = {
+  ptype: "Project Type",
+  rtp_id: "RTP ID",
+  tip_id: "TIP ID",
+  cost: "Cost",
+  mpo: "MPO",
+  county: "County",
+  plan_portion: "Plan Portion",
+  sponsor: "Sponsor",
+  description: "Description",
+  year: "Year",
+};
 
 function onlyUnique(value, index, array) {
   return array.indexOf(value) === index && value !== "null" && value !== 0;
@@ -85,19 +96,7 @@ const ProjectTableFilter = (
   return (
     <div className="flex flex-1 border-blue-100 py-1">
       <div className='flex flex-1'>
-        <div className="py-2 px-1 text-sm text-gray-400">Description</div>
-        <div className="px-1">
-          <input
-            className="pl-3 pr-4 py-2.5 border border-blue-100 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
-            value={descriptionFilterValue || ""}
-            onChange={(e) =>
-              setFilters({ description: { value: e.target.value } })
-            }
-          />
-        </div>
-      </div>
-      <div className='flex flex-1'>
-        <div className="py-2 px-1 text-sm text-gray-400">{projectKey}</div>
+        <div className="py-2 px-1 text-sm text-gray-400">{VARIABLE_LABELS[projectKey]}</div>
         <div className="px-1">
           <select
             className="pl-3 pr-4 py-2.5 border border-blue-100 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
@@ -201,6 +200,27 @@ const ProjectTableFilter = (
           </select>
         </div>
       </div>}
+      <div className='flex flex-1'> 
+        <div className="py-2 px-1 text-sm text-gray-400">County:</div>
+        <div className="px-1">
+          <select
+            className="pl-3 pr-4 py-2.5 border border-blue-100 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
+            value={countyFilterValue || ""}
+            onChange={(e) =>
+              setFilters({ county: { value: e.target.value } })
+            }
+          >
+            <option className="ml-2  truncate" value={""}>
+              --
+            </option>
+            {allCounties.map((k, i) => (
+              <option key={i} className="ml-2  truncate" value={k}>
+                {k}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
       <div className='flex flex-1'>
         <div className="py-2 px-1 text-sm text-gray-400">Sponsor:</div>
         <div className="px-1">
@@ -222,25 +242,16 @@ const ProjectTableFilter = (
           </select>
         </div>
       </div>
-      <div className='flex flex-1'> 
-        <div className="py-2 px-1 text-sm text-gray-400">County:</div>
+      <div className='flex flex-1'>
+        <div className="py-2 px-1 text-sm text-gray-400">Description</div>
         <div className="px-1">
-          <select
+          <input
             className="pl-3 pr-4 py-2.5 border border-blue-100 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
-            value={countyFilterValue || ""}
+            value={descriptionFilterValue || ""}
             onChange={(e) =>
-              setFilters({ county: { value: e.target.value } })
+              setFilters({ description: { value: e.target.value } })
             }
-          >
-            <option className="ml-2  truncate" value={""}>
-              --
-            </option>
-            {allCounties.map((k, i) => (
-              <option key={i} className="ml-2  truncate" value={k}>
-                {k}
-              </option>
-            ))}
-          </select>
+          />
         </div>
       </div>
       <div className='flex'>
@@ -277,23 +288,25 @@ export const ProjectTableTransform = (tableData, attributes, filters, years, sou
   });
 
   const generateColumn = (columnName) => {
+    const column = {
+      Header: VARIABLE_LABELS[columnName],
+      accessor: columnName,
+      id: columnName,
+    };
+
     if (columnName === "cost") {
-      return {
-        Header: columnName,
-        accessor: columnName,
-        id: columnName,
-        Cell: ({ value }) => {
-          const displayValue =
-            value !== "null"
-              ? `$${parseInt(value).toFixed(2).toLocaleString()}`
-              : "--";
-          return <div>{displayValue}</div>;
-        },
+      column.Cell = ({ value }) => {
+        const displayValue =
+          value !== "null"
+            ? `$${parseInt(value).toFixed(2).toLocaleString()}`
+            : "--";
+        return <div>{displayValue}</div>;
       };
-    } else {
-      return { Header: columnName, accessor: columnName, id: columnName };
     }
+
+    return column;
   };
+
   const dependentColumns =
     projectKey === "rtp_id"
       ? [generateColumn("plan_portion"), generateColumn("year")]
