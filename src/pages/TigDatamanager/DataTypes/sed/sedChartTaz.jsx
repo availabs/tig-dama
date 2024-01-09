@@ -20,12 +20,12 @@ const sedVars = {
   empret: { name: "Retail Employment" },
   empoff: { name: "Office Employment" },
   earnwork: { name: "Earnings" },
-  unvenrol: { name: "Universirty Enrollment" },
+  unvenrol: { name: "University Enrollment" },
   k12etot: { name: "School Enrollment" },
   gqpop: { name: "Group Quarters Population" },
-  gqpopins: { name: "Group Quarters Instituional Population" },
+  gqpopins: { name: "Group Quarters Institutional Population" },
   gqpopstr: { name: "Group Quarters Other Population" },
-  gqpopoth: { name: "Group Quarters Homless Population" },
+  gqpopoth: { name: "Group Quarters Homeless Population" },
 };
 
 const summarizeVars = {
