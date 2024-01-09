@@ -6,7 +6,7 @@ import { Button } from "~/modules/avl-components/src"
 const COLUMNS_TO_EXCLUDE = ['ogc_fid', 'county_fips']
 
 function onlyUnique(value, index, array) {
-  return array.indexOf(value) === index;
+  return array.indexOf(value) === index && value !== "null" && value !== 0;
 }
 
 function alphaSort(a, b) {
@@ -26,6 +26,7 @@ const ProjectTableFilter = (
   const projectTypeFilterValue = filters["ptype"]?.value || null;
   const countyFilterValue = filters['county']?.value || null;
   const sponsorFilterValue = filters['sponsor']?.value || null;
+  const descriptionFilterValue = filters['description']?.value || null;
   const yearFilterValue = filters['year']?.value || null; //only for RTP
   const mpoFilterValue = filters['mpo']?.value || null; //only for RTP
   const planPortionFilterValue = filters['plan_portion']?.value || null; //only for TIP
@@ -57,6 +58,8 @@ const ProjectTableFilter = (
   allProjectIds.sort(alphaSort);
   allProjectTypes.sort(alphaSort);
   allCounties.sort(alphaSort);
+  allYears.sort(alphaSort);
+  allPlanPortions.sort(alphaSort);
   allSponsors.sort(alphaSort);
   allMpo.sort(alphaSort);
 
@@ -80,10 +83,21 @@ const ProjectTableFilter = (
   }, [data, downloadColumns]);
     
   return (
-    <div className="flex flex-1 border-blue-100">
+    <div className="flex flex-1 border-blue-100 py-1">
       <div className='flex flex-1'>
-        <div className='flex-1' /> 
-        <div className="py-3.5 px-1 text-sm text-gray-400">{projectKey}</div>
+        <div className="py-2 px-1 text-sm text-gray-400">Description</div>
+        <div className="px-1">
+          <input
+            className="pl-3 pr-4 py-2.5 border border-blue-100 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
+            value={descriptionFilterValue || ""}
+            onChange={(e) =>
+              setFilters({ description: { value: e.target.value } })
+            }
+          />
+        </div>
+      </div>
+      <div className='flex flex-1'>
+        <div className="py-2 px-1 text-sm text-gray-400">{projectKey}</div>
         <div className="px-1">
           <select
             className="pl-3 pr-4 py-2.5 border border-blue-100 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
@@ -93,7 +107,7 @@ const ProjectTableFilter = (
             }
           >
             <option className="ml-2  truncate" value={""}>
-              None
+              --
             </option>
             {allProjectIds.map((k, i) => (
               <option key={i} className="ml-2  truncate" value={k}>
@@ -104,8 +118,7 @@ const ProjectTableFilter = (
         </div>
       </div>
       <div className='flex flex-1'>
-        <div className='flex-1' /> 
-        <div className="py-3.5 px-1 text-sm text-gray-400">Project Type:</div>
+        <div className="px-1 text-sm text-gray-400">Project Type:</div>
         <div className="px-1">
           <select
             className="pl-3 pr-4 py-2.5 border border-blue-100 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
@@ -115,7 +128,7 @@ const ProjectTableFilter = (
             }
           >
             <option className="ml-2  truncate" value={""}>
-              None
+              --
             </option>
             {allProjectTypes.map((k, i) => (
               <option key={i} className="ml-2  truncate" value={k}>
@@ -126,8 +139,7 @@ const ProjectTableFilter = (
         </div>
       </div>
       {projectKey === "tip_id" && <div className='flex flex-1'>
-        <div className='flex-1' /> 
-        <div className="py-3.5 px-1 text-sm text-gray-400">MPO:</div>
+        <div className="py-2 px-1 text-sm text-gray-400">MPO:</div>
         <div className="px-1">
           <select
             className="pl-3 pr-4 py-2.5 border border-blue-100 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
@@ -137,7 +149,7 @@ const ProjectTableFilter = (
             }
           >
             <option className="ml-2  truncate" value={""}>
-              None
+              --
             </option>
             {allMpo.map((k, i) => (
               <option key={i} className="ml-2  truncate" value={k}>
@@ -148,8 +160,7 @@ const ProjectTableFilter = (
         </div>
       </div>}
       {projectKey === "rtp_id" && <div className='flex flex-1'>
-        <div className='flex-1' /> 
-        <div className="py-3.5 px-1 text-sm text-gray-400">Plan Portion:</div>
+        <div className="px-1 text-sm text-gray-400">Plan Portion:</div>
         <div className="px-1">
           <select
             className="pl-3 pr-4 py-2.5 border border-blue-100 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
@@ -159,7 +170,7 @@ const ProjectTableFilter = (
             }
           >
             <option className="ml-2  truncate" value={""}>
-              None
+              --
             </option>
             {allPlanPortions.map((k, i) => (
               <option key={i} className="ml-2  truncate" value={k}>
@@ -170,8 +181,7 @@ const ProjectTableFilter = (
         </div>
       </div>}
       {projectKey === "rtp_id" && <div className='flex flex-1'>
-        <div className='flex-1' /> 
-        <div className="py-3.5 px-1 text-sm text-gray-400">Year:</div>
+        <div className="py-2 px-1 text-sm text-gray-400">Year:</div>
         <div className="px-1">
           <select
             className="pl-3 pr-4 py-2.5 border border-blue-100 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
@@ -181,7 +191,7 @@ const ProjectTableFilter = (
             }
           >
             <option className="ml-2  truncate" value={""}>
-              None
+              --
             </option>
             {allYears.map((k, i) => (
               <option key={i} className="ml-2  truncate" value={k}>
@@ -192,8 +202,7 @@ const ProjectTableFilter = (
         </div>
       </div>}
       <div className='flex flex-1'>
-        <div className='flex-1' /> 
-        <div className="py-3.5 px-1 text-sm text-gray-400">Sponsor:</div>
+        <div className="py-2 px-1 text-sm text-gray-400">Sponsor:</div>
         <div className="px-1">
           <select
             className="pl-3 pr-4 py-2.5 border border-blue-100 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
@@ -203,7 +212,7 @@ const ProjectTableFilter = (
             }
           >
             <option className="ml-2  truncate" value={""}>
-              None
+              --
             </option>
             {allSponsors.map((k, i) => (
               <option key={i} className="ml-2  truncate" value={k}>
@@ -213,9 +222,8 @@ const ProjectTableFilter = (
           </select>
         </div>
       </div>
-      <div className='flex flex-1'>
-        <div className='flex-1' /> 
-        <div className="py-3.5 px-1 text-sm text-gray-400">County:</div>
+      <div className='flex flex-1'> 
+        <div className="py-2 px-1 text-sm text-gray-400">County:</div>
         <div className="px-1">
           <select
             className="pl-3 pr-4 py-2.5 border border-blue-100 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
@@ -225,7 +233,7 @@ const ProjectTableFilter = (
             }
           >
             <option className="ml-2  truncate" value={""}>
-              None
+              --
             </option>
             {allCounties.map((k, i) => (
               <option key={i} className="ml-2  truncate" value={k}>
@@ -235,7 +243,7 @@ const ProjectTableFilter = (
           </select>
         </div>
       </div>
-      <div className='flex flex-1'>
+      <div className='flex'>
         <Button themeOptions={{size:'sm', color: 'primary'}}
           onClick={ TableDataDownloader }
         >
@@ -254,11 +262,16 @@ export const ProjectTableTransform = (tableData, attributes, filters, years, sou
   const activeFilterKeys = Object.keys(filters).filter(
     (filterKey) => !!filters[filterKey].value
   );
-console.log("tabledata", tableData)
+
   filteredData = tableData.filter((val) => {
     const shouldKeep = activeFilterKeys.every((filterKey) => {
-      const dataAccessor = filterKey === 'projectId' ? projectKey : filterKey;
-      return filters[filterKey].value === val[dataAccessor];
+      if(filterKey === "description"){
+        return val[filterKey].toLowerCase().includes(filters[filterKey].value.toLowerCase());
+      }
+      else{
+        const dataAccessor = filterKey === 'projectId' ? projectKey : filterKey;
+        return filters[filterKey].value === val[dataAccessor];
+      }
     });
     return shouldKeep;
   });
