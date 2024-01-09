@@ -3,6 +3,7 @@ import { useSearchParams, Link, useNavigate } from "react-router-dom";
 import download from "downloadjs"
 import { Button } from "~/modules/avl-components/src"
 
+const COLUMNS_TO_EXCLUDE = ['ogc_fid', 'county_fips']
 
 function onlyUnique(value, index, array) {
   return array.indexOf(value) === index;
@@ -25,6 +26,7 @@ const ProjectTableFilter = (
   const projectTypeFilterValue = filters["ptype"]?.value || null;
   const countyFilterValue = filters['county']?.value || null;
   const sponsorFilterValue = filters['sponsor']?.value || null;
+  const yearFilterValue = filters['year']?.value || null; //only for RTP
   const mpoFilterValue = filters['mpo']?.value || null; //only for RTP
   const planPortionFilterValue = filters['plan_portion']?.value || null; //only for TIP
 
@@ -47,6 +49,7 @@ const ProjectTableFilter = (
   const allProjectTypes = data.map(d => d['ptype']).filter(onlyUnique);
   const allCounties = data.map(d => d.county).filter(onlyUnique);
   const allSponsors = data.map(d => d.sponsor).filter(onlyUnique);
+  const allYears = data.map(d => d.year).filter(onlyUnique);
   const allPlanPortions = data.map(d => d.plan_portion).filter(onlyUnique);
   const allMpo = data.map(d => d.mpo).filter(onlyUnique);
 
@@ -166,6 +169,28 @@ const ProjectTableFilter = (
           </select>
         </div>
       </div>}
+      {projectKey === "rtp_id" && <div className='flex flex-1'>
+        <div className='flex-1' /> 
+        <div className="py-3.5 px-1 text-sm text-gray-400">Year:</div>
+        <div className="px-1">
+          <select
+            className="pl-3 pr-4 py-2.5 border border-blue-100 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
+            value={yearFilterValue || ""}
+            onChange={(e) =>
+              setFilters({ year: { value: e.target.value } })
+            }
+          >
+            <option className="ml-2  truncate" value={""}>
+              None
+            </option>
+            {allYears.map((k, i) => (
+              <option key={i} className="ml-2  truncate" value={k}>
+                {k}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>}
       <div className='flex flex-1'>
         <div className='flex-1' /> 
         <div className="py-3.5 px-1 text-sm text-gray-400">Sponsor:</div>
@@ -238,7 +263,7 @@ console.log("tabledata", tableData)
     return shouldKeep;
   });
 
-  const columns = attributes.map((attr) => {
+  const columns = attributes.filter(attr => !COLUMNS_TO_EXCLUDE.includes(attr)).map((attr) => {
     if (attr === "cost") {
       return {
         Header: attr,
