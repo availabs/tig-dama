@@ -313,8 +313,10 @@ export const BPMMapFilter = ({
       domain = ckmeans(values, ckmeansLen) || [];
     }
 
-    const range = getColorRange(5, "YlOrRd", false);
-
+    let range = getColorRange(5, "YlOrRd", false);
+    if (variable === "AvgSpeed") {
+      range = getColorRange(5, "RdYlGn", false);
+    }
     if (!(domain && domain?.length > 5)) {
       const n = domain?.length || 0;
       for (let i = n; i < 5; i++) {
