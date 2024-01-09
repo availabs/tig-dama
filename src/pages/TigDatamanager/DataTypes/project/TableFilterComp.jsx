@@ -28,8 +28,8 @@ const ProjectTableFilter = (
   const sponsorFilterValue = filters['sponsor']?.value || null;
   const descriptionFilterValue = filters['description']?.value || null;
   const yearFilterValue = filters['year']?.value || null; //only for RTP
-  const mpoFilterValue = filters['mpo']?.value || null; //only for RTP
-  const planPortionFilterValue = filters['plan_portion']?.value || null; //only for TIP
+  const planPortionFilterValue = filters['plan_portion']?.value || null; //only for RTP
+  const mpoFilterValue = filters['mpo']?.value || null; //only for TIP
 
   let projectKey = source?.name?.includes("RTP") ? "rtp_id" : "tip_id";
 
@@ -276,21 +276,37 @@ export const ProjectTableTransform = (tableData, attributes, filters, years, sou
     return shouldKeep;
   });
 
-  const columns = attributes.filter(attr => !COLUMNS_TO_EXCLUDE.includes(attr)).map((attr) => {
-    if (attr === "cost") {
+  const generateColumn = (columnName) => {
+    if (columnName === "cost") {
       return {
-        Header: attr,
-        accessor: attr,
-        id: attr,
+        Header: columnName,
+        accessor: columnName,
+        id: columnName,
         Cell: ({ value }) => {
-          const displayValue = value !== "null" ? `$${parseInt(value).toFixed(2).toLocaleString()}` : "--"
+          const displayValue =
+            value !== "null"
+              ? `$${parseInt(value).toFixed(2).toLocaleString()}`
+              : "--";
           return <div>{displayValue}</div>;
         },
       };
     } else {
-      return { Header: attr, accessor: attr, id: attr };
+      return { Header: columnName, accessor: columnName, id: columnName };
     }
-  });
+  };
+  const dependentColumns =
+    projectKey === "rtp_id"
+      ? [generateColumn("plan_portion"), generateColumn("year")]
+      : [generateColumn("mpo")];
+  const columns = [
+    generateColumn(projectKey),
+    generateColumn("ptype"),
+    generateColumn("cost"),
+    ...dependentColumns,
+    generateColumn("county"),
+    generateColumn("sponsor"),
+    generateColumn("description"),
+  ];
 
   columns.push({
     Header: "Actions",
