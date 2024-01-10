@@ -38,7 +38,7 @@ const GisDatasetConfig = {
     component: (props) => (
       <MapPage 
         {...props}
-        showViewSelector={false}
+        showViewSelector={true}
         MapFilter={ProjectMapFilter}
         HoverComp={{Component: ProjectHoverComp, isPinnable: true}}
       />
@@ -50,7 +50,7 @@ const GisDatasetConfig = {
     component: (props) => (
       <Table
         {...props}
-        showViewSelector={false}
+        showViewSelector={true}
         TableFilter={ProjectTableFilter}
         transform={ProjectTableTransform}
       />

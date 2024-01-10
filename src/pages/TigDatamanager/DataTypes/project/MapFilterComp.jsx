@@ -106,7 +106,10 @@ const ProjectMapFilter = ({
   const { falcor, falcorCache, pgEnv } = React.useContext(DamaContext);
   const [searchParams] = useSearchParams();
   
-  let projectKey = source?.name.includes("RTP") ? "rtp_id" : "tip_id";
+  //the `activeViewId` is optionally set by a URL search param
+  const activeDataVersionId = parseInt(searchParams.get("variable")) || activeViewId;
+
+  let projectKey = source?.name.toLowerCase().includes("rtp") ? "rtp_id" : "tip_id";
   let newSymbology = cloneDeep(tempSymbology);
 
   const metadataColumns = (
@@ -121,14 +124,14 @@ const ProjectMapFilter = ({
         "dama",
         pgEnv,
         "viewsbyId",
-        activeViewId,
+        activeDataVersionId,
         "data",
         "length",
       ]);
 
       let length = get(
         d,
-        ["json", "dama", pgEnv, "viewsbyId", activeViewId, "data", "length"],
+        ["json", "dama", pgEnv, "viewsbyId", activeDataVersionId, "data", "length"],
         0
       );
 
@@ -136,18 +139,18 @@ const ProjectMapFilter = ({
         "dama",
         pgEnv,
         "viewsbyId",
-        activeViewId,
+        activeDataVersionId,
         "databyIndex",
         [...Array(length).keys()],
         metadataColumns,
       ]);
     };
     loadSourceData();
-  }, [pgEnv, activeViewId, source]);
+  }, [pgEnv, activeDataVersionId, source]);
 
   const dataById = get(
     falcorCache,
-    ["dama", pgEnv, "viewsbyId", activeViewId, "databyId"],
+    ["dama", pgEnv, "viewsbyId", activeDataVersionId, "databyId"],
     {}
   );
 
@@ -169,7 +172,7 @@ const ProjectMapFilter = ({
     .filter((val) => val !== "");
   const projectIdFilterValue = filters["projectId"]?.value || null;
 
-  const featureId = searchParams.get("featureId")
+  const featureId = searchParams.get("featureId");
 
   React.useEffect(() => {
     if (!projectIdFilterValue) {
@@ -245,7 +248,7 @@ const ProjectMapFilter = ({
   if (!newSymbology?.source) {
     newSymbology.sources = metaData?.tiles?.sources || [];
     const source_id = newSymbology?.sources?.[0]?.id || "0";
-    const source_layer = `s${source.source_id}_v${activeViewId}`;
+    const source_layer = `s${source.source_id}_v${activeDataVersionId}`;
 
     newSymbology.layers = ["line", "circle", "fill"].map((type) => {
       return {
@@ -280,9 +283,9 @@ const ProjectMapFilter = ({
     .filter(onlyUnique)
     .filter(d => d !== "null")
     .reduce((acc, ptype) => {
-      const legendInfo = images.find(img => img.id === ptype.toUpperCase());
-      acc[ptype.toUpperCase()] = {
-        id: ptype.toUpperCase(),
+      const legendInfo = images.find(img => img.id === ptype?.toUpperCase());
+      acc[ptype?.toUpperCase()] = {
+        id: ptype?.toUpperCase(),
         color: legendInfo?.color,
         url: legendInfo?.url
       }
@@ -386,7 +389,7 @@ const ProjectMapFilter = ({
           </div>
         </>
       )}
-      <MapDataDownloader activeViewId={activeViewId} projectKey={projectKey} metadataColumns={metadataColumns}/>
+      <MapDataDownloader activeViewId={activeDataVersionId} projectKey={projectKey} metadataColumns={metadataColumns}/>
     </div>
   );
 };

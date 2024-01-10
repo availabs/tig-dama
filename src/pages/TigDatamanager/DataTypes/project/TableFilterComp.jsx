@@ -1,5 +1,5 @@
 import React from 'react'
-import { useSearchParams, Link, useNavigate } from "react-router-dom";
+import { useSearchParams, useParams, Link, useNavigate } from "react-router-dom";
 import download from "downloadjs"
 import { Button } from "~/modules/avl-components/src"
 
@@ -42,7 +42,7 @@ const ProjectTableFilter = (
   const planPortionFilterValue = filters['plan_portion']?.value || null; //only for RTP
   const mpoFilterValue = filters['mpo']?.value || null; //only for TIP
 
-  let projectKey = source?.name?.includes("RTP") ? "rtp_id" : "tip_id";
+  let projectKey = source?.name?.toLowerCase()?.includes("rtp") ? "rtp_id" : "tip_id";
 
   const [searchParams] = useSearchParams();
   const urlFeatureId = searchParams.get("featureId")
@@ -65,13 +65,12 @@ const ProjectTableFilter = (
   const allPlanPortions = data.map(d => d.plan_portion).filter(onlyUnique);
   const allMpo = data.map(d => d.mpo).filter(onlyUnique);
 
-
   allProjectIds.sort(alphaSort);
   allProjectTypes.sort(alphaSort);
   allCounties.sort(alphaSort);
+  allSponsors.sort(alphaSort);
   allYears.sort(alphaSort);
   allPlanPortions.sort(alphaSort);
-  allSponsors.sort(alphaSort);
   allMpo.sort(alphaSort);
 
   const columns = source?.metadata?.columns;
@@ -268,7 +267,7 @@ const ProjectTableFilter = (
 
 export const ProjectTableTransform = (tableData, attributes, filters, years, source) => {
   let filteredData;
-  let projectKey = source?.name?.includes("RTP") ? "rtp_id" : "tip_id";
+  let projectKey = source?.name?.toLowerCase()?.includes("rtp") ? "rtp_id" : "tip_id";
 
   const activeFilterKeys = Object.keys(filters).filter(
     (filterKey) => !!filters[filterKey].value
@@ -337,12 +336,13 @@ export const ProjectTableTransform = (tableData, attributes, filters, years, sou
 }
 
 const LinkCell = ({feature, sourceId}) => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const variable = searchParams.get("variable")
+  const variable = searchParams.get("variable");
+  const { viewId } = useParams() || "";
 
   return (<div>
-    <Link onClick={(e) => navigate(`/source/${sourceId}/map?variable=${variable}&featureId=${feature}`)}> Link to map </Link>
+    <Link onClick={(e) => navigate(`/source/${sourceId}/map/${viewId}?variable=${variable}&featureId=${feature}`)}> Link to map </Link>
   </div>)
 }
 

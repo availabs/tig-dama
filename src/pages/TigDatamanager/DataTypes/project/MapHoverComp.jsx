@@ -1,5 +1,10 @@
 import React, {useMemo} from 'react'
-import {Link, useNavigate, useSearchParams} from 'react-router-dom'
+import {
+  Link,
+  useNavigate,
+  useSearchParams,
+  useParams,
+} from "react-router-dom";
 import { DamaContext } from "~/pages/DataManager/store"
 import get from 'lodash/get'
 
@@ -82,11 +87,13 @@ const LinkRow = ({ feature, sourceId }) => {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams();
   const variable = searchParams.get("variable");
+  const { viewId } = useParams() || "";
+
   return (
     <Link
       onClick={(e) =>
         navigate(
-          `/source/${sourceId}/table?variable=${variable}&featureId=${feature}`
+          `/source/${sourceId}/table/${viewId}?variable=${variable}&featureId=${feature}`
         )
       }
     >
