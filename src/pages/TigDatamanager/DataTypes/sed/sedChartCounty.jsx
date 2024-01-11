@@ -2,7 +2,6 @@ import React, { useMemo } from "react";
 import get from "lodash/get";
 import sumBy from "lodash/sumBy";
 import { regionalData } from "../constants/index";
-import * as d3scale from "d3-scale"
 import { Button } from "~/modules/avl-components/src"
 import { toPng } from "html-to-image"
 import download from "downloadjs"
@@ -21,6 +20,7 @@ const sedVars = {
     "gq_pop": {name: 'Group Quarters Population', domain: defaultDomain, range: defaultRange},
     "hh_num": {name: 'Households', domain: defaultDomain, range: defaultRange},
     "hh_size": {name: 'Household Size', domain: defaultDomain, range: defaultRange},
+    "emplf": {name: 'Employed Labor Force (in 000s)', domain: defaultDomain, range: defaultRange},
     "lf": {name: 'Labor Force', domain: defaultDomain, range: defaultRange}
 }
 
