@@ -117,7 +117,7 @@ const SedChartFilterCounty = ({ source, filters, setFilters, node }) => {
         </Button>
       </div>
       <div className="py-3.5 px-2 text-sm text-gray-400">Area: </div>
-      <div className="flex-1" style={{ width: "min-content" }}>
+      <div className="flex-none w-48">
         <select
           className="pl-3 pr-4 py-2.5 border border-blue-100 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
           value={area}
@@ -142,7 +142,7 @@ const SedChartFilterCounty = ({ source, filters, setFilters, node }) => {
         </select>
       </div>
       <div className="py-3.5 px-2 text-sm text-gray-400">Summarize: </div>
-      <div className="flex-1">
+      <div className="flex-none w-48">
         <select
           className="pl-3 pr-4 py-2.5 border border-blue-100 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
           value={summarize}
@@ -165,7 +165,7 @@ const SedChartFilterCounty = ({ source, filters, setFilters, node }) => {
         </select>
       </div>
       <div className="py-3.5 px-2 text-sm text-gray-400">Variable: </div>
-      <div className="flex-1">
+      <div className="flex-none w-64">
         <select
           className="pl-3 pr-4 py-2.5 border border-blue-100 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
           value={activeVar}
