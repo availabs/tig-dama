@@ -38,9 +38,12 @@ const ProjectTableFilter = (
   const countyFilterValue = filters['county']?.value || null;
   const sponsorFilterValue = filters['sponsor']?.value || null;
   const descriptionFilterValue = filters['description']?.value || null;
+  const costFilterValue = filters['cost']?.value || [null,null];
   const yearFilterValue = filters['year']?.value || null; //only for RTP
   const planPortionFilterValue = filters['plan_portion']?.value || null; //only for RTP
   const mpoFilterValue = filters['mpo']?.value || null; //only for TIP
+
+
 
   let projectKey = source?.name?.toLowerCase()?.includes("rtp") ? "rtp_id" : "tip_id";
 
@@ -260,6 +263,29 @@ const ProjectTableFilter = (
           />
         </div>
       </div>
+      <div className="flex flex-none pb-2 w-96">
+        <div className="py-7 px-1 text-sm text-gray-400">Cost:</div>
+        <div className="px-1 text-sm text-gray-400 font-bold">
+          From:
+          <input
+            className="pl-3 pr-4 py-2.5 border border-blue-100 bg-blue-50 w-32 bg-white mr-2 flex items-center justify-between text-sm"
+            value={costFilterValue[0] || ""}
+            onChange={(e) =>
+              setFilters({ cost: { value: [parseFloat(e.target.value), costFilterValue[1]] } })
+            }
+          />
+        </div>
+        <div className="px-1 text-sm text-gray-400 font-bold">
+          To:
+          <input
+            className="pl-3 pr-4 py-2.5 border border-blue-100 bg-blue-50 w-32 bg-white mr-2 flex items-center justify-between text-sm"
+            value={costFilterValue[1] || ""}
+            onChange={(e) =>
+              setFilters({ cost: { value: [costFilterValue[0], parseFloat(e.target.value)] } })
+            }
+          />
+        </div>
+      </div>
     </div>
 
   )
@@ -269,14 +295,44 @@ export const ProjectTableTransform = (tableData, attributes, filters, years, sou
   let filteredData;
   let projectKey = source?.name?.toLowerCase()?.includes("rtp") ? "rtp_id" : "tip_id";
 
-  const activeFilterKeys = Object.keys(filters).filter(
-    (filterKey) => !!filters[filterKey].value
-  );
+  const activeFilterKeys = Object.keys(filters).filter((filterKey) => {
+    if (filterKey === "cost") {
+      return (
+        filters[filterKey].value[0] !== null ||
+        filters[filterKey].value[1] !== null
+      );
+    } else {
+      return !!filters[filterKey].value;
+    }
+  });
 
   filteredData = tableData.filter((val) => {
     const shouldKeep = activeFilterKeys.every((filterKey) => {
       if(filterKey === "description"){
         return val[filterKey].toLowerCase().includes(filters[filterKey].value.toLowerCase());
+      }
+      else if (filterKey === "cost"){
+        if(!val[filterKey] || val[filterKey] === 'null'){
+          //Automatically exclude if we cannot compare costs.
+          return false;
+        }
+
+        const [lowerBoundCost, upperBoundCost] = filters[filterKey].value;
+        let withinRange = true;
+
+        if(lowerBoundCost){
+          //check to make sure we equal or exceed lower bound
+          if(val[filterKey] < lowerBoundCost){
+            withinRange = false;
+          }
+        }
+        if(upperBoundCost){
+          //check to make sure we equal or are less than upper bound
+          if(val[filterKey] > upperBoundCost){
+            withinRange = false;
+          }
+        }
+        return withinRange;
       }
       else{
         const dataAccessor = filterKey === 'projectId' ? projectKey : filterKey;
@@ -297,7 +353,7 @@ export const ProjectTableTransform = (tableData, attributes, filters, years, sou
       column.Cell = ({ value }) => {
         const displayValue =
           value !== "null"
-            ? `$${parseInt(value).toFixed(2).toLocaleString()}`
+            ? `$${parseFloat(value).toFixed(2).toLocaleString()} M`
             : "--";
         return <div>{displayValue}</div>;
       };
