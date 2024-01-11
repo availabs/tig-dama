@@ -93,8 +93,8 @@ const ProjectTableFilter = (
   }, [data, downloadColumns]);
     
   return (
-    <div className="flex flex-1 border-blue-100 py-1">
-      <div className='flex flex-1'>
+    <div className="flex flex-wrap flex-1 border-blue-100 pb-1">
+      <div className='flex flex-none pb-2 w-48'>
         <div className="py-2 px-1 text-sm text-gray-400">{VARIABLE_LABELS[projectKey]}</div>
         <div className="px-1">
           <select
@@ -115,8 +115,8 @@ const ProjectTableFilter = (
           </select>
         </div>
       </div>
-      <div className='flex flex-1'>
-        <div className="px-1 text-sm text-gray-400">Project Type:</div>
+      <div className='flex flex-none pb-2 w-60'>
+        <div className="py-2 px-1 text-sm text-gray-400">Project Type:</div>
         <div className="px-1">
           <select
             className="pl-3 pr-4 py-2.5 border border-blue-100 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
@@ -136,7 +136,7 @@ const ProjectTableFilter = (
           </select>
         </div>
       </div>
-      {projectKey === "tip_id" && <div className='flex flex-1'>
+      {projectKey === "tip_id" && <div className='flex flex-none pb-2 w-48'>
         <div className="py-2 px-1 text-sm text-gray-400">MPO:</div>
         <div className="px-1">
           <select
@@ -157,8 +157,8 @@ const ProjectTableFilter = (
           </select>
         </div>
       </div>}
-      {projectKey === "rtp_id" && <div className='flex flex-1'>
-        <div className="px-1 text-sm text-gray-400">Plan Portion:</div>
+      {projectKey === "rtp_id" && <div className='flex flex-none pb-2 '>
+        <div className="py-2 px-1 text-sm text-gray-400">Plan Portion:</div>
         <div className="px-1">
           <select
             className="pl-3 pr-4 py-2.5 border border-blue-100 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
@@ -178,7 +178,14 @@ const ProjectTableFilter = (
           </select>
         </div>
       </div>}
-      {projectKey === "rtp_id" && <div className='flex flex-1'>
+      <div className='flex h-min pb-2 px-2'>
+        <Button themeOptions={{size:'sm', color: 'primary'}}
+          onClick={ TableDataDownloader }
+        >
+          Download
+        </Button>
+      </div>
+      {projectKey === "rtp_id" && <div className='flex flex-none py-2 '>
         <div className="py-2 px-1 text-sm text-gray-400">Year:</div>
         <div className="px-1">
           <select
@@ -199,7 +206,7 @@ const ProjectTableFilter = (
           </select>
         </div>
       </div>}
-      <div className='flex flex-1'> 
+      <div className='flex flex-none py-2 w-48'> 
         <div className="py-2 px-1 text-sm text-gray-400">County:</div>
         <div className="px-1">
           <select
@@ -220,7 +227,7 @@ const ProjectTableFilter = (
           </select>
         </div>
       </div>
-      <div className='flex flex-1'>
+      <div className='flex flex-none py-2 w-48'>
         <div className="py-2 px-1 text-sm text-gray-400">Sponsor:</div>
         <div className="px-1">
           <select
@@ -241,7 +248,7 @@ const ProjectTableFilter = (
           </select>
         </div>
       </div>
-      <div className='flex flex-1'>
+      <div className='flex flex-none py-2 w-96'>
         <div className="py-2 px-1 text-sm text-gray-400">Description</div>
         <div className="px-1">
           <input
@@ -252,13 +259,6 @@ const ProjectTableFilter = (
             }
           />
         </div>
-      </div>
-      <div className='flex'>
-        <Button themeOptions={{size:'sm', color: 'primary'}}
-          onClick={ TableDataDownloader }
-        >
-          Download
-        </Button>
       </div>
     </div>
 
