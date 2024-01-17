@@ -47,6 +47,7 @@ export const tig_sed_taz = {
       showViewSelector={false}
       MapFilter={SedMapFilter}
       HoverComp={{Component: SedHoverComp, isPinnable: true}}
+      displayPinnedGeomBorder={true}
     />,
   },
   table: {
@@ -122,6 +123,7 @@ export const tig_sed_county = {
       showViewSelector={false}
       MapFilter={SedMapFilter}
       HoverComp={{Component: SedHoverComp, isPinnable: true}}
+      displayPinnedGeomBorder={true}
     />,
   },
   table: {

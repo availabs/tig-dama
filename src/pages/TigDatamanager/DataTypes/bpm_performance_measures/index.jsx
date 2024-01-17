@@ -60,6 +60,7 @@ const config = {
          showViewSelector={false}
          MapFilter={BPMMapFilter}
          HoverComp={{Component: BPMHoverComp, isPinnable: true}}
+         displayPinnedGeomBorder={true}
       />
     ),
   },

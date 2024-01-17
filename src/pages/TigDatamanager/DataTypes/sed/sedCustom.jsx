@@ -189,36 +189,6 @@ const SedMapFilter = (props) => {
               };
               return a;
             }, {});
-          //   const layerId = layer.layers?.[0]?.id
-          //   newSymbology[(layerId + "_line")] = {
-          //     "line-color":"chartreuse",
-          //     "line-opacity":1,
-          //     "line-width":3
-          //   }
-
-
-          //   newSymbology[(layerId + "_line")] = {
-          //     "id": (layerId + "_line"),
-          //     "type": "line",
-          //     "paint": {
-          //        "line-color": "chartreuse",
-          //        "line-width": 3,
-          //        "line-opacity": 0
-          //     },
-          //     "line-color":"chartreuse",
-          //     "line-opacity":0,
-          //     "line-width":3, 
-          //     "source": layer.layers?.[0]?.source,
-          //     "source-layer": layerId
-          //  }
-
-          // //  if(!layer.layers.find(layer => layer.id.includes("line"))){
-          // //   console.log("did not find line layer")
-          //   newSymbology.layers = layer.layers; 
-          //   newSymbology.layers.push(newSymbology[(layerId + "_line")])
-          //  //}
-
-
 
             if (projectCalculatedBounds) {
               newSymbology.fitToBounds = projectCalculatedBounds;
@@ -542,9 +512,6 @@ const SedTableTransform = (tableData, attributes, filters, years,source) => {
 };
 
 const SedHoverComp = ({ data, layer }) => {
-  // if(data[1].includes("line")){
-  //   return;
-  // }
   const { pgEnv, falcor, falcorCache } = React.useContext(DamaContext);
   const { source: { type }, attributes, activeViewId, props: { filters, activeView: {metadata: { years } } }  } = layer
 
