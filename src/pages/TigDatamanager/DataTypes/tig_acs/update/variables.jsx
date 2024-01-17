@@ -1,7 +1,14 @@
 import React, { useState } from "react";
 import { cloneDeep, set } from "lodash";
-import { Input, Select } from "~/modules/avl-components/src";
-import {  ColorRanges, ColorBar } from "~/modules/avl-components/src"
+import {
+  Input,
+  Select,
+  ColorRanges,
+  ColorBar,
+  getColorRange,
+} from "~/modules/avl-components/src";
+
+const DEFAULT_COLOR_SCALE = getColorRange(5, "YlOrRd", false);
 
 const areColorScalesEqual = (scaleOne, scaleTwo) => {
   if (
@@ -143,24 +150,26 @@ const ACSVariableUpdate = (props) => {
                           />
                         </td>
                         <td className="whitespace-nowrap px-6 py-4">
+                          <ColorSchemeOption
+                            colorScheme={{colors:v.value?.colorScale || DEFAULT_COLOR_SCALE}}
+                            key={`${v?.value?.name}_colorScale_${JSON.stringify(v.value.colorScale)}`}
+                          />
                           <Select
+                            placeholder={"Select a scale:"}
                             value={v?.value?.colorScale || ""}
                             onChange={(e) => {
-                              setUpdateVariable(i, e.props.value, "colorScale");
+                              setUpdateVariable(i, e.props.colorScheme.colors, "colorScale");
                             }}
-                            options={[emptyColorOption].concat(
-                              colorSchemeOptions.map((colorScheme) => (
-                                <ColorSchemeOption
-                                  isActiveOption={areColorScalesEqual(
-                                    v.value.colorScale,
-                                    colorScheme.colors
-                                  )}
-                                  value={colorScheme.colors}
-                                  colorScheme={colorScheme}
-                                  key={`${v?.value?.name}_colorScale_${JSON.stringify(colorScheme.colors)}`}
-                                />
-                              ))
-                            )}
+                            options={colorSchemeOptions.map((colorScheme) => (
+                              <ColorSchemeOption
+                                isActiveOption={areColorScalesEqual(
+                                  v.value.colorScale,
+                                  colorScheme.colors
+                                )}
+                                colorScheme={colorScheme}
+                                key={`${v?.value?.name}_colorScale_${JSON.stringify(colorScheme.colors)}`}
+                              />
+                            ))}
                           />
                         </td>
                         <td className="whitespace-nowrap">

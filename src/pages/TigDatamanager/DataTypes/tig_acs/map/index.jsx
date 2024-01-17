@@ -27,6 +27,8 @@ const getTilehost = (DAMA_HOST) =>
 
 const TILEHOST = getTilehost(DAMA_HOST);
 
+const DEFAULT_COLOR_SCALE = getColorRange(5, "YlOrRd", false);
+
 const MapDataDownloader = ({
   activeVar,
   year,
@@ -181,7 +183,7 @@ const ACSMapFilter = ({
       updatedFilters.activeCounties = { value: geoids };
     }
     if (!filters?.geometry?.value) {
-      updatedFilters.geometry = { activeValue: geometry };
+      updatedFilters.geometry = { value: geometry };
     }
 
     setFilters(updatedFilters);
@@ -344,7 +346,7 @@ const ACSMapFilter = ({
       domain = ckmeans(values, ckmeansLen) || [];
     }
 
-    let range = getColorRange(5, "YlOrRd", false);
+    let range = DEFAULT_COLOR_SCALE;
 
     const fullActiveVar = activeView.metadata.variables.find(variable => variable.label === activeVar);
     if (fullActiveVar) {
