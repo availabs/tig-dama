@@ -210,12 +210,13 @@ const SedChartTransform = (tableData, attributes, filters, years, flag) => {
   }
 
   const getSum = (accessor, summarizeKeys, groupByTableData) => {
-    let sum = 0;
+    let sum = 0, count = 0;
     (summarizeKeys || []).forEach((k) => {
       const selectedCounty = groupByTableData[`${k}`] || {};
       sum += Math.floor(sumBy(selectedCounty, `${accessor}`) || 0);
+      count += selectedCounty.length || 0;
     });
-    return sum;
+    return { sum, count };
   };
 
   /**
@@ -232,21 +233,38 @@ const SedChartTransform = (tableData, attributes, filters, years, flag) => {
       finalGraphData = Object.keys(keys).map((key) => ({
         id: key,
         name: key,
-        data: (columns || []).map((col) => ({
-          x: col?.Header,
-          y: getSum(col?.accessor, keys[`${key}`], groupByTableData),
-        })),
+        data: (columns || []).map((col) => {
+          const sum = getSum(col?.accessor, keys[`${key}`], groupByTableData);
+
+          let yValue = sum.sum;
+          if (activeVar === "hhsize") {
+            yValue = yValue / sum.count;
+          }
+
+          return {
+            x: col?.Header,
+            y: yValue,
+          };
+        }),
       }));
     } else {
       finalGraphData = Object.keys(groupByTableData).map((key) => ({
         id: key,
         name: key,
-        data: (columns || []).map((col) => ({
-          x: col?.Header,
-          y: Math.floor(
+        data: (columns || []).map((col) => {
+          const sum = Math.floor(
             sumBy(groupByTableData[`${key}`], `${col.accessor}`) || 0
-          ),
-        })),
+          );
+
+          let yValue = sum;
+          if (activeVar === "hhsize") {
+            yValue = yValue / groupByTableData[`${key}`].length;
+          }
+          return {
+            x: col?.Header,
+            y: yValue,
+          };
+        }),
       }));
     }
   }
