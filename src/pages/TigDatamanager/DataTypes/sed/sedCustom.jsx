@@ -20,7 +20,7 @@ export const sedVars = {
   totpop: { name: "Total Population", domain: [872,2047,3649,6934,14119,28578], range: defaultRange},
   hhpop: { name: "Households", domain: [1112,1588,2112,2958,20000, 56390], range: defaultRange},
   hhnum: { name: "Household Population", domain: [2995,4270,5680,7883,64124,177720], range: defaultRange},
-  hhsize: { name: "Household Size", domain: [2.3,2.62,2.83,3.08,7], range: defaultRange},
+  hhsize: { name: "Household Size", domain: [2.3,2.62,2.83,3.08,7], range: defaultRange, aggFunc: 'avg'},
   hhincx: { name: "Household Income", domain: [44787,61304,80355,113880,1109731], range: defaultRange},
   elf: { name: "Employed Labor Force", domain: [1351,2054,2782,3910,78160], range: defaultRange},
   emptot: { name: "Total Employment", domain: [560,1005,1699,3555,80093], range: defaultRange},
@@ -42,7 +42,7 @@ export const sedVarsCounty = {
     "hh_pop": {name: 'Household Population (in 000s)', domain: [69,207,473,729,1099,2761], range: defaultRange},
     "gq_pop": {name: 'Group Quarters Population (in 000s)', domain: [1,5,9,20,29,79], range: defaultRange},
     "hh_num": {name: 'Households (in 000s)', domain: [28,86,166,274,398,1044], range: defaultRange},
-    "hh_size": {name: 'Household Size', domain: [1.98,2.54,2.69,2.77,2.92,3.26], range: defaultRange},
+    "hh_size": {name: 'Household Size', domain: [1.98,2.54,2.69,2.77,2.92,3.26], range: defaultRange, aggFunc: 'avg'},
     "emplf": {name: 'Employed Labor Force (in 000s)', domain: [872,204,364,693,1411,2857], range: defaultRange},
     "lf": {name: 'Labor Force  (in 000s)', domain: [33,116,237,366,557,1383], range: defaultRange}
 }

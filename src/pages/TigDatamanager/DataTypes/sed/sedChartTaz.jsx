@@ -9,25 +9,7 @@ import download from "downloadjs"
 
 import { useSearchParams } from "react-router-dom";
 
-const sedVars = {
-  totpop: { name: "Total Population" },
-  hhpop: { name: "Households" },
-  hhnum: { name: "Household Population" },
-  hhsize: { name: "Household Size" },
-  hhincx: { name: "Household Income" },
-  elf: { name: "Employed Labor Force" },
-  emptot: { name: "Total Employment" },
-  empret: { name: "Retail Employment" },
-  empoff: { name: "Office Employment" },
-  earnwork: { name: "Earnings" },
-  unvenrol: { name: "University Enrollment" },
-  k12etot: { name: "School Enrollment" },
-  gqpop: { name: "Group Quarters Population" },
-  gqpopins: { name: "Group Quarters Institutional Population" },
-  gqpopstr: { name: "Group Quarters Other Population" },
-  gqpopoth: { name: "Group Quarters Homeless Population" },
-};
-
+import { sedVars } from './sedCustom'
 const summarizeVars = {
   subRegion: { name: "Sub Region" },
   region: { name: "Region" },
@@ -213,7 +195,7 @@ const SedChartTransform = (tableData, attributes, filters, years, flag) => {
     let sum = 0, count = 0;
     (summarizeKeys || []).forEach((k) => {
       const selectedCounty = groupByTableData[`${k}`] || {};
-      sum += Math.floor(sumBy(selectedCounty, `${accessor}`) || 0);
+      sum += Math.floor(sumBy(selectedCounty, (item) => parseInt(item[accessor]))  || 0);
       count += selectedCounty.length || 0;
     });
     return { sum, count };
@@ -237,7 +219,7 @@ const SedChartTransform = (tableData, attributes, filters, years, flag) => {
           const sum = getSum(col?.accessor, keys[`${key}`], groupByTableData);
 
           let yValue = sum.sum;
-          if (activeVar === "hhsize") {
+          if (sedVars[activeVar].aggFunc &&  sedVars[activeVar].aggFunc === 'avg') {
             yValue = yValue / sum.count;
           }
 
@@ -253,11 +235,12 @@ const SedChartTransform = (tableData, attributes, filters, years, flag) => {
         name: key,
         data: (columns || []).map((col) => {
           const sum = Math.floor(
-            sumBy(groupByTableData[`${key}`], `${col.accessor}`) || 0
+            sumBy(groupByTableData[`${key}`], (item) => parseInt(item[col.accessor])) || 0
           );
 
           let yValue = sum;
-          if (activeVar === "hhsize") {
+
+          if (sedVars[activeVar].aggFunc &&  sedVars[activeVar].aggFunc === 'avg') {
             yValue = yValue / groupByTableData[`${key}`].length;
           }
           return {

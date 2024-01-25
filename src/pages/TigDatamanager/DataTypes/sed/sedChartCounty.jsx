@@ -8,21 +8,10 @@ import download from "downloadjs"
 
 import { useSearchParams } from "react-router-dom";
 
+import { sedVarsCounty as sedVars } from './sedCustom'
 
 const defaultRange = ['#ffffb2', '#fed976', '#feb24c', '#fd8d3c', '#fc4e2a', '#e31a1c', '#b10026']
 const defaultDomain = [0,872,2047,3649,6934,14119,28578]
-const sedVars = {
-    "tot_pop": {name: 'Total Population (in 000s)', domain: [0,74,213,481,750,1134,2801], range: defaultRange},
-    "tot_emp": {name: 'Total Employment', domain: defaultDomain, range: defaultRange},
-    "emp_pay": {name: 'Payroll Employment', domain: defaultDomain, range: defaultRange},
-    "emp_prop": {name: 'Proprietors Employment', domain: defaultDomain, range: defaultRange},
-    "hh_pop": {name: 'Household Population', domain: defaultDomain, range: defaultRange},
-    "gq_pop": {name: 'Group Quarters Population', domain: defaultDomain, range: defaultRange},
-    "hh_num": {name: 'Households', domain: defaultDomain, range: defaultRange},
-    "hh_size": {name: 'Household Size', domain: defaultDomain, range: defaultRange},
-    "emplf": {name: 'Employed Labor Force (in 000s)', domain: defaultDomain, range: defaultRange},
-    "lf": {name: 'Labor Force', domain: defaultDomain, range: defaultRange}
-}
 
 const summarizeVars = {
   subRegion: { name: "Sub Region" },
@@ -237,7 +226,7 @@ const SedChartTransformCounty = (tableData, attributes, filters, years, flag) =>
     let sum = 0, count = 0;
     (summarizeKeys || []).forEach((k) => {
       const selectedCounty = groupByTableData[`${k}`] || {};
-      sum += Math.floor(sumBy(selectedCounty, `${accessor}`) || 0);
+      sum += Math.floor(sumBy(selectedCounty, (item) => parseInt(item[accessor])) || 0);
       count += selectedCounty.length || 0;
     });
     return { sum, count };
@@ -261,7 +250,7 @@ const SedChartTransformCounty = (tableData, attributes, filters, years, flag) =>
           const sum = getSum(col?.accessor, keys[`${key}`], groupByTableData);
 
           let yValue = sum.sum;
-          if (activeVar === "hh_size") {
+          if (sedVars[activeVar].aggFunc &&  sedVars[activeVar].aggFunc === 'avg') {
             yValue = yValue / sum.count;
           }
 
