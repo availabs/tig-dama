@@ -90,7 +90,7 @@ const ACSHoverComp = (props) => {
   const divisorValue = useMemo(
     () =>
       (divisorConfig || []).reduce((aa, cc) => {
-        const v = get(falcorCache, ["acs", geoid, year, cc], -666666666);
+        const v = get(falcorCache, ["dama", pgEnv, "acs",[layer.activeViewId], geoid, year, cc], -666666666);
         if (v !== -666666666) {
           aa += v;
         }

@@ -6,14 +6,16 @@ import { DAMA_HOST } from "~/config";
 import { reducer } from "./components/reducer";
 
 import UploadFileComp from "./uploadFile";
+import SelectLayerComp from "./selectLayer";
+import SchemaEditorComp from "./schemaEditor";
 import PublishComp from "./publish";
 
 const BlankComponent = () => <></>;
 
-export default function UploadHubboundDataset({
+export default function UploadGisDataset({
   source = {},
   user = {},
-  dataType = "hubbound",
+  dataType = "gis_dataset",
   CustomAttributes = BlankComponent,
   tippecanoeOptions = {},
   customRules = {},
@@ -46,6 +48,17 @@ export default function UploadHubboundDataset({
     uploadErrMsg: null,
     polling: false,
     pollingInterval: null,
+
+    // selectLayer state
+    layerNames: null,
+    layerName: null,
+    lyrAnlysErrMsg: null,
+    layerAnalysis: null,
+
+    // schemaEditor state
+    
+    tableDescriptor: null,
+    mbtilesOptions: { preserveColumns: {}, ...tippecanoeOptions },
 
     // publish state
     publishStatus: "AWAITING",
@@ -109,7 +122,7 @@ export default function UploadHubboundDataset({
     }
     return out;
   }, "canUpload");
-console.log("ryan testing hubbound create")
+
   return (
     <div>
       <CustomAttributes state={state} dispatch={dispatch} />
@@ -120,6 +133,8 @@ console.log("ryan testing hubbound create")
         canUpload
       )}
 
+      <SelectLayerComp state={state} dispatch={dispatch} />
+      <SchemaEditorComp state={state} dispatch={dispatch} />
       <PublishComp state={state} dispatch={dispatch} />
     </div>
   );

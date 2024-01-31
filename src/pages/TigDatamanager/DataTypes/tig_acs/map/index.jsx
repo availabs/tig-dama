@@ -332,7 +332,11 @@ const ACSMapFilter = ({
       }
 
       if (tempFlag) {
-        a[c] = divisorFalg ? Math.round((censusVal / divisorVal) * 100) : null;
+        a[c] = divisorFalg
+          ? censusVal > 0
+            ? Math.round((censusVal / divisorVal) * 100)
+            : 0
+          : null;
       } else {
         a[c] = censusFlag ? censusVal : null;
       }

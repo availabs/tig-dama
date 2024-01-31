@@ -261,7 +261,9 @@ const TablePage = ({
 
         if (tempFlag) {
           tableRow[`${columnName}`] = divisorFalg
-            ? `${Math.round((censusVal / divisorVal) * 100)}%`
+            ? censusVal > 0
+              ? `${Math.round((censusVal / divisorVal) * 100)}%`
+              : "0%"
             : null;
         } else {
           tableRow[`${columnName}`] = censusFlag ? censusVal.toLocaleString() : null;
