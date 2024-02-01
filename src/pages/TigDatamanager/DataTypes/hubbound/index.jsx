@@ -14,7 +14,7 @@ const hubboundConfig = {
       <Table
         {...props}
         // transform={HubboundTableTransform}
-        // TableFilter={HubboundTableFilter}
+        TableFilter={HubboundTableFilter}
       />
     ),
   },
