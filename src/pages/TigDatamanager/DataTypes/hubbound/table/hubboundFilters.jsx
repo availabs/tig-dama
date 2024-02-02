@@ -4,6 +4,9 @@ import React, {
 } from "react";
 import { get } from "lodash";
 
+const OUTBOUND_VAL = "Outbound";
+const INBOUND_VAL = "Inbound";
+
 const HubboundTableFilter = ({ source, filters, setFilters, data, columns }) => {
   // console.log("HubboundTableFilter", filters);
 
@@ -18,12 +21,18 @@ const HubboundTableFilter = ({ source, filters, setFilters, data, columns }) => 
 
   }, []);
 
-  const year =  filters?.year?.value || 2019; 
+  const directions = [OUTBOUND_VAL, INBOUND_VAL];
+
+  const year =  filters?.year?.value;
+  const direction = filters?.direction?.value;
 
   useEffect(() => {
     const newFilters = {...filters};
     if (!year && years && years.length) {
-      newFilters.year = { value: years[0] }
+      newFilters.year = { value: 2019 }
+    }
+    if (!direction) {
+      newFilters.direction = { value: OUTBOUND_VAL }
     }
     
     setFilters(newFilters)
@@ -42,7 +51,29 @@ const HubboundTableFilter = ({ source, filters, setFilters, data, columns }) => 
               setFilters({ ...filters, year: { value: e.target.value } })
             }
           >
+            <option className="ml-2  truncate" value={'all'}>
+              All
+            </option>
             {years.map((k, i) => (
+              <option key={i} className="ml-2  truncate" value={k}>
+                {k}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+      <div className='flex flex-1'>
+        <div className='flex-1' /> 
+        <div className="py-3.5 px-2 text-sm text-gray-400">Direction: </div>
+        <div className="px-2">
+          <select
+            className="pl-3 pr-4 py-2.5 border border-blue-100 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
+            value={direction}
+            onChange={(e) =>
+              setFilters({ ...filters, direction: { value: e.target.value } })
+            }
+          >
+            {directions.map((k, i) => (
               <option key={i} className="ml-2  truncate" value={k}>
                 {k}
               </option>

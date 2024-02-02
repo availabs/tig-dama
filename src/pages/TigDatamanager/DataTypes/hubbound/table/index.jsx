@@ -14,7 +14,6 @@ import { DamaContext } from "~/pages/DataManager/store";
 var geometries = ["county", "tracts"];
 
 const OUTBOUND_VAL = "Outbound";
-const INBOUND_VAL = "Inbound";
 
 const DefaultTableFilter = () => <div />;
 
@@ -57,6 +56,9 @@ const TablePage = ({
   );
 
   const year = filters?.year?.value || 2019;
+  const direction = filters?.direction?.value || OUTBOUND_VAL;
+
+  console.log("year filter value", year)
 
   const years = useMemo(() => {
     //RYAN TODO set hubbound metadata on source create
@@ -70,15 +72,17 @@ const TablePage = ({
 
   //RYAN TODO this cannot be hardcoded. Path values will be determined by filters
   const dataPath = useMemo(() => {
+    console.log({year})
+    const yearParam = year === 'all' ? years : [year]
     return [
       "dama",
       [pgEnv],
       "hubbound",
       [activeViewId],
-      [year],
-      [OUTBOUND_VAL], //RYAN TODO maybe do something so this isn't annoyingly case-sensitive
+      yearParam,
+      [direction],
     ];
-  }, [year, activeViewId]);
+  }, [year, direction, activeViewId]);
 
 
   useEffect(() => {
@@ -91,11 +95,24 @@ const TablePage = ({
       falcor.chunk(dataPath);
     }
     getViewData();
-  }, [falcorCache, pgEnv, activeViewId, activeView, year]);
+  }, [falcorCache, pgEnv, activeViewId, activeView, year, direction]);
 
   //RYAN TODO this is where you format the table data
   const tableData = useMemo(() => {
+    const newDataPath = ['dama', pgEnv, 'hubbound', [activeViewId]];
+
+    const newData = get(falcorCache, newDataPath, {});
+
+    //only access newData[yearVal] for values in year filter
+    //Do the same for all possible filters (data is nested)
+
+    //pull out data that matches filter paths, send it to table
+
+    console.log({falcorCache})
+    console.log({newData})
+
     const data = get(falcorCache, dataPath, {});
+    console.log({data})
     const finalData = data?.value;
     return finalData;
   }, [activeViewId, falcorCache, tableColumns]);
