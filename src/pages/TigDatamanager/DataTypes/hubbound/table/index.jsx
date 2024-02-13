@@ -5,15 +5,33 @@ import React, {
   useCallback,
   useContext,
 } from "react";
-import { get, uniq } from "lodash";
+import { get } from "lodash";
 import { Table } from "~/modules/avl-components/src";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 import { DamaContext } from "~/pages/DataManager/store";
 
 var geometries = ["county", "tracts"];
 
 const OUTBOUND_VAL = "Outbound";
+
+const HUBBOUND_ATTRIBUTES = [
+  "direction",
+  "year",
+  "hour",
+  "count",
+  "count_variable_name",
+  "in_station_name",
+  "out_station_name",
+  "transit_mode_name",
+  "transit_mode_type",
+  "transit_mode_group",
+  "sector_name",
+  "transit_agency_name",
+  "transit_route_name",
+  "location_name",
+];
+
 
 const DefaultTableFilter = () => <div />;
 
@@ -86,35 +104,53 @@ const TablePage = ({
 
 
   useEffect(() => {
-    setTableColumns(source.metadata.map((column) => column.name));
+    setTableColumns(HUBBOUND_ATTRIBUTES);
   }, []);
 
+  const hubboundDetailsOptions = useMemo(() => {
+    return JSON.stringify({
+      filter: {
+        ["year"]: [year],
+        ["direction"]:[direction]
+      },
+    });
+  }, [year, direction]);
+
+  const hubboundDetailsPath = useMemo(() => {
+    return [
+      "dama",
+      pgEnv,
+      "viewsbyId",
+      activeViewId,
+      "options",
+      hubboundDetailsOptions,
+    ]
+  }, [pgEnv, activeViewId, hubboundDetailsOptions] )
+
   useEffect(() => {
-    console.log("getting view data")
-    async function getViewData() {
-      falcor.chunk(dataPath);
+    async function fetchData() {
+      console.log("getting view data")
+  
+      const lenRes = await falcor.get([...hubboundDetailsPath, 'length']);
+      const len = get(lenRes, ['json', ...hubboundDetailsPath, 'length'], 0);
+  
+      await falcor.get([...hubboundDetailsPath, 'databyIndex', {
+          from: 0,
+          to: len - 1
+      }, HUBBOUND_ATTRIBUTES]);
     }
-    getViewData();
-  }, [falcorCache, pgEnv, activeViewId, activeView, year, direction]);
 
-  //RYAN TODO this is where you format the table data
+    fetchData();
+  }, [falcorCache, pgEnv, activeViewId, activeView, year, direction])
+
   const tableData = useMemo(() => {
-    const newDataPath = ['dama', pgEnv, 'hubbound', [activeViewId]];
+    const tableDataPath = [
+      ...hubboundDetailsPath,
+      "databyIndex",
+    ];
+    const tableData = get(falcorCache, tableDataPath, {});
 
-    const newData = get(falcorCache, newDataPath, {});
-
-    //only access newData[yearVal] for values in year filter
-    //Do the same for all possible filters (data is nested)
-
-    //pull out data that matches filter paths, send it to table
-
-    console.log({falcorCache})
-    console.log({newData})
-
-    const data = get(falcorCache, dataPath, {});
-    console.log({data})
-    const finalData = data?.value;
-    return finalData;
+    return Object.values(tableData);
   }, [activeViewId, falcorCache, tableColumns]);
 
   const { data, columns } = useMemo(() => {
