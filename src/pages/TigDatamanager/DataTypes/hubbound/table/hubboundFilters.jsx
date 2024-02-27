@@ -3,21 +3,10 @@ import React, {
   useMemo,
 } from "react";
 import { get } from "lodash";
+import {HUBBOUND_ATTRIBUTES_FULL} from './index'
 
-const OUTBOUND_VAL = "Outbound";
-const INBOUND_VAL = "Inbound";
-const COUNT_VARIABLES = [
-  "Passengers",
-  "Trains",
-  "Cars in Trains",
-  "Buses",
-  "Vehicles",
-  "Occupancy Rates",
-];
-
-const HubboundTableFilter = ({ source, filters, setFilters, data, columns }) => {
+const HubboundTableFilter = ({ source, filters, setFilters, data, columns, tableColumns  }) => {
   // console.log("HubboundTableFilter", filters);
-
   const years = useMemo(() => {
     //RYAN TODO set hubbound metadata on source create
     const finishYear = 2020;
@@ -29,13 +18,13 @@ const HubboundTableFilter = ({ source, filters, setFilters, data, columns }) => 
 
   }, []);
 
-  const directions = [OUTBOUND_VAL, INBOUND_VAL];
+  const directions = HUBBOUND_ATTRIBUTES_FULL.direction.values;
 
   const year =  filters?.year?.value;
   const direction = filters?.direction?.value;
-  const countVariableName = filters?.countVariableName?.value || "";
-  const minCount = filters?.minCount?.value || "";
-  const maxCount = filters?.maxCount?.value || "";
+  const count_variable_name = filters?.count_variable_name?.value || "";
+  // const minCount = filters?.minCount?.value || "";
+  // const maxCount = filters?.maxCount?.value || "";
 
   useEffect(() => {
     const newFilters = {...filters};
@@ -43,107 +32,43 @@ const HubboundTableFilter = ({ source, filters, setFilters, data, columns }) => 
       newFilters.year = { value: 2019 }
     }
     if (!direction) {
-      newFilters.direction = { value: OUTBOUND_VAL }
-    }
-    if (!countVariableName) {
-      newFilters.countVariableName = { value: "all" };
-    }
-    if (!minCount) {
-      newFilters.minCount = { value: "" };
-    }
-    if (!maxCount) {
-      newFilters.maxCount = { value: "" };
+      newFilters.direction = { value: directions[0] }
     }
     
     setFilters(newFilters)
   }, []);
 
   return (
-    <div className="flex flex-wrap flex-1 border-blue-100 pb-1 justify-start">
-      <div className='flex '>
-        <div className="py-3.5 px-2 text-sm text-gray-400">Count: </div>
-        <div className="px-2 text-sm">
-          From:
-          <input
-            className="w-16 pl-3 pr-4 py-2.5 border border-blue-100 bg-white mr-2 flex items-center justify-between text-sm"
-            value={minCount}
-            onChange={(e) =>
-              setFilters({ ...filters, minCount: { value: parseInt(e.target.value) > 0 ? parseInt(e.target.value) : 0 } })
-            }
-          >
-          </input>
-        </div>
-        <div className="px-2 text-sm">
-          To:
-          <input
-            className=" w-16 pl-3 pr-4 py-2.5 border border-blue-100 bg-white mr-2 flex items-center justify-between text-sm"
-            value={maxCount}
-            onChange={(e) =>
-              setFilters({ ...filters, maxCount: { value: parseInt(e.target.value) > 0 ? parseInt(e.target.value) : 0 } })
-            }
-          >
-          </input>
-        </div>
-      </div>
-      <div className='flex  justify-start content-center flex-wrap'>
-        <div className="py-3.5 px-2 text-sm text-gray-400">Count variable: </div>
-        <div className="px-2">
-          <select
-            className="pl-3 pr-4 py-2.5 border border-blue-100 w-full bg-white mr-2 flex text-sm"
-            value={countVariableName}
-            onChange={(e) =>
-              setFilters({ ...filters, countVariableName: { value: e.target.value } })
-            }
-          >
-            <option className="ml-2  truncate" value={'all'}>
-              All
+    <div className="flex flex-wrap flex-1 border-blue-100 pb-1 justify-start gap-1 p-2">
+      {Object.keys(HUBBOUND_ATTRIBUTES_FULL).map(attrName => {
+        return <FilterInput key={`filter_input_${attrName}`} setFilters={setFilters} filters={filters} name={attrName} attribute={HUBBOUND_ATTRIBUTES_FULL[attrName]} value={filters[attrName]?.value || ""}/>
+      })}
+    </div>
+  );
+};
+
+const FilterInput = ({ attribute, name, value, setFilters, filters }) => {
+  const { values } = attribute;
+  return (
+    <div className="flex  justify-start content-center flex-wrap border border-blue-100">
+      <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">{name.split("_").join(" ")}:</div>
+      <div className="flex px-2">
+        <select
+          className="pl-3 pr-4 py-2.5 border  w-full bg-white mr-2 flex text-sm"
+          value={value}
+          onChange={(e) =>
+            setFilters({ ...filters, [name]: { value: e.target.value } })
+          }
+        >
+          <option className="ml-2  truncate" value={"all"}>
+            --
+          </option>
+          {values?.map((k, i) => (
+            <option key={i} className="ml-2  truncate" value={k}>
+              {k}
             </option>
-            {COUNT_VARIABLES.map((k, i) => (
-              <option key={i} className="ml-2  truncate" value={k}>
-                {k}
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
-      <div className='flex  justify-start content-center flex-wrap'>
-        <div className="py-3.5 px-2 text-sm text-gray-400">Year: </div>
-        <div className="px-2">
-          <select
-            className="pl-3 pr-4 py-2.5 border border-blue-100 w-full bg-white mr-2 flex text-sm"
-            value={year}
-            onChange={(e) =>
-              setFilters({ ...filters, year: { value: e.target.value } })
-            }
-          >
-            <option className="ml-2  truncate" value={'all'}>
-              All
-            </option>
-            {years.map((k, i) => (
-              <option key={i} className="ml-2  truncate" value={k}>
-                {k}
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
-      <div className='flex  justify-start content-center flex-wrap'>
-        <div className="py-3.5 px-2 text-sm text-gray-400">Direction: </div>
-        <div className="px-2">
-          <select
-            className="pl-3 pr-4 py-2.5 border border-blue-100 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
-            value={direction}
-            onChange={(e) =>
-              setFilters({ ...filters, direction: { value: e.target.value } })
-            }
-          >
-            {directions.map((k, i) => (
-              <option key={i} className="ml-2  truncate" value={k}>
-                {k}
-              </option>
-            ))}
-          </select>
-        </div>
+          ))}
+        </select>
       </div>
     </div>
   );

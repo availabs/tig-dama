@@ -13,7 +13,67 @@ import { DamaContext } from "~/pages/DataManager/store";
 
 var geometries = ["county", "tracts"];
 
-const OUTBOUND_VAL = "Outbound";
+const finishYear = 2020;
+const startYear = 2007
+ 
+export const HUBBOUND_ATTRIBUTES_FULL = {
+  direction: { values: ["Outbound", "Inbound"] },
+  year: {
+    values: Array.from(
+      { length: finishYear - startYear },
+      (_, i) => startYear + 1 + i
+    ),
+  },
+  hour: {values: Array.from(
+    { length: 24 },
+    (_, i) => -1 + 1 + i
+  ),},
+  count: {},
+  count_variable_name: {
+    values: [
+      "Passengers",
+      "Trains",
+      "Cars in Trains",
+      "Buses",
+      "Vehicles",
+      "Occupancy Rates",
+    ],
+  },
+  in_station_name: { values: [] },
+  out_station_name: { values: [] },
+  transit_mode_name: { values: [] },
+  transit_mode_type: { values: [] },
+  transit_mode_group: { values: [] },
+  sector_name: { values: [] },
+  transit_agency_name: { values: [] },
+  transit_route_name: {
+    values: [
+      "B",
+      "V",
+      "7",
+      "D",
+      "J/Z",
+      "5",
+      "N",
+      "6",
+      "Q",
+      "3",
+      "2",
+      "E",
+      "R",
+      "W",
+      "A",
+      "C",
+      "1",
+      "M",
+      "L",
+      "F",
+      "4",
+    ],
+  },
+  location_name: { values: [] },
+};
+
 
 const HUBBOUND_ATTRIBUTES = [
   "direction",
@@ -73,13 +133,6 @@ const TablePage = ({
     [activeView]
   );
 
-  const year = filters?.year?.value || 2019;
-  const direction = filters?.direction?.value || OUTBOUND_VAL;
-  const countVariableName = filters?.countVariableName?.value || null;
-
-  const minCount = filters?.minCount?.value || null;
-  const maxCount = filters?.maxCount?.value || null;
-
   console.log("filters", filters)
 
   const years = useMemo(() => {
@@ -97,22 +150,19 @@ const TablePage = ({
   }, []);
 
   const hubboundDetailsOptions = useMemo(() => {
-    //TODO implement min/max cost filter
-    //TODO OR, remove the filter from the UI
-    const filterClause = {};
-    if(year && year !== "all"){
-      filterClause["year"] = [year];
-    }
+    const filterClause = Object.keys(filters).reduce((a,c) => {
+      if(filters[c].value && filters[c].value !== "all"){
+        a[c] = [filters[c].value];
+      }
 
-    if(countVariableName && countVariableName !== "all"){
-      filterClause["count_variable_name"] = [countVariableName];
-    }
-    filterClause["direction"] = [direction]
+
+      return a;
+    }, {});
 
     return JSON.stringify({
       filter: filterClause,
     });
-  }, [year, direction, countVariableName]);
+  }, [filters]);
 
   const hubboundDetailsPath = useMemo(() => {
     return [
