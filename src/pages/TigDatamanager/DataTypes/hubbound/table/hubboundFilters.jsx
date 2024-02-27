@@ -6,6 +6,14 @@ import { get } from "lodash";
 
 const OUTBOUND_VAL = "Outbound";
 const INBOUND_VAL = "Inbound";
+const COUNT_VARIABLES = [
+  "Passengers",
+  "Trains",
+  "Cars in Trains",
+  "Buses",
+  "Vehicles",
+  "Occupancy Rates",
+];
 
 const HubboundTableFilter = ({ source, filters, setFilters, data, columns }) => {
   // console.log("HubboundTableFilter", filters);
@@ -25,6 +33,9 @@ const HubboundTableFilter = ({ source, filters, setFilters, data, columns }) => 
 
   const year =  filters?.year?.value;
   const direction = filters?.direction?.value;
+  const countVariableName = filters?.countVariableName?.value || "";
+  const minCount = filters?.minCount?.value || "";
+  const maxCount = filters?.maxCount?.value || "";
 
   useEffect(() => {
     const newFilters = {...filters};
@@ -34,18 +45,72 @@ const HubboundTableFilter = ({ source, filters, setFilters, data, columns }) => 
     if (!direction) {
       newFilters.direction = { value: OUTBOUND_VAL }
     }
+    if (!countVariableName) {
+      newFilters.countVariableName = { value: "all" };
+    }
+    if (!minCount) {
+      newFilters.minCount = { value: "" };
+    }
+    if (!maxCount) {
+      newFilters.maxCount = { value: "" };
+    }
     
     setFilters(newFilters)
   }, []);
 
   return (
-    <div className="flex flex-1 border-blue-100">
-      <div className='flex flex-1'>
-        <div className='flex-1' /> 
+    <div className="flex flex-wrap flex-1 border-blue-100 pb-1 justify-start">
+      <div className='flex '>
+        <div className="py-3.5 px-2 text-sm text-gray-400">Count: </div>
+        <div className="px-2 text-sm">
+          From:
+          <input
+            className="w-16 pl-3 pr-4 py-2.5 border border-blue-100 bg-white mr-2 flex items-center justify-between text-sm"
+            value={minCount}
+            onChange={(e) =>
+              setFilters({ ...filters, minCount: { value: parseInt(e.target.value) > 0 ? parseInt(e.target.value) : 0 } })
+            }
+          >
+          </input>
+        </div>
+        <div className="px-2 text-sm">
+          To:
+          <input
+            className=" w-16 pl-3 pr-4 py-2.5 border border-blue-100 bg-white mr-2 flex items-center justify-between text-sm"
+            value={maxCount}
+            onChange={(e) =>
+              setFilters({ ...filters, maxCount: { value: parseInt(e.target.value) > 0 ? parseInt(e.target.value) : 0 } })
+            }
+          >
+          </input>
+        </div>
+      </div>
+      <div className='flex  justify-start content-center flex-wrap'>
+        <div className="py-3.5 px-2 text-sm text-gray-400">Count variable: </div>
+        <div className="px-2">
+          <select
+            className="pl-3 pr-4 py-2.5 border border-blue-100 w-full bg-white mr-2 flex text-sm"
+            value={countVariableName}
+            onChange={(e) =>
+              setFilters({ ...filters, countVariableName: { value: e.target.value } })
+            }
+          >
+            <option className="ml-2  truncate" value={'all'}>
+              All
+            </option>
+            {COUNT_VARIABLES.map((k, i) => (
+              <option key={i} className="ml-2  truncate" value={k}>
+                {k}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+      <div className='flex  justify-start content-center flex-wrap'>
         <div className="py-3.5 px-2 text-sm text-gray-400">Year: </div>
         <div className="px-2">
           <select
-            className="pl-3 pr-4 py-2.5 border border-blue-100 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
+            className="pl-3 pr-4 py-2.5 border border-blue-100 w-full bg-white mr-2 flex text-sm"
             value={year}
             onChange={(e) =>
               setFilters({ ...filters, year: { value: e.target.value } })
@@ -62,8 +127,7 @@ const HubboundTableFilter = ({ source, filters, setFilters, data, columns }) => 
           </select>
         </div>
       </div>
-      <div className='flex flex-1'>
-        <div className='flex-1' /> 
+      <div className='flex  justify-start content-center flex-wrap'>
         <div className="py-3.5 px-2 text-sm text-gray-400">Direction: </div>
         <div className="px-2">
           <select

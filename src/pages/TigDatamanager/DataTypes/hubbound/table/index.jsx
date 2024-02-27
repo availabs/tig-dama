@@ -75,8 +75,12 @@ const TablePage = ({
 
   const year = filters?.year?.value || 2019;
   const direction = filters?.direction?.value || OUTBOUND_VAL;
+  const countVariableName = filters?.countVariableName?.value || null;
 
-  console.log("year filter value", year)
+  const minCount = filters?.minCount?.value || null;
+  const maxCount = filters?.maxCount?.value || null;
+
+  console.log("filters", filters)
 
   const years = useMemo(() => {
     //RYAN TODO set hubbound metadata on source create
@@ -88,33 +92,27 @@ const TablePage = ({
     );
   }, []);
 
-  //RYAN TODO this cannot be hardcoded. Path values will be determined by filters
-  const dataPath = useMemo(() => {
-    console.log({year})
-    const yearParam = year === 'all' ? years : [year]
-    return [
-      "dama",
-      [pgEnv],
-      "hubbound",
-      [activeViewId],
-      yearParam,
-      [direction],
-    ];
-  }, [year, direction, activeViewId]);
-
-
   useEffect(() => {
     setTableColumns(HUBBOUND_ATTRIBUTES);
   }, []);
 
   const hubboundDetailsOptions = useMemo(() => {
+    //TODO implement min/max cost filter
+    //TODO OR, remove the filter from the UI
+    const filterClause = {};
+    if(year && year !== "all"){
+      filterClause["year"] = [year];
+    }
+
+    if(countVariableName && countVariableName !== "all"){
+      filterClause["count_variable_name"] = [countVariableName];
+    }
+    filterClause["direction"] = [direction]
+
     return JSON.stringify({
-      filter: {
-        ["year"]: [year],
-        ["direction"]:[direction]
-      },
+      filter: filterClause,
     });
-  }, [year, direction]);
+  }, [year, direction, countVariableName]);
 
   const hubboundDetailsPath = useMemo(() => {
     return [
@@ -141,7 +139,7 @@ const TablePage = ({
     }
 
     fetchData();
-  }, [falcorCache, pgEnv, activeViewId, activeView, year, direction])
+  }, [falcorCache, pgEnv, activeViewId, activeView, hubboundDetailsOptions])
 
   const tableData = useMemo(() => {
     const tableDataPath = [
@@ -151,7 +149,7 @@ const TablePage = ({
     const tableData = get(falcorCache, tableDataPath, {});
 
     return Object.values(tableData);
-  }, [activeViewId, falcorCache, tableColumns]);
+  }, [activeViewId, falcorCache, tableColumns, hubboundDetailsPath]);
 
   const { data, columns } = useMemo(() => {
     return transform(tableData, tableColumns);
@@ -160,7 +158,6 @@ const TablePage = ({
   return (
     <div>
       <div className="flex">
-        <div className="flex-1 pl-3 pr-4 py-2">Table View</div>
         <TableFilter
           filters={filters}
           setFilters={setFilters}
