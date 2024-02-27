@@ -11,86 +11,10 @@ import { useParams } from "react-router-dom";
 
 import { DamaContext } from "~/pages/DataManager/store";
 
+import {HUBBOUND_ATTRIBUTES} from '../constants';
+
 var geometries = ["county", "tracts"];
 
-const finishYear = 2020;
-const startYear = 2007
- 
-export const HUBBOUND_ATTRIBUTES_FULL = {
-  direction: { values: ["Outbound", "Inbound"] },
-  year: {
-    values: Array.from(
-      { length: finishYear - startYear },
-      (_, i) => startYear + 1 + i
-    ),
-  },
-  hour: {values: Array.from(
-    { length: 24 },
-    (_, i) => -1 + 1 + i
-  ),},
-  count: {},
-  count_variable_name: {
-    values: [
-      "Passengers",
-      "Trains",
-      "Cars in Trains",
-      "Buses",
-      "Vehicles",
-      "Occupancy Rates",
-    ],
-  },
-  in_station_name: { values: [] },
-  out_station_name: { values: [] },
-  transit_mode_name: { values: [] },
-  transit_mode_type: { values: [] },
-  transit_mode_group: { values: [] },
-  sector_name: { values: [] },
-  transit_agency_name: { values: [] },
-  transit_route_name: {
-    values: [
-      "B",
-      "V",
-      "7",
-      "D",
-      "J/Z",
-      "5",
-      "N",
-      "6",
-      "Q",
-      "3",
-      "2",
-      "E",
-      "R",
-      "W",
-      "A",
-      "C",
-      "1",
-      "M",
-      "L",
-      "F",
-      "4",
-    ],
-  },
-  location_name: { values: [] },
-};
-
-
-const HUBBOUND_ATTRIBUTES = [
-  "direction",
-  "year",
-  "hour",
-  "count",
-  "count_variable_name",
-  "in_station_name",
-  "out_station_name",
-  "transit_mode_name",
-  "transit_mode_type",
-  "transit_mode_group",
-  "sector_name",
-  "transit_agency_name",
-  "transit_route_name",
-  "location_name",
-];
 
 
 const DefaultTableFilter = () => <div />;
@@ -146,7 +70,7 @@ const TablePage = ({
   }, []);
 
   useEffect(() => {
-    setTableColumns(HUBBOUND_ATTRIBUTES);
+    setTableColumns(Object.keys(HUBBOUND_ATTRIBUTES));
   }, []);
 
   const hubboundDetailsOptions = useMemo(() => {
@@ -185,7 +109,7 @@ const TablePage = ({
       await falcor.get([...hubboundDetailsPath, 'databyIndex', {
           from: 0,
           to: len - 1
-      }, HUBBOUND_ATTRIBUTES]);
+      }, Object.keys(HUBBOUND_ATTRIBUTES)]);
     }
 
     fetchData();

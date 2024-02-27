@@ -3,7 +3,9 @@ import React, {
   useMemo,
 } from "react";
 import { get } from "lodash";
-import {HUBBOUND_ATTRIBUTES_FULL} from './index'
+import {HUBBOUND_ATTRIBUTES} from '../constants'
+
+const FILTERS_TO_EXCLUDE = ['out_station_name']
 
 const HubboundTableFilter = ({ source, filters, setFilters, data, columns, tableColumns  }) => {
   // console.log("HubboundTableFilter", filters);
@@ -18,30 +20,20 @@ const HubboundTableFilter = ({ source, filters, setFilters, data, columns, table
 
   }, []);
 
-  const directions = HUBBOUND_ATTRIBUTES_FULL.direction.values;
-
   const year =  filters?.year?.value;
-  const direction = filters?.direction?.value;
-  const count_variable_name = filters?.count_variable_name?.value || "";
-  // const minCount = filters?.minCount?.value || "";
-  // const maxCount = filters?.maxCount?.value || "";
 
   useEffect(() => {
     const newFilters = {...filters};
     if (!year && years && years.length) {
       newFilters.year = { value: 2019 }
-    }
-    if (!direction) {
-      newFilters.direction = { value: directions[0] }
-    }
-    
+    }    
     setFilters(newFilters)
   }, []);
 
   return (
     <div className="flex flex-wrap flex-1 border-blue-100 pb-1 justify-start gap-1 p-2">
-      {Object.keys(HUBBOUND_ATTRIBUTES_FULL).map(attrName => {
-        return <FilterInput key={`filter_input_${attrName}`} setFilters={setFilters} filters={filters} name={attrName} attribute={HUBBOUND_ATTRIBUTES_FULL[attrName]} value={filters[attrName]?.value || ""}/>
+      {Object.keys(HUBBOUND_ATTRIBUTES).filter(attrKey => !FILTERS_TO_EXCLUDE.includes(attrKey)).map(attrName => {
+        return <FilterInput key={`filter_input_${attrName}`} setFilters={setFilters} filters={filters} name={attrName} attribute={HUBBOUND_ATTRIBUTES[attrName]} value={filters[attrName]?.value || ""}/>
       })}
     </div>
   );
