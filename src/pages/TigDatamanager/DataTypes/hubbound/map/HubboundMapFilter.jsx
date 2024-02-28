@@ -25,6 +25,8 @@ const mapStyle = {
   }
 };
 
+//TODO -- change `hour` to be a "range". It is a set of discrete values, we can send a range
+//TODO -- Can maybe `group by`, do some agg on the backend. If not,  can just sum client side
 //TODO -- map filter should take in prop that handles which filters should be enabled
 /**
  * RYAN TODO -- may need to come back and add a 2nd layer for county geom
@@ -66,7 +68,6 @@ export const HubboundMapFilter = (props) => {
     setFilters(newFilters)
   }, []);
 
-  console.log({filters});
   const hubboundDetailsOptions = useMemo(() => {
     const filterClause = Object.keys(filters).reduce((a,c) => {
       if(filters[c].value && filters[c].value !== "all"){
@@ -111,6 +112,7 @@ export const HubboundMapFilter = (props) => {
     }
 
   }, [pgEnv, activeViewId, hubboundDetailsOptions])
+  
   const tableData = useMemo(() => {
     const tableDataPath = [
       ...hubboundDetailsPath,
@@ -120,18 +122,18 @@ export const HubboundMapFilter = (props) => {
     const tableDataById = get(falcorCache, tableDataPath, {});
 
     return Object.values(tableDataById);
-  }, [activeViewId, falcorCache, hubboundDetailsPath]);
+  }, [activeViewId, falcorCache, hubboundDetailsPath, hubboundDetailsOptions, filters]);
 
   useEffect(() => {
     if (tableData && tableData.length) {
-
+      setTempSymbology({})
       const featObjs = tableData.reduce((a, data) => {
         const { latitude: lat, longitude: lng, ...rest } = data;
 
         //for each lng, lon
         //route name : { [count_variable_name] : value }
-        if (!a[data.in_station_name]) {
-          a[data.in_station_name] = {
+        if (!a[data.location_name]) {
+          a[data.location_name] = {
             type: "Feature",
             properties: {
               ...rest,
@@ -145,24 +147,24 @@ export const HubboundMapFilter = (props) => {
         }
 
         if (
-          !a[data.in_station_name]["properties"]["routes"][
+          !a[data.location_name]["properties"]["routes"][
             data.transit_route_name
           ]
         ) {
-          a[data.in_station_name]["properties"]["routes"][
+          a[data.location_name]["properties"]["routes"][
             data.transit_route_name
           ] = {};
         }
 
-        a[data.in_station_name]["properties"]["routes"][
+        a[data.location_name]["properties"]["routes"][
           data.transit_route_name
         ][data.count_variable_name] = data.count;
 
         return a;
       }, {})
 
-      const featArray = Object.keys(featObjs).map(featName => ({name: featName, ...featObjs[featName]}))
-
+      const featArray = Object.keys(featObjs).map(featName => ({name: featName, ...featObjs[featName]}));
+      const source_layer_id = `s${source.source_id}_v${activeViewId}`;
       const newSource = {
         source:{
           type: "geojson",
@@ -172,7 +174,7 @@ export const HubboundMapFilter = (props) => {
           },
         },
         type: "geojson",
-        id: "0"
+        id: source_layer_id
       };
 
       newSymbology.sources = [newSource];
@@ -181,7 +183,8 @@ export const HubboundMapFilter = (props) => {
         return {
           id: `source_layer_${type}`,
           ...mapStyle[type],
-          source: "0",
+          source: source_layer_id,
+          path: hubboundDetailsPath
         };
       });
 
@@ -191,10 +194,8 @@ export const HubboundMapFilter = (props) => {
       }
 
     }
-  }, [tableData]);
+  }, [tableData, hubboundDetailsPath, hubboundDetailsOptions, filters]);
   return <div>
-    <div>Some Filters!</div>
-    <HubboundTableFilter filters={filters} setFilters={setFilters}/>
-    
+      <HubboundTableFilter filters={filters} setFilters={setFilters}/>
     </div>;
 };
