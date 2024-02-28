@@ -3,6 +3,7 @@ import MapPage from "~/pages/DataManager/DataTypes/gis_dataset/pages/Map";
 import CreatePage from "~/pages/DataManager/DataTypes/gis_dataset/pages/Create";
 import { HubboundTableFilter, HubboundTableTransform } from "./table/hubboundFilters";
 import { HubboundMapFilter } from "./map/HubboundMapFilter";
+import { HubboundMapHover } from "./map/HubboundMapHover";
 
 const hubboundConfig = {
   sourceCreate: {
@@ -28,7 +29,7 @@ const hubboundConfig = {
         {...props}
         showViewSelector={false}
         MapFilter={HubboundMapFilter}
-        // HoverComp={{Component: ProjectHoverComp, isPinnable: true}}
+        HoverComp={{Component: HubboundMapHover, isPinnable: true}}
       />
     ),
   },

@@ -6,22 +6,26 @@ import { HubboundTableFilter } from "../table/hubboundFilters";
 import { HUBBOUND_ATTRIBUTES } from "../constants";
 import cloneDeep from "lodash/cloneDeep";
 import isEqual from "lodash/isEqual";
-import mapboxgl from "maplibre-gl";
-import { Button } from "~/modules/avl-components/src";
-import shpwrite from "@mapbox/shp-write";
-import { range as d3range } from "d3-array";
+
+const colors = {
+  "Staten Island": "rgb(255, 0, 255)",
+  "Queens":"rgb(0, 0, 255)",
+  "New Jersey": "rgb(255, 0, 0)",
+  "Brooklyn":"rgb(0, 255, 0)",
+  "60th Street Sector":"rgb(0, 255, 255)"
+} 
 
 const mapStyle = {
   circle: {
     type: "circle",
     'paint': {
       'circle-radius': 6,
-      'circle-color': '#B42222'
+      'circle-color': ["get", ["to-string", ["get", "sector_name"]], ["literal", colors]]
     },
   }
 };
 
-
+//TODO -- map filter should take in prop that handles which filters should be enabled
 /**
  * RYAN TODO -- may need to come back and add a 2nd layer for county geom
  * Otherwise, this will just show dots
@@ -119,8 +123,6 @@ export const HubboundMapFilter = (props) => {
   }, [activeViewId, falcorCache, hubboundDetailsPath]);
 
   useEffect(() => {
-    console.log(tableData);
-
     if (tableData && tableData.length) {
 
       const featObjs = tableData.reduce((a, data) => {
@@ -173,13 +175,7 @@ export const HubboundMapFilter = (props) => {
         id: "0"
       };
 
-      console.log("this is newSource",newSource);
-
-
       newSymbology.sources = [newSource];
-      const source_id = newSymbology?.sources?.[0]?.id || "0";
-      const source_layer = `s${source.source_id}_v${activeViewId}`;
-
 
       newSymbology.layers = ["circle"].map((type) => {
         return {
@@ -196,12 +192,6 @@ export const HubboundMapFilter = (props) => {
 
     }
   }, [tableData]);
-
-  //map.addSource('conferences', newSource);
-
-
-
-
   return <div>
     <div>Some Filters!</div>
     <HubboundTableFilter filters={filters} setFilters={setFilters}/>
