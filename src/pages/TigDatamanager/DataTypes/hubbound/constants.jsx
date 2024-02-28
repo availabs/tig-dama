@@ -126,4 +126,6 @@ export const HUBBOUND_ATTRIBUTES = {
     values: ROUTE_NAMES,
   },
   location_name: { values: LOCATION_NAMES },
+  latitude: {},
+  longitude: {},
 };

@@ -3,11 +3,13 @@ import React, {
   useMemo,
 } from "react";
 import { get } from "lodash";
-import {HUBBOUND_ATTRIBUTES} from '../constants'
+import { HUBBOUND_ATTRIBUTES } from "../constants";
 
-const FILTERS_TO_EXCLUDE = ['out_station_name']
+//`count` is excluded because API endpoint currently does not support `<` or `>` operations
+//`hour` is currently restricted to a single hour, for the same reason
+const FILTERS_TO_EXCLUDE = ['out_station_name', 'latitude', 'longitude', 'count']
 
-const HubboundTableFilter = ({ source, filters, setFilters, data, columns, tableColumns  }) => {
+const HubboundTableFilter = ({ filters, setFilters }) => {
   // console.log("HubboundTableFilter", filters);
   const years = useMemo(() => {
     //RYAN TODO set hubbound metadata on source create
