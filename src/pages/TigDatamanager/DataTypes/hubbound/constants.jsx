@@ -1,6 +1,8 @@
 const finishYear = 2020;
 const startYear = 2007
- 
+
+export const MAP_BOUNDS = [[-73.9616912861, 40.7542415367], [-73.9890044908, 40.7095419789]];
+
 const STATION_NAMES = [
   "York Street",
   "Whitehall Street",

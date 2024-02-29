@@ -3,10 +3,10 @@ import { useSearchParams } from "react-router-dom";
 import { DamaContext } from "~/pages/DataManager/store";
 import get from "lodash/get";
 import { HubboundTableFilter } from "../table/hubboundFilters";
-import { HUBBOUND_ATTRIBUTES } from "../constants";
+import { HUBBOUND_ATTRIBUTES, MAP_BOUNDS } from "../constants";
 import cloneDeep from "lodash/cloneDeep";
 import isEqual from "lodash/isEqual";
-
+import mapboxgl from "maplibre-gl";
 const colors = {
   "Staten Island": "rgb(255, 0, 255)",
   "Queens":"rgb(0, 0, 255)",
@@ -221,6 +221,13 @@ export const HubboundMapFilter = (props) => {
       }
 
 
+      const projectCalculatedBounds = new mapboxgl.LngLatBounds(
+        MAP_BOUNDS[0],
+        MAP_BOUNDS[1]
+      );
+      
+      newSymbology.fitToBounds = projectCalculatedBounds;
+      newSymbology.fitZoom = 12;
 
       if (!isEqual(newSymbology, tempSymbology)) {
         console.log("setting new newSymbology");
