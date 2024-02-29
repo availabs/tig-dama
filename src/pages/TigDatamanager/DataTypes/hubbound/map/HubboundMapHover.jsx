@@ -86,12 +86,12 @@ const HubboundMapHover = ({ data, layer }) => {
   }
   return (
     <div className="bg-white px-4 py-2 max-w-[300px] scrollbar-xs overflow-y-scroll">
-      <div className="flex border-b pt-1 capitalize" key={`col-year`}>
+      {/* <div className="flex border-b pt-1 capitalize" key={`col-year`}>
         <div className="flex-1 font-medium text-sm pl-1">Year, Hour</div>
         <div className="flex-1 text-right font-thin pl-4 pr-1">
           {hoverData?.year}, {hoverData?.hour}
         </div>
-      </div>
+      </div> */}
       {HEADER_PROP_NAMES.map((propName) => (
         <div className="flex border-b pt-1 capitalize" key={`col-${propName}`}>
           <div className="flex-1 font-medium text-sm pl-1">
