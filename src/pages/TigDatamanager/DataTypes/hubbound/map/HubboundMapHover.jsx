@@ -110,7 +110,7 @@ const HubboundMapHover = ({ data, layer }) => {
               {routeName}
             </div>
           </div>
-          {HUBBOUND_ATTRIBUTES.count_variable_name.values.map((varName) => (
+          {HUBBOUND_ATTRIBUTES.count_variable_name.values.filter(varName => routeData?.[routeName]?.[varName] !== undefined).map((varName) => (
             <div
               className="flex border-b pt-1"
               key={`route_${routeName}_${varName}`}
