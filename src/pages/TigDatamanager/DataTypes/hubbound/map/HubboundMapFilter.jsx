@@ -7,6 +7,19 @@ import { HUBBOUND_ATTRIBUTES, MAP_BOUNDS } from "../constants";
 import cloneDeep from "lodash/cloneDeep";
 import isEqual from "lodash/isEqual";
 import mapboxgl from "maplibre-gl";
+
+const FILTERS_TO_EXCLUDE = [
+  "sector_name",
+  "transit_agency_name",
+  "transit_route_name",
+  "out_station_name",
+  "in_station_name",
+  "location_name",
+  "count_variable_name",
+  "latitude",
+  "longitude",
+  "count",
+];
 const colors = {
   "Staten Island": "rgb(255, 0, 255)",
   "Queens":"rgb(0, 0, 255)",
@@ -237,6 +250,6 @@ export const HubboundMapFilter = (props) => {
     }
   }, [tableData, hubboundDetailsPath, hubboundDetailsOptions, filters]);
   return <div>
-      <HubboundTableFilter filters={filters} setFilters={setFilters}/>
+      <HubboundTableFilter filters={filters} setFilters={setFilters} filtersToExclude={FILTERS_TO_EXCLUDE}/>
     </div>;
 };

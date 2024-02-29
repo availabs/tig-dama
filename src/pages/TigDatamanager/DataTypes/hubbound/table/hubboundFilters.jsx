@@ -7,10 +7,8 @@ import { HUBBOUND_ATTRIBUTES } from "../constants";
 
 //`count` is excluded because API endpoint currently does not support `<` or `>` operations
 //`hour` is currently restricted to a single hour, for the same reason
-const FILTERS_TO_EXCLUDE = ['out_station_name', 'latitude', 'longitude', 'count']
 
-const HubboundTableFilter = ({ filters, setFilters }) => {
-  // console.log("HubboundTableFilter", filters);
+const HubboundTableFilter = ({ filters, setFilters, filtersToExclude }) => {
   const years = useMemo(() => {
     //RYAN TODO set hubbound metadata on source create
     const finishYear = 2020;
@@ -34,7 +32,7 @@ const HubboundTableFilter = ({ filters, setFilters }) => {
 
   return (
     <div className="flex flex-wrap flex-1 border-blue-100 pb-1 justify-start gap-1 p-2">
-      {Object.keys(HUBBOUND_ATTRIBUTES).filter(attrKey => !FILTERS_TO_EXCLUDE.includes(attrKey)).map(attrName => {
+      {Object.keys(HUBBOUND_ATTRIBUTES).filter(attrKey => !filtersToExclude.includes(attrKey)).map(attrName => {
         return <FilterInput key={`filter_input_${attrName}`} setFilters={setFilters} filters={filters} name={attrName} attribute={HUBBOUND_ATTRIBUTES[attrName]} value={filters[attrName]?.value || ""}/>
       })}
     </div>
@@ -44,7 +42,7 @@ const HubboundTableFilter = ({ filters, setFilters }) => {
 const FilterInput = ({ attribute, name, value, setFilters, filters }) => {
   const { values } = attribute;
   return (
-    <div className="flex  justify-start content-center flex-wrap border border-blue-100">
+    <div className="flex  justify-start content-center flex-wrap">
       <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">{name.split("_").join(" ")}:</div>
       <div className="flex px-2">
         <select

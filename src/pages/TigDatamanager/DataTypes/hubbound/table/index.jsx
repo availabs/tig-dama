@@ -15,7 +15,7 @@ import {HUBBOUND_ATTRIBUTES} from '../constants';
 
 var geometries = ["county", "tracts"];
 
-
+const FILTERS_TO_EXCLUDE = ['out_station_name', 'latitude', 'longitude', 'count']
 
 const DefaultTableFilter = () => <div />;
 
@@ -133,6 +133,7 @@ const TablePage = ({
     <div>
       <div className="flex">
         <TableFilter
+          filtersToExclude={FILTERS_TO_EXCLUDE}
           filters={filters}
           setFilters={setFilters}
           years={years}
