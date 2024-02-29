@@ -22,6 +22,14 @@ const mapStyle = {
       'circle-radius': 6,
       'circle-color': ["get", ["to-string", ["get", "sector_name"]], ["literal", colors]]
     },
+  },
+  line: {
+    type: 'line',
+    paint: {
+        'line-color': 'black',
+        'line-width': 1,
+        'line-dasharray': [10, 5]
+    }
   }
 };
 
@@ -186,6 +194,33 @@ export const HubboundMapFilter = (props) => {
           path: hubboundDetailsPath
         };
       });
+
+      const countySourceId = 'counties_source';
+      if(!newSymbology.sources.find(source => source.id === countySourceId)){
+        console.log("adding county source")
+        const countySource = {
+          source:{
+            type: 'geojson',
+            data: '/data/hubbound.json'
+          },
+          url:'/data/hubbound.json',
+          type: "geojson",
+          id: countySourceId
+        };
+        newSymbology.sources.push(countySource);
+      }
+
+      if(!newSymbology.layers.find(layer => layer.id === 'counties_layer')){
+        console.log("adding county layer")
+        const countyLayer = {
+          id: `counties_layer`,
+          ...mapStyle['line'],
+          source: countySourceId
+        };
+        newSymbology.layers.push(countyLayer);
+      }
+
+
 
       if (!isEqual(newSymbology, tempSymbology)) {
         console.log("setting new newSymbology");
