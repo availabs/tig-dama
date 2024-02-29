@@ -126,7 +126,6 @@ export const HubboundMapFilter = (props) => {
 
   useEffect(() => {
     if (tableData && tableData.length) {
-      setTempSymbology({})
       const featObjs = tableData.reduce((a, data) => {
         const { latitude: lat, longitude: lng, ...rest } = data;
 

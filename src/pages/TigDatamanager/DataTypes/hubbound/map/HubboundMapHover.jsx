@@ -80,6 +80,10 @@ const HubboundMapHover = ({ data, layer }) => {
   }, [tableData, locationName])
 
   const routeData = hoverData?.routes || {};
+
+  if(!Object.keys(routeData).length) {
+    return (<></>)
+  }
   return (
     <div className="bg-white px-4 py-2 max-w-[300px] scrollbar-xs overflow-y-scroll">
       <div className="flex border-b pt-1 capitalize" key={`col-year`}>

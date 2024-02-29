@@ -1,11 +1,25 @@
 import Table from "./table";
 import MapPage from "~/pages/DataManager/DataTypes/gis_dataset/pages/Map";
 import CreatePage from "~/pages/DataManager/DataTypes/gis_dataset/pages/Create";
+import TigOverview from '../TigOverview'
 import { HubboundTableFilter, HubboundTableTransform } from "./table/hubboundFilters";
 import { HubboundMapFilter } from "./map/HubboundMapFilter";
 import { HubboundMapHover } from "./map/HubboundMapHover";
 
+const getVariables = (source, views, activeViewId) =>
+  views.map((d) => ({
+    key: d.view_id,
+    name: d.version || d.view_id,
+    type: "view",
+  }));
+
 const hubboundConfig = {
+  overview: {
+    name: "Overview",
+    path: "",
+    tag: 'test',
+    component: (props) => <TigOverview {...props} getVariables={getVariables}/>
+  },
   sourceCreate: {
     name: "Create",
     component: (props) => <CreatePage {...props} dataType="hubbound" />,
