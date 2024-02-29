@@ -127,8 +127,6 @@ const TRANSIT_MODES = [
   'Tramway',
   'Express Bus',
   'Private Ferry',
-  'Rail Rapid Transit - Local',
-  'Rail Rapid Transit - Express',
   'Bicycle',
   'Local Bus',
   'Vehicles (Auto+Taxi+Trucks+Comm. Vans)',

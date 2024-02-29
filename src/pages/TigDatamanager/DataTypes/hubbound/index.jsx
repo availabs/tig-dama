@@ -30,7 +30,7 @@ const hubboundConfig = {
     component: (props) => (
       <Table
         {...props}
-        // transform={HubboundTableTransform}
+        transform={HubboundTableTransform}
         TableFilter={HubboundTableFilter}
       />
     ),

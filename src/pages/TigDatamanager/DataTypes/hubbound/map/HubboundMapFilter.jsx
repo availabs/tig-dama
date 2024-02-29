@@ -81,7 +81,7 @@ export const HubboundMapFilter = (props) => {
       newFilters.hour = { value: 12 }
     }    
     if (!transit_mode_name) {
-      newFilters.transit_mode_name = { value: HUBBOUND_ATTRIBUTES['transit_mode_name'].values[0] }
+      newFilters.transit_mode_name = { value: HUBBOUND_ATTRIBUTES['transit_mode_name'].values[6] }
     }
     if(!direction){
       newFilters.direction = { value: HUBBOUND_ATTRIBUTES['direction'].values[0] }
