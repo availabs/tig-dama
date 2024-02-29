@@ -15,7 +15,7 @@ import {HUBBOUND_ATTRIBUTES} from '../constants';
 
 var geometries = ["county", "tracts"];
 
-const FILTERS_TO_EXCLUDE = ['out_station_name', 'latitude', 'longitude', 'count']
+const FILTERS_TO_EXCLUDE = ['out_station_name', "transit_route_name",'latitude', 'longitude', 'count']
 
 const DefaultTableFilter = () => <div />;
 

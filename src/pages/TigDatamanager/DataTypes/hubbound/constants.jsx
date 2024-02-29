@@ -1,86 +1,167 @@
 const finishYear = 2020;
 const startYear = 2007
 
+function alphaSort(a, b) {
+  if (a < b) {
+    return -1;
+  } else if (b < a) {
+    return 1;
+  } else {
+    return 0;
+  }
+}
+
 export const MAP_BOUNDS = [[-73.9616912861, 40.7542415367], [-73.9890044908, 40.7095419789]];
 
 const STATION_NAMES = [
-  "York Street",
-  "Whitehall Street",
-  "Wall Street",
-  "Vernon Blvd/Jackson Ave",
-  "Times Square",
-  "Roosevelt Island",
-  "Queens Plaza",
-  "Queensboro Plaza",
   "Pacific Street",
-  "Marcy Avenue",
-  "Lexington Av/63rd St",
   "High Street",
-  "Grand Street",
-  "Grand Central",
-  "First Avenue",
-  "Essex Street",
-  "East Broadway",
-  "Dekalb Avenue",
-  "Court Street",
-  "Clark Street",
-  "Canal Street",
-  "Broadway/Nassau",
-  "Broad Street",
-  "Bowling Green",
-  "Borough Hall",
-  "Bedford Avenue",
-  "86th St / Lexington Ave",
-  "72nd St / Broadway",
-  "68th St / Lexington Ave",
-  "66th St / Broadway",
-  "63rd St / Lexington Ave",
+  "Roosevelt Island",
   "59th St / Lexington Ave",
   "59th St /Columbus Circle",
-  "59th St / Columbus Circle",
-  "57th St/7th Av",
+  "63rd St / Lexington Ave",
+  "66th St / Broadway",
+  "Times Square",
+  "Grand Street",
+  "Whitehall Street",
+  "Wall Street",
+  "Queens Plaza",
+  "86th St / Lexington Ave",
+  "Borough Hall",
+  "Bowling Green",
   "53rd St / Lexington Ave",
-  "23rd St/Ely Ave",
+  "Bedford Avenue",
+  "68th St / Lexington Ave",
+  "Dekalb Avenue",
+  "Canal Street",
+  "Vernon Blvd/Jackson Ave",
+  "Grand Central",
+  "59th St / Columbus Circle",
+  "72nd St / Broadway",
+  "York Street",
+  "Lexington Av/63rd St",
+  "Marcy Avenue",
+  "Broadway/Nassau",
+  "Queensboro Plaza",
   "125th St / Nicholas St",
+  "Clark Street",
+  "First Avenue",
+  "Broad Street",
+  "57th St/7th Av",
+  "23rd St/Ely Ave",
+  "East Broadway",
+  "Court Street",
+  "Essex Street",
 ];
+STATION_NAMES.sort(alphaSort);
 
 const LOCATION_NAMES = [
-  "Sixtieth St. Tunnel-BMT/IND",
-  "Joralemon Tunnel-IRT",
+  "All Ferry Points - 60th Street",
+  "Holland Tunnel",
+  "Downtown Path Tunnel",
   "Fifty-Third St. Tunnel-IND",
   "Rutgers Tunnel-IND",
+  "E Koch Queensboro Brdg Ramp",
   "Sixty-Third St. Tunnel",
-  "Fourtheenth St. Tunnel-BMT",
-  "Manhattan Bridge-BMT",
-  "Clark Tunnel-IRT",
-  "Lexington Av/63rd St",
-  "Steinway Tunnel-IRT",
+  "Brooklyn Bridge",
+  "Amsterdam Avenue",
+  "Fifth Avenue",
+  "All Ferry Points-Staten Island",
+  "West Side Highway",
+  "Hugh L. Carey / Brooklyn Battery Tunnel",
+  "West End Avenue",
+  "Uptown Path Tunnel",
   "Lexington Avenue- IRT",
   "Broadway",
-  "Montague Tunnel-BMT",
-  "57th St/7th Av",
+  "Lincoln Tunnel",
   "Eight Ave",
   "Williamsburg Bridge-BMT",
   "Cranberry Tunnel-IND",
+  "All Ferry Points - Queens",
+  "Staten Island Ferry",
+  "Sixtieth St. Tunnel-BMT/IND",
+  "Columbus Avenue",
+  "Amtrak/N.J. Transit Tunnels",
+  "Joralemon Tunnel-IRT",
+  "Queens Midtown Tunnel-IRT",
+  "Seventh Avenue",
+  "Fourtheenth St. Tunnel-BMT",
+  "Franklin D. Roosevelt Drive",
+  "E Koch Queensboro Brdg or Roosevelt Island Tramway",
+  "Manhattan Bridge-BMT",
+  "West End Avenue/11th Avenue",
+  "York Avenue",
+  "West Side Highway/12th Avenue",
+  "Park Ave",
+  "All Ferry Points - Brooklyn",
+  "Madison Avenue",
+  "Clark Tunnel-IRT",
+  "Lexington Av/63rd St",
+  "Second Avenue",
+  "Third Avenue",
+  "Steinway Tunnel-IRT",
+  "Montague Tunnel-BMT",
+  "Hudson River Greenway",
+  "All Ferry Points - New Jersey",
+  "Amtrak/LIRR Tunnels",
+  "First Avenue",
+  "57th St/7th Av",
+  "Sixth Avenue",
 ];
+LOCATION_NAMES.sort(alphaSort);
 
-const SECTOR_NAMES = ["Queens", "Brooklyn", "60th Street Sector"];
+
+const SECTOR_NAMES = [
+  "Queens",
+  "Brooklyn",
+  "60th Street Sector",
+  "Staten Island",
+  "New Jersey",
+];
+SECTOR_NAMES.sort(alphaSort);
 
 const TRANSIT_MODES = [
   "Rail Rapid Transit - Local",
   "Rail Rapid Transit - Express",
+  'Suburban Rail',
+  'Tramway',
+  'Express Bus',
+  'Private Ferry',
+  'Rail Rapid Transit - Local',
+  'Rail Rapid Transit - Express',
+  'Bicycle',
+  'Local Bus',
+  'Vehicles (Auto+Taxi+Trucks+Comm. Vans)',
+  'Public Ferry'
 ];
+TRANSIT_MODES.sort(alphaSort);
 
-const AGENCY_NAMES = ["MTA NYC Transit"];
+const AGENCY_NAMES = [
+  "New Jersey Transit",
+  "Private Ferries",
+  "Port Authority of NY&NJ",
+  "MTA Long Island Rail Road",
+  "AMTRAK",
+  "No Operators",
+  "MTA Bus Company",
+  "Private Bus Operators",
+  "Westchester DOT",
+  "MTA NYC Transit",
+  "RIOC",
+  "MTA Metro North Railroad",
+];
+AGENCY_NAMES.sort(alphaSort);
+
 
 const VARIABLE_NAMES = [
   "Passengers",
   "Trains",
   "Cars in Trains",
-  // "Buses",
-  // "Vehicles",
-  // "Occupancy Rates",
+  "Buses",
+  "Vehicles",
+  "Occupancy Rates",
 ];
+VARIABLE_NAMES.sort(alphaSort);
 
 const ROUTE_NAMES = [
   "B",
@@ -105,6 +186,7 @@ const ROUTE_NAMES = [
   "F",
   "4",
 ];
+ROUTE_NAMES.sort(alphaSort);
 
 export const HUBBOUND_ATTRIBUTES = {
   direction: { values: ["Outbound", "Inbound"] },
