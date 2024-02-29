@@ -94,7 +94,7 @@ const HubboundMapHover = ({ data, layer }) => {
             {propName.split("_").join(" ")}
           </div>
           <div className="flex-1 text-right font-thin pl-4 pr-1">
-            {hoverData[propName]}
+            {hoverData?.[propName]}
           </div>
         </div>
       ))}
@@ -113,7 +113,7 @@ const HubboundMapHover = ({ data, layer }) => {
             >
               <div className="flex-1 font-medium text-sm pl-1">{varName}</div>
               <div className="flex-1 text-right font-thin pl-4 pr-1">
-                {routeData[routeName][varName]}
+                {routeData?.[routeName]?.[varName]}
               </div>
             </div>
           ))}
