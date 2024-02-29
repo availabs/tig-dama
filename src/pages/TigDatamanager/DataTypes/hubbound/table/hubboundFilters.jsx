@@ -66,30 +66,14 @@ const FilterInput = ({ attribute, name, value, setFilters, filters }) => {
   );
 };
 
-const HubboundTableTransform = (tableData, attributes, filters, years,source) => {
-  let activeVar = get(filters, "activeVar.value", "totpop");
-
-  let updatedYears = years?.map((str) => (''+str).slice(-2));
-  const columns = [
-    {
-      Header: "County",
-      accessor: "county",
-      sortBy: 'asc'
-    },
-  ];
-
-  updatedYears.forEach((y, i) => {
-    columns.push({
-      Header: `20${y}`,
-      accessor: `${activeVar}_${i}`,
-      Cell: ({ value }) => Math.round(value).toLocaleString(),
-    });
-  });
-
+const COLUMNS_TO_EXCLUDE = ['latitude', 'longitude'];
+const HubboundTableTransform = (tableData, attributes) => {
   return {
     data: tableData,
-    columns,
+    columns: attributes?.filter(d => !COLUMNS_TO_EXCLUDE.includes(d)).map((d) => ({
+      Header: d.split("_").filter(chunk => chunk.toLowerCase() !== "name").join(' '),
+      accessor: d,
+    })),
   };
 };
-
 export { HubboundTableFilter, HubboundTableTransform };
