@@ -11,7 +11,8 @@ import { useParams } from "react-router-dom";
 
 import { DamaContext } from "~/pages/DataManager/store";
 
-import {HUBBOUND_ATTRIBUTES} from '../constants';
+import { HUBBOUND_ATTRIBUTES } from "../constants";
+import { createHubboundFilterClause } from "../utils";
 
 var geometries = ["county", "tracts"];
 
@@ -74,18 +75,7 @@ const TablePage = ({
   }, []);
 
   const hubboundDetailsOptions = useMemo(() => {
-    const filterClause = Object.keys(filters).reduce((a,c) => {
-      if(filters[c].value && filters[c].value !== "all"){
-        a[c] = [filters[c].value];
-      }
-
-
-      return a;
-    }, {});
-
-    return JSON.stringify({
-      filter: filterClause,
-    });
+    return createHubboundFilterClause(filters);
   }, [filters]);
 
   const hubboundDetailsPath = useMemo(() => {

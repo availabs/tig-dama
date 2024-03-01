@@ -194,7 +194,7 @@ export const HUBBOUND_ATTRIBUTES = {
       (_, i) => startYear + 1 + i
     ),
   },
-  hour: { values: Array.from({ length: 24 }, (_, i) => -1 + 1 + i) },
+  hour: { values: Array.from({ length: 24 }, (_, i) => -1 + 1 + i), type: "range" },
   count: {},
   count_variable_name: {
     values: VARIABLE_NAMES,

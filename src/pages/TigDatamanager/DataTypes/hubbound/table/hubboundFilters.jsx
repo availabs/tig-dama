@@ -40,16 +40,27 @@ const HubboundTableFilter = ({ filters, setFilters, filtersToExclude }) => {
 };
 
 const FilterInput = ({ attribute, name, value, setFilters, filters }) => {
-  const { values } = attribute;
+  const { values, type } = attribute;
+
+  if(type === "range"){
+    console.log("range type variable", attribute)
+  }
+
+  const inputValue = type === "range" ? value[0] : value;
   return (
     <div className="flex  justify-start content-center flex-wrap">
-      <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">{name.split("_").join(" ")}:</div>
+      <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">
+        {name.split("_").join(" ")}:
+      </div>
       <div className="flex px-2">
         <select
           className="pl-3 pr-4 py-2.5 border  w-full bg-white mr-2 flex text-sm"
-          value={value}
+          value={inputValue}
           onChange={(e) =>
-            setFilters({ ...filters, [name]: { value: e.target.value } })
+            setFilters({
+              ...filters,
+              [name]: { value: [e.target.value, filters[name].value[1]] },
+            })
           }
         >
           <option className="ml-2  truncate" value={"all"}>
@@ -62,6 +73,29 @@ const FilterInput = ({ attribute, name, value, setFilters, filters }) => {
           ))}
         </select>
       </div>
+      {type === "range" && (
+        <div className="flex px-2">
+          <select
+            className="pl-3 pr-4 py-2.5 border  w-full bg-white mr-2 flex text-sm"
+            value={value[1]}
+            onChange={(e) =>
+              setFilters({
+                ...filters,
+                [name]: { value: [filters[name].value[0], e.target.value] },
+              })
+            }
+          >
+            <option className="ml-2  truncate" value={"all"}>
+              --
+            </option>
+            {values?.map((k, i) => (
+              <option key={i} className="ml-2  truncate" value={k}>
+                {k}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
     </div>
   );
 };

@@ -2,7 +2,7 @@ import { useContext, useMemo } from 'react';
 import get from "lodash/get";
 import { DamaContext } from "~/pages/DataManager/store";
 import { HUBBOUND_ATTRIBUTES } from "../constants";
-import { aggHubboundByLocation } from "../utils";
+import { aggHubboundByLocation, createHubboundFilterClause } from "../utils";
 const HEADER_PROP_NAMES = ["location_name", "sector_name", "transit_mode_name"];
 
 const HubboundMapHover = ({ data, layer }) => {
@@ -13,17 +13,7 @@ const HubboundMapHover = ({ data, layer }) => {
   const { filters } = layerProps;
 
   const hubboundDetailsOptions = useMemo(() => {
-    const filterClause = Object.keys(filters).reduce((a,c) => {
-      if(filters[c].value && filters[c].value !== "all"){
-        a[c] = [filters[c].value];
-      }
-
-      return a;
-    }, {});
-
-    return JSON.stringify({
-      filter: filterClause,
-    });
+    return createHubboundFilterClause(filters)
   }, [filters]);
 
   const hubboundDetailsPath = useMemo(() => {

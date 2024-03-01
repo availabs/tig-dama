@@ -3,7 +3,7 @@ import { DamaContext } from "~/pages/DataManager/store";
 import get from "lodash/get";
 import { HubboundTableFilter } from "../table/hubboundFilters";
 import { HUBBOUND_ATTRIBUTES, MAP_BOUNDS } from "../constants";
-import { aggHubboundByLocation } from "../utils";
+import { aggHubboundByLocation, createHubboundFilterClause } from "../utils";
 import cloneDeep from "lodash/cloneDeep";
 import isEqual from "lodash/isEqual";
 import mapboxgl from "maplibre-gl";
@@ -78,7 +78,7 @@ export const HubboundMapFilter = (props) => {
       newFilters.year = { value: 2019 }
     }  
     if (!hour) {
-      newFilters.hour = { value: 12 }
+      newFilters.hour = { value: [12, 12] }
     }    
     if (!transit_mode_name) {
       newFilters.transit_mode_name = { value: HUBBOUND_ATTRIBUTES['transit_mode_name'].values[6] }
@@ -90,20 +90,11 @@ export const HubboundMapFilter = (props) => {
   }, []);
 
   const hubboundDetailsOptions = useMemo(() => {
-    const filterClause = Object.keys(filters).reduce((a,c) => {
-      if(filters[c].value && filters[c].value !== "all"){
-        a[c] = [filters[c].value];
-      }
-
-
-      return a;
-    }, {});
-
-    return JSON.stringify({
-      filter: filterClause,
-    });
+    return createHubboundFilterClause(filters);
   }, [filters]);
 
+
+  
   const hubboundDetailsPath = useMemo(() => {
     return [
       "dama",
