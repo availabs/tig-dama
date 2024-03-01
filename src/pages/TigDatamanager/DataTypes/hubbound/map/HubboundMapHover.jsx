@@ -2,6 +2,7 @@ import { useContext, useMemo } from 'react';
 import get from "lodash/get";
 import { DamaContext } from "~/pages/DataManager/store";
 import { HUBBOUND_ATTRIBUTES } from "../constants";
+import { aggHubboundByLocation } from "../utils";
 const HEADER_PROP_NAMES = ["location_name", "sector_name", "transit_mode_name"];
 
 const HubboundMapHover = ({ data, layer }) => {
@@ -16,7 +17,6 @@ const HubboundMapHover = ({ data, layer }) => {
       if(filters[c].value && filters[c].value !== "all"){
         a[c] = [filters[c].value];
       }
-
 
       return a;
     }, {});
@@ -49,34 +49,7 @@ const HubboundMapHover = ({ data, layer }) => {
   }, [activeViewId, falcorCache, hubboundDetailsPath, hubboundDetailsOptions, filters]);
 
   const hoverData = useMemo(() => {
-    return tableData.reduce((a, tData) => {
-      const { latitude: lat, longitude: lng, ...rest } = tData;
-
-      if (!a[tData.location_name]) {
-        a[tData.location_name] = {
-          properties: {
-            ...rest,
-            routes: {},
-          },
-        };
-      }
-
-      if (
-        !a[tData.location_name]["properties"]["routes"][
-          tData.transit_route_name
-        ]
-      ) {
-        a[tData.location_name]["properties"]["routes"][
-          tData.transit_route_name
-        ] = {};
-      }
-
-      a[tData.location_name]["properties"]["routes"][
-        tData.transit_route_name
-      ][tData.count_variable_name] = tData.count;
-
-      return a;
-    }, {})[locationName]?.properties;
+    return aggHubboundByLocation(tableData)?.[locationName]?.properties;
   }, [tableData, locationName])
 
   const routeData = hoverData?.routes || {};

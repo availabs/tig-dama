@@ -1,9 +1,9 @@
 import React, { useMemo, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
 import { DamaContext } from "~/pages/DataManager/store";
 import get from "lodash/get";
 import { HubboundTableFilter } from "../table/hubboundFilters";
 import { HUBBOUND_ATTRIBUTES, MAP_BOUNDS } from "../constants";
+import { aggHubboundByLocation } from "../utils";
 import cloneDeep from "lodash/cloneDeep";
 import isEqual from "lodash/isEqual";
 import mapboxgl from "maplibre-gl";
@@ -115,6 +115,21 @@ export const HubboundMapFilter = (props) => {
     ]
   }, [pgEnv, activeViewId, hubboundDetailsOptions] )
 
+  const hubboundLocationsPath = [
+    "dama",
+    pgEnv,
+    "hubbound",
+    activeViewId,
+    "locations",
+  ];
+  useEffect(() => {
+    async function getHubboundLocations() {
+      await falcor.get(hubboundLocationsPath);
+    }
+
+    getHubboundLocations();
+  }, [hubboundLocationsPath]);
+
   useEffect(() => {
     async function fetchData() {
       console.log("getting view data")
@@ -145,48 +160,24 @@ export const HubboundMapFilter = (props) => {
     return Object.values(tableDataById);
   }, [activeViewId, falcorCache, hubboundDetailsPath, hubboundDetailsOptions, filters]);
 
+  const locationsData = useMemo(() => {
+    const locations = get(falcorCache, hubboundLocationsPath, {});
+
+    return locations?.value;
+  }, [falcorCache, activeViewId]);
+
   useEffect(() => {
-    if (tableData && tableData.length) {
-      const featObjs = tableData.reduce((a, data) => {
-        const { latitude: lat, longitude: lng, ...rest } = data;
-
-        //for each lng, lon
-        //route name : { [count_variable_name] : value }
-        if (!a[data.location_name]) {
-          a[data.location_name] = {
-            type: "Feature",
-            properties: {
-              ...rest,
-              routes: {},
-            },
-            geometry: {
-              type: "Point",
-              coordinates: [lng, lat],
-            },
-          };
-        }
-
-        if (
-          !a[data.location_name]["properties"]["routes"][
-            data.transit_route_name
-          ]
-        ) {
-          a[data.location_name]["properties"]["routes"][
-            data.transit_route_name
-          ] = {};
-        }
-
-        a[data.location_name]["properties"]["routes"][
-          data.transit_route_name
-        ][data.count_variable_name] = data.count;
-
-        return a;
-      }, {})
-
-      const featArray = Object.keys(featObjs).map(featName => ({name: featName, ...featObjs[featName]}));
+    if(locationsData && locationsData.length){
+      const featObjs = aggHubboundByLocation(locationsData);
+      const featArray = Object.keys(featObjs).map((featName) => ({
+        name: featName,
+        ...featObjs[featName],
+      }));
+  
       const source_layer_id = `s${source.source_id}_v${activeViewId}`;
+  
       const newSource = {
-        source:{
+        source: {
           type: "geojson",
           data: {
             type: "FeatureCollection",
@@ -194,19 +185,20 @@ export const HubboundMapFilter = (props) => {
           },
         },
         type: "geojson",
-        id: source_layer_id
+        id: source_layer_id,
       };
-
+  
       newSymbology.sources = [newSource];
-
-      newSymbology.layers = ["circle"].map((type) => {
-        return {
-          id: `source_layer_${type}`,
-          ...mapStyle[type],
-          source: source_layer_id,
-          path: hubboundDetailsPath
-        };
-      });
+  
+      const layer_layer_id = `${source_layer_id}_${"circle"}`;
+  
+      const newLayer = {
+        id: layer_layer_id,
+        ...mapStyle["circle"],
+        source: source_layer_id
+      };
+  
+      newSymbology.layers = [newLayer];
 
       const countySourceId = 'counties_source';
       if(!newSymbology.sources.find(source => source.id === countySourceId)){
@@ -222,7 +214,7 @@ export const HubboundMapFilter = (props) => {
         };
         newSymbology.sources.push(countySource);
       }
-
+  
       if(!newSymbology.layers.find(layer => layer.id === 'counties_layer')){
         console.log("adding county layer")
         const countyLayer = {
@@ -232,8 +224,8 @@ export const HubboundMapFilter = (props) => {
         };
         newSymbology.layers.push(countyLayer);
       }
-
-
+  
+  
       const projectCalculatedBounds = new mapboxgl.LngLatBounds(
         MAP_BOUNDS[0],
         MAP_BOUNDS[1]
@@ -241,12 +233,23 @@ export const HubboundMapFilter = (props) => {
       
       newSymbology.fitToBounds = projectCalculatedBounds;
       newSymbology.fitZoom = 12;
-
       if (!isEqual(newSymbology, tempSymbology)) {
-        console.log("setting new newSymbology");
+        console.log("setting new newSymbology, locationsData useEffect");
         setTempSymbology(newSymbology);
       }
+    }
+  }, [locationsData])
 
+  useEffect(() => {
+    if (tableData && tableData.length) {
+      const dataObjs = aggHubboundByLocation(tableData);
+      const activeLocationNames = Object.keys(dataObjs);
+      newSymbology.filter = activeLocationNames;
+
+      if (!isEqual(newSymbology, tempSymbology)) {
+        console.log("setting new newSymbology, FILTER useEffect");
+        setTempSymbology(newSymbology);
+      }
     }
   }, [tableData, hubboundDetailsPath, hubboundDetailsOptions, filters]);
   return <div>
