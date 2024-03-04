@@ -7,18 +7,20 @@ export const aggHubboundByLocation = (data) => {
     //for each lng, lon
     //route name : { [count_variable_name] : value }
    
-    a[tData.location_name] = {
-      type: "Feature",
-      properties: {
-        ...rest,
-        ogc_fid: rest['location_name'],
-        routes: {},
-      },
-      geometry: {
-        type: "Point",
-        coordinates: [lng, lat],
-      },
-    };
+    if(!a[tData.location_name]){
+      a[tData.location_name] = {
+        type: "Feature",
+        properties: {
+          ...rest,
+          ogc_fid: rest['location_name'],
+          routes: {},
+        },
+        geometry: {
+          type: "Point",
+          coordinates: [lng, lat],
+        },
+      };
+    }
 
     if (
       !a[tData.location_name]["properties"]["routes"][
@@ -30,9 +32,19 @@ export const aggHubboundByLocation = (data) => {
       ] = {};
     }
 
+    if (
+      !a[tData.location_name]["properties"]["routes"][tData.transit_route_name][
+        tData.count_variable_name
+      ]
+    ) {
+      a[tData.location_name]["properties"]["routes"][tData.transit_route_name][
+        tData.count_variable_name
+      ] = 0;
+    }
+
     a[tData.location_name]["properties"]["routes"][
       tData.transit_route_name
-    ][tData.count_variable_name] = tData.count;
+    ][tData.count_variable_name] += tData.count;
 
     return a;
   }, {})

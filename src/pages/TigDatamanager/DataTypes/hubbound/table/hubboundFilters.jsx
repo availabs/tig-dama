@@ -52,14 +52,14 @@ const FilterInput = ({ attribute, name, value, setFilters, filters }) => {
       <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">
         {name.split("_").join(" ")}:
       </div>
-      <div className="flex px-2">
+      {type !== "range" && <div className="flex px-2">
         <select
           className="pl-3 pr-4 py-2.5 border  w-full bg-white mr-2 flex text-sm"
           value={inputValue}
           onChange={(e) =>
             setFilters({
               ...filters,
-              [name]: { value: [e.target.value, filters[name].value[1]] },
+              [name]: { value: e.target.value },
             })
           }
         >
@@ -72,29 +72,52 @@ const FilterInput = ({ attribute, name, value, setFilters, filters }) => {
             </option>
           ))}
         </select>
-      </div>
+      </div>}
       {type === "range" && (
-        <div className="flex px-2">
-          <select
-            className="pl-3 pr-4 py-2.5 border  w-full bg-white mr-2 flex text-sm"
-            value={value[1]}
-            onChange={(e) =>
-              setFilters({
-                ...filters,
-                [name]: { value: [filters[name].value[0], e.target.value] },
-              })
-            }
-          >
-            <option className="ml-2  truncate" value={"all"}>
-              --
-            </option>
-            {values?.map((k, i) => (
-              <option key={i} className="ml-2  truncate" value={k}>
-                {k}
+        <>
+          <div className="flex px-2">
+            <select
+              className="pl-3 pr-4 py-2.5 border  w-full bg-white mr-2 flex text-sm"
+              value={inputValue}
+              onChange={(e) =>
+                setFilters({
+                  ...filters,
+                  [name]: { value: [parseInt(e.target.value), filters[name].value[1]] },
+                })
+              }
+            >
+              <option className="ml-2  truncate" value={"all"}>
+                --
               </option>
-            ))}
-          </select>
-        </div>
+              {values?.map((k, i) => (
+                <option key={i} className="ml-2  truncate" value={k}>
+                  {k}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="flex px-2">
+            <select
+              className="pl-3 pr-4 py-2.5 border  w-full bg-white mr-2 flex text-sm"
+              value={value[1]}
+              onChange={(e) =>
+                setFilters({
+                  ...filters,
+                  [name]: { value: [filters[name].value[0], parseInt(e.target.value)] },
+                })
+              }
+            >
+              <option className="ml-2  truncate" value={"all"}>
+                --
+              </option>
+              {values?.map((k, i) => (
+                <option key={i} className="ml-2  truncate" value={k}>
+                  {k}
+                </option>
+              ))}
+            </select>
+          </div>
+        </>
       )}
     </div>
   );

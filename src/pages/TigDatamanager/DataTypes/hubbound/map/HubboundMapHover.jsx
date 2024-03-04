@@ -43,7 +43,6 @@ const HubboundMapHover = ({ data, layer }) => {
   }, [tableData, locationName])
 
   const routeData = hoverData?.routes || {};
-
   if(!Object.keys(routeData).length) {
     return (<></>)
   }
