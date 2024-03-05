@@ -1,25 +1,13 @@
 import React, { useMemo, useEffect } from "react";
 import { DamaContext } from "~/pages/DataManager/store";
 import get from "lodash/get";
-import { HubboundTableFilter } from "../table/hubboundFilters";
+import { HubboundFilters } from "./hubboundFilters";
 import { HUBBOUND_ATTRIBUTES, MAP_BOUNDS } from "../constants";
 import { aggHubboundByLocation, createHubboundFilterClause } from "../utils";
 import cloneDeep from "lodash/cloneDeep";
 import isEqual from "lodash/isEqual";
 import mapboxgl from "maplibre-gl";
 
-const FILTERS_TO_EXCLUDE = [
-  "sector_name",
-  "transit_agency_name",
-  "transit_route_name",
-  "out_station_name",
-  "in_station_name",
-  "location_name",
-  "count_variable_name",
-  "latitude",
-  "longitude",
-  "count",
-];
 const colors = {
   "Staten Island": "rgb(255, 0, 255)",
   "Queens":"rgb(0, 0, 255)",
@@ -46,13 +34,6 @@ const mapStyle = {
   }
 };
 
-//TODO -- change `hour` to be a "range". It is a set of discrete values, we can send a range
-//TODO -- Can maybe `group by`, do some agg on the backend. If not,  can just sum client side
-//TODO -- map filter should take in prop that handles which filters should be enabled
-/**
- * RYAN TODO -- may need to come back and add a 2nd layer for county geom
- * Otherwise, this will just show dots
- */
 export const HubboundMapFilter = (props) => {
   const {
     source,
@@ -243,7 +224,10 @@ export const HubboundMapFilter = (props) => {
       }
     }
   }, [tableData, hubboundDetailsPath, hubboundDetailsOptions, filters]);
-  return <div>
-      <HubboundTableFilter filters={filters} setFilters={setFilters} filtersToExclude={FILTERS_TO_EXCLUDE}/>
-    </div>;
+
+  return (
+    <div>
+      <HubboundFilters filters={filters} setFilters={setFilters} />
+    </div>
+  );
 };

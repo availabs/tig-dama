@@ -16,8 +16,6 @@ import { createHubboundFilterClause } from "../utils";
 
 var geometries = ["county", "tracts"];
 
-const FILTERS_TO_EXCLUDE = ['out_station_name', "transit_route_name",'latitude', 'longitude', 'count']
-
 const DefaultTableFilter = () => <div />;
 
 const identityMap = (tableData, attributes) => {
@@ -58,16 +56,13 @@ const TablePage = ({
     [activeView]
   );
 
-  console.log("filters", filters)
-
-  const years = useMemo(() => {
-    //RYAN TODO set hubbound metadata on source create
-    const finishYear = 2020;
-    const startYear = 2007;
-    return Array.from(
-      { length: finishYear - startYear },
-      (_, i) => startYear + 1 + i
-    );
+  const year =  filters?.year?.value;
+  useEffect(() => {
+    const newFilters = {...filters};
+    if (!year) {
+      newFilters.year = { value: 2019 }
+    }    
+    setFilters(newFilters)
   }, []);
 
   useEffect(() => {
@@ -116,27 +111,17 @@ const TablePage = ({
   }, [activeViewId, falcorCache, tableColumns, hubboundDetailsPath]);
 
   const { data, columns } = useMemo(() => {
-    return transform(tableData, tableColumns);
-  }, [tableData]);
+    return transform(tableData, tableColumns, filters, setFilters);
+  }, [tableData, tableColumns, filters, setFilters]);
+
+  //Without this, would be unable to remove filters that result in 0 rows
+  if(data.length === 0){
+    data.push({})
+  }
 
   return (
-    <div>
-      <div className="flex">
-        <TableFilter
-          filtersToExclude={FILTERS_TO_EXCLUDE}
-          filters={filters}
-          setFilters={setFilters}
-          years={years}
-          geometries={geometries}
-          data={data}
-          columns={columns}
-          tableColumns={tableColumns}
-          setTableColumns={setTableColumns}
-        />
-      </div>
-      <div className="max-w-6xl mt-2">
-        <Table data={data} columns={columns} pageSize={50} />
-      </div>
+    <div className="max-w-6xl mt-2">
+      <Table data={data} columns={columns} pageSize={20} />
     </div>
   );
 };

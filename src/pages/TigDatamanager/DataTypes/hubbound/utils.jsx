@@ -51,25 +51,30 @@ export const aggHubboundByLocation = (data) => {
 }
 
 export const createHubboundFilterClause = (filters) => {
-  const filterClause = Object.keys(filters).reduce((a,c) => {
-    if(filters[c].value && filters[c].value !== "all"){
-      if(HUBBOUND_ATTRIBUTES[c].type === "range"){
-        const rangeLength = Math.abs(filters[c].value[1] - filters[c].value[0]) + 1;
-        console.log("rangeLength",rangeLength);
-        a[c] = [Array.from({ length: rangeLength }, (_, i) => -1 + 1 + i+filters[c].value[0])]
-        console.log(a[c])
-      }
-      else{
+  const filterClause = Object.keys(filters).reduce((a, c) => {
+    if (filters[c].value && filters[c].value !== "all") {
+      if (HUBBOUND_ATTRIBUTES[c].type === "range") {
+        const rangeLength =
+          filters[c].value.length === 2
+            ? Math.abs(filters[c].value[1] - filters[c].value[0]) + 1
+            : 1;
+
+        const rangeStart = filters[c].value[0] > filters[c].value[1] ? filters[c].value[1] : filters[c].value[0]
+        a[c] = [
+          Array.from(
+            { length: rangeLength },
+            (_, i) => -1 + 1 + i + rangeStart
+          ),
+        ];
+      } else {
         a[c] = [filters[c].value];
       }
-
     }
-
 
     return a;
   }, {});
-  console.log("createHubboundFilterClause filterClause",filterClause)
+
   return JSON.stringify({
     filter: filterClause,
   });
-}
+};
