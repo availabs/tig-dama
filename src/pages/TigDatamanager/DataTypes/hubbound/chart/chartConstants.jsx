@@ -1,3 +1,4 @@
+import { HUBBOUND_ATTRIBUTES } from "../constants";
 const BAR_CHART_PROPS = {
   keys: ["value"], //ryan todo this is a fishy value
   indexBy: "id",
@@ -24,7 +25,14 @@ const BAR_CHART_PROPS = {
     tickSize: 5,
     tickPadding: 5,
     tickRotation: 0,
-    legend: "hour", //ryan todo verify this is `hour`
+    legend: "hour",
+    legendPosition: "middle",
+    legendOffset: 36,
+    tickValues: HUBBOUND_ATTRIBUTES.hour.values,
+  },
+  axisLeft: {
+    showGridLines: false,
+    tickDensity: 1,
     legendPosition: "middle",
     legendOffset: 36,
   },
@@ -75,9 +83,13 @@ const LINE_GRAPH_PROPS = {
     "#0c5922",
     "#743411",
   ],
-  axisBottom: { tickDensity: 1 },
+  axisBottom: {
+    tickValues:  HUBBOUND_ATTRIBUTES.hour.values,
+    label: "hour",
+    legendPosition: "middle",
+  },
   axisLeft: {
-    lzabel: "Values",
+    label: "Values",
     showGridLines: false,
     tickDensity: 1,
   },
@@ -92,7 +104,7 @@ const LINE_GRAPH_PROPS = {
   },
   margin: {
     top: 20,
-    bottom: 25,
+    bottom: 55,
     left: 80,
     right: 30,
   },

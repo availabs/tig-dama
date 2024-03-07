@@ -212,7 +212,6 @@ export const HUBBOUND_ATTRIBUTES = {
   count: { tableFilter: true },
   count_variable_name: {
     values: VARIABLE_NAMES,
-
     chartFilter: true,
     tableFilter: true,
   },

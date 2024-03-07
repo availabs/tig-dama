@@ -6,10 +6,11 @@ import download from "downloadjs";
 
 import { Button } from "~/modules/avl-components/src";
 import { fips2Name, regionalData } from "../../constants";
+import { HUBBOUND_ATTRIBUTES } from "../constants";
 
 const CHART_TYPES = ["bar", "line"];
 const AGGREGATION_TYPES = ["avg", "sum"];
-const SERIES_TYPES = ["sector", "mode", "direction"];
+const SERIES_TYPES = ["sector_name", "transit_mode_name", "direction"];
 
 export const HubboundChartFilters = ({
   filters,
@@ -21,23 +22,6 @@ export const HubboundChartFilters = ({
   let chartType = useMemo(() => get(filters, "chartType.value", ""), [filters]);
   let aggregation = useMemo(() => get(filters, "aggregation.value", "all"), [filters]);
   let series = useMemo(() => get(filters, "series.value", ""), [filters]);
-
-  const [searchParams] = useSearchParams();
-
-  //Initialize chart filters
-  React.useEffect(() => {
-    const newFilters = {...filters}
-    if (!chartType) {
-      newFilters.chartType = {value: 'bar'};
-    }
-    if(!aggregation) {
-      newFilters.aggregation = {value: 'sum'};
-    }
-    if(!series){
-      newFilters.series = {value:'direction'}
-    }
-
-  },[]);
 
   const downloadImage = React.useCallback(() => {
     console.log("Called download");
@@ -120,7 +104,37 @@ export const HubboundChartFilters = ({
 
 export const HubboundChartTransform = ({ tableData, filters, chartFilters }) => {
   console.log("HubboundChartTransform", { tableData, filters, chartFilters });
+  const series = chartFilters?.series?.value;
 
+  const data = Object.values(tableData).reduce((a, tData) => {
+    //for each lng, lon
+    //route name : { [count_variable_name] : value }
+    const curSeriesValue = tData[series];
+    const curHourValue = tData['hour']
+    if(!a[curSeriesValue]){
+      a[curSeriesValue] = {
+        id: curSeriesValue,
+        name: curSeriesValue,
+        data: {} //TODO convert this in another loop, from {hour: {x: hour, y: count}} to: [{x: hour, y: count}]
+      };
+    }
+
+    if(!a[curSeriesValue].data[curHourValue]){
+      //If we haven't seen this hour yet, initialzie
+      a[curSeriesValue].data[curHourValue] = {x: curHourValue, y:0}
+    }
+
+    //RYAN TODO change this from hardcoded sum, to dynamic sum or average
+    a[curSeriesValue].data[curHourValue]['y'] += tData['count']
+    
+    return a;
+  }, {})
+  console.log(data)
+  const transformedData = Object.values(data).map(seriesData => ({...seriesData, data: Object.values(seriesData.data)}));
+  //aggregate based on chartFilters.series
+  console.log(transformedData)
+  //One top-level element per unique series
+  //Each series has data array, with x=hour, y=chartFilter.count_variable_name (`count` is what holds the data)
 
   //DESIRED SHAPE:
   //x is `hour`, y is sum/avg
@@ -132,9 +146,14 @@ export const HubboundChartTransform = ({ tableData, filters, chartFilters }) => 
   //     name: "outbound",
   //     data:[{x: val, y:val}]
   //   }
+  //   {
+  //     id: "inbound",
+  //     name: "inbound",
+  //     data:[{x: val, y:val}]
+  //   }
   // ]
 
   return {
-    data: [tableData],
+    data: transformedData,
   };
 };

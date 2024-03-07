@@ -27,6 +27,40 @@ const ChartPage = ({
     _setChartFilters((prev) => ({ ...prev, ...chartFilters }));
   }, []);
 
+  const count_variable_name = useMemo(() => get(filters, "count_variable_name.value"), [filters]);
+  const year = useMemo(() => get(filters, "year.value"), [filters]);
+
+  //initialize data filters
+  useEffect(() => {
+    const newFilters = {...filters};
+    if (!year) {
+      newFilters.year = { value: 2019 }
+    }   
+    if (!count_variable_name) {
+      newFilters.count_variable_name = { value: HUBBOUND_ATTRIBUTES['count_variable_name'].values[0] }
+    }
+    setFilters(newFilters)
+  }, []);
+
+  const chartType = useMemo(() => get(chartFilters, "chartType.value"), [chartFilters]);
+  const aggregation = useMemo(() => get(chartFilters, "aggregation.value"), [chartFilters]);
+  const series = useMemo(() => get(chartFilters, "series.value"), [chartFilters]);
+
+  //Initialize chart filters
+  useEffect(() => {
+    const newFilters = { ...chartFilters };
+    if (!chartType) {
+      newFilters.chartType = { value: "line" };
+    }
+    if (!aggregation) {
+      newFilters.aggregation = { value: "sum" };
+    }
+    if (!series) {
+      newFilters.series = { value: "direction" };
+    }
+    setChartFilters(newFilters);
+  }, []);
+
   const hubboundDetailsOptions = useMemo(() => {
     return createHubboundFilterClause(filters);
   }, [filters]);
@@ -44,7 +78,7 @@ const ChartPage = ({
 
   useEffect(() => {
     async function fetchData() {
-      console.log("getting view data")
+      console.log("getting view data inside CHART INDEX")
   
       const lenRes = await falcor.get([...hubboundDetailsPath, 'length']);
       const len = get(lenRes, ['json', ...hubboundDetailsPath, 'length'], 0);
@@ -55,9 +89,12 @@ const ChartPage = ({
       }, Object.keys(HUBBOUND_ATTRIBUTES)]);
     }
 
-    fetchData();
+    if (year && count_variable_name) {
+      fetchData();
+    }
   }, [pgEnv, viewId, hubboundDetailsOptions])
 
+  console.log(falcorCache)
   const tableData = useMemo(() => {
     const tableDataPath = [
       ...hubboundDetailsPath,
@@ -65,7 +102,7 @@ const ChartPage = ({
     ];
 
     const tableDataById = get(falcorCache, tableDataPath, {});
-
+    console.log({filters})
     return tableDataById;
   }, [viewId, falcorCache, hubboundDetailsPath, hubboundDetailsOptions, filters]);
 
@@ -79,18 +116,15 @@ const ChartPage = ({
     [tableData, transform, filters, chartFilters]
   );
 
-  const [chartType] = useMemo(
-    () => [
-      get(chartFilters, "chartType.value", "bar"),
-      // get(filters, "area.value", "all"),
-      // get(filters, "summarize.value", "county"),
-    ],
-    [chartFilters]
-  );
 
-  const chartComponent = generateChart(data, chartType)
+  console.log(data);
+  const axisLeftName = `${aggregation} ${count_variable_name}`;
+  const chartComponent = useMemo(() => {
+    return generateChart(data, chartType, axisLeftName);
+  }, [data, chartType, axisLeftName]);
+    
 
-  console.log(data)
+
   const [ref, setRef] = useState(null);
   return (
     <div>
@@ -113,14 +147,19 @@ const ChartPage = ({
   );
 };
 
-const generateChart = (data, chartType) => {
+const generateChart = (data, chartType, axisLeftName) => {
+  console.log(axisLeftName)
   switch (chartType) {
     case "bar":
       console.log("BAR chart detected");
-      return <ResponsiveBar {...BAR_CHART_PROPS} data={data} />;
+      const barAxisLeftConfig = {...BAR_CHART_PROPS?.axisLeft, legend: axisLeftName};
+      const barChartProps ={ ...BAR_CHART_PROPS, axisLeft: barAxisLeftConfig}
+      return <ResponsiveBar {...barChartProps} data={data} />;
     case "line":
       console.log("LINE chart detected");
-      return <LineGraph {...LINE_GRAPH_PROPS} data={data} />;
+      const lineAxisLeftConfig = {...LINE_GRAPH_PROPS?.axisLeft, label: axisLeftName};
+      const lineChartProps ={ ...LINE_GRAPH_PROPS, axisLeft: lineAxisLeftConfig}
+      return <LineGraph {...lineChartProps} data={data} />;
     default:
       console.error("no chart type detected::", chartType);
       return <>No Chart Type</>
