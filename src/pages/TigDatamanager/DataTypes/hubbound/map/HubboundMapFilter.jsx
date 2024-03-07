@@ -73,8 +73,6 @@ export const HubboundMapFilter = (props) => {
   const hubboundDetailsOptions = useMemo(() => {
     return createHubboundFilterClause(filters);
   }, [filters]);
-
-
   
   const hubboundDetailsPath = useMemo(() => {
     return [
@@ -84,8 +82,8 @@ export const HubboundMapFilter = (props) => {
       activeViewId,
       "options",
       hubboundDetailsOptions,
-    ]
-  }, [pgEnv, activeViewId, hubboundDetailsOptions] )
+    ];
+  }, [pgEnv, activeViewId, hubboundDetailsOptions]);
 
   const hubboundLocationsPath = [
     "dama",
@@ -104,22 +102,26 @@ export const HubboundMapFilter = (props) => {
 
   useEffect(() => {
     async function fetchData() {
-      console.log("getting view data")
-  
-      const lenRes = await falcor.get([...hubboundDetailsPath, 'length']);
-      const len = get(lenRes, ['json', ...hubboundDetailsPath, 'length'], 0);
-  
-      await falcor.get([...hubboundDetailsPath, 'databyIndex', {
+      console.log("getting view data");
+
+      const lenRes = await falcor.get([...hubboundDetailsPath, "length"]);
+      const len = get(lenRes, ["json", ...hubboundDetailsPath, "length"], 0);
+
+      await falcor.get([
+        ...hubboundDetailsPath,
+        "databyIndex",
+        {
           from: 0,
-          to: len - 1
-      }, Object.keys(HUBBOUND_ATTRIBUTES)]);
+          to: len - 1,
+        },
+        Object.keys(HUBBOUND_ATTRIBUTES),
+      ]);
     }
 
-    if(year && hour && transit_mode_name && direction){
+    if (year && hour && transit_mode_name && direction) {
       fetchData();
     }
-
-  }, [pgEnv, activeViewId, hubboundDetailsOptions])
+  }, [pgEnv, activeViewId, hubboundDetailsOptions]);
   
   const tableData = useMemo(() => {
     const tableDataPath = [

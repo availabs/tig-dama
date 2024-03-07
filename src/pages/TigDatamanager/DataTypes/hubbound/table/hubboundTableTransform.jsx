@@ -11,7 +11,7 @@ const HubboundTableTransform = (tableData, attributes, filters, setFilters) => {
       .map((d) => {
         const attrProps = HUBBOUND_ATTRIBUTES[d];
         const filterProperties =
-          attrProps.tableFilter === false
+          !attrProps.tableFilter
             ? undefined
             : {
                 customValue: filters[d]?.value || undefined,

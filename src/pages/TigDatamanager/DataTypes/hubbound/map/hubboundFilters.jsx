@@ -4,7 +4,7 @@ import React, {
 import { HUBBOUND_ATTRIBUTES } from "../constants";
 
 //`count` is excluded because API endpoint currently does not support `<` or `>` operations
-const HubboundFilters = ({ filters, setFilters }) => {
+const HubboundFilters = ({ filters, setFilters, filterType = "mapFilter" }) => {
   const year =  filters?.year?.value;
 
   useEffect(() => {
@@ -17,7 +17,7 @@ const HubboundFilters = ({ filters, setFilters }) => {
 
   return (
     <div className="flex flex-wrap flex-1 border-blue-100 pb-1 justify-start gap-1 p-2">
-      {Object.keys(HUBBOUND_ATTRIBUTES).filter(attrKey => !HUBBOUND_ATTRIBUTES[attrKey].mapFilter).map(attrName => {
+      {Object.keys(HUBBOUND_ATTRIBUTES).filter(attrKey => HUBBOUND_ATTRIBUTES[attrKey][filterType]).map(attrName => {
         return <FilterInput key={`filter_input_${attrName}`} setFilters={setFilters} filters={filters} name={attrName} attribute={HUBBOUND_ATTRIBUTES[attrName]} value={filters[attrName]?.value || ""}/>
       })}
     </div>
@@ -28,7 +28,7 @@ const FilterInput = ({ attribute, name, value, setFilters, filters }) => {
   const { values, type } = attribute;
   const inputValue = type === "range" ? value[0] : value;
   return (
-    <div className="flex  justify-start content-center flex-wrap">
+    <div className="flex justify-start content-center flex-wrap">
       <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">
         {name.split("_").join(" ")}:
       </div>
