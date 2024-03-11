@@ -1,6 +1,6 @@
 import { HUBBOUND_ATTRIBUTES } from "../constants";
 const BAR_CHART_PROPS = {
-  keys: ["value"], //ryan todo this is a fishy value
+  keys: ["value"],
   indexBy: "id",
   margin: { top: 20, right: 60, bottom: 50, left: 100 },
   pixelRatio: 2,
@@ -25,10 +25,8 @@ const BAR_CHART_PROPS = {
     tickSize: 5,
     tickPadding: 5,
     tickRotation: 0,
-    legend: "hour",
     legendPosition: "middle",
     legendOffset: 36,
-    tickValues: HUBBOUND_ATTRIBUTES.hour.values,
   },
   axisLeft: {
     showGridLines: false,
