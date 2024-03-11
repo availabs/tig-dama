@@ -53,7 +53,7 @@ const ChartPage = ({
       newFilters.chartType = { value: "line" };
     }
     if (!aggregation) {
-      newFilters.aggregation = { value: "sum" };
+      newFilters.aggregation = { value: "Sum" };
     }
     if (!series) {
       newFilters.series = { value: "direction" };
@@ -94,7 +94,6 @@ const ChartPage = ({
     }
   }, [pgEnv, viewId, hubboundDetailsOptions])
 
-  console.log(falcorCache)
   const tableData = useMemo(() => {
     const tableDataPath = [
       ...hubboundDetailsPath,
@@ -102,7 +101,6 @@ const ChartPage = ({
     ];
 
     const tableDataById = get(falcorCache, tableDataPath, {});
-    console.log({filters})
     return tableDataById;
   }, [viewId, falcorCache, hubboundDetailsPath, hubboundDetailsOptions, filters]);
 
@@ -116,14 +114,10 @@ const ChartPage = ({
     [tableData, transform, filters, chartFilters]
   );
 
-
-  console.log(data);
   const countAxisName = `${aggregation} ${count_variable_name}`;
   const chartComponent = useMemo(() => {
     return generateChart(data, chartType, countAxisName);
   }, [data, chartType, countAxisName]);
-    
-
 
   const [ref, setRef] = useState(null);
   return (

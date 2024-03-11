@@ -9,7 +9,7 @@ import { fips2Name, regionalData } from "../../constants";
 import { HUBBOUND_ATTRIBUTES } from "../constants";
 
 const CHART_TYPES = ["bar", "line"];
-const AGGREGATION_TYPES = ["average", "sum"];
+const AGGREGATION_TYPES = ["Average", "Sum"];
 const SERIES_TYPES = ["sector_name", "transit_mode_name", "direction"];
 
 export const HubboundChartFilters = ({
@@ -20,14 +20,14 @@ export const HubboundChartFilters = ({
   node,
 }) => {
   let chartType = useMemo(() => get(filters, "chartType.value", ""), [filters]);
-  let aggregation = useMemo(() => get(filters, "aggregation.value", "all"), [filters]);
+  let aggregation = useMemo(() => get(filters, "aggregation.value", ""), [filters]);
   let series = useMemo(() => get(filters, "series.value", ""), [filters]);
 
   const downloadImage = React.useCallback(() => {
     console.log("Called download");
     if (!node) return;
     toPng(node, { backgroundColor: "#fff" }).then((dataUrl) => {
-      download(dataUrl, `${activeVar}.png`, "image/png");
+      download(dataUrl, `${chartType}_${aggregation}_${series}.png`, "image/png");
     });
   }, [node, filters]);
 
@@ -104,16 +104,7 @@ export const HubboundChartFilters = ({
   );
 };
 
-
-/**
- * Bar chart -- 
- * left axis is `series`
- * bottom axis is `variable`
- */
-
-
 export const HubboundChartTransform = ({ tableData, filters, chartFilters }) => {
-  console.log("HubboundChartTransform", { tableData, filters, chartFilters });
   const chartType = chartFilters?.chartType?.value;
   const series = chartFilters?.series?.value;
   const aggregation = chartFilters?.aggregation?.value;
@@ -135,13 +126,12 @@ export const HubboundChartTransform = ({ tableData, filters, chartFilters }) => 
 
       return a;
     }, {});
-    console.log(data);
     const transformedData = Object.values(data).map((seriesData) => ({
       ...seriesData,
       value:
-        aggregation === "sum"
+        (aggregation === "Sum"
           ? seriesData.value
-          : seriesData.value / seriesData.numVal,
+          : seriesData.value / seriesData.numVal).toFixed(2),
     }));
     return {
       data: transformedData,
@@ -179,8 +169,8 @@ export const HubboundChartTransform = ({ tableData, filters, chartFilters }) => 
     const transformedData = Object.values(data).map((seriesData) => ({
       ...seriesData,
       data: Object.values(seriesData.data).map((datum) => {
-        const yVal = aggregation === "sum" ? datum.y : datum.y / datum.numVal;
-        return { x: datum.x, y: yVal };
+        const yVal = aggregation === "Sum" ? datum.y : datum.y / datum.numVal;
+        return { x: datum.x, y: yVal.toFixed(2) };
       }),
     }));
     return {
