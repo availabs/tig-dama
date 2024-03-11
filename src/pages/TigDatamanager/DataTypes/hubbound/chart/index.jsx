@@ -144,12 +144,10 @@ const ChartPage = ({
 const generateChart = (data, chartType, countAxisName) => {
   switch (chartType) {
     case "bar":
-      console.log("BAR chart detected");
       const barAxisBottomConfig = {...BAR_CHART_PROPS?.axisBottom, legend: countAxisName}
       const barChartProps ={ ...BAR_CHART_PROPS, axisBottom: barAxisBottomConfig}
       return <ResponsiveBar {...barChartProps} data={data} />;
     case "line":
-      console.log("LINE chart detected");
       const lineAxisLeftConfig = {...LINE_GRAPH_PROPS?.axisLeft, label: countAxisName};
       const lineChartProps ={ ...LINE_GRAPH_PROPS, axisLeft: lineAxisLeftConfig}
       return <LineGraph {...lineChartProps} data={data} />;
