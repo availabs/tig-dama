@@ -78,7 +78,7 @@ const ChartPage = ({
 
   useEffect(() => {
     async function fetchData() {
-      console.log("getting view data inside CHART INDEX")
+      console.log("getting view data inside CHART page")
   
       const lenRes = await falcor.get([...hubboundDetailsPath, 'length']);
       const len = get(lenRes, ['json', ...hubboundDetailsPath, 'length'], 0);

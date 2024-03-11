@@ -1,22 +1,16 @@
 import React, { useMemo } from "react";
-import { get, sum, mean } from "lodash";
-import { useSearchParams } from "react-router-dom";
+import { get } from "lodash";
 import { toPng } from "html-to-image";
 import download from "downloadjs";
 
 import { Button } from "~/modules/avl-components/src";
-import { fips2Name, regionalData } from "../../constants";
-import { HUBBOUND_ATTRIBUTES } from "../constants";
+import { CHART_TYPES, AGGREGATION_TYPES, SERIES_TYPES } from "./chartConstants";
 
-const CHART_TYPES = ["bar", "line"];
-const AGGREGATION_TYPES = ["Average", "Sum"];
-const SERIES_TYPES = ["sector_name", "transit_mode_name", "direction"];
+
 
 export const HubboundChartFilters = ({
   filters,
   setFilters,
-  variables,
-  years,
   node,
 }) => {
   let chartType = useMemo(() => get(filters, "chartType.value", ""), [filters]);
@@ -99,7 +93,6 @@ export const HubboundChartFilters = ({
           ))}
         </select>
       </div>
-
     </div>
   );
 };

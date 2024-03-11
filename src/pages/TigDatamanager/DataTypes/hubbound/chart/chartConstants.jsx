@@ -108,4 +108,14 @@ const LINE_GRAPH_PROPS = {
   },
 };
 
-export { BAR_CHART_PROPS, LINE_GRAPH_PROPS };
+const CHART_TYPES = ["bar", "line"];
+const AGGREGATION_TYPES = ["Average", "Sum"];
+const SERIES_TYPES = ["sector_name", "transit_mode_name", "direction"];
+
+export {
+  BAR_CHART_PROPS,
+  LINE_GRAPH_PROPS,
+  CHART_TYPES,
+  AGGREGATION_TYPES,
+  SERIES_TYPES,
+};
