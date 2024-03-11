@@ -9,7 +9,7 @@ import { fips2Name, regionalData } from "../../constants";
 import { HUBBOUND_ATTRIBUTES } from "../constants";
 
 const CHART_TYPES = ["bar", "line"];
-const AGGREGATION_TYPES = ["avg", "sum"];
+const AGGREGATION_TYPES = ["average", "sum"];
 const SERIES_TYPES = ["sector_name", "transit_mode_name", "direction"];
 
 export const HubboundChartFilters = ({
@@ -32,15 +32,18 @@ export const HubboundChartFilters = ({
   }, [node, filters]);
 
   return (
-    <div className="flex justify-start content-center flex-wrap">
-      <Button
-        themeOptions={{ size: "sm", color: "primary" }}
-        onClick={downloadImage}
-      >
-        Download
-      </Button>
-      <div className="py-2 px-2 text-sm text-gray-400">Chart Type: </div>
-      <div className="flex-1" >
+    <div className="flex justify-center content-center flex-wrap mt-5">
+      <div className="ml-5">
+        <Button
+          themeOptions={{ size: "sm", color: "primary" }}
+          onClick={downloadImage}
+          
+        >
+          Download
+        </Button>
+      </div>
+      <div className="py-2 px-2 text-sm text-gray-400 ml-5">Chart Type: </div>
+      <div className="flex-none" >
         <select
           className="py-2 w-[200px] border border-blue-100 bg-blue-50 w-full bg-white items-center justify-between text-sm"
           value={chartType}
@@ -58,8 +61,8 @@ export const HubboundChartFilters = ({
           ))}
         </select>
       </div>
-      <div className="py-2 px-2 text-sm text-gray-400">Aggregation</div>
-      <div className="flex-1" >
+      <div className="py-2 px-2 text-sm text-gray-400 ml-5">Aggregation</div>
+      <div className="flex-none" >
         <select
           className="py-2 w-[200px] border border-blue-100 bg-blue-50 w-full bg-white items-center justify-between text-sm"
           value={aggregation}
@@ -77,8 +80,8 @@ export const HubboundChartFilters = ({
           ))}
         </select>
       </div>
-      <div className="py-2 px-2 text-sm text-gray-400">Series</div>
-      <div className="flex-1" >
+      <div className="py-2 px-2 text-sm text-gray-400 ml-5">Series</div>
+      <div className="flex-none" >
         <select
           className="py-2 w-[200px] border border-blue-100 bg-blue-50 w-full bg-white items-center justify-between text-sm"
           value={series}
@@ -105,6 +108,7 @@ export const HubboundChartFilters = ({
 export const HubboundChartTransform = ({ tableData, filters, chartFilters }) => {
   console.log("HubboundChartTransform", { tableData, filters, chartFilters });
   const series = chartFilters?.series?.value;
+  const aggregation = chartFilters?.aggregation?.value;
 
   const data = Object.values(tableData).reduce((a, tData) => {
     //for each lng, lon
@@ -115,23 +119,33 @@ export const HubboundChartTransform = ({ tableData, filters, chartFilters }) => 
       a[curSeriesValue] = {
         id: curSeriesValue,
         name: curSeriesValue,
-        data: {} //TODO convert this in another loop, from {hour: {x: hour, y: count}} to: [{x: hour, y: count}]
+        data: {}
       };
     }
 
-    if(!a[curSeriesValue].data[curHourValue]){
+    if (!a[curSeriesValue].data[curHourValue]) {
       //If we haven't seen this hour yet, initialzie
-      a[curSeriesValue].data[curHourValue] = {x: curHourValue, y:0}
+      a[curSeriesValue].data[curHourValue] = {
+        x: curHourValue,
+        y: 0,
+        numVal: 0,
+      };
     }
 
-    //RYAN TODO change this from hardcoded sum, to dynamic sum or average
-    a[curSeriesValue].data[curHourValue]['y'] += tData['count']
-    
+    a[curSeriesValue].data[curHourValue]["y"] += tData["count"];
+    a[curSeriesValue].data[curHourValue]["numVal"]++;
+
     return a;
   }, {})
   console.log(data)
-  const transformedData = Object.values(data).map(seriesData => ({...seriesData, data: Object.values(seriesData.data)}));
-  //aggregate based on chartFilters.series
+  const transformedData = Object.values(data).map((seriesData) => ({
+    ...seriesData,
+    data: Object.values(seriesData.data).map((datum) => {
+      const yVal = aggregation === "sum" ? datum.y : datum.y / datum.numVal;
+      return { x: datum.x, y: yVal };
+    }),
+  }));
+
   console.log(transformedData)
   //One top-level element per unique series
   //Each series has data array, with x=hour, y=chartFilter.count_variable_name (`count` is what holds the data)
