@@ -32,15 +32,28 @@ const ChartPage = ({
 
   //initialize data filters
   useEffect(() => {
-    const newFilters = {...filters};
+    const newFilters = { ...filters };
     if (!year) {
-      newFilters.year = { value: 2019 }
-    }   
-    if (!count_variable_name) {
-      newFilters.count_variable_name = { value: HUBBOUND_ATTRIBUTES['count_variable_name'].values[0] }
+      newFilters.year = { value: 2019 };
     }
-    setFilters(newFilters)
+    if (!count_variable_name) {
+      newFilters.count_variable_name = {
+        value: HUBBOUND_ATTRIBUTES["count_variable_name"].values[0],
+      };
+    }
+    setFilters(newFilters);
   }, []);
+
+  //Must always have a `count_variable_name`
+  useEffect(() => {
+    const newFilters = { ...filters };
+    if (count_variable_name === "all") {
+      newFilters.count_variable_name = {
+        value: HUBBOUND_ATTRIBUTES["count_variable_name"].values[0],
+      };
+    }
+    setFilters(newFilters);
+  }, [count_variable_name]);
 
   const chartType = useMemo(() => get(chartFilters, "chartType.value"), [chartFilters]);
   const aggregation = useMemo(() => get(chartFilters, "aggregation.value"), [chartFilters]);
