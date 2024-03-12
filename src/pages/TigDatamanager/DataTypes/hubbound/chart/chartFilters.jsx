@@ -27,7 +27,7 @@ export const HubboundChartFilters = ({
 
   return (
     <div className="flex justify-center content-center flex-wrap mt-5">
-      <div className="ml-5">
+      <div className="ml-4">
         <Button
           themeOptions={{ size: "sm", color: "primary" }}
           onClick={downloadImage}

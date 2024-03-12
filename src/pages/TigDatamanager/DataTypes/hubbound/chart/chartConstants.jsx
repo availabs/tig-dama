@@ -1,4 +1,3 @@
-import { HUBBOUND_ATTRIBUTES } from "../constants";
 const BAR_CHART_PROPS = {
   keys: ["value"],
   indexBy: "id",
@@ -82,8 +81,18 @@ const LINE_GRAPH_PROPS = {
     "#743411",
   ],
   axisBottom: {
-    tickValues:  HUBBOUND_ATTRIBUTES.hour.values,
-    label: "hour",
+    tickDensity: 4,
+    format: (element) => {
+      if(element.toString().length > 1){
+        //two digit hour
+        return `${element}:00`
+      }
+      else {
+        //one digit hour
+        return `0${element}:00`
+      }
+    },
+    label: "Hour",
     legendPosition: "middle",
   },
   axisLeft: {
