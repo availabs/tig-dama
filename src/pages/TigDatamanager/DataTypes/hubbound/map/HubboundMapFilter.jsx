@@ -141,7 +141,7 @@ export const HubboundMapFilter = (props) => {
   }, [falcorCache, activeViewId]);
   console.log({tableData})
   useEffect(() => {
-    if(locationsData && locationsData.length && tableData && tableData.length){
+    if(locationsData && locationsData.length){
       const featObjs = aggHubboundByLocation(locationsData);
       const featArray = Object.keys(featObjs).map((featName) => ({
         name: featName,
@@ -212,7 +212,7 @@ export const HubboundMapFilter = (props) => {
         setTempSymbology(newSymbology);
       }
     }
-  }, [locationsData, (tableData?.length > 0)]);
+  }, [locationsData]);
 
   useEffect(() => {
     if (tableData && tableData.length) {
@@ -225,6 +225,7 @@ export const HubboundMapFilter = (props) => {
         setTempSymbology(newSymbology);
       }
     }
+    //RYAN TODO maybe try adjusting this dependency array?
   }, [tableData, hubboundDetailsPath, hubboundDetailsOptions, filters, locationsData]);
 
   return (
