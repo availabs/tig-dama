@@ -141,7 +141,7 @@ export const HubboundMapFilter = (props) => {
   }, [falcorCache, activeViewId]);
   console.log({tableData})
   useEffect(() => {
-    if(locationsData && locationsData.length){
+    if(locationsData && locationsData.length && tableData && tableData.length){
       const featObjs = aggHubboundByLocation(locationsData);
       const featArray = Object.keys(featObjs).map((featName) => ({
         name: featName,
@@ -212,7 +212,7 @@ export const HubboundMapFilter = (props) => {
         setTempSymbology(newSymbology);
       }
     }
-  }, [locationsData]);
+  }, [locationsData, (tableData?.length > 0)]);
 
   useEffect(() => {
     if (tableData && tableData.length) {
