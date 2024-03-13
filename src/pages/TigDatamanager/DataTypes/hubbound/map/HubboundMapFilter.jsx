@@ -139,7 +139,7 @@ export const HubboundMapFilter = (props) => {
 
     return locations?.value;
   }, [falcorCache, activeViewId]);
-
+  console.log({tableData})
   useEffect(() => {
     if(locationsData && locationsData.length){
       const featObjs = aggHubboundByLocation(locationsData);
@@ -149,7 +149,7 @@ export const HubboundMapFilter = (props) => {
       }));
   
       const source_layer_id = `s${source.source_id}_v${activeViewId}`;
-      console.log({featArray})
+
       const newSource = {
         source: {
           type: "geojson",
