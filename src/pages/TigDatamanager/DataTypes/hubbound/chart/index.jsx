@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo, useCallback, useContext } from "react";
-import { useParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { get } from "lodash";
 
 import { createHubboundFilterClause } from "../utils";
@@ -10,14 +10,15 @@ import { ResponsiveBar } from "@nivo/bar";
 import { LineGraph } from "~/modules/avl-graph/src";
 
 const ChartPage = ({
-  views,
+  activeViewId,
   transform = () => null,
   filterData = {},
   ChartFilter = <div />,
   HubboundFilter = <div />
 }) => {
-  const { viewId } = useParams();
+  const [searchParams] = useSearchParams();
   const { falcor, falcorCache, pgEnv } = useContext(DamaContext);
+  
   const [filters, _setFilters] = useState(filterData);
   const [chartFilters, _setChartFilters] = useState({})
   const setFilters = useCallback((filters) => {
@@ -26,6 +27,8 @@ const ChartPage = ({
   const setChartFilters = useCallback((chartFilters) => {
     _setChartFilters((prev) => ({ ...prev, ...chartFilters }));
   }, []);
+
+  const activeDataVersionId = parseInt(searchParams.get("variable")) || activeViewId;
 
   const count_variable_name = useMemo(() => get(filters, "count_variable_name.value"), [filters]);
   const year = useMemo(() => get(filters, "year.value"), [filters]);
@@ -83,16 +86,16 @@ const ChartPage = ({
       "dama",
       pgEnv,
       "viewsbyId",
-      viewId, //ryan TODO might need to make sure URL routing is correct, otherwise need different way to get activeViewId
+      activeDataVersionId,
       "options",
       hubboundDetailsOptions,
     ];
-  }, [pgEnv, viewId, hubboundDetailsOptions]);
+  }, [pgEnv, activeDataVersionId, hubboundDetailsOptions]);
 
   useEffect(() => {
     async function fetchData() {
       console.log("getting view data inside CHART page")
-  
+
       const lenRes = await falcor.get([...hubboundDetailsPath, 'length']);
       const len = get(lenRes, ['json', ...hubboundDetailsPath, 'length'], 0);
   
@@ -105,7 +108,7 @@ const ChartPage = ({
     if (year && count_variable_name) {
       fetchData();
     }
-  }, [pgEnv, viewId, hubboundDetailsOptions])
+  }, [pgEnv, activeDataVersionId, hubboundDetailsOptions])
 
   const tableData = useMemo(() => {
     const tableDataPath = [
@@ -115,7 +118,7 @@ const ChartPage = ({
 
     const tableDataById = get(falcorCache, tableDataPath, {});
     return tableDataById;
-  }, [viewId, falcorCache, hubboundDetailsPath, hubboundDetailsOptions, filters]);
+  }, [activeDataVersionId, falcorCache, hubboundDetailsPath, hubboundDetailsOptions, filters]);
 
   let { data } = useMemo(
     () =>
