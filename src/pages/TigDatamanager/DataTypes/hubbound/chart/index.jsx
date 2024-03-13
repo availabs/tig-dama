@@ -9,13 +9,16 @@ import { DamaContext } from "~/pages/DataManager/store";
 import { ResponsiveBar } from "@nivo/bar";
 import { LineGraph } from "~/modules/avl-graph/src";
 
-const ChartPage = ({
-  activeViewId,
-  transform = () => null,
-  filterData = {},
-  ChartFilter = <div />,
-  HubboundFilter = <div />
-}) => {
+const ChartPage = (props) => {
+  const {
+    activeViewId,
+    views,
+    transform = () => null,
+    filterData = {},
+    ChartFilter = <div />,
+    HubboundFilter = <div />
+  } = props;
+
   const [searchParams] = useSearchParams();
   const { falcor, falcorCache, pgEnv } = useContext(DamaContext);
   
@@ -28,8 +31,7 @@ const ChartPage = ({
     _setChartFilters((prev) => ({ ...prev, ...chartFilters }));
   }, []);
 
-  const activeDataVersionId = parseInt(searchParams.get("variable")) || activeViewId;
-
+  const activeDataVersionId = parseInt(searchParams.get("variable")) || activeViewId || views?.[0].view_id;
   const count_variable_name = useMemo(() => get(filters, "count_variable_name.value"), [filters]);
   const year = useMemo(() => get(filters, "year.value"), [filters]);
 
@@ -94,7 +96,7 @@ const ChartPage = ({
 
   useEffect(() => {
     async function fetchData() {
-      console.log("getting view data inside CHART page")
+      console.log("getting view data inside CHART page",hubboundDetailsPath)
 
       const lenRes = await falcor.get([...hubboundDetailsPath, 'length']);
       const len = get(lenRes, ['json', ...hubboundDetailsPath, 'length'], 0);
