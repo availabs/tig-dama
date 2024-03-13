@@ -149,7 +149,7 @@ export const HubboundMapFilter = (props) => {
       }));
   
       const source_layer_id = `s${source.source_id}_v${activeViewId}`;
-  
+      console.log({featArray})
       const newSource = {
         source: {
           type: "geojson",
@@ -212,7 +212,7 @@ export const HubboundMapFilter = (props) => {
         setTempSymbology(newSymbology);
       }
     }
-  }, [locationsData])
+  }, [locationsData]);
 
   useEffect(() => {
     if (tableData && tableData.length) {
@@ -222,12 +222,10 @@ export const HubboundMapFilter = (props) => {
 
       if (!isEqual(newSymbology, tempSymbology)) {
         console.log("setting new newSymbology, FILTER useEffect");
-        console.log("new symb filter",newSymbology.filter);
-        console.log("new symb filter, activeLocationName", activeLocationNames)
         setTempSymbology(newSymbology);
       }
     }
-  }, [tableData, hubboundDetailsPath, hubboundDetailsOptions, filters]);
+  }, [tableData, hubboundDetailsPath, hubboundDetailsOptions, filters, locationsData]);
 
   return (
     <div>
