@@ -222,6 +222,8 @@ export const HubboundMapFilter = (props) => {
 
       if (!isEqual(newSymbology, tempSymbology)) {
         console.log("setting new newSymbology, FILTER useEffect");
+        console.log("new symb filter",newSymbology.filter);
+        console.log("new symb filter, activeLocationName", activeLocationNames)
         setTempSymbology(newSymbology);
       }
     }
