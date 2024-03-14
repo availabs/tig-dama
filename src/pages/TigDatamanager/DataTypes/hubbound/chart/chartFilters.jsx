@@ -36,10 +36,10 @@ export const HubboundChartFilters = ({
           Download
         </Button>
       </div>
-      <div className="py-2 px-2 text-sm text-gray-400 ml-5">Chart Type: </div>
+      <div className="px-2 text-sm text-gray-400 ml-5">Chart Type:</div>
       <div className="flex-none" >
         <select
-          className="py-2 w-[200px] border border-blue-100 bg-blue-50 w-full bg-white items-center justify-between text-sm"
+          className="pl-2 py-0.5 pr-4border  w-full bg-white mr-2 flex text-sm"
           value={chartType}
           onChange={(e) =>
             setFilters({
@@ -55,10 +55,10 @@ export const HubboundChartFilters = ({
           ))}
         </select>
       </div>
-      <div className="py-2 px-2 text-sm text-gray-400 ml-5">Aggregation</div>
+      <div className=" px-2 text-sm text-gray-400 ml-5">Aggregation:</div>
       <div className="flex-none" >
         <select
-          className="py-2 w-[200px] border border-blue-100 bg-blue-50 w-full bg-white items-center justify-between text-sm"
+          className="pl-2 pr-4  border  w-full bg-white mr-2 flex text-sm"
           value={aggregation}
           onChange={(e) =>
             setFilters({
@@ -74,10 +74,10 @@ export const HubboundChartFilters = ({
           ))}
         </select>
       </div>
-      <div className="py-2 px-2 text-sm text-gray-400 ml-5">Series</div>
+      <div className=" px-2 text-sm text-gray-400 ml-5">Series:</div>
       <div className="flex-none" >
         <select
-          className="py-2 w-[200px] border border-blue-100 bg-blue-50 w-full bg-white items-center justify-between text-sm"
+          className="pl-2 pr-4 border w-full bg-white mr-2 flex text-sm"
           value={series}
           onChange={(e) =>
             setFilters({
