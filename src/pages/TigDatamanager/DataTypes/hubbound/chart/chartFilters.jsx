@@ -160,7 +160,7 @@ export const HubboundChartTransform = ({ tableData, filters, chartFilters }) => 
       ...seriesData,
       data: Object.values(seriesData.data).map((datum) => {
         const yVal = aggregation === "Sum" ? datum.y : datum.y / datum.numVal;
-        return { x: datum.x, y: yVal.toFixed(2) };
+        return { x: datum.x, y: yVal };
       }),
     }));
     return {
