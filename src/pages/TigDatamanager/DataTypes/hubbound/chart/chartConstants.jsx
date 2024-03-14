@@ -1,7 +1,7 @@
 const BAR_CHART_PROPS = {
   keys: ["value"],
   indexBy: "id",
-  margin: { top: 20, right: 60, bottom: 50, left: 100 },
+  margin: { top: 10, right: 30, bottom: 95, left: 150 },
   pixelRatio: 2,
   padding: 0.15,
   innerPadding: 0,
@@ -30,14 +30,13 @@ const BAR_CHART_PROPS = {
   axisLeft: {
     showGridLines: false,
     tickDensity: 1,
-    legendPosition: "middle",
-    legendOffset: 36,
+    tickRotation: 310
   },
   enableGridX: true,
   enableGridY: false,
   enableLabel: true,
-  labelSkipWidth: 12,
-  labelSkipHeight: 12,
+  labelSkipWidth: 32,
+  labelSkipHeight: 32,
   labelTextColor: {
     from: "color",
     modifiers: [["darker", 1.6]],
