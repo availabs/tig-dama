@@ -22,6 +22,7 @@ const ChartPage = (props) => {
   const [searchParams] = useSearchParams();
   const { falcor, falcorCache, pgEnv } = useContext(DamaContext);
   
+  const [isLoading, setIsLoading] = useState(false);
   const [filters, _setFilters] = useState(filterData);
   const [chartFilters, _setChartFilters] = useState({})
   const setFilters = useCallback((filters) => {
@@ -105,9 +106,11 @@ const ChartPage = (props) => {
           from: 0,
           to: len - 1
       }, Object.keys(HUBBOUND_ATTRIBUTES)]);
+      setIsLoading(false);
     }
 
     if (year && count_variable_name) {
+      setIsLoading(true);
       fetchData();
     }
   }, [pgEnv, activeDataVersionId, hubboundDetailsOptions])
@@ -134,8 +137,17 @@ const ChartPage = (props) => {
 
   const countAxisName = `${aggregation} ${count_variable_name}`;
   const chartComponent = useMemo(() => {
-    return generateChart(data, chartType, countAxisName, count_variable_name);
-  }, [data, chartType, countAxisName]);
+    if (data && data.length === 0 && !isLoading) {
+      console.log("No data detected", data);
+      return (
+        <div className="ml-12 text-xl justify-self-center">
+          No data for selected filters
+        </div>
+      );
+    } else {
+      return generateChart(data, chartType, countAxisName, count_variable_name);
+    }
+  }, [data, chartType, countAxisName, isLoading]);
 
   const [ref, setRef] = useState(null);
   return (
@@ -152,7 +164,7 @@ const ChartPage = (props) => {
           <HubboundFilter filters={filters} setFilters={setFilters} filterType={"chartFilter"}/>
         </div>
       </div>
-      <div style={{ height: "600px" }} ref={setRef}>
+      <div style={{ height: "600px" }} className="grid" ref={setRef}>
         {chartComponent}
       </div>
     </div>
