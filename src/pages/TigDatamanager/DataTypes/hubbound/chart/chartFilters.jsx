@@ -119,10 +119,9 @@ export const HubboundChartTransform = ({ tableData, filters, chartFilters }) => 
     }, {});
     const transformedData = Object.values(data).map((seriesData) => ({
       ...seriesData,
-      value:
-        (aggregation === "Sum"
-          ? seriesData.value
-          : seriesData.value / seriesData.numVal).toFixed(2),
+      [filters?.count_variable_name?.value]:(aggregation === "Sum"
+      ? seriesData.value
+      : seriesData.value / seriesData.numVal).toFixed(2),
     }));
     return {
       data: transformedData,

@@ -1,5 +1,6 @@
 const BAR_CHART_PROPS = {
   keys: ["value"],
+  valueFormat: (value) => value.toLocaleString(),
   indexBy: "id",
   margin: { top: 10, right: 30, bottom: 95, left: 150 },
   pixelRatio: 2,

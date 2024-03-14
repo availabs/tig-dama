@@ -134,7 +134,7 @@ const ChartPage = (props) => {
 
   const countAxisName = `${aggregation} ${count_variable_name}`;
   const chartComponent = useMemo(() => {
-    return generateChart(data, chartType, countAxisName);
+    return generateChart(data, chartType, countAxisName, count_variable_name);
   }, [data, chartType, countAxisName]);
 
   const [ref, setRef] = useState(null);
@@ -159,11 +159,11 @@ const ChartPage = (props) => {
   );
 };
 
-const generateChart = (data, chartType, countAxisName) => {
+const generateChart = (data, chartType, countAxisName, count_variable_name) => {
   switch (chartType) {
     case "bar":
       const barAxisBottomConfig = {...BAR_CHART_PROPS?.axisBottom, legend: countAxisName}
-      const barChartProps ={ ...BAR_CHART_PROPS, axisBottom: barAxisBottomConfig}
+      const barChartProps ={ ...BAR_CHART_PROPS, axisBottom: barAxisBottomConfig, keys:[count_variable_name]}
       return <ResponsiveBar {...barChartProps} data={data} />;
     case "line":
       const lineAxisLeftConfig = {...LINE_GRAPH_PROPS?.axisLeft, label: countAxisName};
