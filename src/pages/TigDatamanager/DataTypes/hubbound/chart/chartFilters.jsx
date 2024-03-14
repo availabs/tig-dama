@@ -6,8 +6,6 @@ import download from "downloadjs";
 import { Button } from "~/modules/avl-components/src";
 import { CHART_TYPES, AGGREGATION_TYPES, SERIES_TYPES } from "./chartConstants";
 
-
-
 export const HubboundChartFilters = ({
   filters,
   setFilters,
@@ -39,7 +37,7 @@ export const HubboundChartFilters = ({
       <div className="px-2 text-sm text-gray-400 ml-5">Chart Type:</div>
       <div className="flex-none" >
         <select
-          className="pl-2 py-0.5 pr-4border  w-full bg-white mr-2 flex text-sm"
+          className="pl-2 py-0.5 pr-4border  w-full bg-white mr-2 flex text-sm capitalize"
           value={chartType}
           onChange={(e) =>
             setFilters({
@@ -49,7 +47,7 @@ export const HubboundChartFilters = ({
           }
         >
           {(CHART_TYPES || []).map((cType, i) => (
-            <option key={i} className="ml-2 truncate" value={cType}>
+            <option key={i} className="ml-2 truncate " value={cType}>
               {cType}
             </option>
           ))}
@@ -58,7 +56,7 @@ export const HubboundChartFilters = ({
       <div className=" px-2 text-sm text-gray-400 ml-5">Aggregation:</div>
       <div className="flex-none" >
         <select
-          className="pl-2 pr-4  border  w-full bg-white mr-2 flex text-sm"
+          className="pl-2 pr-4  border  w-full bg-white mr-2 flex text-sm capitalize"
           value={aggregation}
           onChange={(e) =>
             setFilters({
@@ -77,7 +75,7 @@ export const HubboundChartFilters = ({
       <div className=" px-2 text-sm text-gray-400 ml-5">Series:</div>
       <div className="flex-none" >
         <select
-          className="pl-2 pr-4 border w-full bg-white mr-2 flex text-sm"
+          className="pl-2 pr-4 border w-full bg-white mr-2 flex text-sm capitalize"
           value={series}
           onChange={(e) =>
             setFilters({
@@ -88,7 +86,7 @@ export const HubboundChartFilters = ({
         >
           {(SERIES_TYPES || []).map((sType, i) => (
             <option key={i} className="ml-2 truncate" value={sType}>
-              {sType}
+              {sType.split("_").join(" ")}
             </option>
           ))}
         </select>
