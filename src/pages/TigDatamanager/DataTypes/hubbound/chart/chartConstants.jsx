@@ -1,3 +1,14 @@
+const formatHour = (element) => {
+  if(element.toString().length > 1){
+    //two digit hour
+    return `${element}:00`
+  }
+  else {
+    //one digit hour
+    return `0${element}:00`
+  }
+}
+
 const BAR_CHART_PROPS = {
   keys: ["value"],
   valueFormat: (value) => value.toLocaleString(),
@@ -82,16 +93,7 @@ const LINE_GRAPH_PROPS = {
   ],
   axisBottom: {
     tickDensity: 4,
-    format: (element) => {
-      if(element.toString().length > 1){
-        //two digit hour
-        return `${element}:00`
-      }
-      else {
-        //one digit hour
-        return `0${element}:00`
-      }
-    },
+    format: formatHour,
     label: "Hour",
     legendPosition: "middle",
   },
@@ -106,6 +108,7 @@ const LINE_GRAPH_PROPS = {
   },
   hoverComp: {
     idFormat: (id, data) => data.name,
+    xFormat: formatHour,
     yFormat: ",.2f",
     showTotals: false,
   },
