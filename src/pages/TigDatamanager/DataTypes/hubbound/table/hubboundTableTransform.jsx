@@ -41,6 +41,7 @@ const HubboundTableTransform = (tableData, attributes, filters, setFilters) => {
                     [d]: { value: newValue },
                   });
                 },
+                filterPlaceholder:"Select value"
               };
 
         return {
