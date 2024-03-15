@@ -14,7 +14,8 @@ export const DropDownColumnFilter = ({
                                       filterThemeOptions,
                                       filterClassName,
                                       filterMulti,
-                                      filterRemovable = true
+                                      filterRemovable = true,
+                                      filterPlaceholder = "Select a value...",
                                   },
                               }) => {
     // Calculate the options for filtering
@@ -43,7 +44,7 @@ export const DropDownColumnFilter = ({
                     setFilter(e || undefined)
                     onFilterChange(e || undefined) // Set undefined to remove the filter entirely
                 }}
-                placeHolder={`Search ${count} records...`}
+                placeholder={filterPlaceholder}
                 removable={filterRemovable}
                 multi={filterMulti}
                 themeOptions={filterThemeOptions}
