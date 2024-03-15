@@ -36,13 +36,21 @@ const HubboundTableTransform = (tableData, attributes, filters, setFilters) => {
                   if (attrProps.type === "range" && newValue?.length > 2) {
                     newValue.shift();
                   }
+                  if(newValue?.length === 0 && attrProps.values.includes("all")){
+                    newValue.push("all");
+                  }
+                  if((newValue === null || newValue === undefined) && attrProps.values.includes("all")){
+                    newValue = "all";
+                  }
+                  if(newValue.length === 2 && newValue.includes("all")){
+                    newValue.shift();
+                  }
                   setFilters({
                     ...filters,
                     [d]: { value: newValue },
                   });
                 },
-                filterPlaceholder:"Select value"
-              };
+                filterPlaceholder:"Select value"              };
 
         return {
           Header: d

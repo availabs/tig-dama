@@ -56,12 +56,16 @@ const TablePage = ({
     [activeView]
   );
 
-  const year =  filters?.year?.value;
+  const year = filters?.year?.value;
+  const direction = filters?.direction?.value;
   useEffect(() => {
     const newFilters = {...filters};
     if (!year) {
       newFilters.year = { value: 2019 }
-    }    
+    }
+    if(!direction){
+      newFilters.direction = { value: "all" }
+    }
     setFilters(newFilters)
   }, []);
 
@@ -120,7 +124,7 @@ const TablePage = ({
   }
 
   return (
-    <div className="mt-2 mx-12" style={{width:"95vw", position:"relative", left:"calc(-50vw + 50%)"}}>
+    <div className="mt-2 mx-12" style={{width:"97vw", position:"relative", left:"calc(-50vw + 50%)"}}>
       <Table data={data} columns={columns} pageSize={15} />
     </div>
   );

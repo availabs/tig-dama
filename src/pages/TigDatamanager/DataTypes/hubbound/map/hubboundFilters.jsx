@@ -34,7 +34,7 @@ const FilterInput = ({ attribute, name, value, setFilters, filters }) => {
       </div>
       {type !== "range" && <div className="flex px-2">
         <select
-          className="pl-3 pr-4 py-2.5 border  w-full bg-white mr-2 flex text-sm"
+          className="pl-3 pr-4 py-2.5 border  w-full bg-white mr-2 flex text-sm capitalize"
           value={inputValue}
           onChange={(e) =>
             setFilters({
@@ -43,9 +43,6 @@ const FilterInput = ({ attribute, name, value, setFilters, filters }) => {
             })
           }
         >
-          <option className="ml-2  truncate" value={"all"}>
-            --
-          </option>
           {values?.map((k, i) => (
             <option key={i} className="ml-2  truncate" value={k}>
               {k}
@@ -57,7 +54,7 @@ const FilterInput = ({ attribute, name, value, setFilters, filters }) => {
         <>
           <div className="flex px-2">
             <select
-              className="pl-3 pr-4 py-2.5 border  w-full bg-white mr-2 flex text-sm"
+              className="pl-3 pr-4 py-2.5 border  w-full bg-white mr-2 flex text-sm capitalize"
               value={inputValue}
               onChange={(e) =>
                 setFilters({

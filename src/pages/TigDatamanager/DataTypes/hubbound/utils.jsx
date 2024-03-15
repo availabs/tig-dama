@@ -52,7 +52,7 @@ export const aggHubboundByLocation = (data) => {
 
 export const createHubboundFilterClause = (filters) => {
   const filterClause = Object.keys(filters).reduce((a, c) => {
-    if (filters[c].value && filters[c].value !== "all") {
+    if (shouldCreateFilter(filters[c].value)) {
       if (HUBBOUND_ATTRIBUTES[c].type === "range") {
         const rangeLength =
           filters[c].value.length === 2
@@ -77,4 +77,19 @@ export const createHubboundFilterClause = (filters) => {
   return JSON.stringify({
     filter: filterClause,
   });
+};
+
+//TODO may need some optional chains, or null checking
+const shouldCreateFilter = (filterValue) => {
+  //Check if value is null
+  //Check if value is "all" (to lower case)
+  //Check if value is array with length 0
+  //check if value is array with 1 element of "all" (to lower case)
+
+  if (Array.isArray(filterValue)) {
+    return filterValue.length > 0 && filterValue[0].toString().toLowerCase() !== "all";
+  } else {
+    console.log(filterValue)
+    return filterValue !== null && filterValue.toString().toLowerCase() !== "all";
+  }
 };

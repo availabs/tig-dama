@@ -188,32 +188,39 @@ ROUTE_NAMES.sort(alphaSort);
 
 export const HUBBOUND_ATTRIBUTES = {
   direction: {
-    values: ["Outbound", "Inbound"],
+    values: ["all","Outbound", "Inbound"],
     filterMulti: false,
     chartFilter: true,
     mapFilter: true,
     tableFilter: true,
+    filterRemovable: true,
   },
   year: {
-    values: Array.from(
-      { length: finishYear - startYear },
-      (_, i) => startYear + 1 + i
-    ),
+    values: [
+      "all",
+      ...Array.from(
+        { length: finishYear - startYear },
+        (_, i) => startYear + 1 + i
+      ),
+    ],
     chartFilter: true,
     mapFilter: true,
     tableFilter: true,
+    filterRemovable: true,
   },
   hour: {
     values: Array.from({ length: 24 }, (_, i) => -1 + 1 + i),
     type: "range",
     mapFilter: true,
     tableFilter: true,
+    filterRemovable: true,
   },
-  count: { tableFilter: true },
+  count: { tableFilter: true, filterRemovable: true, },
   count_variable_name: {
     values: VARIABLE_NAMES,
     chartFilter: true,
     tableFilter: true,
+    filterRemovable: true,
   },
   in_station_name: {
     values: STATION_NAMES,
@@ -233,18 +240,22 @@ export const HUBBOUND_ATTRIBUTES = {
     values: SECTOR_NAMES,
     chartFilter: true,
     tableFilter: true,
+    filterRemovable: true,
   },
   transit_agency_name: {
     values: AGENCY_NAMES,
     tableFilter: true,
+    filterRemovable: true,
   },
   transit_route_name: {
     values: ROUTE_NAMES,
     tableFilter: true,
+    filterRemovable: true,
   },
   location_name: {
     values: LOCATION_NAMES,
     tableFilter: true,
+    filterRemovable: true,
   },
   latitude: { tableFilter: false, tableColumn: false },
   longitude: { tableFilter: false, tableColumn: false },
