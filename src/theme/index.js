@@ -241,7 +241,7 @@ const ppdaf = () => {
         menuItemActive: `px-4 py-2 cursor-not-allowed bg-${accent}-200 border-1 focus:border-${accent}-300`,
         menuItem: `px-4 py-2 cursor-pointer hover:bg-blue-100 border-1 border-${colors[color]} focus:border-blue-300`,
         select: `bg-${colors[color]} w-full flex flex-row flex-wrap justify-between px-4 py-2 cursor-pointer focus:border-blue-300`,
-        selectIcon: `fal fa-angle-down text-gray-400 pt-2`
+        selectIcon: `fal fa-angle-down text-gray-400 pt-1`
       }
     },
     table: (opts = {color:'white', size: 'compact'}) => {
