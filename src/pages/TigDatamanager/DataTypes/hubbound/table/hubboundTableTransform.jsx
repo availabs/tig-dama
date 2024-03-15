@@ -4,8 +4,21 @@ import { HUBBOUND_ATTRIBUTES } from "../constants";
 //src/modules/avl-components/src/components/Table/components/DropDownColumnFilter.jsx
 //(currently, there is a misspelled `placeHolder` being passed to a `Select`)
 const HubboundTableTransform = (tableData, attributes, filters, setFilters) => {
+
+  //Clean out any `null` values
+  //One day we might do this when we upload the data instead
+  const cleanedData = tableData.map(tRow => {
+    const newRow = Object.keys(tRow).reduce((accRow, curKey) => {
+      accRow[curKey] = tRow[curKey] === "NULL" ? "" : tRow[curKey]
+
+      return accRow;
+    }, {})
+
+    return newRow;
+  })
+
   return {
-    data: tableData,
+    data: cleanedData,
     columns: attributes
       ?.filter((d) => !(HUBBOUND_ATTRIBUTES[d].tableColumn === false))
       .map((d) => {
