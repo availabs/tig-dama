@@ -189,10 +189,10 @@ export const HubboundMapFilter = (props) => {
         newSymbology.sources.push(countySource);
       }
   
-      if(!newSymbology.layers.find(layer => layer.id === 'counties_layer')){
+      if(!newSymbology.layers.find(layer => layer.id === 'counties_layer_static')){
         console.log("adding county layer")
         const countyLayer = {
-          id: `counties_layer`,
+          id: `counties_layer_static`,
           ...mapStyle['line'],
           source: countySourceId
         };
