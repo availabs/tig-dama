@@ -124,7 +124,7 @@ const TablePage = ({
   }
 
   return (
-    <div className="mt-2 mx-12" style={{width:"97vw", position:"relative", left:"calc(-50vw + 50%)"}}>
+    <div className="mt-2 mx-12" style={{width:"96vw", position:"relative", left:"calc(-50vw + 50%)"}}>
       <Table data={data} columns={columns} pageSize={15} />
     </div>
   );

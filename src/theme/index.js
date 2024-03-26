@@ -240,9 +240,11 @@ const ppdaf = () => {
         menuWrapper: `bg-${colors[color]} my-1`,
         menuItemActive: `px-4 py-2 cursor-not-allowed bg-${accent}-200 border-1 focus:border-${accent}-300`,
         menuItem: `px-4 py-2 cursor-pointer hover:bg-blue-100 border-1 border-${colors[color]} focus:border-blue-300`,
-        select: `bg-${colors[color]} w-full flex flex-row flex-wrap justify-between px-4 py-2 cursor-pointer focus:border-blue-300`,
+        select: `bg-${colors[color]} w-full flex flex-row flex-wrap py-2 cursor-pointer focus:border-blue-300`,
         selectIcon: `fal fa-angle-down text-gray-400 pt-1`,
-        menuBgActive: `bg-blue-100 rounded overflow-visible`
+        valueItem: `overflow-hidden text-ellipsis whitespace-nowrap`,
+        itemText: `w-32  text-gray-400`,
+        menuBgActive: `bg-blue-100 rounded overflow-visible text-gray-700`
       }
     },
     table: (opts = {color:'white', size: 'compact'}) => {
@@ -254,13 +256,16 @@ const ppdaf = () => {
           }
 
           let sizes = {
-              small: 'px-4 py-1 text-xs',
-              compact: 'px-4 py-1 text-sm',
+              small: 'px-1 py-1 text-xs',
+              compact: 'px-2 py-1 text-sm',
               full: 'px-10 py-5'
           }
           return {
               tableHeader:
-                  `${sizes[size]} pb-1 h-8 border border-b-4 border-gray-200 bg-white text-left font-medium text-gray-700 uppercase first:rounded-tl-md last:rounded-tr-md capitalize`,
+                  `${sizes[size]} pb-1 h-8 border border-b-4 border-gray-200 bg-white text-left font-medium text-gray-700 uppercase first:rounded-tl-md last:rounded-tr-md capitalize Class
+                  Properties
+                  align-baseline	vertical-align: baseline;
+                  align-top`,
               tableInfoBar: "bg-white",
               tableRow: `${colors[color]} transition ease-in-out duration-150 hover:bg-gray-300`,
               tableRowStriped: `bg-white odd:bg-tigGray-25 hover:bg-tigGray-100 bg-opacity-25 transition ease-in-out duration-150`,
