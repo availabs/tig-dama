@@ -1,8 +1,13 @@
 import React, {
   useEffect,
 } from "react";
+import ReactSlider from 'react-slider';
+
 import { HUBBOUND_ATTRIBUTES } from "../constants";
 
+const SLIDER_TRACK_CLASSNAME = " track"
+const INACTIVE_TRACK_CLASSNAME = " bg-gray-100";
+const ACTIVE_TRACK_CLASSNAME = " bg-blue-700"
 //`count` is excluded because API endpoint currently does not support `<` or `>` operations
 const HubboundFilters = ({ filters, setFilters, filterType = "mapFilter" }) => {
   const year =  filters?.year?.value;
@@ -51,50 +56,44 @@ const FilterInput = ({ attribute, name, value, setFilters, filters }) => {
         </select>
       </div>}
       {type === "range" && (
-        <>
-          <div className="flex px-2">
-            <select
-              className="pl-3 pr-4 py-2.5 border  w-full bg-white mr-2 flex text-sm capitalize"
-              value={inputValue}
-              onChange={(e) =>
-                setFilters({
-                  ...filters,
-                  [name]: { value: [parseInt(e.target.value), filters[name].value[1]] },
-                })
-              }
-            >
-              <option className="ml-2  truncate" value={"all"}>
-                --
-              </option>
-              {values?.map((k, i) => (
-                <option key={i} className="ml-2  truncate" value={k}>
-                  {k}
-                </option>
-              ))}
-            </select>
+        <div className="grid">
+          <div className="flex">
+            <ReactSlider
+                className="w-64 h-8 self-center"
+                thumbClassName="bg-gray-100 self-center rounded-lg border border-black w-3 h-3"
+                trackClassName={`h-3 self-center rounded  border border-blue-300 ${SLIDER_TRACK_CLASSNAME}`}
+                markClassName="bg-blue-500 w-px h-1 mt-3 ml-1 text-xs"
+                marks={true}
+                min={values[0]}
+                max={values[values.length-1]}
+                pearling
+                renderMark={(props) => {return <span {...props} >{props.key % 4 === 3 ? props.key : ''}</span>}}
+                value={filters?.[name]?.value}
+                onAfterChange={(value, thumbIndex) => {
+                  setFilters({
+                    ...filters,
+                    [name]: { value },
+                  })
+                }}
+                renderTrack={(props, state) => {
+                  let { className, key } = props;
+                  if (key.includes(`${SLIDER_TRACK_CLASSNAME}-0`) || key.includes(`${SLIDER_TRACK_CLASSNAME}-2`)) {
+                    className += INACTIVE_TRACK_CLASSNAME;
+                    key += INACTIVE_TRACK_CLASSNAME;
+                  }
+                  else {
+                    className += ACTIVE_TRACK_CLASSNAME;
+                    key += ACTIVE_TRACK_CLASSNAME;
+                  }
+                  const newProps = { ...props, className, key };
+                  return <div { ...newProps } />
+                }}
+
+            />
+
           </div>
-          <div className="flex px-2">
-            <select
-              className="pl-3 pr-4 py-2.5 border  w-full bg-white mr-2 flex text-sm"
-              value={value[1]}
-              onChange={(e) =>
-                setFilters({
-                  ...filters,
-                  [name]: { value: [filters[name].value[0], parseInt(e.target.value)] },
-                })
-              }
-            >
-              <option className="ml-2  truncate" value={"all"}>
-                --
-              </option>
-              {values?.map((k, i) => (
-                <option key={i} className="ml-2  truncate" value={k}>
-                  {k}
-                </option>
-              ))}
-            </select>
-          </div>
-        </>
+          <div className="flex justify-self-center text-sm">From: {value[0]} To: {value[1]}</div>
+        </div>
       )}
     </div>
   );

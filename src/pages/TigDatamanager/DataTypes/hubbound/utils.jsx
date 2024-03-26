@@ -89,7 +89,6 @@ const shouldCreateFilter = (filterValue) => {
   if (Array.isArray(filterValue)) {
     return filterValue.length > 0 && filterValue[0].toString().toLowerCase() !== "all";
   } else {
-    console.log(filterValue)
     return filterValue !== null && filterValue.toString().toLowerCase() !== "all";
   }
 };
