@@ -314,9 +314,9 @@ const ProjectMapFilter = ({
       <div className="py-3.5 px-2 text-sm text-gray-400">
         {projectKey === "rtp_id" ? "RTP" : "TIP"} ID :{" "}
       </div>
-      <div className="flex-2">
+      <div className="flex-2 border border-blue-100 m-1">
         <select
-          className="pl-3 pr-4 py-2.5 border border-blue-100 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
+          className="pl-3 pr-4 py-2.5 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
           value={projectIdFilterValue || ""}
           onChange={(e) => setFilters({ projectId: { value: e.target.value } })}
         >
@@ -331,9 +331,9 @@ const ProjectMapFilter = ({
         </select>
       </div>
       <div className="py-3.5 px-2 text-sm text-gray-400">Project Type: </div>
-      <div className="flex-1">
+      <div className="flex-1 border border-blue-100 m-1">
         <select
-          className="pl-3 pr-4 py-2.5 border border-blue-100 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
+          className="pl-3 pr-4 py-2.5 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
           value={projectTypeFilterValue || ""}
           onChange={(e) => setFilters({ ptype: { value: e.target.value } })}
         >
@@ -348,9 +348,9 @@ const ProjectMapFilter = ({
         </select>
       </div>
       <div className="py-3.5 px-2 text-sm text-gray-400">Sponsor: </div>
-      <div className="flex-1">
+      <div className="flex-1 border border-blue-100 m-1">
         <select
-          className="pl-3 pr-4 py-2.5 border border-blue-100 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
+          className="pl-3 pr-4 py-2.5 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
           value={sponsorFilterValue || ""}
           onChange={(e) => setFilters({ sponsor: { value: e.target.value } })}
         >
@@ -369,17 +369,17 @@ const ProjectMapFilter = ({
           <div className="py-3.5 px-2 text-sm text-gray-400">
             Plan Portion:{" "}
           </div>
-          <div className="flex-1">
+          <div className="flex-1 border border-blue-100 m-1">
             <select
-              className="pl-3 pr-4 py-2.5 border border-blue-100 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
+              className="pl-3 pr-4 py-2.5 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
               value={planPortionFilterValue || ""}
               onChange={(e) =>
                 setFilters({ plan_portion: { value: e.target.value } })
               }
             >
-            <option className="ml-2  truncate" value={""}>
-              None
-            </option>
+              <option className="ml-2  truncate" value={""}>
+                None
+              </option>
               {allPlanPortions?.map((v, i) => (
                 <option key={i} className="ml-2  truncate" value={v}>
                   {v}
@@ -389,7 +389,13 @@ const ProjectMapFilter = ({
           </div>
         </>
       )}
-      <MapDataDownloader activeViewId={activeDataVersionId} projectKey={projectKey} metadataColumns={metadataColumns}/>
+      <div className="px-2 m-2">
+        <MapDataDownloader
+          activeViewId={activeDataVersionId}
+          projectKey={projectKey}
+          metadataColumns={metadataColumns}
+        />
+      </div>
     </div>
   );
 };
