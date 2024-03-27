@@ -292,69 +292,45 @@ const ProjectTableFilter = (
 };
 
 export const ProjectTableTransform = (tableData, attributes, filters, years, source) => {
-  let filteredData;
   let projectKey = source?.name?.toLowerCase()?.includes("rtp") ? "rtp_id" : "tip_id";
 
-  const activeFilterKeys = Object.keys(filters).filter((filterKey) => {
-    if (filterKey === "cost") {
-      return (
-        filters[filterKey].value[0] !== null ||
-        filters[filterKey].value[1] !== null
-      );
-    } else {
-      return !!filters[filterKey].value;
+  const valueRanges = tableData && tableData.length > 0 ? Object.keys(tableData[0]).reduce((a, c) => {
+    if(!a[c]){
+      a[c] = tableData.map(d => d[c]).filter(onlyUnique)
     }
-  });
 
-  filteredData = tableData.filter((val) => {
-    const shouldKeep = activeFilterKeys.every((filterKey) => {
-      if(filterKey === "description"){
-        return val[filterKey].toLowerCase().includes(filters[filterKey].value.toLowerCase());
-      }
-      else if (filterKey === "cost"){
-        if(!val[filterKey] || val[filterKey] === 'null'){
-          //Automatically exclude if we cannot compare costs.
-          return false;
-        }
-
-        const [lowerBoundCost, upperBoundCost] = filters[filterKey].value;
-        let withinRange = true;
-
-        if(lowerBoundCost){
-          //check to make sure we equal or exceed lower bound
-          if(val[filterKey] < lowerBoundCost){
-            withinRange = false;
-          }
-        }
-        if(upperBoundCost){
-          //check to make sure we equal or are less than upper bound
-          if(val[filterKey] > upperBoundCost){
-            withinRange = false;
-          }
-        }
-        return withinRange;
-      }
-      else{
-        const dataAccessor = filterKey === 'projectId' ? projectKey : filterKey;
-        return filters[filterKey].value === val[dataAccessor];
-      }
-    });
-    return shouldKeep;
-  });
+    return a;
+  }, {}) : {};
 
   const generateColumn = (columnName) => {
+    let filterProperties = {};
+    if(columnName !== "cost"){
+      filterProperties = {
+          filter: "dropdown",
+          filterDomain: valueRanges[columnName],
+          // filterMulti: attrProps.filterMulti === false ? false : true,
+          filterPlaceholder:"Select value"
+      };
+    }
+    
+    if(columnName === "description"){
+      filterProperties.filter = "text";
+    }
+
+
     const column = {
       Header: VARIABLE_LABELS[columnName],
       accessor: columnName,
       id: columnName,
+      ...filterProperties
     };
 
     if (columnName === "cost") {
       column.Cell = ({ value }) => {
         const displayValue =
-          value !== "null"
+          value !== "null" && value !== ""
             ? `$${parseFloat(value).toFixed(2).toLocaleString()} M`
-            : "--";
+            : "";
         return <div>{displayValue}</div>;
       };
     }
@@ -362,6 +338,9 @@ export const ProjectTableTransform = (tableData, attributes, filters, years, sou
     return column;
   };
 
+
+
+  
   const dependentColumns =
     projectKey === "rtp_id"
       ? [generateColumn("plan_portion"), generateColumn("year")]
@@ -385,8 +364,19 @@ export const ProjectTableTransform = (tableData, attributes, filters, years, sou
     },
   });
 
+
+  const cleanedData = tableData.map(tRow => {
+    const newRow = Object.keys(tRow).reduce((accRow, curKey) => {
+      accRow[curKey] = tRow[curKey] === "null" ? "" : tRow[curKey]
+
+      return accRow;
+    }, {})
+
+    return newRow;
+  })
+
   return {
-    data: filteredData,
+    data: cleanedData,
     columns: columns,
   };
 }

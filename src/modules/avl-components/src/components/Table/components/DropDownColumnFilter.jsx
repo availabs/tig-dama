@@ -9,7 +9,7 @@ export const DropDownColumnFilter = ({
                                       id,
                                       filterMeta,
                                       filterDomain,
-                                      onFilterChange,
+                                      onFilterChange = () => {},
                                       customValue,
                                       filterThemeOptions,
                                       filterClassName,

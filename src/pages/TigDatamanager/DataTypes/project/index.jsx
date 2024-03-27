@@ -51,8 +51,8 @@ const GisDatasetConfig = {
       <Table
         {...props}
         showViewSelector={true}
-        TableFilter={ProjectTableFilter}
         transform={ProjectTableTransform}
+        fullWidth={true}
       />
     ),
   },
