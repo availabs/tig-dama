@@ -12,6 +12,8 @@ import {
 } from "./chart/chartFilters";
 import Chart from "./chart";
 
+import config from "~/config.json"
+
 const getVariables = (source, views, activeViewId) =>
   views.map((d) => ({
     key: d.view_id,
@@ -52,6 +54,7 @@ const hubboundConfig = {
         showViewSelector={false}
         MapFilter={HubboundMapFilter}
         HoverComp={{ Component: HubboundMapHover, isPinnable: true }}
+        mapStyles={[config?.google_streets_style]}
       />
     ),
   },

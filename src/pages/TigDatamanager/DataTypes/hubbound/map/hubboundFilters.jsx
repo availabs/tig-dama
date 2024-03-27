@@ -37,32 +37,35 @@ const FilterInput = ({ attribute, name, value, setFilters, filters }) => {
       <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">
         {name.split("_").join(" ")}:
       </div>
-      {type !== "range" && <div className="flex px-2">
-        <select
-          className="pl-3 pr-4 py-2.5 border  w-full bg-white mr-2 flex text-sm capitalize"
-          value={inputValue}
-          onChange={(e) =>
-            setFilters({
-              ...filters,
-              [name]: { value: e.target.value },
-            })
-          }
-        >
-          {values?.map((k, i) => (
-            <option key={i} className="ml-2  truncate" value={k}>
-              {k}
-            </option>
-          ))}
-        </select>
+      {type !== "range" && <div className="flex pl-2 pr-1">
+        <div className="border  border-blue-100 rounded">
+          <select
+            className="pl-3 pr-4 py-2.5  w-full bg-white mr-2 flex text-sm capitalize"
+            value={inputValue}
+            onChange={(e) =>
+              setFilters({
+                ...filters,
+                [name]: { value: e.target.value },
+              })
+            }
+          >
+            {values?.map((k, i) => (
+              <option key={i} className="ml-2  truncate" value={k}>
+                {k}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>}
       {type === "range" && (
-        <div className="grid">
+        <div className="grid border border-blue-100 rounded p-2">
           <div className="flex">
             <ReactSlider
-                className="w-64 h-8 self-center"
+                className="w-64 h-8 mt-2 self-center"
                 thumbClassName="bg-gray-100 self-center rounded-lg border border-black w-3 h-3"
                 trackClassName={`h-3 self-center rounded  border border-blue-300 ${SLIDER_TRACK_CLASSNAME}`}
                 markClassName="bg-blue-500 w-px h-1 mt-3 ml-1 text-xs"
+                thumbActiveClassName="bg-gray-300"
                 marks={true}
                 min={values[0]}
                 max={values[values.length-1]}

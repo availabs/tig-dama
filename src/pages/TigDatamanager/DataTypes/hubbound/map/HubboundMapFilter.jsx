@@ -139,7 +139,7 @@ export const HubboundMapFilter = (props) => {
 
     return locations?.value;
   }, [falcorCache, activeViewId]);
-  console.log({tableData})
+
   useEffect(() => {
     if(locationsData && locationsData.length){
       const featObjs = aggHubboundByLocation(locationsData);
