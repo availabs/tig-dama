@@ -40,6 +40,7 @@ const TigAcsConfig = {
     component: (props) => (
       <MapPage
         {...props}
+        showViewSelector={false}
         MapFilter={ACSMapFilter}
         HoverComp={{ Component: ACSHoverComp, isPinnable: true }}
         mapStyles={[config?.google_streets_style]}
@@ -61,6 +62,7 @@ const TigAcsConfig = {
     component: (props) => (
       <Chart
         {...props}
+        showViewSelector={false}
         ChartFilter={AcsChartFilters}
         transform={ACSChartTransform}
       />

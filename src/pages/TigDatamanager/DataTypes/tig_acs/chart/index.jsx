@@ -160,7 +160,6 @@ const ChartPage = ({
           years={(years || []).sort()}
           node={ref}
         />
-        <ViewSelector views={views} />
       </div>
       <div style={{ height: "600px" }} ref={setRef}>
         <ResponsiveBar

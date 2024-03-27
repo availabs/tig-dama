@@ -429,9 +429,9 @@ const ACSMapFilter = ({
   return (
     <div className="flex flex-1 border-blue-100">
       <div className="py-3.5 px-2 text-sm text-gray-400">Variable: </div>
-      <div className="flex-1">
+      <div className="flex-1 border border-blue-100 m-1">
         <select
-          className="pl-3 pr-4 py-2.5 border border-blue-100 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
+          className="pl-3 pr-4 py-2.5  bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
           value={activeVar}
           onChange={(e) => {
             setFilters({
@@ -449,9 +449,9 @@ const ACSMapFilter = ({
       </div>
 
       <div className="py-3.5 px-2 text-sm text-gray-400">Type: </div>
-      <div className="flex-1">
+      <div className="flex-1 border border-blue-100 m-1">
         <select
-          className="pl-3 pr-4 py-2.5 border border-blue-100 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
+          className="pl-3 pr-4 py-2.5  bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
           value={geometry}
           onChange={(e) => {
             setFilters({
@@ -470,7 +470,7 @@ const ACSMapFilter = ({
         </select>
       </div>
       <div className="py-3.5 px-2 text-sm text-gray-400">Year:</div>
-      <div className="">
+      <div className="border border-blue-100 m-1">
         <select
           className="pl-3 pr-4 py-2.5 border border-blue-100 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
           value={year}
@@ -491,7 +491,7 @@ const ACSMapFilter = ({
         </select>
       </div>
 
-      <div className="px-2 text-sm text-gray-400">
+      <div className="px-2 m-2 text-sm text-gray-400">
         <MapDataDownloader
           activeViewId={activeViewId}
           variable={activeVar}
