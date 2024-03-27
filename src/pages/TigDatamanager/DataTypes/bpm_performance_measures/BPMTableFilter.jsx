@@ -35,9 +35,9 @@ export const HBTableFilter = ({ filters, setFilters, data, columns }) => {
     return (
       <div className='flex flex-1'>
         <div className='py-3.5 px-2 text-sm text-gray-400'>Time period : </div>
-        <div className='flex-1'>
+        <div className='flex-1 border border-blue-100 m-1'>
           <select
-              className="pl-3 pr-4 py-2.5 border border-blue-100 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
+              className="pl-3 pr-4 py-2.5 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
               value={timePeriod}
               onChange={(e) => setFilters({'period' :{ value: e.target.value}})}
             >
@@ -49,9 +49,9 @@ export const HBTableFilter = ({ filters, setFilters, data, columns }) => {
           </select>
         </div>
         <div className='py-3.5 px-2 text-sm text-gray-400'>Functional class : </div>
-        <div className='flex-1'>
+        <div className='flex-1 border border-blue-100 m-1'>
           <select
-              className="pl-3 pr-4 py-2.5 border border-blue-100 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
+              className="pl-3 pr-4 py-2.5 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
               value={functionalClass}
               onChange={(e) => setFilters({'functional_class' :{ value: e.target.value}})}
             >
@@ -62,7 +62,7 @@ export const HBTableFilter = ({ filters, setFilters, data, columns }) => {
               ))}
           </select>
         </div>
-        <div>
+        <div className="px-2 m-2">
           <Button themeOptions={{size:'sm', color: 'primary'}}
             onClick={ downloadData }
           >
