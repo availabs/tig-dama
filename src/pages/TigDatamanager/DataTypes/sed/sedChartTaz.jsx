@@ -68,7 +68,7 @@ const SedChartFilter = ({ source, filters, setFilters, node }) => {
 
   return (
     <div className="flex border-blue-100">
-      <div>
+      <div className="px-2 m-2">
         <Button themeOptions={{size:'sm', color: 'primary'}}
           onClick={ downloadImage }
         >
@@ -76,9 +76,9 @@ const SedChartFilter = ({ source, filters, setFilters, node }) => {
         </Button>
       </div>
       <div className="py-3.5 px-2 text-sm text-gray-400">Area: </div>
-      <div className="flex-none w-48">
+      <div className="flex-none w-48 border border-blue-100 m-1">
         <select
-          className="pl-3 pr-4 py-2.5 border border-blue-100 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
+          className="pl-3 pr-4 py-2.5 0 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
           value={area}
           onChange={(e) =>
             setFilters({
@@ -101,9 +101,9 @@ const SedChartFilter = ({ source, filters, setFilters, node }) => {
         </select>
       </div>
       <div className="py-3.5 px-2 text-sm text-gray-400">Summarize: </div>
-      <div className="flex-none w-48">
+      <div className="flex-none w-48 border border-blue-100 m-1">
         <select
-          className="pl-3 pr-4 py-2.5 border border-blue-100 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
+          className="pl-3 pr-4 py-2.5 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
           value={summarize}
           onChange={(e) =>
             setFilters({ ...filters, summarize: { value: e.target.value } })
@@ -124,9 +124,9 @@ const SedChartFilter = ({ source, filters, setFilters, node }) => {
         </select>
       </div>
       <div className="py-3.5 px-2 text-sm text-gray-400">Variable: </div>
-      <div className="flex-none w-96">
+      <div className="flex-none w-96 border border-blue-100 m-1">
         <select
-          className="pl-3 pr-4 py-2.5 border border-blue-100 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
+          className="pl-3 pr-4 py-2.5 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
           value={activeVar}
           onChange={(e) =>
             setFilters({ ...filters, activeVar: { value: e.target.value } })
