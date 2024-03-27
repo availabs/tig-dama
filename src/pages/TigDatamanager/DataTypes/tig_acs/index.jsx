@@ -13,6 +13,8 @@ import { AcsChartFilters, ACSChartTransform } from "./chart/filters";
 import TigOverview from '../TigOverview'
 import TigMetadata from '../TigMetadata'
 
+import config from "~/config.json"
+
 const getVariables = (source,views,activeViewId) =>  {
     
     let currentView = (views || []).filter(d => d.view_id === +activeViewId)?.[0] || views?.[0]
@@ -40,6 +42,7 @@ const TigAcsConfig = {
         {...props}
         MapFilter={ACSMapFilter}
         HoverComp={{ Component: ACSHoverComp, isPinnable: true }}
+        mapStyles={[config?.google_streets_style]}
       />
     ),
   },

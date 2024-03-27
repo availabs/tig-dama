@@ -4,16 +4,20 @@ import CreatePage from "~/pages/DataManager/DataTypes/gis_dataset/pages/Create";
 import Table from "~/pages/DataManager/DataTypes/gis_dataset/pages/Table";
 import ProjectHoverComp from './MapHoverComp'
 import ProjectMapFilter from './MapFilterComp'
-import ProjectTableFilter, { ProjectTableTransform } from './TableFilterComp'
+import { ProjectTableTransform } from './TableFilterComp'
 
 import TigOverview from '../TigOverview'
 import TigMetadata from '../TigMetadata'
 
-const getVariables = (source,views,activeViewId) =>  {
-    
-    let currentView = (views || []).filter(d => d.view_id === +activeViewId)?.[0] || views?.[0]
-    return views.map(d => ({key: d.view_id, name: d.version || d.view_id , type: 'view'}))
-}
+import config from "~/config.json"
+
+const getVariables = (source, views, activeViewId) => {
+  return views.map((d) => ({
+    key: d.view_id,
+    name: d.version || d.view_id,
+    type: "view",
+  }));
+};
 
 const GisDatasetConfig = {
   overview: {
@@ -41,6 +45,7 @@ const GisDatasetConfig = {
         showViewSelector={true}
         MapFilter={ProjectMapFilter}
         HoverComp={{Component: ProjectHoverComp, isPinnable: true}}
+        mapStyles={[config?.google_streets_style]}
       />
     ),
   },

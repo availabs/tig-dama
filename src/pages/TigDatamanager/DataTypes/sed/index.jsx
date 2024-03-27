@@ -17,6 +17,7 @@ import dbColsCounty from "./dbColsCounty.json";
 // import { getAttributes } from '~/pages/DataManager/components/attributes'
 import TigOverview from "../TigOverview"
 import TigMetadata from '../TigMetadata'
+import config from "~/config.json"
 
 import { sedVars, sedVarsCounty } from "./sedCustom"
 
@@ -48,6 +49,7 @@ export const tig_sed_taz = {
       MapFilter={SedMapFilter}
       HoverComp={{Component: SedHoverComp, isPinnable: true}}
       displayPinnedGeomBorder={true}
+      mapStyles={[config?.google_streets_style]}
     />,
   },
   table: {
@@ -124,6 +126,7 @@ export const tig_sed_county = {
       MapFilter={SedMapFilter}
       HoverComp={{Component: SedHoverComp, isPinnable: true}}
       displayPinnedGeomBorder={true}
+      mapStyles={[config?.google_streets_style]}
     />,
   },
   table: {

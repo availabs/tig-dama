@@ -10,6 +10,7 @@ import {BPMTableTransform, HBTableFilter} from './BPMTableFilter'
 import {BPMMapFilter} from './BPMMapFilter'
 import {BPMHoverComp} from './BPMHoverComp'
 
+import mapStyleConfig from "~/config.json"
 
 import {BPMChartFilters, BPMChartTransform } from './BPMChartFilters'
 
@@ -61,6 +62,7 @@ const config = {
          MapFilter={BPMMapFilter}
          HoverComp={{Component: BPMHoverComp, isPinnable: true}}
          displayPinnedGeomBorder={true}
+         mapStyles={[mapStyleConfig?.google_streets_style]}
       />
     ),
   },
