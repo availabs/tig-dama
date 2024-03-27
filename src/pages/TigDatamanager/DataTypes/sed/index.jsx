@@ -134,6 +134,7 @@ export const tig_sed_county = {
     path: "/table",
     component: (props) => (
       <Table
+        showViewSelector={false}
         {...props}
         transform={SedTableTransform}
         TableFilter={SedTableFilter}

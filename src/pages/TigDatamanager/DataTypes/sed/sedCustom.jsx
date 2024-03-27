@@ -265,9 +265,9 @@ const SedMapFilter = (props) => {
   return (
     <div className="flex flex-1 border-blue-100">
     <div className="py-3.5 px-2 text-sm text-gray-400">ID :</div>
-    <div className="flex-1">
+    <div className="flex-1 border border-blue-100 m-1">
       <select
-        className="pl-3 pr-4 py-2.5 border border-blue-100 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
+        className="pl-3 pr-4 py-2.5  bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
         value={projectIdFilterValue || ""}
         onChange={(e) => setFilters({ projectId: { value: e.target.value } })}
       >
@@ -307,9 +307,9 @@ const SedMapFilter = (props) => {
         </div>
 
       <div className="py-3.5 ms-3 px-2 text-sm text-gray-400">Variable: </div>
-      <div className="me-2">
+      <div className="m-1 border border-blue-100">
         <select
-          className="pl-3 pr-4 py-2.5 border border-blue-100 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
+          className="pl-3 pr-4 py-2.5  bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
           value={varType}
           onChange={(e) =>
             setFilters({
@@ -399,7 +399,7 @@ const MapDataDownloader = ({ activeViewId, activeVar, variable, year }) => {
   }, [falcorCache, pgEnv, activeViewId, variable, activeVar, year]);
 
   return (
-    <div>
+    <div className="px-2 m-2">
       <Button themeOptions={{size:'sm', color: 'primary'}}
         onClick={ downloadData }
         disabled={ loading }
@@ -455,9 +455,9 @@ const SedTableFilter = ({ source, filters, setFilters, data, columns }) => {
       <div className='flex flex-1'>
         <div className='flex-1' /> 
         <div className="py-3.5 px-2 text-sm text-gray-400">Variable: </div>
-        <div className="px-2">
+        <div className="px-2 border border-blue-100 m-1">
           <select
-            className="pl-3 pr-4 py-2.5 border border-blue-100 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
+            className="pl-3 pr-4 py-2.5  bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
             value={activeVar}
             onChange={(e) =>
               setFilters({ ...filters, activeVar: { value: e.target.value } })
@@ -474,7 +474,7 @@ const SedTableFilter = ({ source, filters, setFilters, data, columns }) => {
           </select>
         </div>
       </div>
-      <div>
+      <div className="px-2 m-2">
         <Button themeOptions={{size:'sm', color: 'primary'}}
           onClick={ downloadData }
         >
