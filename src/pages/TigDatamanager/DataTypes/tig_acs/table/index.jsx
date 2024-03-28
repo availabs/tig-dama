@@ -58,6 +58,7 @@ const TablePage = ({
   transform = identityMap,
   filterData = {},
   TableFilter = DefaultTableFilter,
+  fullWidth = false
 }) => {
   const { viewId } = useParams();
   const [filters, _setFilters] = useState(filterData);
@@ -287,6 +288,18 @@ const TablePage = ({
     return transform(tableData, [...tempTableColumns, ...tableColumns]);
   }, [tableData]);
 
+  let tableContainerStyle = {};
+  let tableContainerClassName = "";
+
+  if (fullWidth) {
+    tableContainerStyle = {
+      width: "96vw",
+      position: "relative",
+      left: "calc(-50vw + 50%)",
+    };
+    tableContainerClassName = "mt-2 mx-12";
+  }
+
   return (
     <div>
       <div className="flex">
@@ -304,7 +317,7 @@ const TablePage = ({
         />
         <ViewSelector views={views} />
       </div>
-      <div className="max-w-6xl mt-2">
+      <div className={tableContainerClassName} style={tableContainerStyle}>
         <Table data={data} columns={columns} pageSize={50} />
       </div>
     </div>

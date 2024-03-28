@@ -310,7 +310,7 @@ const ProjectMapFilter = ({
   }
 
   return (
-    <div className="flex justify-start content-center flex-wrap p-1">
+    <div className="flex justify-start content-center flex-wrap p-1 gap-y-2">
       <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">
         {projectKey === "rtp_id" ? "RTP" : "TIP"} ID :{" "}
       </div>
@@ -350,7 +350,7 @@ const ProjectMapFilter = ({
       <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">Sponsor: </div>
       <div className="flex">
         <select
-          className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
+          className="w-56 text-ellipsis overflow-hidden bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
           value={sponsorFilterValue || ""}
           onChange={(e) => setFilters({ sponsor: { value: e.target.value } })}
         >

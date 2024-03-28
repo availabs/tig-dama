@@ -34,6 +34,7 @@ const TablePage = ({
   transform = identityMap,
   filterData = {},
   TableFilter = DefaultTableFilter,
+  fullWidth = false
 }) => {
   const { viewId, sourceId } = useParams();
   const [filters, _setFilters] = useState(filterData);
@@ -123,8 +124,20 @@ const TablePage = ({
     data.push({})
   }
 
+  let containerStyle = {};
+  let containerClassName = "";
+
+  if (fullWidth) {
+    containerStyle = {
+      width: "96vw",
+      position: "relative",
+      left: "calc(-50vw + 50%)",
+    };
+    containerClassName = "mt-2 mx-12";
+  }
+
   return (
-    <div className="mt-2 mx-12" style={{width:"96vw", position:"relative", left:"calc(-50vw + 50%)"}}>
+    <div className={containerClassName} style={containerStyle}>
       <Table data={data} columns={columns} pageSize={15} />
     </div>
   );
