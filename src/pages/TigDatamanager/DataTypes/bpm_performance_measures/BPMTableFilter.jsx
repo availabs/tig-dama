@@ -33,25 +33,25 @@ export const HBTableFilter = ({ filters, setFilters, data, columns }) => {
     }, [data, columns]);
 
     return (
-      <div className='flex flex-1'>
-        <div className='py-3.5 px-2 text-sm text-gray-400'>Time period : </div>
-        <div className='flex-1 border border-blue-100 m-1'>
+      <div className='flex justify-start content-center flex-wrap w-full p-1'>
+        <div className='flex py-3.5 px-2 text-sm text-gray-400 capitalize'>Time period : </div>
+        <div className='flex'>
           <select
-              className="pl-3 pr-4 py-2.5 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
+              className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
               value={timePeriod}
               onChange={(e) => setFilters({'period' :{ value: e.target.value}})}
             >
               {allTimePeriods?.map((v,i) => (
                 <option key={i} className="ml-2  truncate" value={v}>
-                  {v}
+                  {v?.replace("_"," ")}
                 </option>
               ))}
           </select>
         </div>
-        <div className='py-3.5 px-2 text-sm text-gray-400'>Functional class : </div>
-        <div className='flex-1 border border-blue-100 m-1'>
+        <div className='flex py-3.5 px-2 text-sm text-gray-400 capitalize'>Functional class : </div>
+        <div className='flex'>
           <select
-              className="pl-3 pr-4 py-2.5 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
+              className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
               value={functionalClass}
               onChange={(e) => setFilters({'functional_class' :{ value: e.target.value}})}
             >
@@ -62,7 +62,7 @@ export const HBTableFilter = ({ filters, setFilters, data, columns }) => {
               ))}
           </select>
         </div>
-        <div className="px-2 m-2">
+        <div className="flex ml-auto">
           <Button themeOptions={{size:'sm', color: 'primary'}}
             onClick={ downloadData }
           >

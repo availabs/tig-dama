@@ -24,20 +24,11 @@ export const HubboundChartFilters = ({
   }, [node, filters]);
 
   return (
-    <div className="flex justify-center content-center flex-wrap mt-5">
-      <div className="ml-4">
-        <Button
-          themeOptions={{ size: "sm", color: "primary" }}
-          onClick={downloadImage}
-          
-        >
-          Download
-        </Button>
-      </div>
-      <div className="px-2 text-sm text-gray-400 ml-5">Chart Type:</div>
-      <div className="flex-none" >
+    <div className="flex justify-start content-center flex-wrap w-full mt-4">
+      <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">Chart Type:</div>
+      <div className="flex" >
         <select
-          className="pl-2 py-0.5 pr-4border  w-full bg-white mr-2 flex text-sm capitalize"
+          className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
           value={chartType}
           onChange={(e) =>
             setFilters({
@@ -53,10 +44,10 @@ export const HubboundChartFilters = ({
           ))}
         </select>
       </div>
-      <div className=" px-2 text-sm text-gray-400 ml-5">Aggregation:</div>
-      <div className="flex-none" >
+      <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">Aggregation:</div>
+      <div className="flex" >
         <select
-          className="pl-2 pr-4  border  w-full bg-white mr-2 flex text-sm capitalize"
+          className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
           value={aggregation}
           onChange={(e) =>
             setFilters({
@@ -72,10 +63,10 @@ export const HubboundChartFilters = ({
           ))}
         </select>
       </div>
-      <div className=" px-2 text-sm text-gray-400 ml-5">Series:</div>
-      <div className="flex-none" >
+      <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">Series:</div>
+      <div className="flex" >
         <select
-          className="pl-2 pr-4 border w-full bg-white mr-2 flex text-sm capitalize"
+          className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
           value={series}
           onChange={(e) =>
             setFilters({
@@ -90,6 +81,15 @@ export const HubboundChartFilters = ({
             </option>
           ))}
         </select>
+      </div>
+      <div className="ml-auto mr-2">
+        <Button
+          themeOptions={{ size: "sm", color: "primary" }}
+          onClick={downloadImage}
+          
+        >
+          Download
+        </Button>
       </div>
     </div>
   );

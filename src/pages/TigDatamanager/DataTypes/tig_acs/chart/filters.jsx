@@ -66,20 +66,11 @@ export const AcsChartFilters = ({
   }, [node, activeVar]);
 
   return (
-    <div className="flex flex-1 border-blue-100">
-      <div className="px-2 m-2">
-        <Button
-          themeOptions={{ size: "sm", color: "primary" }}
-          onClick={downloadImage}
-        >
-          Download
-        </Button>
-      </div>
-
-      <div className="py-2 px-2 text-sm text-gray-400">Area: </div>
-      <div className="flex-1 border border-blue-100 m-1" >
+    <div className="flex justify-start content-center flex-wrap w-full p-1">
+      <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">Area: </div>
+      <div className="flex" >
         <select
-          className="pl-3 py-2 w-[200px] mr-2 items-center justify-between text-sm"
+          className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
           value={area}
           onChange={(e) =>
             setFilters({
@@ -101,10 +92,10 @@ export const AcsChartFilters = ({
           ))}
         </select>
       </div>
-      <div className="py-2 px-2 text-sm text-gray-400">Summarize: </div>
-      <div className="flex-1 border border-blue-100 m-1">
+      <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">Summarize: </div>
+      <div className="flex">
         <select
-          className="pl-3 py-2 w-[110px] mr-2 flex items-center justify-between text-sm"
+          className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
           value={summarize}
           onChange={(e) =>
             setFilters({ ...filters, summarize: { value: e.target.value } })
@@ -124,10 +115,10 @@ export const AcsChartFilters = ({
           ) : null}
         </select>
       </div>
-      <div className="py-2 px-2 text-sm text-gray-400">Variable: </div>
-      <div className="flex-1 border border-blue-100 m-1">
+      <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">Variable: </div>
+      <div className="flex">
         <select
-          className="pl-3 py-2 w-[270px]  mr-2 flex items-center justify-between text-sm"
+          className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
           value={activeVar}
           onChange={(e) =>
             setFilters({ ...filters, activeVar: { value: e.target.value } })
@@ -140,11 +131,10 @@ export const AcsChartFilters = ({
           ))}
         </select>
       </div>
-
-      <div className="py-2 px-2 text-sm text-gray-400">Year: </div>
-      <div className="flex-1 border border-blue-100 m-1">
+      <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">Year: </div>
+      <div className="flex">
         <select
-          className="pl-3 py-2 mr-2 flex items-center justify-between text-sm"
+          className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
           value={year}
           onChange={(e) =>
             setFilters({ ...filters, year: { value: e.target.value } })
@@ -156,6 +146,14 @@ export const AcsChartFilters = ({
             </option>
           ))}
         </select>
+      </div>
+      <div className="flex px-2 ml-auto">
+        <Button
+          themeOptions={{ size: "sm", color: "primary" }}
+          onClick={downloadImage}
+        >
+          Download
+        </Button>
       </div>
     </div>
   );

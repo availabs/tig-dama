@@ -389,11 +389,11 @@ export const BPMMapFilter = ({
 
 
   return (
-    <div className='flex flex-1'>
-        <div className="py-3.5 px-2 text-sm text-gray-400">ID :</div>
-        <div className="flex-1 border border-blue-100 m-1">
+    <div className='flex justify-start content-center flex-wrap w-full p-1'>
+        <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">ID :</div>
+        <div className="flex">
           <select
-            className="pl-3 pr-4 py-2.5 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
+            className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
             value={projectIdFilterValue || ""}
             onChange={(e) => setFilters({ projectId: { value: e.target.value } })}
           >
@@ -403,10 +403,10 @@ export const BPMMapFilter = ({
             {idFilterOptions}
           </select>
         </div>
-        <div className='py-3.5 px-2 text-sm text-gray-400'>Variable : </div>
-        <div className='flex-1 border border-blue-100 m-1'>
+        <div className='flex py-3.5 px-2 text-sm text-gray-400 capitalize'>Variable : </div>
+        <div className='flex'>
           <select
-              className="pl-3 pr-4 py-2.5 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
+              className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
               value={variable || ''}
               onChange={(e) => setFilters({'activeVar' :{ value: e.target.value}})}
             >
@@ -417,24 +417,24 @@ export const BPMMapFilter = ({
               ))}
           </select>
         </div>
-        <div className='py-3.5 px-2 text-sm text-gray-400'>Time period : </div>
-        <div className='flex-1 border border-blue-100 m-1'>
+        <div className='flex py-3.5 px-2 text-sm text-gray-400 capitalize'>Time period : </div>
+        <div className='flex'>
           <select
-              className="pl-3 pr-4 py-2.5 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
+              className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
               value={timePeriod || ''}
               onChange={(e) => setFilters({'period' :{ value: e.target.value}})}
             >
               {allTimePeriods?.filter(d => d && d !== 'null').map((v,i) => (
                 <option key={i} className="ml-2  truncate" value={v}>
-                  {v}
+                  {v?.replace("_"," ")}
                 </option>
               ))}
           </select>
         </div>
-        <div className='py-3.5 px-2 text-sm text-gray-400'>Functional class : </div>
-        <div className='flex-1 border border-blue-100 m-1'>
+        <div className='flex py-3.5 px-2 text-sm text-gray-400 capitalize'>Functional class : </div>
+        <div className='flex'>
           <select
-              className="pl-3 pr-4 py-2.5  bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
+              className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
               value={functionalClass || ''}
               onChange={(e) => setFilters({'functional_class' :{ value: e.target.value}})}
             >
@@ -445,7 +445,7 @@ export const BPMMapFilter = ({
               ))}
           </select>
         </div>
-        <div className="px-2 m-2">
+        <div className="flex px-2 ml-auto">
           <MapDataDownloader
             timePeriod={timePeriod}
             functionalClass={functionalClass}

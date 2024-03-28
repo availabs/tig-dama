@@ -97,18 +97,11 @@ const SedChartFilterCounty = ({ source, filters, setFilters, node }) => {
   }, [node, activeVar]);
 
   return (
-    <div className="flex border-blue-100">
-      <div className="px-2 m-2">
-        <Button themeOptions={{size:'sm', color: 'primary'}}
-          onClick={ downloadImage }
-        >
-          Download
-        </Button>
-      </div>
-      <div className="py-3.5 px-2 text-sm text-gray-400">Area: </div>
-      <div className="flex-none w-48 border border-blue-100 m-1">
+    <div className="flex w-full p-1">
+      <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">Area: </div>
+      <div className="flex">
         <select
-          className="pl-3 pr-4 py-2.5  bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
+          className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
           value={area}
           onChange={(e) =>
             setFilters({
@@ -130,10 +123,10 @@ const SedChartFilterCounty = ({ source, filters, setFilters, node }) => {
           ))}
         </select>
       </div>
-      <div className="py-3.5 px-2 text-sm text-gray-400">Summarize: </div>
-      <div className="flex-none w-48 border border-blue-100 m-1">
+      <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">Summarize: </div>
+      <div className="flex">
         <select
-          className="pl-3 pr-4 py-2.5 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
+          className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
           value={summarize}
           onChange={(e) =>
             setFilters({ ...filters, summarize: { value: e.target.value } })
@@ -153,10 +146,10 @@ const SedChartFilterCounty = ({ source, filters, setFilters, node }) => {
           ) : null}
         </select>
       </div>
-      <div className="py-3.5 px-2 text-sm text-gray-400">Variable: </div>
-      <div className="flex-none w-64 border border-blue-100 m-1">
+      <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">Variable: </div>
+      <div className="flex">
         <select
-          className="pl-3 pr-4 py-2.5 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
+          className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
           value={activeVar}
           onChange={(e) =>
             setFilters({ ...filters, activeVar: { value: e.target.value } })
@@ -171,6 +164,13 @@ const SedChartFilterCounty = ({ source, filters, setFilters, node }) => {
             </option>
           ))}
         </select>
+      </div>
+      <div className="flex ml-auto">
+        <Button themeOptions={{size:'sm', color: 'primary'}}
+          onClick={ downloadImage }
+        >
+          Download
+        </Button>
       </div>
     </div>
   );

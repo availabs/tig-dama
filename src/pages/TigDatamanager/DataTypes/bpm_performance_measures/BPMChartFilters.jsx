@@ -123,36 +123,11 @@ export const BPMChartFilters = ({
   }, [node, activeVar]);
 
   return (
-    <div className="flex flex-1 border-blue-100">
-      {/*<div className="py-3.5 px-2 text-sm text-gray-400">Area: </div>
-      <div className="flex-1" style={{ width: "min-content" }}>
+    <div className="flex justify-start content-center flex-wrap w-full p-1">
+      <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">Summarize: </div>
+      <div className="flex">
         <select
-          className="pl-3 pr-4 py-2.5 border border-blue-100 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
-          value={area}
-          onChange={(e) =>
-            setFilters({
-              ...filters,
-              area: { value: e.target.value },
-              summarize: {
-                value: e.target.value === "all" ? summarize : "county",
-              },
-            })
-          }
-        >
-          <option className="ml-2  truncate" value={"all"}>
-            All
-          </option>
-          {(areas || []).map((area, i) => (
-            <option key={i} className="ml-2  truncate" value={area}>
-              {area}
-            </option>
-          ))}
-        </select>
-      </div>*/}
-      <div className="py-3.5 px-2 text-sm text-gray-400">Summarize: </div>
-      <div className="flex-1">
-        <select
-          className="pl-3 pr-4 py-2.5 border border-blue-100 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
+          className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
           value={summarize}
           onChange={(e) =>
             setFilters({ ...filters, summarize: { value: e.target.value } })
@@ -172,56 +147,56 @@ export const BPMChartFilters = ({
           ) : null}
         </select>
       </div>
-      <div className='py-3.5 px-2 text-sm text-gray-400'>Variable : </div>
-        <div className='flex-1'>
-          <select
-              className="pl-3 pr-4 py-2.5 border border-blue-100 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
-              value={activeVar || ''}
-              onChange={(e) => setFilters({'activeVar' :{ value: e.target.value}})}
-            >
-              {variableClasses?.filter(d => d).map((v,i) => (
-                <option key={i} className="ml-2  truncate" value={v}>
-                  {v}
-                </option>
-              ))}
-          </select>
-        </div>
-        <div className='py-3.5 px-2 text-sm text-gray-400'>Time period : </div>
-        <div className='flex-1'>
-          <select
-              className="pl-3 pr-4 py-2.5 border border-blue-100 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
-              value={timePeriod || ''}
-              onChange={(e) => setFilters({'period' :{ value: e.target.value}})}
-            >
-              {allTimePeriods?.filter(d => d && d !== 'null').map((v,i) => (
-                <option key={i} className="ml-2  truncate" value={v}>
-                  {v}
-                </option>
-              ))}
-          </select>
-        </div>
-        <div className='py-3.5 px-2 text-sm text-gray-400'>Functional class : </div>
-        <div className='flex-1'>
-          <select
-              className="pl-3 pr-4 py-2.5 border border-blue-100 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
-              value={functionalClass || ''}
-              onChange={(e) => setFilters({'functional_class' :{ value: e.target.value}})}
-            >
-              {allFunctionalClasses?.filter(d => d && d !== 'null').map((v,i) => (
-                <option key={i} className="ml-2  truncate" value={v}>
-                  {v}
-                </option>
-              ))}
-          </select>
-        </div>
-        <div className='px-4'>
-            <Button
-            themeOptions={{ size: "sm", color: "primary" }}
-            onClick={downloadImage}
+      <div className='flex py-3.5 px-2 text-sm text-gray-400 capitalize'>Variable : </div>
+      <div className='flex'>
+        <select
+            className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
+            value={activeVar || ''}
+            onChange={(e) => setFilters({'activeVar' :{ value: e.target.value}})}
           >
-            Download
-          </Button>
-        </div>
+            {variableClasses?.filter(d => d).map((v,i) => (
+              <option key={i} className="ml-2  truncate" value={v}>
+                {v}
+              </option>
+            ))}
+        </select>
+      </div>
+      <div className='flex py-3.5 px-2 text-sm text-gray-400 capitalize'>Time period : </div>
+      <div className='flex'>
+        <select
+            className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
+            value={timePeriod || ''}
+            onChange={(e) => setFilters({'period' :{ value: e.target.value}})}
+          >
+            {allTimePeriods?.filter(d => d && d !== 'null').map((v,i) => (
+              <option key={i} className="ml-2  truncate" value={v}>
+                {v?.replace("_"," ")}
+              </option>
+            ))}
+        </select>
+      </div>
+      <div className='flex py-3.5 px-2 text-sm text-gray-400 capitalize'>Functional class : </div>
+      <div className='flex'>
+        <select
+            className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
+            value={functionalClass || ''}
+            onChange={(e) => setFilters({'functional_class' :{ value: e.target.value}})}
+          >
+            {allFunctionalClasses?.filter(d => d && d !== 'null').map((v,i) => (
+              <option key={i} className="ml-2  truncate" value={v}>
+                {v}
+              </option>
+            ))}
+        </select>
+      </div>
+      <div className='flex ml-auto'>
+        <Button
+          themeOptions={{ size: "sm", color: "primary" }}
+          onClick={downloadImage}
+        >
+          Download
+        </Button>
+      </div>
     </div>
   );
 };

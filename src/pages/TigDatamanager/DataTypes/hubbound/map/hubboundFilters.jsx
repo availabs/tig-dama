@@ -21,7 +21,7 @@ const HubboundFilters = ({ filters, setFilters, filterType = "mapFilter" }) => {
   }, []);
 
   return (
-    <div className="flex flex-wrap flex-1 border-blue-100 pb-1 justify-start gap-1 p-2">
+    <div className="flex flex-wrap flex-1 border-blue-100 pb-1 justify-start gap-y-2">
       {Object.keys(HUBBOUND_ATTRIBUTES).filter(attrKey => HUBBOUND_ATTRIBUTES[attrKey][filterType]).map(attrName => {
         return <FilterInput key={`filter_input_${attrName}`} setFilters={setFilters} filters={filters} name={attrName} attribute={HUBBOUND_ATTRIBUTES[attrName]} value={filters[attrName]?.value || ""}/>
       })}
@@ -37,10 +37,10 @@ const FilterInput = ({ attribute, name, value, setFilters, filters }) => {
       <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">
         {name.split("_").join(" ")}:
       </div>
-      {type !== "range" && <div className="flex pl-2 pr-1">
-        <div className="border  border-blue-100 rounded">
+      { type !== "range" && (
+        <div className="flex">
           <select
-            className="pl-3 pr-4 py-2.5  w-full bg-white mr-2 flex text-sm capitalize"
+            className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
             value={inputValue}
             onChange={(e) =>
               setFilters({
@@ -56,9 +56,9 @@ const FilterInput = ({ attribute, name, value, setFilters, filters }) => {
             ))}
           </select>
         </div>
-      </div>}
-      {type === "range" && (
-        <div className="grid border border-blue-100 rounded p-2">
+      )}
+      { type === "range" && (
+        <div className="grid p-2 mx-2">
           <div className="flex">
             <ReactSlider
                 className="w-64 h-8 mt-2 self-center"

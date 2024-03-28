@@ -263,21 +263,21 @@ const SedMapFilter = (props) => {
     });
 
   return (
-    <div className="flex flex-1 border-blue-100">
-    <div className="py-3.5 px-2 text-sm text-gray-400">ID :</div>
-    <div className="flex-1 border border-blue-100 m-1">
-      <select
-        className="pl-3 pr-4 py-2.5  bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
-        value={projectIdFilterValue || ""}
-        onChange={(e) => setFilters({ projectId: { value: e.target.value } })}
-      >
-        <option className="ml-2  truncate" value={""}>
-          None
-        </option>
-        {idFilterOptions}
-      </select>
-    </div>
-      <div className="py-3.5 px-2 text-sm text-gray-400">Year:</div>
+    <div className="flex justify-start content-center flex-wrap mx-px my-2 w-full">
+      <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">ID :</div>
+      <div className="flex">
+        <select
+          className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
+          value={projectIdFilterValue || ""}
+          onChange={(e) => setFilters({ projectId: { value: e.target.value } })}
+        >
+          <option className="ml-2  truncate" value={""}>
+            None
+          </option>
+          {idFilterOptions}
+        </select>
+      </div>
+      <div className="flex py-3.5 pl-2 pr-2 text-sm text-gray-400 capitalize">Year:</div>
         <div className="flex-1">
           <div className='px-6'>
           <input type="range" 
@@ -305,11 +305,10 @@ const SedMapFilter = (props) => {
           </datalist>
         
         </div>
-
-      <div className="py-3.5 ms-3 px-2 text-sm text-gray-400">Variable: </div>
-      <div className="m-1 border border-blue-100">
+      <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">Variable: </div>
+      <div className="flex">
         <select
-          className="pl-3 pr-4 py-2.5  bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
+          className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
           value={varType}
           onChange={(e) =>
             setFilters({
@@ -327,7 +326,6 @@ const SedMapFilter = (props) => {
           ))}
         </select>
       </div>
-
       <MapDataDownloader
         variable={ get(varList, [varType, "name"]) }
         activeViewId={ activeViewId }
@@ -399,14 +397,14 @@ const MapDataDownloader = ({ activeViewId, activeVar, variable, year }) => {
   }, [falcorCache, pgEnv, activeViewId, variable, activeVar, year]);
 
   return (
-    <div className="px-2 m-2">
+
       <Button themeOptions={{size:'sm', color: 'primary'}}
         onClick={ downloadData }
         disabled={ loading }
       >
         Download
       </Button>
-    </div>
+
   )
 }
 
@@ -454,10 +452,10 @@ const SedTableFilter = ({ source, filters, setFilters, data, columns }) => {
     <div className="flex flex-1 border-blue-100">
       <div className='flex flex-1'>
         <div className='flex-1' /> 
-        <div className="py-3.5 px-2 text-sm text-gray-400">Variable: </div>
-        <div className="px-2 border border-blue-100 m-1">
+        <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">Variable: </div>
+        <div className="flex my-1">
           <select
-            className="pl-3 pr-4 py-2.5  bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
+            className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
             value={activeVar}
             onChange={(e) =>
               setFilters({ ...filters, activeVar: { value: e.target.value } })

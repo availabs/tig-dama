@@ -107,14 +107,12 @@ const MapDataDownloader = ({
   }, [falcorCache, pgEnv, tempViewId, activeVar, year]);
 
   return (
-    <>
-      <Button
-        themeOptions={{ size: "sm", color: "primary" }}
-        onClick={downloadData}
-      >
-        Download
-      </Button>
-    </>
+    <Button
+      themeOptions={{ size: "sm", color: "primary" }}
+      onClick={downloadData}
+    >
+      Download
+    </Button>
   );
 };
 
@@ -427,11 +425,11 @@ const ACSMapFilter = ({
   ]);
 
   return (
-    <div className="flex flex-1 border-blue-100">
-      <div className="py-3.5 px-2 text-sm text-gray-400">Variable: </div>
-      <div className="flex-1 border border-blue-100 m-1">
+    <div className="flex justify-start content-center flex-wrap w-full p-1">
+      <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">Variable: </div>
+      <div className="flex">
         <select
-          className="pl-3 pr-4 py-2.5  bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
+          className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
           value={activeVar}
           onChange={(e) => {
             setFilters({
@@ -448,10 +446,10 @@ const ACSMapFilter = ({
         </select>
       </div>
 
-      <div className="py-3.5 px-2 text-sm text-gray-400">Type: </div>
-      <div className="flex-1 border border-blue-100 m-1">
+      <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">Type: </div>
+      <div className="flex">
         <select
-          className="pl-3 pr-4 py-2.5  bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
+          className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
           value={geometry}
           onChange={(e) => {
             setFilters({
@@ -469,10 +467,10 @@ const ACSMapFilter = ({
           ))}
         </select>
       </div>
-      <div className="py-3.5 px-2 text-sm text-gray-400">Year:</div>
-      <div className="border border-blue-100 m-1">
+      <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">Year:</div>
+      <div className="flex">
         <select
-          className="pl-3 pr-4 py-2.5 border border-blue-100 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
+          className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
           value={year}
           onChange={(e) => {
             setFilters({
@@ -491,7 +489,7 @@ const ACSMapFilter = ({
         </select>
       </div>
 
-      <div className="px-2 m-2 text-sm text-gray-400">
+      <div className=" flex px-2 ml-auto">
         <MapDataDownloader
           activeViewId={activeViewId}
           variable={activeVar}

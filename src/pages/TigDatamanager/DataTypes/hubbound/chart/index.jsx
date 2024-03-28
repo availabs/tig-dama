@@ -153,14 +153,14 @@ const ChartPage = (props) => {
   return (
     <div>
       <div className="flex justify-start content-center flex-wrap">
-        <div className="flex">
+        <div className="flex w-full">
           <ChartFilter
             filters={chartFilters}
             setFilters={setChartFilters}
             node={ref}
           />
         </div>
-        <div className="flex">
+        <div className="flex mt-4">
           <HubboundFilter filters={filters} setFilters={setFilters} filterType={"chartFilter"}/>
         </div>
       </div>

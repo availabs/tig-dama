@@ -310,13 +310,13 @@ const ProjectMapFilter = ({
   }
 
   return (
-    <div className="flex flex-1">
-      <div className="py-3.5 px-2 text-sm text-gray-400">
+    <div className="flex justify-start content-center flex-wrap p-1">
+      <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">
         {projectKey === "rtp_id" ? "RTP" : "TIP"} ID :{" "}
       </div>
-      <div className="flex-2 border border-blue-100 m-1">
+      <div className="flex">
         <select
-          className="pl-3 pr-4 py-2.5 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
+          className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
           value={projectIdFilterValue || ""}
           onChange={(e) => setFilters({ projectId: { value: e.target.value } })}
         >
@@ -330,10 +330,10 @@ const ProjectMapFilter = ({
           ))}
         </select>
       </div>
-      <div className="py-3.5 px-2 text-sm text-gray-400">Project Type: </div>
-      <div className="flex-1 border border-blue-100 m-1">
+      <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">Project Type: </div>
+      <div className="flex">
         <select
-          className="pl-3 pr-4 py-2.5 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
+          className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
           value={projectTypeFilterValue || ""}
           onChange={(e) => setFilters({ ptype: { value: e.target.value } })}
         >
@@ -347,10 +347,10 @@ const ProjectMapFilter = ({
           ))}
         </select>
       </div>
-      <div className="py-3.5 px-2 text-sm text-gray-400">Sponsor: </div>
-      <div className="flex-1 border border-blue-100 m-1">
+      <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">Sponsor: </div>
+      <div className="flex">
         <select
-          className="pl-3 pr-4 py-2.5 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
+          className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
           value={sponsorFilterValue || ""}
           onChange={(e) => setFilters({ sponsor: { value: e.target.value } })}
         >
@@ -366,12 +366,12 @@ const ProjectMapFilter = ({
       </div>
       {projectKey === "rtp_id" && (
         <>
-          <div className="py-3.5 px-2 text-sm text-gray-400">
+          <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">
             Plan Portion:{" "}
           </div>
-          <div className="flex-1 border border-blue-100 m-1">
+          <div className="flex">
             <select
-              className="pl-3 pr-4 py-2.5 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
+              className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
               value={planPortionFilterValue || ""}
               onChange={(e) =>
                 setFilters({ plan_portion: { value: e.target.value } })
@@ -389,7 +389,7 @@ const ProjectMapFilter = ({
           </div>
         </>
       )}
-      <div className="px-2 m-2">
+      <div className="flex mx-2">
         <MapDataDownloader
           activeViewId={activeDataVersionId}
           projectKey={projectKey}
@@ -496,15 +496,13 @@ const MapDataDownloader = ({ activeViewId, projectKey, metadataColumns }) => {
   }, [falcorCache, pgEnv, activeViewId, projectKey]);
 
   return (
-    <div>
-      <Button
-        themeOptions={{ size: "sm", color: "primary" }}
-        onClick={downloadData}
-        disabled={loading}
-      >
-        Download
-      </Button>
-    </div>
+    <Button
+      themeOptions={{ size: "sm", color: "primary" }}
+      onClick={downloadData}
+      disabled={loading}
+    >
+      Download
+    </Button>
   );
 };
 
