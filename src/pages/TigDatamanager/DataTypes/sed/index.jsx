@@ -62,6 +62,7 @@ export const tig_sed_taz = {
         transform={SedTableTransform}
         TableFilter={SedTableFilter}
         fullWidth={true}
+        striped={true}
       />
     ),
   },
@@ -140,6 +141,7 @@ export const tig_sed_county = {
         transform={SedTableTransform}
         TableFilter={SedTableFilter}
         fullWidth={true}
+        striped={true}
       />
     ),
   },

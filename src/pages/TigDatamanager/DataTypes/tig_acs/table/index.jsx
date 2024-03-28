@@ -318,7 +318,7 @@ const TablePage = ({
         <ViewSelector views={views} />
       </div>
       <div className={tableContainerClassName} style={tableContainerStyle}>
-        <Table data={data} columns={columns} pageSize={50} />
+        <Table data={data} columns={columns} pageSize={50} striped={true}/>
       </div>
     </div>
   );

@@ -58,6 +58,7 @@ const GisDatasetConfig = {
         showViewSelector={true}
         transform={ProjectTableTransform}
         fullWidth={true}
+        striped={true}
       />
     ),
   },

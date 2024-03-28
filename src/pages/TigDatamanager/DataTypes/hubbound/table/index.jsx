@@ -138,7 +138,7 @@ const TablePage = ({
 
   return (
     <div className={containerClassName} style={containerStyle}>
-      <Table data={data} columns={columns} pageSize={15} />
+      <Table data={data} columns={columns} pageSize={15} striped={true}/>
     </div>
   );
 };

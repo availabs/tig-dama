@@ -46,6 +46,7 @@ const config = {
     component: (props) => (
       <Table
         {...props}
+        striped={true}
         showViewSelector={false}
         transform={BPMTableTransform}
         TableFilter={HBTableFilter}
