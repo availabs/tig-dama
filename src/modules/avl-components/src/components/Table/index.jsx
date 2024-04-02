@@ -158,11 +158,11 @@ export default ({
     // pagination utils
     const onNextPage = useCallback(() => {
         setCurrentPage((prevPage) => prevPage + 1);
-        onPageChange(currentPage + 1)
+        onPageChange((prevPage) => prevPage + 1);
     }, []);
     const onPrevPage = useCallback(() => {
         setCurrentPage((prevPage) => prevPage - 1);
-        onPageChange(currentPage - 1)
+        onPageChange((prevPage) => prevPage - 1);
     }, []);
 
     const onPageSelect = useCallback((pageNo) => {
