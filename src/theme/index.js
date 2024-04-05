@@ -401,13 +401,12 @@ const ppdaf = () => {
                 small: 'w-64',
                 large: 'sm:max-w-5xl',
                 xlarge: 'sm:max-w-8xl'
-
             }
             
             return {
                 modalContainer: `${overlay === 'default' ? '' : 'pointer-events-none'} fixed bottom-0 inset-x-0 px-4 pb-4 inset-0 flex items-center justify-center`,
                 modalOverlay: overlays[overlay],
-                modal: `${sizes[size]} w-full  pointer-events-auto bg-white rounded-lg overflow-hidden shadow-xl transform transition-all`,
+                modal: `${sizes[size]} p-6 w-full pointer-events-auto bg-white rounded-lg overflow-hidden shadow-xl transform transition-all`,
                 vars: {
                     size: sizes,
                     overlay: overlays
