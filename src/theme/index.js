@@ -397,7 +397,7 @@ const ppdaf = () => {
             }
 
             let sizes = {
-                base: 'sm:max-w-2xl',
+                base: 'sm:max-w-8xl',
                 small: 'w-64',
                 large: 'sm:max-w-5xl',
                 xlarge: 'sm:max-w-8xl'
@@ -406,7 +406,7 @@ const ppdaf = () => {
             return {
                 modalContainer: `${overlay === 'default' ? '' : 'pointer-events-none'} fixed bottom-0 inset-x-0 px-4 pb-4 inset-0 flex items-center justify-center`,
                 modalOverlay: overlays[overlay],
-                modal: `${sizes[size]} p-6 w-full pointer-events-auto bg-white rounded-lg overflow-hidden shadow-xl transform transition-all`,
+                modal: `${sizes[size]} p-6 w-full max-h-[900px] pointer-events-auto bg-white rounded-lg overflow-auto shadow-xl transform transition-all`,
                 vars: {
                     size: sizes,
                     overlay: overlays
