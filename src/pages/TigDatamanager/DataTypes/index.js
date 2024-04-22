@@ -7,6 +7,7 @@ import upwp_projects from './upwp_projects';
 import tig_project from './project'
 
 import hubbound from './hubbound';
+import npmrds from './npmrds';
 
 import tiger_full from './tiger_full'
 
@@ -22,6 +23,7 @@ const tigDataTypes = {
   tig_bpm_perfomance_measures,
   tig_project,
   upwp_projects,
+  npmrds,
 
   //ACS
   tiger_full
