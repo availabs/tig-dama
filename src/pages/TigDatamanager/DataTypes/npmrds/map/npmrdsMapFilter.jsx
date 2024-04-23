@@ -17,6 +17,10 @@ const GEOM_TYPES = {
 const API_HOST = 'https://tigtest2.nymtc.org/api2/graph'
 const tig_falcor = falcorGraph(API_HOST)
 const GEO_LEVEL = 'COUNTY';
+//TODO
+//How to get available months/years? tig22 doesn't list all months for all years
+//What is `day of week`?
+//What is `vehicle class`?
 const npmrdsMapFilter = ({
   filters,
   setFilters,
@@ -30,23 +34,29 @@ const npmrdsMapFilter = ({
   const year =  filters?.year?.value;
   const month = filters?.month?.value;
   const hour = filters?.hour?.value;
+  const direction = filters?.direction?.value;
   const tmc = filters?.tmc?.value;
 
   useEffect(() => {
-    const newFilters = {...filters};
+    const newFilters = { ...filters };
     if (!year) {
-      newFilters.year = { value: 2020}
+      newFilters.year = { value: 2020 };
     }
-    if (!month){
-      newFilters.month = {value : NPMRDS_ATTRIBUTES['month'].values[5]}
+    if (!month) {
+      newFilters.month = { value: NPMRDS_ATTRIBUTES["month"].values[5] };
     }
-    if(!hour){
-      newFilters.hour = {value: NPMRDS_ATTRIBUTES['hour'].values[0]}
+    if (!hour) {
+      newFilters.hour = { value: NPMRDS_ATTRIBUTES["hour"].values[0] };
     }
-    if(!tmc){
-      newFilters.tmc = {value: ""}
+    if (!direction) {
+      newFilters.direction = {
+        value: NPMRDS_ATTRIBUTES["direction"].values[0],
+      };
     }
-    setFilters(newFilters)
+    if (!tmc) {
+      newFilters.tmc = { value: "" };
+    }
+    setFilters(newFilters);
   }, []);
 
   useEffect(() => {
@@ -66,6 +76,9 @@ const npmrdsMapFilter = ({
 
     if (tmc && tmc !== "") {
       getTmcGeom();
+    }
+    else{
+      setTmcBounds();
     }
   }, [tmc]);
 
@@ -111,7 +124,7 @@ const npmrdsMapFilter = ({
           return a;
       }, {});
 
-      newSymbology.layers = LAYERS.map(layer => ({
+      newSymbology.layers = [...(newSymbology.layers ?? LAYERS)].map(layer => ({
         ...layer,
           paint: {
             "line-color": [
@@ -170,6 +183,31 @@ const npmrdsMapFilter = ({
       //   }
       // });
 
+
+        //Determine which filters are active;
+        const directionFilterActive = direction && direction.toLowerCase() !== "all";
+        const filteredData = Object.keys(data)
+          .filter((tmcId) => data[tmcId].direction === direction.substring(0, 1))
+          .map((tmcId) => (tmcId))
+        
+
+        if (directionFilterActive) {
+          newSymbology.filter = {};
+          newSymbology.filter.dataIds = filteredData;
+          newSymbology.filter.dataKey = "tmc"
+        } else {
+          newSymbology.filter = null;
+        }
+        if (tmcBounds) {
+          newSymbology.fitToBounds = tmcBounds;
+          newSymbology.fitZoom = 14.5;
+        }
+        else {
+          newSymbology.fitToBounds = null;
+          newSymbology.fitZoom = null;
+        }
+
+
       if (!isEqual(newSymbology, tempSymbology)) {
         console.log("setting new newSymbology, newSymb layers");
         setTempSymbology(newSymbology);
@@ -182,22 +220,7 @@ const npmrdsMapFilter = ({
       getData();
     }
 
-  },[filters])
-
-  useEffect(() => {
-    if (tmcBounds) {
-      newSymbology.fitToBounds = tmcBounds;
-      newSymbology.fitZoom = 14.5;
-    }
-    else {
-      newSymbology.fitToBounds = null;
-      newSymbology.fitZoom = null;
-    }
-    if (!isEqual(newSymbology, tempSymbology)) {
-      console.log("setting new newSymbology, zoom to TMC");
-      setTempSymbology(newSymbology);
-    }
-  }, [tmcBounds])
+  },[filters, tmcBounds]);
 
   const filterSettings = {...NPMRDS_ATTRIBUTES, tmc: {...NPMRDS_ATTRIBUTES.tmc, values: [""].concat(allTmcs)}};
   return (
