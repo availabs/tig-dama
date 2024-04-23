@@ -1,124 +1,19 @@
-import {useEffect, useContext} from "react";
+import {useEffect, useState, useMemo} from "react";
 import cloneDeep from 'lodash/cloneDeep'
 import isEqual from 'lodash/isEqual'
 import { NPMRDS_ATTRIBUTES } from "../constants";
 import * as d3scale from "d3-scale"
-import { useSearchParams } from "react-router-dom";
+import mapboxgl from "maplibre-gl";
 import { DamaContext } from "~/pages/DataManager/store";
 import get from "lodash/get";
 import {
   falcorGraph,
 } from "~/modules/avl-components/src"
 
-const LEGEND_RANGE = ['rgb(255,0,0)', 'rgb(255,100,0)', 'rgb(255,255,0)', 'rgb(0,100,255)', 'rgb(0,0,255)', 'rgb(0,255,255)', 'rgb(0,255,0)']
-const LEGEND_DOMAIN = [0, 10, 20, 30, 40, 50, 55];
-const npmrdsPaint = {
-  'line-color': '#ccc',
-  'line-width': [
-    "interpolate",
-    ["linear"],
-    ["zoom"],
-    0,
-    [
-      "match",
-      ["get", "n"],
-      [1, 2],
-      0.5,
-      0
-    ],
-    13,
-    [
-      "match",
-      ["get", "n"],
-      [1, 2],
-      1.5,
-      1
-    ],
-    18,
-    [
-      "match",
-      ["get", "n"],
-      [1, 2],
-      8,
-      5
-    ]
-  ],
-  'line-opacity': [
-    "case",
-    ["boolean", ["feature-state", "hover"], false],
-    0.4,
-    1
-  ],
-  'line-offset': {
-    base: 1.5,
-    stops: [[5, 0], [9, 1], [15, 3], [18, 7]]
-  }
-}
-
-const NpmrdsLayers = ['2016','2017','2018','2019','2020','2021']
-  .map(year => {
-    return {
-      id: `tmc-${year}`,
-      type: 'line',
-      source: 'npmrds',
-      beneath: 'waterway-label',
-      'source-layer': `npmrds_${year}`,
-      layout: {
-        'visibility': 'visible',
-        'line-join': 'round',
-        'line-cap': 'round'
-      },
-      paint: npmrdsPaint
-    }
-  })
-
-
-
-const NpmrdsSources = [
-  { id: "npmrds",
-    source: {
-      type: "vector",
-      url: "https://tiles.availabs.org/data/npmrds.json"
-    }
-  }
-]
-const TrafficSignalsSources = [
-  { id: "traffic_signals",
-    source: {
-      type: "vector",
-      url: "https://tiles.availabs.org/data/osm_traffic_signals.json"
-    }
-  }
-]
-const SOURCES = [
-  ...NpmrdsSources,
-  ...TrafficSignalsSources,
-  {
-      id: "geo-boundaries-source",
-      source: {
-          type: "geojson",
-          data: {
-              type: "FeatureCollection",
-              features: []
-          }
-      }
-  },
-]
-const LAYERS = [
-  // ...ConflationLayerCase,
-  ...NpmrdsLayers,
-  // ...TrafficSignalsLayers,
-  {
-      id: "geo-boundaries",
-      type: "line",
-      source: "geo-boundaries-source",
-      paint: {
-          "line-color": "#fff"
-      }
-  }
-]
-
-
+import {LAYERS, LEGEND_RANGE, LEGEND_DOMAIN, SOURCES} from './mapConstants'
+const GEOM_TYPES = {
+  LineString: "LineString",
+};
 const API_HOST = 'https://tigtest2.nymtc.org/api2/graph'
 const tig_falcor = falcorGraph(API_HOST)
 const GEO_LEVEL = 'COUNTY';
@@ -127,111 +22,159 @@ const npmrdsMapFilter = ({
   setFilters,
   filterType = "mapFilter",
   tempSymbology, 
-  setTempSymbology,
-  activeViewId
+  setTempSymbology
 }) => {
-
-  const [searchParams] = useSearchParams();
-  const activeDataVersionId = parseInt(searchParams.get("variable")) || activeViewId;
+  const [allTmcs, setAllTmcs] = useState([]);
+  const [tmcBounds, setTmcBounds] = useState();
   let newSymbology = cloneDeep(tempSymbology);
   const year =  filters?.year?.value;
   const month = filters?.month?.value;
   const hour = filters?.hour?.value;
-  const geoid = filters?.geoid?.value;
+  const tmc = filters?.tmc?.value;
+
   useEffect(() => {
     const newFilters = {...filters};
-    console.log(NPMRDS_ATTRIBUTES)
     if (!year) {
-      newFilters.year = { value: NPMRDS_ATTRIBUTES['year'].values[0] }
+      newFilters.year = { value: 2020}
     }
     if (!month){
-      newFilters.month = {value : NPMRDS_ATTRIBUTES['month'].values[0]}
+      newFilters.month = {value : NPMRDS_ATTRIBUTES['month'].values[5]}
     }
     if(!hour){
       newFilters.hour = {value: NPMRDS_ATTRIBUTES['hour'].values[0]}
     }
-    if(!geoid){
-      newFilters.geoid = {value: NPMRDS_ATTRIBUTES['geoid'].values[0]}
+    if(!tmc){
+      newFilters.tmc = {value: ""}
     }
     setFilters(newFilters)
   }, []);
 
-  const getColorScale = (domain) => {
-    if (LEGEND_RANGE.length > domain.length) {
-        domain = []
-        return false
+  useEffect(() => {
+    async function getTmcGeom() {
+      const tmcGeometryPath = ["tmc", tmc, "year", year, "geometries"];
+      let getTmcResponse = await tig_falcor.get(tmcGeometryPath);
+
+      const tmcGeom = get(getTmcResponse, ["json", ...tmcGeometryPath]);
+      console.log("filtered to geometries::", tmcGeom);
+      if (tmcGeom?.type === GEOM_TYPES["LineString"]) {
+        const coordinates = tmcGeom.coordinates;
+        setTmcBounds(coordinates.reduce((bounds, coord) => {
+          return bounds.extend(coord);
+        }, new mapboxgl.LngLatBounds(coordinates[0], coordinates[0])));
+      }
     }
-    domain = [0, 10, 20, 30, 40, 50, 55]
-    //ckmeans(domain,this.legend.range.length).map(d => Math.min(...d))
-    //this.updateLegend(this.filters, this.legend)
-    return d3scale.scaleThreshold()
-        .domain(domain)
-        .range(LEGEND_RANGE);
-}
+
+    if (tmc && tmc !== "") {
+      getTmcGeom();
+    }
+  }, [tmc]);
 
   useEffect(() => {
     async function getData() {    
       // geoids = filters.geography.domain.filter(d => d.name === filters.geography.value)[0].value,
-      const geoDataPath = ["tig", "npmrds", `${month}|${year}`, `${GEO_LEVEL}|${geoid}`, "data"];
-      const boundingGeometryPath = ["geo", GEO_LEVEL.toLowerCase(), "36061", "geometry"]
-      const requests = [
-        geoDataPath,
-        boundingGeometryPath,
-      ];
-      // console.log({geometries})
-      // console.log({requests})
+
+      let requests = NPMRDS_ATTRIBUTES['counties'].values.reduce((a, c) => {
+          a.push(['tig', 'npmrds', `${month}|${year}`, `${GEO_LEVEL}|${c}`, 'data'])
+          // a.push(["geo", GEO_LEVEL.toLowerCase(), `${c}`, "geometry"]);
+          return a;
+      }, [])
+
       const response = await tig_falcor.get(...requests);
-      const data = get(response, ['json', ...geoDataPath ])
-      console.log("data::", data)
-      console.log("newSymbology", newSymbology)
-      if (!newSymbology?.source) {
-        newSymbology.sources = SOURCES;
-        const source_id = newSymbology?.sources?.[0]?.id || "0";
-        const source_layer = `s${source_id}_v${activeDataVersionId}`;
-        console.log("data inside setting source", data)
-
-        const scale = d3scale.scaleThreshold()
-          .domain(LEGEND_DOMAIN)
-          .range(LEGEND_RANGE)
-
-        const colors = Object.keys(data).reduce((a, c) => {
-            let val = scale(get(data[c], `s[${hour}]`, 0))
-            a[c] = val ? val : 'hsla(185, 0%, 27%,0.8)'
-            return a;
-        }, {});
-
-        newSymbology.layers = LAYERS.map(layer => ({
-          ...layer,
-          ...(NPMRDS_ATTRIBUTES['year'].values.map(year => ({
-            paint: {
-              "line-color": [
-                "case",
-                ["has", ["to-string", ["get", 'tmc']], ["literal", colors]],
-                ["get", ["to-string", ["get", 'tmc']], ["literal", colors]],
-                "hsla(185, 0%, 27%,0.0)",
+      const data = NPMRDS_ATTRIBUTES['counties'].values
+        .map((d) =>
+          get(
+            response,
+            [
+              "json",
+              "tig",
+              "npmrds",
+              `${month}|${year}`,
+              `${GEO_LEVEL}|${d}`,
+              "data",
             ],
-              "line-width": 3,
-            }
-          })))
-        }));
+            []
+          )
+        )
+        .reduce((out, d) => ({ ...out, ...d }), {});
 
-        newSymbology.legend =  {
-          type: "threshold",
-          domain: LEGEND_DOMAIN,
-          range: LEGEND_RANGE,
-          format: ",.1f",
-          direction: 'horizontal',
-          show: false,
-          units: "Average Speed (mph)"
-        }
-        console.log(newSymbology)
+      newSymbology.sources = SOURCES;
 
-        if (!isEqual(newSymbology, tempSymbology)) {
-          console.log("setting new newSymbology");
-          setTempSymbology(newSymbology);
-        }
+      setAllTmcs(Object.keys(data));
+      const scale = d3scale.scaleThreshold()
+        .domain(LEGEND_DOMAIN)
+        .range(LEGEND_RANGE)
 
+      const colors = Object.keys(data).reduce((a, c) => {
+          const val = scale(get(data[c], `s[${hour}]`, 0))
+          a[c] = val ? val : 'hsla(185, 0%, 27%,0.8)'
+          return a;
+      }, {});
+
+      newSymbology.layers = LAYERS.map(layer => ({
+        ...layer,
+          paint: {
+            "line-color": [
+              "case",
+              ["has", ["to-string", ["get", 'tmc']], ["literal", colors]],
+              ["get", ["to-string", ["get", 'tmc']], ["literal", colors]],
+              "hsla(185, 0%, 27%,0.0)",
+          ],
+            "line-width": 3,
+          },
+          layout: {
+            ...layer.layout,
+            visibility: layer.id.includes(year) ? 'visible' : 'none'
+          }
+      }));
+
+      newSymbology.legend =  {
+        type: "threshold",
+        domain: LEGEND_DOMAIN,
+        range: LEGEND_RANGE,
+        format: ",.1f",
+        direction: 'horizontal',
+        show: false,
+        units: "Average Speed (mph)"
       }
+
+      // newSymbology.sources.push({
+      //   id: "geo-boundaries-source",
+      //   source: {
+      //     type: "geojson",
+      //     data: {
+      //       type: "FeatureCollection",
+      //       features: NPMRDS_ATTRIBUTES['counties'].values.map((f) => ({
+      //         type: "Feature",
+      //         properties: { geoid: f },
+      //         geometry: get(
+      //           response,
+      //           ["geo", GEO_LEVEL.toLowerCase(), `${f}`, "geometry", "value"],
+      //           null
+      //         ),
+      //       })),
+      //     },
+      //   },
+      // });
+
+      // newSymbology.layers.push({
+      //   id: "geo-boundaries",
+      //   type: "line",
+      //   source: "geo-boundaries-source",
+      //   paint: {
+      //     "line-color": "#000000",
+      //     "line-width": 10,
+      //   },
+      //   layout: {
+      //     visibility:'visible'
+      //   }
+      // });
+
+      if (!isEqual(newSymbology, tempSymbology)) {
+        console.log("setting new newSymbology");
+        setTempSymbology(newSymbology);
+      }
+
+  
     }
 
     if(year && month) {
@@ -240,14 +183,26 @@ const npmrdsMapFilter = ({
 
   },[filters])
 
+  useEffect(() => {
+    if (tmcBounds) {
+      newSymbology.fitToBounds = tmcBounds;
+      newSymbology.fitZoom = 14.5;
+    }
+    else {
+      newSymbology.fitToBounds = null;
+      newSymbology.fitZoom = null;
+    }
+    if (!isEqual(newSymbology, tempSymbology)) {
+      console.log("setting new newSymbology, zoom to TMC");
+      setTempSymbology(newSymbology);
+    }
+  }, [tmcBounds])
 
-
-
-
+  const filterSettings = {...NPMRDS_ATTRIBUTES, tmc: {...NPMRDS_ATTRIBUTES.tmc, values: [""].concat(allTmcs)}};
   return (
     <div className="flex flex-wrap flex-1 border-blue-100 pt-1 pb-1 justify-start gap-y-2">
-      {Object.keys(NPMRDS_ATTRIBUTES).filter(attrKey => NPMRDS_ATTRIBUTES[attrKey][filterType]).map(attrName => {
-        return <FilterInput key={`filter_input_${attrName}`} setFilters={setFilters} filters={filters} name={attrName} attribute={NPMRDS_ATTRIBUTES[attrName]} value={filters[attrName]?.value || ""}/>
+      {Object.keys(filterSettings).filter(attrKey => filterSettings[attrKey][filterType]).map(attrName => {
+        return <FilterInput key={`filter_input_${attrName}`} setFilters={setFilters} filters={filters} name={attrName} attribute={filterSettings[attrName]} value={filters[attrName]?.value || ""}/>
       })}
     </div>
   );
