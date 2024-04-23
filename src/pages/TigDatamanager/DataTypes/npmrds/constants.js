@@ -23,6 +23,11 @@ export const NPMRDS_ATTRIBUTES = {
     values: [...Array.from({ length: 12 }, (_, i) => 0 + 1 + i)],
     mapFilter: true,
   },
+  direction:{
+    values: ['All', 'Northbound', 'Southbound', 'Eastbound', 'Westbound'],
+    mapFilter: true,
+    filterRemovable: true
+  },
   tmc: {
     values: [],
     mapFilter: true,
