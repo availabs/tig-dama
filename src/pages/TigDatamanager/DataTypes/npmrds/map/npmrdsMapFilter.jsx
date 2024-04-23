@@ -98,6 +98,7 @@ const npmrdsMapFilter = ({
         .reduce((out, d) => ({ ...out, ...d }), {});
 
       newSymbology.sources = SOURCES;
+      newSymbology.data = data;
 
       setAllTmcs(Object.keys(data));
       const scale = d3scale.scaleThreshold()
@@ -170,7 +171,7 @@ const npmrdsMapFilter = ({
       // });
 
       if (!isEqual(newSymbology, tempSymbology)) {
-        console.log("setting new newSymbology");
+        console.log("setting new newSymbology, newSymb layers");
         setTempSymbology(newSymbology);
       }
 
