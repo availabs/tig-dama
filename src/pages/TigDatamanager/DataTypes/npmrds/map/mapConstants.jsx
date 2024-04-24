@@ -1,5 +1,5 @@
-const LEGEND_RANGE = ['rgb(255,0,0)', 'rgb(255,100,0)', 'rgb(255,255,0)', 'rgb(0,100,255)', 'rgb(0,255,0)', 'rgb(0,255,255)', 'rgb(0,0,0)']
-const LEGEND_DOMAIN = [0, 10, 20, 50, 55, 57, 60];
+const LEGEND_RANGE = ['rgb(255,0,0)', 'rgb(255,100,0)', 'rgb(255,255,0)', 'rgb(0,100,255)', 'rgb(0,0,255)', 'rgb(0,255,255)', 'rgb(0,255,0)']
+const LEGEND_DOMAIN = [0, 10, 20, 30, 40, 50, 55];
 const npmrdsPaint = {
   'line-color': '#ccc',
   'line-width': [

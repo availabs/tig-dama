@@ -29,6 +29,7 @@ export const NPMRDS_ATTRIBUTES = {
     filterRemovable: true
   },
   tmc: {
+    displayName: "Zoom to TMC",
     values: [],
     mapFilter: true,
     filterRemovable: true

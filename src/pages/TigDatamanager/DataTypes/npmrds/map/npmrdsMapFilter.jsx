@@ -235,10 +235,11 @@ const npmrdsMapFilter = ({
 const FilterInput = ({ attribute, name, value, setFilters, filters }) => {
   const { values, type } = attribute;
   const inputValue = type === "range" ? value[0] : value;
+  const displayName = attribute.displayName ?? name.split("_").join(" ")
   return (
     <div className="flex justify-start content-center flex-wrap">
       <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">
-        {name.split("_").join(" ")}:
+        {displayName}:
       </div>
       <div className="flex">
         <select
