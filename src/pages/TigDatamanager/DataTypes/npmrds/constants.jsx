@@ -13,7 +13,6 @@ export const NPMRDS_ATTRIBUTES = {
     mapFilter: true,
     tableFilter: true,
     filterRemovable: true,
-    tableFilter: true,
   },
   hour: {
     values: Array.from({ length: 24 }, (_, i) => -1 + 1 + i),
@@ -70,6 +69,7 @@ export const NPMRDS_ATTRIBUTES = {
     mapFilter: true,
     tableFilter: false,
     filterMulti: true,
+    searchable: true,
     tableHeaderFilter: true,
     filterRemovable: true,
   },

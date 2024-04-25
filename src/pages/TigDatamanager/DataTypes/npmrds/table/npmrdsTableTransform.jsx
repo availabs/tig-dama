@@ -28,6 +28,7 @@ const npmrdsTableTransform = (tableData, attributes, filters, setFilters) => {
       columnConfig.filter = "dropdown";
       columnConfig.customValue = filters[attr]?.value || undefined
       columnConfig.filterMulti = attrProps.filterMulti === false ? false : true;
+      columnConfig.searchable = attrProps.searchable;
     }
 
     return columnConfig;
