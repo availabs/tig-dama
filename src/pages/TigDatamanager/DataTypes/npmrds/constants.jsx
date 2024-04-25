@@ -13,6 +13,7 @@ export const NPMRDS_ATTRIBUTES = {
     mapFilter: true,
     tableFilter: true,
     filterRemovable: true,
+    tableFilter: true,
   },
   hour: {
     values: Array.from({ length: 24 }, (_, i) => -1 + 1 + i),
@@ -26,7 +27,7 @@ export const NPMRDS_ATTRIBUTES = {
       );
     },
     mapFilter: true,
-    tableFilter: true,
+    tableFilter: false,
     filterRemovable: false,
   },
   month: {
@@ -53,21 +54,27 @@ export const NPMRDS_ATTRIBUTES = {
       );
     },
     mapFilter: true,
+    tableFilter: true,
   },
   direction: {
     values: ["All", "Northbound", "Southbound", "Eastbound", "Westbound"],
     mapFilter: true,
+    tableFilter: false,
+    tableHeaderFilter: true,
     filterRemovable: true,
   },
   tmc: {
     displayName: "Zoom to TMC",
     values: [],
     mapFilter: true,
+    tableFilter: false,
+    tableHeaderFilter: true,
     filterRemovable: true,
   },
   counties: {
     values: [
-      36079, 36119, 36087, 36005, 36061, 36047, 36081, 36085, 36059, 36103,
+      36079, 
+      // 36119, 36087, 36005, 36061, 36047, 36081, 36085, 36059, 36103,
     ],
     // values: [
     //   34003,
@@ -102,5 +109,6 @@ export const NPMRDS_ATTRIBUTES = {
     //   "09001",
     // ],
     mapFilter: false,
+    tableFilter: false,
   },
 };

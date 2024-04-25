@@ -1,15 +1,37 @@
-import {useEffect,useContext} from "react";
-import { DamaContext } from "~/pages/DataManager/store";
+import { NPMRDS_ATTRIBUTES } from "../constants";
+import moment from "moment";
 const npmrdsTableTransform = (tableData, attributes, filters, setFilters) => {
-  const { pgEnv, falcor, falcorCache } = useContext(DamaContext);
-  
+  const flattenedData = tableData.map((tmcObj) => {
+    const newTmcObj = { ...tmcObj };
+    tmcObj["s"].forEach((value, hourVal) => {
+      newTmcObj[hourVal] = value;
+    });
+    return newTmcObj;
+  });
 
+  const columns = attributes.map((attr) => {
+    const columnConfig = {
+      accessor: attr.toString(),
+      filterPlaceholder: "Select value",
+    };
+    if (typeof attr === "number") {
+      columnConfig.Header = moment(attr, "HH").format("HH:mm");
+    } else {
+      columnConfig.Header = attr
+        .split("_")
+        .filter((chunk) => chunk.toLowerCase() !== "name")
+        .join(" ");
+    }
 
+    if (NPMRDS_ATTRIBUTES?.[attr]?.["tableHeaderFilter"]) {
+      columnConfig.filter = "dropdown";
+    }
 
-  console.log("in NPMRDS table transform")
+    return columnConfig;
+  });
   return {
-    data: [],
-    columns: []
+    data: flattenedData,
+    columns: columns,
   };
 };
 

@@ -1,4 +1,4 @@
-import Table from "~/pages/DataManager/DataTypes/gis_dataset/pages/Table";
+import NpmrdsTable from "./table"
 import MapPage from "~/pages/DataManager/DataTypes/gis_dataset/pages/Map";
 import { npmrdsMapFilter } from "./map/npmrdsMapFilter";
 import {npmrdsHoverComp} from './map/npmrdsHoverComp'
@@ -30,9 +30,10 @@ const npmrdsConfig = {
     name: "Table",
     path: "/table",
     component: (props) => (
-      <Table
+      <NpmrdsTable
         {...props}
         transform={npmrdsTableTransform}
+        fullWidth={true}
       />
     ),
   },

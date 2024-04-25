@@ -4,13 +4,13 @@ import isEqual from 'lodash/isEqual'
 import { NPMRDS_ATTRIBUTES } from "../constants";
 import * as d3scale from "d3-scale"
 import mapboxgl from "maplibre-gl";
-import { DamaContext } from "~/pages/DataManager/store";
 import get from "lodash/get";
 import {
   falcorGraph,
 } from "~/modules/avl-components/src"
 
 import {LAYERS, LEGEND_RANGE, LEGEND_DOMAIN, SOURCES} from './mapConstants'
+import { NpmrdsFilters } from "../filters";
 const GEOM_TYPES = {
   LineString: "LineString",
 };
@@ -24,7 +24,6 @@ const GEO_LEVEL = 'COUNTY';
 const npmrdsMapFilter = ({
   filters,
   setFilters,
-  filterType = "mapFilter",
   tempSymbology, 
   setTempSymbology
 }) => {
@@ -40,7 +39,7 @@ const npmrdsMapFilter = ({
   useEffect(() => {
     const newFilters = { ...filters };
     if (!year) {
-      newFilters.year = { value: 2020 };``
+      newFilters.year = { value: 2020 };
     }
     if (!month) {
       newFilters.month = { value:  NPMRDS_ATTRIBUTES["month"].values[5] };
@@ -223,53 +222,7 @@ const npmrdsMapFilter = ({
   },[filters, tmcBounds]);
 
   const filterSettings = {...NPMRDS_ATTRIBUTES, tmc: {...NPMRDS_ATTRIBUTES.tmc, values: [""].concat(allTmcs)}};
-  return (
-    <div className="flex flex-wrap flex-1 border-blue-100 pt-1 pb-1 justify-start gap-y-2">
-      {Object.keys(filterSettings).filter(attrKey => filterSettings[attrKey][filterType]).map(attrName => {
-        return <FilterInput key={`filter_input_${attrName}`} setFilters={setFilters} filters={filters} name={attrName} attribute={filterSettings[attrName]} value={filters[attrName]?.value || ""}/>
-      })}
-    </div>
-  );
-};
-
-const DefaultOptionComp = ({ val }) => {
-  return (
-    <option className="ml-2  truncate" value={val}>
-      {val}
-    </option>
-  );
-};
-
-const FilterInput = ({ attribute, name, value, setFilters, filters }) => {
-  const { values, optionComp, type } = attribute;
-  const inputValue = type === "range" ? value[0] : value;
-  const displayName = attribute.displayName ?? name.split("_").join(" ")
-
-  const OptionComp = optionComp ?? DefaultOptionComp;
-
-  return (
-    <div className="flex justify-start content-center flex-wrap">
-      <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">
-        {displayName}:
-      </div>
-      <div className="flex">
-        <select
-          className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
-          value={inputValue}
-          onChange={(e) =>
-            setFilters({
-              ...filters,
-              [name]: { value: e.target.value },
-            })
-          }
-        >
-          {values?.map((k, i) => (
-            <OptionComp key={i} val={k}/>
-          ))}
-        </select>
-      </div>
-    </div>
-  );
+  return <NpmrdsFilters filterSettings={filterSettings} filterType={"mapFilter"} filters={filters} setFilters={setFilters}/>
 };
 
 export { npmrdsMapFilter };
