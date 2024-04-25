@@ -43,7 +43,7 @@ const npmrdsMapFilter = ({
       newFilters.year = { value: 2020 };``
     }
     if (!month) {
-      newFilters.month = { value: Object.keys(NPMRDS_ATTRIBUTES["month"].valueMap)[5] };
+      newFilters.month = { value:  NPMRDS_ATTRIBUTES["month"].values[5] };
     }
     if (!hour) {
       newFilters.hour = { value: NPMRDS_ATTRIBUTES["hour"].values[0] };
@@ -232,23 +232,20 @@ const npmrdsMapFilter = ({
   );
 };
 
+const DefaultOptionComp = ({ val }) => {
+  return (
+    <option className="ml-2  truncate" value={val}>
+      {val}
+    </option>
+  );
+};
+
 const FilterInput = ({ attribute, name, value, setFilters, filters }) => {
-  const { values, valueMap, type } = attribute;
+  const { values, optionComp, type } = attribute;
   const inputValue = type === "range" ? value[0] : value;
   const displayName = attribute.displayName ?? name.split("_").join(" ")
 
-
-  const inputOptions = valueMap
-    ? Object.keys(valueMap).map((val, i) => (
-        <option key={i} className="ml-2  truncate" value={val}>
-          {valueMap[val]}
-        </option>
-      ))
-    : values?.map((k, i) => (
-        <option key={i} className="ml-2  truncate" value={k}>
-          {k}
-        </option>
-      ));
+  const OptionComp = optionComp ?? DefaultOptionComp;
 
   return (
     <div className="flex justify-start content-center flex-wrap">
@@ -266,7 +263,9 @@ const FilterInput = ({ attribute, name, value, setFilters, filters }) => {
             })
           }
         >
-          {inputOptions}
+          {values?.map((k, i) => (
+            <OptionComp key={i} val={k}/>
+          ))}
         </select>
       </div>
     </div>

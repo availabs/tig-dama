@@ -1,3 +1,4 @@
+import moment from "moment"
 const finishYear = 2021;
 const startYear = 2016
 
@@ -15,24 +16,41 @@ export const NPMRDS_ATTRIBUTES = {
   },
   hour: {
     values: Array.from({ length: 24 }, (_, i) => -1 + 1 + i),
+    optionComp: ({val}) => {
+      const lowerStringHour = moment(val, "HH").format("HH:mm");
+      const upperStringHour = moment(val + 1, "HH").format("HH:mm");
+      return (
+        <option className="ml-2  truncate" value={val}>
+          {lowerStringHour} - {upperStringHour}
+        </option>
+      );
+    },
     mapFilter: true,
     tableFilter: true,
     filterRemovable: false,
   },
   month: {
-    valueMap: {
-      1: "January",
-      2: "February",
-      3: "March",
-      4: "April",
-      5: "May",
-      6: "June",
-      7: "July",
-      8: "August",
-      9: "September",
-      10: "October",
-      11: "November",
-      12: "December",
+    values: [...Array.from({ length: 12 }, (_, i) => 0 + 1 + i)],
+    optionComp: ({val}) => {
+      const months = [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
+      ];
+      return (
+        <option className="ml-2  truncate" value={val}>
+          {months[(val-1)]}
+        </option>
+      );
     },
     mapFilter: true,
   },
