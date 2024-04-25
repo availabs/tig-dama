@@ -24,7 +24,7 @@ const DAMA_ARGS = {
 }
 
 const Routes = [
-  Auth,
+  ...Auth,
   ...DataManager(DAMA_ARGS),
   ...Documentation,
   NoMatch
