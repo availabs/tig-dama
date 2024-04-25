@@ -1,213 +1,395 @@
-import React, { useEffect, /*useMemo,*/ useState } from 'react';
-import { Input, Button } from "~/modules/avl-components/src"
-import get from 'lodash/get'
-import { SourceAttributes } from '~/pages/DataManager/Source/attributes'
-import { DamaContext } from "~/pages/DataManager/store"
-import Versions from '~/pages/DataManager/DataTypes/default/Version/list'
-import { VersionEditor, VersionDownload } from '~/pages/DataManager/DataTypes/default/Version/version'
+import React from "react";
+import moment from "moment";
+import { DamaContext } from "~/pages/DataManager/store";
 
-// import SourceCategories from "./SourceCategories"
+const OverviewEdit = ({ source, views, activeViewId }) => {
+  const { pgEnv, baseUrl, user } = React.useContext(DamaContext);
+  const [showContributors, setShowContributors] = React.useState(true);
+  const [showLibrarians, setShowLibrarians] = React.useState(true);
 
-const Edit = ({startValue, attr, sourceId, type='text',cancel=()=>{}}) => {
-  const [value, setValue] = useState('')
-  //console.log('what is the value :', )
-  const {pgEnv, baseUrl, falcor} = React.useContext(DamaContext);
-  /*const [loading, setLoading] = useState(false)*/
+  const activeView = React.useMemo(() => {
+    return (
+      views && activeViewId && views.find((v) => v.view_id === activeViewId)
+    );
+  }, [activeViewId]);
 
-  useEffect(() => {
-    setValue(startValue)
-  },[startValue])
-
-  const save = (attr, value) => {
-    if(sourceId) {
-      falcor.set({
-          paths: [
-            ['dama',pgEnv,'sources','byId',sourceId,'attributes', attr ]
-          ],
-          jsonGraph: {
-            dama:{
-              [pgEnv] : {
-                sources: {
-                  byId:{
-                    [sourceId] : {
-                        attributes : {[attr]: value}
-                    }
-                  }
-                }
-              }
-            }
-          }
-      }).then(d => {
-        cancel()
-      })
-    }
-  }
+  const Tab = ({ columns = [] }) => {
+    return (
+      <>
+        <div className="relative m-2 overflow-x-auto">
+          <table className="w-full border-collapse border text-center	border-slate-500">
+            <tbody>
+              <tr className="bg-tigGreen-50 border-slate-500 border-collapse border border-slate-500">
+                <td className="min-w-[25px] px-3 py-1 border-collapse border border-tigGreen-50 font-semibold	">
+                  Columns
+                </td>
+                {columns &&
+                  (columns || []).map((row, i) => (
+                    <td
+                      className="px-3 py-1 border-collapse border border-tigGreen-50"
+                      key={Math.random() * i}
+                    >
+                      {row?.name}
+                    </td>
+                  ))}
+              </tr>
+              <tr className="border-collapse border border-slate-500	">
+                <td className="min-w-[25px] px-3 py-1 border-collapse border border-tigGreen-50 font-semibold	">
+                  Labels
+                </td>
+                {columns &&
+                  (columns || []).map((row, i) => (
+                    <td
+                      className="px-3 py-1 border-collapse border border-tigGreen-50"
+                      key={Math.random() * 10 * i}
+                    >
+                      {row?.display}
+                    </td>
+                  ))}
+              </tr>
+              <tr className="bg-tigGreen-50 border-collapse border border-slate-500	">
+                <td className="min-w-[25px] px-3 py-1  border-collapse border border-tigGreen-50 font-semibold	">
+                  Column Types
+                </td>
+                {columns &&
+                  (columns || []).map((row, i) => (
+                    <td
+                      className="px-3 py-1 border-collapse border border-tigGreen-50"
+                      key={Math.random() * 100 * i}
+                    >
+                      {row?.type}
+                    </td>
+                  ))}
+              </tr>
+              <tr className="border-collapse border border-slate-500	">
+                <td className="min-w-[25px] px-3 py-1 border-collapse border border-tigGreen-50 font-semibold	">
+                  Value Columns
+                </td>
+                {columns &&
+                  (columns || []).map((row, i) => (
+                    <td
+                      className="px-3 py-1 border-collapse border border-tigGreen-50"
+                      key={Math.random() * 1000 * i}
+                    >
+                      {row?.val || "N/A"}
+                    </td>
+                  ))}
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </>
+    );
+  };
 
   return (
-    type === 'textarea' ? (
-      <div className='w-full flex flex-col h-full border border-lime-300'>
-        <div>
-          <textarea className='flex-1 w-full px-2 shadow bg-blue-100 min-h-[200px] focus:ring-blue-700 focus:border-blue-500  border-gray-300 rounded-none rounded-l-md' onChange={e => setValue(e.target.value)} >
-            {value}
-          </textarea>
-        </div>
-        <div className='flex py-2'>
-          <div className='flex-1'/>
-          <Button themeOptions={{size:'sm', color: 'primary'}} onClick={e => save(attr,value)}> Save </Button>
-          <Button themeOptions={{size:'sm', color: 'cancel'}} onClick={e => cancel()}> Cancel </Button>
-        </div>
-      </div>) : (
-      <div className='w-full flex flex-1'>
-        <Input className='flex-1 px-2 shadow bg-blue-100 focus:ring-blue-700 focus:border-blue-500  border-gray-300 rounded-none rounded-l-md' value={value} onChange={e => setValue(e)}/>
-        <Button themeOptions={{size:'sm', color: 'primary'}} onClick={e => save(attr,value)}> Save </Button>
-        <Button themeOptions={{size:'sm', color: 'cancel'}} onClick={e => cancel()}> Cancel </Button>
-      </div>
-      )
-  )
-}
+    <>
+      <div className=" flex flex-col md:flex-row mt-3 mb-3">
+        <div className="flex-1">
+          <div className="flex justify-between group">
+            <div className="flex-1 grid grid-cols-12 px-6">
+              <div className="col-span-7">
+                <div>
+                  <div className="flex border-tigGreen-100 border-t-2 mr-6 mt-2">
+                    <div className="-mt-px mr-1">
+                      <span className="bg-tigGreen-100 inline-block py-2 px-4 text-blue-700 text-white text-[16px] p-6">
+                        Topic
+                      </span>
+                    </div>
+                  </div>
+                  <div>
+                    <p className="my-2 text-[13px] leading-[18px]">
+                      <em>Agency:</em>
+                      <br />
+                      {source && source?.agency ? `${source?.agency}` : "N/A"}
+                    </p>
+                    <div className="my-2 text-[13px] leading-[18px]">
+                      Description:{" "}
+                      <p>
+                        {source && source?.description
+                          ? `${source?.description}`
+                          : "N/A"}
+                      </p>
+                    </div>
+                    <hr className=" mr-6" />
+                    <p className="my-2 text-[13px] leading-[18px]">
+                      <em>Data Starts On:</em>
+                      <br />
+                      {activeView && activeView._created_timestamp
+                        ? activeView._created_timestamp
+                        : null}
+                    </p>
+                    <p className="my-2 text-[13px] leading-[18px]">
+                      <em>Data Ends On:</em>
+                      <br />
+                      {activeView && activeView.end_date
+                        ? activeView.end_date
+                        : "N/A"}
+                    </p>
+                  </div>
+                </div>
+                <div>
+                  <div>
+                    <div className="flex border-tigGreen-100 border-t-2 mr-6 mt-4">
+                      <div className="-mt-px mr-1">
+                        <span className="bg-tigGreen-100 inline-block py-2 px-4 text-blue-700 text-white text-[16px]">
+                          Visibility
+                        </span>
+                      </div>
+                    </div>
+                    <div>
+                      <span className="font-bold text-[24px]">
+                        {source.user_cnt || 0} {" Contributors"}
+                      </span>
+                      <p className="text-[13px]">
+                        {source.user_cnt || 0} contributors to this view:
+                      </p>
+                      <ul
+                        className={`text-[13px] block list-disc mt-2 ml-4 ${
+                          showContributors ? " min-h-9" : "min-h-3 "
+                        }`}
+                        id="contributors"
+                      >
+                        {source &&
+                          (source.contributed_users || []).map((user, _) => (
+                            <li>{user || ""}</li>
+                          ))}
+                      </ul>
+                      <span
+                        className=" text-[13px] float-right mr-6 cursor-pointer	"
+                        onClick={() => setShowContributors(!showContributors)}
+                      >
+                        {`show ${showContributors ? "less" : "more"}`}
+                      </span>
+                      <br />
 
+                      <hr className=" mr-6" />
+                      <span className="font-bold text-[24px]">
+                        {source.librarians_cnt || 0}
+                        {" Librarians"}
+                      </span>
+                      <p className="text-[13px]">
+                        {source.librarians_cnt || 0} librarians to this view:
+                      </p>
+                      <ul
+                        className={`text-[13px] block list-disc mt-2 ml-4 ${
+                          showLibrarians ? " min-h-9" : "min-h-3"
+                        }`}
+                        id="librarians"
+                      >
+                        {source &&
+                          (source.librarians || []).map((lib, _) => (
+                            <li>{lib || ""}</li>
+                          ))}
+                      </ul>
+                      <span
+                        className=" text-[13px] float-right mr-6 cursor-pointer	"
+                        onClick={() => setShowLibrarians(!showLibrarians)}
+                      >
+                        {`show ${showLibrarians ? "less" : "more"}`}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="col-span-5">
+                <div>
+                  <div className="flex border-tigGreen-100 border-t-2 mr-6 mt-2">
+                    <div className="-mt-px mr-1">
+                      <span className="bg-tigGreen-100 inline-block py-2 px-4 text-blue-700 text-white text-[16px]">
+                        Origin
+                      </span>
+                    </div>
+                  </div>
+                  <span className="font-bold text-[24px]">
+                    {"About "}
+                    {activeView && activeView?._created_timestamp
+                      ? moment().diff(activeView?._created_timestamp, "years")
+                      : 0}
+                    {" years ago"}
+                  </span>
+                  <p className="my-2 text-[13px] leading-[18px]">
+                    {activeView && activeView?._created_timestamp ? (
+                      <>
+                        {"This info was originally uploaded on "}
+                        {activeView?._created_timestamp}
+                        <br />
+                        {user && user.name ? `By ${user.name}` : null}
+                      </>
+                    ) : null}
+                  </p>
+                  <hr className=" mr-6" />
+                  <p className="my-2 text-[13px] leading-[18px]">
+                    <em>Source:</em>
+                    <br />
+                    {source && source.name ? (
+                      <>
+                        <a href={`/sources/${source?.source_id}`}>
+                          {source.name}
+                        </a>
+                      </>
+                    ) : (
+                      <></>
+                    )}
+                  </p>
+                </div>
+                <div>
+                  <div className="flex border-tigGreen-100 border-t-2 mr-6 mt-6">
+                    <div className="-mt-px mr-1">
+                      <span className="bg-tigGreen-100 inline-block py-2 px-4 text-blue-700 text-white text-[16px]">
+                        Updates
+                      </span>
+                    </div>
+                  </div>
+                  <span className="font-bold text-[24px] mt-2">
+                    {activeView && activeView?._modified_timestamp
+                      ? `Over ${moment().diff(
+                          activeView?._modified_timestamp,
+                          "years"
+                        )} Years Ago`
+                      : 0}
+                  </span>
+                  <p className="text-[13px]">
+                    This view was last updated on{" "}
+                    {activeView && activeView?._modified_timestamp
+                      ? activeView?._modified_timestamp
+                      : "N/A"}
+                  </p>
 
+                  <span className="font-bold text-[24px] mt-2">
+                    {"About "}
+                    {activeView && activeView?._modified_timestamp
+                      ? moment().diff(activeView?._modified_timestamp, "years")
+                      : 0}
+                    {" Years Ago"}
+                  </span>
+                  <p className="text-[13px] ">
+                    {activeView && activeView?._modified_timestamp ? (
+                      <>
+                        {"The rows of this view were last updated on "}
+                        {activeView?._modified_timestamp}
+                        <br />
+                        {user && user.name ? `By ${user.name}` : null}
+                      </>
+                    ) : null}
+                  </p>
 
-const OverviewEdit = ({source, views, activeViewId}) => {
-  const [editing, setEditing] = React.useState(null);
+                  <span className="font-bold text-[24px] mt-2">
+                    {(activeView && activeView?.update_cnt) || 0}
+                    {" Updates"}
+                  </span>
+                  <p className="text-[13px]">
+                    This info has been updated{" "}
+                    {(activeView && activeView?.update_cnt) || 0} times
+                  </p>
+                  <span className="font-bold text-[24px] mt-2">
+                    {(activeView && activeView?.upload_cnt) || 0}
+                    {" Uploads"}
+                  </span>
+                  <p className="text-[13px] ">
+                    {(activeView && activeView?.upload_cnt) || 0} uploads made
+                    to this set of data.{" "}
+                  </p>
 
-  const stopEditing = React.useCallback(e => {
-    e.stopPropagation();
-    setEditing(null);
-  }, []);
-
-  
-  const {pgEnv, baseUrl, user} = React.useContext(DamaContext);
-
-  return (
-    <div>
-      <div className=" flex flex-col md:flex-row">
-        <div className='flex-1'>
-          <div className='flex justify-between group'>
-            <div  className="flex-1 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-              {/*<dt className="text-sm font-medium text-gray-500 py-5">name</dt>*/}
-              <dd className="mt-1 text-2xl text-gray-700 font-medium overflow-hidden sm:mt-0 sm:col-span-3">
-                {editing === 'name' ?
-                  <div className='pt-3 pr-8'>
-                    <Edit
-                      startValue={source['name']}
-                      attr={'name'}
-                      sourceId={source.source_id}
-                      cancel={stopEditing}
-                    />
-                  </div> :
-                  <div className='py-2 px-2'>{source['name']}</div>
-                }
-              </dd>
-            </div>
-            {user.authLevel > 5 ?
-            <div className='hidden group-hover:block text-blue-500 cursor-pointer' onClick={e => editing === 'name' ? setEditing(null): setEditing('name')}>
-              <i className="fad fa-pencil absolute -ml-12 mt-3 p-2.5 rounded hover:bg-blue-500 hover:text-white "/>
-            </div> : ''}
-          </div>
-          <div className="w-full pl-4 py-6 hover:py-6 sm:pl-6 flex justify-between group">
-            <div className="flex-1">
-              <div className='mt-1 text-sm text-gray-500 pr-14'>
-              {editing === 'description' ?
-                <Edit
-                  startValue={get(source,'description', '')}
-                  attr={'description'}
-                  type='textarea'
-                  sourceId={source?.source_id}
-                  cancel={stopEditing}/> :
-                get(source,'description', false) || 'No Description'}
+                  <span className="font-bold text-[24px] mt-2">
+                    {(activeView && activeView?.download_cnt) || 0}
+                    {" Downloads"}
+                  </span>
+                  <p className="text-[13px]">
+                    This info has been downloaded{" "}
+                    {(activeView && activeView?.download_cnt) || 0} times.
+                  </p>
+                  <span className="font-bold text-[24px] mt-2">
+                    {(activeView && activeView?.view_cnt) || 0}
+                    {" Views"}
+                  </span>
+                  <p className="text-[13px] ">
+                    This info has been viewed{" "}
+                    {(activeView && activeView?.view_cnt) || 0} times.
+                  </p>
+                </div>
+              </div>
+              <div className="col-span-12">
+                <div>
+                  <div className="flex border-tigGreen-100 border-t-2 mr-6 mt-4">
+                    <div className="-mt-px mr-1">
+                      <span className="bg-tigGreen-100 inline-block py-2 px-4 text-blue-700 text-white text-[16px]">
+                        Functionality
+                      </span>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-12">
+                    <div className="col-span-7">
+                      <p className="my-2 text-[13px] leading-[18px]">
+                        <em>Statistics Involved:</em>
+                        <br />
+                        {activeView && activeView.statistics
+                          ? activeView.statistics
+                          : "N/A"}
+                      </p>
+                      <p className="my-2 text-[13px] leading-[18px]">
+                        <em>Data Model:</em>
+                        <br />
+                        {activeView && activeView.model
+                          ? activeView.model
+                          : "N/A"}
+                      </p>
+                      <p className="my-2 text-[13px] leading-[18px]">
+                        <em>Data Levels:</em>
+                        <br />
+                        {activeView && activeView.level
+                          ? activeView.level
+                          : "N/A"}
+                      </p>
+                      <p className="my-2 text-[13px] leading-[18px]">
+                        <em>Available Actions:</em>
+                        {activeView &&
+                          (activeView.actions || []).map((act) => {
+                            ` ${act || ""}, `;
+                          })}
+                      </p>
+                    </div>
+                    <div className="col-span-5">
+                      <p className="my-2 text-[13px] leading-[18px]">
+                        <em>Data Hierarchy:</em>
+                        <br />
+                        {activeView && activeView.hierarchy
+                          ? activeView.hierarchy
+                          : "N/A"}
+                      </p>
+                      <p className="my-2 text-[13px] leading-[18px]">
+                        <em>Spatial Level:</em>
+                        <br />
+                        {activeView && activeView.spatial
+                          ? activeView.spatial
+                          : "N/A"}
+                      </p>
+                      <p className="my-2 text-[13px] leading-[18px]">
+                        <em>Value Name:</em>
+                        <br />
+                        {activeView && activeView.name
+                          ? activeView.name
+                          : "N/A"}
+                      </p>
+                    </div>
+                    <div className="col-span-12">
+                      <span className="my-2 text-[13px] leading-[18px]">
+                        {" "}
+                        Data columns included in this view:{" "}
+                      </span>
+                      {(source?.metadata?.columns || []).length > 0 ? (
+                        <Tab columns={source?.metadata?.columns} />
+                      ) : null}
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-            {user.authLevel > 5 ?
-            <div className='hidden group-hover:block text-blue-500 cursor-pointer' onClick={e => setEditing('description')}>
-                <i className="fad fa-pencil absolute -ml-12  p-2 hover:bg-blue-500 rounded focus:bg-blue-700 hover:text-white "/>
-            </div> : '' }
           </div>
         </div>
-        <div className="border-t border-gray-200 px-4 py-5 sm:p-0">
-          <dl className="sm:divide-y sm:divide-gray-200">
-            {Object.keys(SourceAttributes)
-              .filter(d => !['source_id','metadata','description', 'statistics', 'category', 'display_name','name'].includes(d))
-              .map((attr,i) => {
-                let val = typeof source[attr] === 'object' ? JSON.stringify(source[attr]) : source[attr]
-                if (attr === "categories") {
-                  return (
-                    <div key={attr} className='flex justify-between group'>
-                      <div  className="flex-1 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                        <dt className="text-sm font-medium text-gray-500 py-5">{attr}</dt>
-                        <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                          <div className="py-5 px-2 relative">
-                           {/*  <SourceCategories source={ source }
-                              editingCategories={ editing === attr }
-                              stopEditingCategories={ stopEditing }/>
-                            */}
-                          </div>
-                        </dd>
-                      </div>
-                      { user.authLevel > 5 && (editing !== attr) ?
-                        <div className='hidden group-hover:block text-blue-500 cursor-pointer'
-                          onClick={ e => setEditing(attr) }
-                        >
-                          <i className="fad fa-pencil absolute -ml-12 mt-3 p-2.5 rounded hover:bg-blue-500 hover:text-white "/>
-                        </div> : null
-                      }
-                    </div>
-                  )
-                }
-                return (
-                  <div key={attr} className='flex justify-between group'>
-                    <div  className="flex-1 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                      <dt className="text-sm font-medium text-gray-500 py-5">{attr}</dt>
-                      <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                        {editing === attr ?
-                          <div className='pt-3 pr-8'>
-                            <Edit
-                              startValue={val}
-                              attr={attr}
-                              sourceId={source.source_id}
-                              cancel={stopEditing}
-                            />
-                          </div> :
-                          <div className='py-5 px-2'>{val}</div>
-                        }
-                      </dd>
-                    </div>
-                    {user.authLevel > 5 ?
-                    <div className='hidden group-hover:block text-blue-500 cursor-pointer' onClick={e => editing === attr ? setEditing(null): setEditing(attr)}>
-                      <i className="fad fa-pencil absolute -ml-12 mt-3 p-2.5 rounded hover:bg-blue-500 hover:text-white "/>
-                    </div> : ''}
-                  </div>
-                )
-              })
-            }
-            <VersionEditor
-              view={views.filter(d => d.view_id === activeViewId )?.[0] || {}}
-              columns={['source_url', 'publisher','_created_timestamp']}
-            />
-            <div className='w-full flex p-4'>
-              <div className='flex-1' />
-
-            </div>
-          </dl>
-
-          {/*<div className='py-10 px-2'>
-            <div className='text-gray-500 py-8 px-5'>Index</div>
-            <div className=''>
-              <Index source={source} />
-            </div>
-          </div>*/}
-        </div>
-
       </div>
-      <div className='py-10 px-2'>
-          <div className='text-gray-500 py-8 px-5'>Versions</div>
-          <div className=''>
-            <Versions source={source} views={views} />
-          </div>
-        </div>
-    </div>
-  )
-}
+    </>
+  );
+};
 
-
-export default OverviewEdit
+export default OverviewEdit;
