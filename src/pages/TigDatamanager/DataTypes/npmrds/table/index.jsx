@@ -63,7 +63,6 @@ const NpmrdsTable = ({
 
   const year =  filters?.year?.value;
   const month = filters?.month?.value;
-  const hour = filters?.hour?.value;
   const direction = filters?.direction?.value;
   const tmc = filters?.tmc?.value;
 
@@ -75,16 +74,13 @@ const NpmrdsTable = ({
     if (!month) {
       newFilters.month = { value:  NPMRDS_ATTRIBUTES["month"].values[5] };
     }
-    if (!hour) {
-      newFilters.hour = { value: NPMRDS_ATTRIBUTES["hour"].values[0] };
-    }
     if (!direction) {
       newFilters.direction = {
-        value: NPMRDS_ATTRIBUTES["direction"].values[0],
+        value: [],
       };
     }
     if (!tmc) {
-      newFilters.tmc = { value: "" };
+      newFilters.tmc = { value: [] };
     }
     setFilters(newFilters);
   }, []);
@@ -129,11 +125,10 @@ const NpmrdsTable = ({
         ...respData[tmcId]
       }))
 
-      console.log("data in table index", tmcArray)
       setTableData(tmcArray);
     }
 
-    if(year && month) {
+    if(year && month && direction) {
       getData();
     }
   }, [filters])

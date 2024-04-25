@@ -61,6 +61,7 @@ export const NPMRDS_ATTRIBUTES = {
     mapFilter: true,
     tableFilter: false,
     tableHeaderFilter: true,
+    filterMulti: true,
     filterRemovable: true,
   },
   tmc: {
@@ -68,13 +69,13 @@ export const NPMRDS_ATTRIBUTES = {
     values: [],
     mapFilter: true,
     tableFilter: false,
+    filterMulti: true,
     tableHeaderFilter: true,
     filterRemovable: true,
   },
   counties: {
     values: [
-      36079, 
-      // 36119, 36087, 36005, 36061, 36047, 36081, 36085, 36059, 36103,
+      36079, 36119, 36087, 36005, 36061, 36047, 36081, 36085, 36059, 36103,
     ],
     // values: [
     //   34003,

@@ -23,8 +23,11 @@ const npmrdsTableTransform = (tableData, attributes, filters, setFilters) => {
         .join(" ");
     }
 
-    if (NPMRDS_ATTRIBUTES?.[attr]?.["tableHeaderFilter"]) {
+    const attrProps = NPMRDS_ATTRIBUTES?.[attr];
+    if (attrProps?.["tableHeaderFilter"]) {
       columnConfig.filter = "dropdown";
+      columnConfig.customValue = filters[attr]?.value || undefined
+      columnConfig.filterMulti = attrProps.filterMulti === false ? false : true;
     }
 
     return columnConfig;
