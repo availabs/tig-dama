@@ -11,6 +11,7 @@ export const DropDownColumnFilter = ({
                                       filterDomain,
                                       onFilterChange = () => {},
                                       customValue,
+                                      searchable = false,
                                       filterThemeOptions,
                                       filterClassName,
                                       filterMulti,
@@ -38,6 +39,7 @@ export const DropDownColumnFilter = ({
         <div className="">
             <Select
                 domain={filterDomain || options}
+                searchable={searchable}
                 value={filterValue || customValue || []}
                 // value = {['row2']}
                 onChange={(e) => {
