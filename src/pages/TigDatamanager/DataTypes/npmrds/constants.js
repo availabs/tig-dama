@@ -20,19 +20,32 @@ export const NPMRDS_ATTRIBUTES = {
     filterRemovable: false,
   },
   month: {
-    values: [...Array.from({ length: 12 }, (_, i) => 0 + 1 + i)],
+    valueMap: {
+      1: "January",
+      2: "February",
+      3: "March",
+      4: "April",
+      5: "May",
+      6: "June",
+      7: "July",
+      8: "August",
+      9: "September",
+      10: "October",
+      11: "November",
+      12: "December",
+    },
     mapFilter: true,
   },
-  direction:{
-    values: ['All', 'Northbound', 'Southbound', 'Eastbound', 'Westbound'],
+  direction: {
+    values: ["All", "Northbound", "Southbound", "Eastbound", "Westbound"],
     mapFilter: true,
-    filterRemovable: true
+    filterRemovable: true,
   },
   tmc: {
     displayName: "Zoom to TMC",
     values: [],
     mapFilter: true,
-    filterRemovable: true
+    filterRemovable: true,
   },
   counties: {
     values: [
