@@ -1,10 +1,4 @@
 import React, { useEffect, useState } from "react";
-import {
-  Link,
-  useNavigate,
-  useSearchParams,
-  useParams,
-} from "react-router-dom";
 import get from "lodash/get";
 import { falcorGraph } from "~/modules/avl-components/src";
 
@@ -59,11 +53,6 @@ const npmrdsHoverComp = (props) => {
       name: "Avg. speed",
       display: (d) => <>{mapTmcData["s"][hourFilterValue]}</>,
     },
-    {
-      col: "tmcId",
-      name: "Link to table",
-      display: (d) => <LinkRow feature={d} />,
-    },
     { col: "f_system", name: "f_system", display: (d) => d },
     { col: "frc", name: "frc", display: (d) => d },
     { col: "miles", name: "Miles", display: (d) => d },
@@ -85,25 +74,6 @@ const npmrdsHoverComp = (props) => {
         </div>
       ))}
     </div>
-  );
-};
-
-const LinkRow = ({ feature, sourceId }) => {
-  const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const variable = searchParams.get("variable");
-  const { viewId } = useParams() || "";
-
-  return (
-    <Link
-      onClick={(e) =>
-        navigate(
-          `/source/${sourceId}/table/${viewId}?variable=${variable}&featureId=${feature}`
-        )
-      }
-    >
-      Link to table
-    </Link>
   );
 };
 

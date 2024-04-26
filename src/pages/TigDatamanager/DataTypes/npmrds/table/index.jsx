@@ -128,10 +128,10 @@ const NpmrdsTable = ({
       setTableData(tmcArray);
     }
 
-    if(year && month && direction) {
+    if(year && month) {
       getData();
     }
-  }, [filters])
+  }, [year, month])
 
   const { data, columns } = useMemo(() => {
     return transform(tableData, tableColumns, filters, setFilters);
