@@ -13,6 +13,8 @@ import download from "downloadjs"
 
 import shpwrite from  '@mapbox/shp-write'
 
+import { regionalData } from "../constants/index";
+
 // [1112,1588,2112,2958,56390]
 const defaultRange = ['#ffffb2', '#fed976',  '#fd8d3c', '#fc4e2a', '#e31a1c', '#b10026']
 const defaultDomain = [0,872,2047,3649,6934,14119,28578]
@@ -410,12 +412,17 @@ const MapDataDownloader = ({ activeViewId, activeVar, variable, year }) => {
 
 const SedTableFilter = ({ source, filters, setFilters, data, columns }) => {
   let activeVar = useMemo(() => get(filters, "activeVar.value", ""), [filters]);
-  // console.log("SedTableFilter", filters);
+  let area = useMemo(() => get(filters, "area.value", ""), [filters]);
 
   const [searchParams] = useSearchParams();
   const searchVar = searchParams.get("variable");
+
+  const areas = [
+    ...Object.keys(regionalData?.regions || {}),
+    ...Object.keys(regionalData?.sub_regions || {}),
+  ];
+
   React.useEffect(() => {
-    //console.log("SedMapFilter", activeVar);
     if (!activeVar) {
       if (searchVar) {
         setFilters({
@@ -434,8 +441,6 @@ const SedTableFilter = ({ source, filters, setFilters, data, columns }) => {
     return source.type === 'tig_sed_county' ? sedVarsCounty : sedVars
   },[source.type])
 
-// console.log("data, columns", data, columns, varList[activeVar].name)
-
   const downloadData = React.useCallback(() => {
     const mapped = data.map(d => {
       return columns.map(c => {
@@ -446,12 +451,32 @@ const SedTableFilter = ({ source, filters, setFilters, data, columns }) => {
     download(mapped.join("\n"), `${ varList[activeVar].name }.csv`, "text/csv");
   }, [data, columns, varList, activeVar]);
 
-  //console.log(, year,activeVar)
-
   return (
     <div className="flex flex-1 border-blue-100">
       <div className='flex flex-1'>
         <div className='flex-1' /> 
+        <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">Area: </div>
+      <div className="flex">
+        <select
+          className="w-full bg-blue-100 rounded mr-2 mt-1 px-1 flex text-sm capitalize"
+          value={area}
+          onChange={(e) =>
+            setFilters({
+              ...filters,
+              area: { value: e.target.value },
+            })
+          }
+        >
+          <option className="ml-2  truncate" value={"all"}>
+            All
+          </option>
+          {(areas || []).map((area, i) => (
+            <option key={i} className="ml-2  truncate" value={area}>
+              {area}
+            </option>
+          ))}
+        </select>
+        </div>
         <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">Variable: </div>
         <div className="flex my-1">
           <select
@@ -483,15 +508,26 @@ const SedTableFilter = ({ source, filters, setFilters, data, columns }) => {
   );
 };
 
-const SedTableTransform = (tableData, attributes, filters, years,source) => {
+const SedTableTransform = (tableData, attributes, filters, years, source) => {
   let activeVar = get(filters, "activeVar.value", "totpop");
+  let area = get(filters, "area.value", "all");
+  const selectedArea = {
+    ...(regionalData?.regions || {}),
+    ...(regionalData?.sub_regions || {}),
+  }[`${area}`];
 
-  let updatedYears = years?.map((str) => (''+str).slice(-2));
+  if (area !== "all") {
+    tableData = (tableData || []).filter((g) =>
+      (selectedArea || []).includes(g.county)
+    );
+  }
+
+  let updatedYears = years?.map((str) => ("" + str).slice(-2));
   const columns = [
     {
-      Header: source.type === 'tig_sed_county' ? "County" : "TAZ",
-      accessor: source.type === 'tig_sed_county' ? "county" : "taz",
-      sortBy: 'asc'
+      Header: source.type === "tig_sed_county" ? "County" : "TAZ",
+      accessor: source.type === "tig_sed_county" ? "county" : "taz",
+      sortBy: "asc",
     },
   ];
 
