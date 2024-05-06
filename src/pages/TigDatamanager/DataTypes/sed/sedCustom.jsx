@@ -92,11 +92,11 @@ const SedMapFilter = (props) => {
     {}
   );
 
-  const { attributes } = layer;
+  const attributes = layer?.attributes;
   const getAttributes = (typeof attributes?.[0] === 'string' ?
-    attributes : attributes.map(d => d.name)).filter(d => !['wkb_geometry'].includes(d))
+    attributes : attributes?.map(d => d.name))?.filter(d => !['wkb_geometry'].includes(d))
 
-  const geomKeyName = getAttributes.includes('taz') ? 'taz' : 'county';
+  const geomKeyName = getAttributes?.includes('taz') ? 'taz' : 'county';
   const projectCalculatedBounds = useMemo(() => {
     if (projectIdFilterValue) {
       const formattedFilterValue = geomKeyName === "taz" ? parseInt(projectIdFilterValue) : projectIdFilterValue
@@ -284,7 +284,7 @@ const SedMapFilter = (props) => {
           <div className='px-6'>
           <input type="range" 
               min="0" 
-              max={metaData?.years.length-1} 
+              max={metaData?.years?.length-1} 
               id="my-range" 
               list="my-datalist"
               className='w-full'
