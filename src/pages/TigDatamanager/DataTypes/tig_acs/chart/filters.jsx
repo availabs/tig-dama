@@ -28,6 +28,10 @@ export const AcsChartFilters = ({
   let area = useMemo(() => get(filters, "area.value", "all"), [filters]);
   let year = useMemo(() => get(filters, "year.value", ""), [filters]);
   let summarize = useMemo(() => get(filters, "summarize.value", ""), [filters]);
+  let chartType = useMemo(
+    () => get(filters, "chartType.value", "bar"),
+    [filters]
+  );
 
   const [searchParams] = useSearchParams();
   const searchVar = searchParams.get("variable");
@@ -53,12 +57,13 @@ export const AcsChartFilters = ({
     if (!get(filters, "year.value", null)) {
       update.year = { value: "2019" };
     }
-
+    if (!get(filters, "chartType.value", null)) {
+      update.chartType = { value: "bar" };
+    }
     setFilters(update);
   }, [variables]);
 
   const downloadImage = React.useCallback(() => {
-    console.log("Called");
     if (!node) return;
     toPng(node, { backgroundColor: "#fff" }).then((dataUrl) => {
       download(dataUrl, `${activeVar}.png`, "image/png");
@@ -67,8 +72,10 @@ export const AcsChartFilters = ({
 
   return (
     <div className="flex justify-start content-center flex-wrap w-full p-1">
-      <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">Area: </div>
-      <div className="flex" >
+      <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">
+        Area:{" "}
+      </div>
+      <div className="flex">
         <select
           className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
           value={area}
@@ -92,7 +99,9 @@ export const AcsChartFilters = ({
           ))}
         </select>
       </div>
-      <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">Summarize: </div>
+      <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">
+        Summarize:{" "}
+      </div>
       <div className="flex">
         <select
           className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
@@ -115,7 +124,9 @@ export const AcsChartFilters = ({
           ) : null}
         </select>
       </div>
-      <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">Variable: </div>
+      <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">
+        Variable:{" "}
+      </div>
       <div className="flex">
         <select
           className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
@@ -131,7 +142,25 @@ export const AcsChartFilters = ({
           ))}
         </select>
       </div>
-      <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">Year: </div>
+      <div className="flex">
+        <select
+          className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
+          value={chartType}
+          onChange={(e) =>
+            setFilters({ ...filters, chartType: { value: e.target.value } })
+          }
+        >
+          <option className="ml-2 truncate" value="bar">
+            Bar
+          </option>
+          <option className="ml-2 truncate" value="pie">
+            Pie
+          </option>
+        </select>
+      </div>
+      <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">
+        Year:{" "}
+      </div>
       <div className="flex">
         <select
           className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"

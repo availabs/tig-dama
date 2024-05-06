@@ -4,6 +4,7 @@ import { get } from "lodash";
 
 import { DamaContext } from "~/pages/DataManager/store";
 import { ResponsiveBar } from "@nivo/bar";
+import { ResponsivePieCanvas } from "@nivo/pie";
 import { fips2Name } from "./../../constants/index";
 
 const ViewSelector = ({ views }) => {
@@ -27,6 +28,125 @@ const ViewSelector = ({ views }) => {
         </select>
       </div>
     </div>
+  );
+};
+
+const BarChart = ({ barData, activeVar }) => {
+  return (
+    <>
+      <ResponsiveBar
+        data={barData}
+        keys={["value"]}
+        indexBy="id"
+        margin={{ top: 20, right: 60, bottom: 50, left: 100 }}
+        pixelRatio={2}
+        padding={0.15}
+        innerPadding={0}
+        minValue="auto"
+        maxValue="auto"
+        groupMode="stacked"
+        layout="horizontal"
+        reverse={false}
+        valueScale={{ type: "linear" }}
+        indexScale={{ type: "band", round: true }}
+        colors={{ scheme: "category10" }}
+        borderColor={{
+          from: "color",
+          modifiers: [
+            ["darker", 0.6],
+            ["opacity", 0.5],
+          ],
+        }}
+        axisBottom={{
+          tickSize: 5,
+          tickPadding: 5,
+          tickRotation: 0,
+          legend: activeVar,
+          legendPosition: "middle",
+          legendOffset: 36,
+        }}
+        enableGridX={true}
+        enableGridY={false}
+        enableLabel={true}
+        labelSkipWidth={12}
+        labelSkipHeight={12}
+        labelTextColor={{
+          from: "color",
+          modifiers: [["darker", 1.6]],
+        }}
+        isInteractive={true}
+        legends={[]}
+      />
+    </>
+  );
+};
+const PieChart = ({ pieData }) => {
+  return (
+    <>
+      <ResponsivePieCanvas
+        data={
+          (pieData || []).map((p) => {
+            return {
+              id: p?.id || "",
+              label: p?.name || "",
+              value: p?.value,
+            };
+          }) || []
+        }
+        margin={{ top: 40, right: 200, bottom: 40, left: 80 }}
+        padAngle={0.7}
+        cornerRadius={3}
+        activeOuterRadiusOffset={8}
+        colors={{ scheme: "paired" }}
+        borderColor={{
+          from: "color",
+          modifiers: [["darker", 0.6]],
+        }}
+        arcLinkLabelsSkipAngle={10}
+        arcLinkLabelsTextColor="#333333"
+        arcLinkLabelsThickness={2}
+        arcLinkLabelsColor={{ from: "color" }}
+        arcLabelsSkipAngle={10}
+        arcLabelsTextColor="#333333"
+        defs={[
+          {
+            id: "dots",
+            type: "patternDots",
+            background: "inherit",
+            color: "rgba(255, 255, 255, 0.3)",
+            size: 4,
+            padding: 1,
+            stagger: true,
+          },
+          {
+            id: "lines",
+            type: "patternLines",
+            background: "inherit",
+            color: "rgba(255, 255, 255, 0.3)",
+            rotation: -45,
+            lineWidth: 6,
+            spacing: 10,
+          },
+        ]}
+        legends={[
+          {
+            anchor: "right",
+            direction: "column",
+            justify: false,
+            translateX: 140,
+            translateY: 0,
+            itemsSpacing: 2,
+            itemWidth: 60,
+            itemHeight: 14,
+            itemTextColor: "#999",
+            itemDirection: "left-to-right",
+            itemOpacity: 1,
+            symbolSize: 14,
+            symbolShape: "circle",
+          },
+        ]}
+      />
+    </>
   );
 };
 
@@ -139,6 +259,14 @@ const ChartPage = ({
     }, {});
   }, [falcorCache, geoids, activeCensusKeys, activeDivisorKeys, activeYear]);
 
+  const [chartType, year] = useMemo(
+    () => [
+      get(filters, "chartType.value", "line"),
+      get(filters, "year.value", "0"),
+    ],
+    [filters]
+  );
+
   let { data } = useMemo(
     () =>
       transform({
@@ -160,51 +288,25 @@ const ChartPage = ({
           years={(years || []).sort()}
           node={ref}
         />
-      </div>
+      </div>  
       <div style={{ height: "600px" }} ref={setRef}>
-        <ResponsiveBar
-          data={data}
-          keys={["value"]}
-          indexBy="id"
-          margin={{ top: 20, right: 60, bottom: 50, left: 100 }}
-          pixelRatio={2}
-          padding={0.15}
-          innerPadding={0}
-          minValue="auto"
-          maxValue="auto"
-          groupMode="stacked"
-          layout="horizontal"
-          reverse={false}
-          valueScale={{ type: "linear" }}
-          indexScale={{ type: "band", round: true }}
-          colors={{ scheme: "category10" }}
-          borderColor={{
-            from: "color",
-            modifiers: [
-              ["darker", 0.6],
-              ["opacity", 0.5],
-            ],
-          }}
-          axisBottom={{
-            tickSize: 5,
-            tickPadding: 5,
-            tickRotation: 0,
-            legend: filters?.activeVar?.value,
-            legendPosition: "middle",
-            legendOffset: 36,
-          }}
-          enableGridX={true}
-          enableGridY={false}
-          enableLabel={true}
-          labelSkipWidth={12}
-          labelSkipHeight={12}
-          labelTextColor={{
-            from: "color",
-            modifiers: [["darker", 1.6]],
-          }}
-          isInteractive={true}
-          legends={[]}
-        />
+        {data?.length ? (
+          <>
+            {chartType === "bar" ? (
+              <BarChart barData={data} activeVar={filters?.activeVar?.value} />
+            ) : null}
+            {chartType === "pie" ? (
+              <PieChart pieData={data} year={years[Number(year)]} />
+            ) : null}
+          </>
+        ) : (
+          <div
+            className="text-center justify-content-center"
+            style={{ height: "600px", lineHeight: "600px" }}
+          >
+            No Chart Data Available
+          </div>
+        )}
       </div>
     </div>
   );

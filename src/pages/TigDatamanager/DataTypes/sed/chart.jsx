@@ -182,22 +182,21 @@ const LineChart = ({ lineData }) => {
   );
 };
 
-const BarChart = ({ barData, year, activeVar }) => {
-  console.log("barData", barData);
-  const d =
-    (barData || []).map((b) => {
-      return {
-        id: b?.id || "",
-        label: b?.name || "",
-        value: ((b?.data || []).find((f) => Number(f.x) === Number(year)) ||
-          {})["y"],
-      };
-    }) || [];
-  console.log("d", d);
+const BarChart = ({ barData, year }) => {
   return (
     <>
       <ResponsiveBar
-        data={d}
+        data={
+          (barData || []).map((b) => {
+            return {
+              id: b?.id || "",
+              label: b?.name || "",
+              value: ((b?.data || []).find(
+                (f) => Number(f.x) === Number(year)
+              ) || {})["y"],
+            };
+          }) || []
+        }
         keys={["value"]}
         indexBy="id"
         margin={{ top: 20, right: 60, bottom: 50, left: 100 }}
@@ -223,9 +222,6 @@ const BarChart = ({ barData, year, activeVar }) => {
           tickSize: 5,
           tickPadding: 5,
           tickRotation: 0,
-          // legend: filters?.activeVar?.value,
-          legendPosition: "middle",
-          legendOffset: 36,
         }}
         enableGridX={true}
         enableGridY={false}
@@ -248,23 +244,131 @@ const AreaChart = ({ areaData }) => {
     data={[
       {
         id: "japan",
-        color: "hsl(167, 70%, 50%)",
+        color: "hsl(13, 70%, 50%)",
         data: [
           {
             x: "plane",
-            y: 7,
+            y: 155,
           },
           {
             x: "helicopter",
-            y: 18,
+            y: 221,
           },
           {
             x: "boat",
-            y: 125,
+            y: 2,
           },
           {
             x: "train",
-            y: 271,
+            y: 248,
+          },
+          {
+            x: "subway",
+            y: 83,
+          },
+          {
+            x: "bus",
+            y: 246,
+          },
+          {
+            x: "car",
+            y: 134,
+          },
+          {
+            x: "moto",
+            y: 250,
+          },
+          {
+            x: "bicycle",
+            y: 224,
+          },
+          {
+            x: "horse",
+            y: 81,
+          },
+          {
+            x: "skateboard",
+            y: 252,
+          },
+          {
+            x: "others",
+            y: 174,
+          },
+        ],
+      },
+      {
+        id: "france",
+        color: "hsl(33, 70%, 50%)",
+        data: [
+          {
+            x: "plane",
+            y: 209,
+          },
+          {
+            x: "helicopter",
+            y: 134,
+          },
+          {
+            x: "boat",
+            y: 231,
+          },
+          {
+            x: "train",
+            y: 90,
+          },
+          {
+            x: "subway",
+            y: 93,
+          },
+          {
+            x: "bus",
+            y: 49,
+          },
+          {
+            x: "car",
+            y: 129,
+          },
+          {
+            x: "moto",
+            y: 268,
+          },
+          {
+            x: "bicycle",
+            y: 102,
+          },
+          {
+            x: "horse",
+            y: 273,
+          },
+          {
+            x: "skateboard",
+            y: 39,
+          },
+          {
+            x: "others",
+            y: 4,
+          },
+        ],
+      },
+      {
+        id: "us",
+        color: "hsl(130, 70%, 50%)",
+        data: [
+          {
+            x: "plane",
+            y: 223,
+          },
+          {
+            x: "helicopter",
+            y: 220,
+          },
+          {
+            x: "boat",
+            y: 242,
+          },
+          {
+            x: "train",
+            y: 12,
           },
           {
             x: "subway",
@@ -272,227 +376,11 @@ const AreaChart = ({ areaData }) => {
           },
           {
             x: "bus",
-            y: 266,
+            y: 102,
           },
           {
             x: "car",
-            y: 185,
-          },
-          {
-            x: "moto",
-            y: 62,
-          },
-          {
-            x: "bicycle",
-            y: 299,
-          },
-          {
-            x: "horse",
-            y: 6,
-          },
-          {
-            x: "skateboard",
-            y: 36,
-          },
-          {
-            x: "others",
-            y: 222,
-          },
-        ],
-      },
-      {
-        id: "france",
-        color: "hsl(188, 70%, 50%)",
-        data: [
-          {
-            x: "plane",
-            y: 229,
-          },
-          {
-            x: "helicopter",
-            y: 185,
-          },
-          {
-            x: "boat",
-            y: 207,
-          },
-          {
-            x: "train",
-            y: 176,
-          },
-          {
-            x: "subway",
-            y: 3,
-          },
-          {
-            x: "bus",
-            y: 229,
-          },
-          {
-            x: "car",
-            y: 251,
-          },
-          {
-            x: "moto",
-            y: 30,
-          },
-          {
-            x: "bicycle",
-            y: 29,
-          },
-          {
-            x: "horse",
-            y: 270,
-          },
-          {
-            x: "skateboard",
-            y: 242,
-          },
-          {
-            x: "others",
-            y: 219,
-          },
-        ],
-      },
-      {
-        id: "us",
-        color: "hsl(202, 70%, 50%)",
-        data: [
-          {
-            x: "plane",
-            y: 47,
-          },
-          {
-            x: "helicopter",
-            y: 189,
-          },
-          {
-            x: "boat",
-            y: 290,
-          },
-          {
-            x: "train",
-            y: 38,
-          },
-          {
-            x: "subway",
-            y: 186,
-          },
-          {
-            x: "bus",
-            y: 20,
-          },
-          {
-            x: "car",
-            y: 20,
-          },
-          {
-            x: "moto",
-            y: 269,
-          },
-          {
-            x: "bicycle",
-            y: 163,
-          },
-          {
-            x: "horse",
-            y: 8,
-          },
-          {
-            x: "skateboard",
-            y: 167,
-          },
-          {
-            x: "others",
-            y: 11,
-          },
-        ],
-      },
-      {
-        id: "germany",
-        color: "hsl(146, 70%, 50%)",
-        data: [
-          {
-            x: "plane",
-            y: 129,
-          },
-          {
-            x: "helicopter",
-            y: 234,
-          },
-          {
-            x: "boat",
-            y: 115,
-          },
-          {
-            x: "train",
-            y: 31,
-          },
-          {
-            x: "subway",
-            y: 150,
-          },
-          {
-            x: "bus",
-            y: 33,
-          },
-          {
-            x: "car",
-            y: 125,
-          },
-          {
-            x: "moto",
-            y: 33,
-          },
-          {
-            x: "bicycle",
-            y: 86,
-          },
-          {
-            x: "horse",
-            y: 6,
-          },
-          {
-            x: "skateboard",
-            y: 195,
-          },
-          {
-            x: "others",
-            y: 10,
-          },
-        ],
-      },
-      {
-        id: "norway",
-        color: "hsl(139, 70%, 50%)",
-        data: [
-          {
-            x: "plane",
-            y: 200,
-          },
-          {
-            x: "helicopter",
-            y: 142,
-          },
-          {
-            x: "boat",
-            y: 153,
-          },
-          {
-            x: "train",
-            y: 178,
-          },
-          {
-            x: "subway",
-            y: 238,
-          },
-          {
-            x: "bus",
-            y: 188,
-          },
-          {
-            x: "car",
-            y: 87,
+            y: 119,
           },
           {
             x: "moto",
@@ -500,19 +388,127 @@ const AreaChart = ({ areaData }) => {
           },
           {
             x: "bicycle",
-            y: 63,
+            y: 191,
           },
           {
             x: "horse",
-            y: 257,
+            y: 240,
           },
           {
             x: "skateboard",
-            y: 256,
+            y: 147,
           },
           {
             x: "others",
-            y: 42,
+            y: 278,
+          },
+        ],
+      },
+      {
+        id: "germany",
+        color: "hsl(173, 70%, 50%)",
+        data: [
+          {
+            x: "plane",
+            y: 206,
+          },
+          {
+            x: "helicopter",
+            y: 277,
+          },
+          {
+            x: "boat",
+            y: 284,
+          },
+          {
+            x: "train",
+            y: 226,
+          },
+          {
+            x: "subway",
+            y: 46,
+          },
+          {
+            x: "bus",
+            y: 10,
+          },
+          {
+            x: "car",
+            y: 137,
+          },
+          {
+            x: "moto",
+            y: 298,
+          },
+          {
+            x: "bicycle",
+            y: 16,
+          },
+          {
+            x: "horse",
+            y: 65,
+          },
+          {
+            x: "skateboard",
+            y: 46,
+          },
+          {
+            x: "others",
+            y: 166,
+          },
+        ],
+      },
+      {
+        id: "norway",
+        color: "hsl(61, 70%, 50%)",
+        data: [
+          {
+            x: "plane",
+            y: 186,
+          },
+          {
+            x: "helicopter",
+            y: 19,
+          },
+          {
+            x: "boat",
+            y: 163,
+          },
+          {
+            x: "train",
+            y: 231,
+          },
+          {
+            x: "subway",
+            y: 89,
+          },
+          {
+            x: "bus",
+            y: 181,
+          },
+          {
+            x: "car",
+            y: 77,
+          },
+          {
+            x: "moto",
+            y: 19,
+          },
+          {
+            x: "bicycle",
+            y: 9,
+          },
+          {
+            x: "horse",
+            y: 21,
+          },
+          {
+            x: "skateboard",
+            y: 224,
+          },
+          {
+            x: "others",
+            y: 262,
           },
         ],
       },
@@ -527,7 +523,7 @@ const AreaChart = ({ areaData }) => {
       reverse: false,
     }}
     yFormat=" >-.2f"
-    curve="natural"
+    curve="cardinal"
     axisTop={null}
     axisRight={null}
     axisBottom={{
@@ -548,24 +544,25 @@ const AreaChart = ({ areaData }) => {
       legendPosition: "middle",
       truncateTickAt: 0,
     }}
-    lineWidth={3}
-    pointSize={2}
+    enableGridX={false}
+    enablePoints={false}
+    pointSize={10}
     pointColor={{ theme: "background" }}
-    pointBorderWidth={5}
+    pointBorderWidth={2}
     pointBorderColor={{ from: "serieColor" }}
     pointLabel="data.yFormatted"
     pointLabelYOffset={-12}
-    areaBaselineValue={40}
-    enableSlices="x"
-    enableCrosshair={false}
-    crosshairType="top-left"
+    enableArea={true}
+    areaOpacity={0.15}
+    isInteractive={false}
+    enableTouchCrosshair={true}
     legends={[
       {
         anchor: "bottom-right",
         direction: "column",
         justify: false,
-        translateX: 107,
-        translateY: -131,
+        translateX: 100,
+        translateY: 0,
         itemsSpacing: 0,
         itemDirection: "left-to-right",
         itemWidth: 80,
