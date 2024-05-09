@@ -1,77 +1,52 @@
-import React from "react"
-import { 
-  registerDataType,
-  dmsPageFactory
-} from "~/modules/dms/src"
-
-//import DmsLexical from "~/modules/dms-custom/lexical"
+//import { useFalcor } from "~/modules/avl-components/src"
+import { dmsPageFactory, registerDataType } from "~/modules/dms/src"
 import { withAuth } from "@availabs/ams" 
-import Layout from "./components/layout"
-import { PageView, PageEdit } from "./components/page"
-
-import docsFormat from "./docs.format.js"
-
 import checkAuth  from "~/layout/checkAuth"
+//import {Logo} from '~/layout/ppdaf-layout'
+//import AuthMenu from "~/pages/Auth/AuthMenu"
 
-//registerDataType("lexical", DmsLexical)
+import siteConfig from '~/modules/dms/src/patterns/page/siteConfig'
+//import ComponentRegistry from '~/component_registry'
+import Selector, { registerComponents } from "~/modules/dms/src/patterns/page/selector"
+// import BuildingFootprintsDownload from "./buildings_download"
 
+//registerComponents(ComponentRegistry)
+registerDataType("selector", Selector)
 
-
-const siteConfig = {
-  format: docsFormat,
-  check: ({user}, activeConfig, navigate) =>  {
-
-    const getReqAuth = (configs) => {
-      return configs.reduce((out,config) => {
-        let authLevel = config.authLevel || -1
-        if(config.children) {
-          authLevel = Math.max(authLevel, getReqAuth(config.children))
-        }
-        return Math.max(out, authLevel)
-      },-1)
-    } 
-
-    let requiredAuth = getReqAuth(activeConfig)
-    checkAuth({user, authLevel:requiredAuth}, navigate)
-    
-  },
-  children: [
-    { 
-      type: Layout,
-      action: "list",
-      path: "/*",
-      children: [
-        { 
-          type: PageView,
-          path: "/*",
-          action: "view"
-        },
-      ]
-    },
-    { 
-      type: (props) => <Layout {...props} edit={true}/>,
-      action: "list",
-      path: "/edit/*",
-      authLevel: 5,
-      children: [
-        { 
-          type: PageEdit,
-          action: "edit",
-          path: "/edit/*"
-        },
-      ]
-    }
-  ]
+const theme = {
+  page: {
+    wrapper1: 'w-full flex-1 flex flex-col bg-white border', // first div inside Layout
+    wrapper2: 'w-full h-full flex-1 flex flex-row px-1 md:px-6 py-6', // inside page header, wraps sidebar
+    wrapper3: 'flex flex-1 w-full  flex-col   relative text-md font-light leading-7 p-4 min-h-[calc(100vh_-_102px)]' , // content wrapepr
+  }
 }
 
-export default [{ 
-  ...dmsPageFactory(siteConfig,"/docs/", withAuth),
-  name: "Home",
-  mainNav: false,
-  sideNav: {
-    size: "none"
-  },
-  topNav: {
-    position: "fixed"
+
+const Routes = [
+  {
+    ...dmsPageFactory(
+      siteConfig({ 
+        app: "tig-dama",
+        type: "tig-docs2",
+        logo: <></>, 
+        rightMenu: <></>,
+        baseUrl: "/docs",
+        theme,
+        checkAuth: () => true
+      }), 
+      "/docs", 
+      withAuth
+    ),
+    authLevel: -1,
+    name: "CMS",
+    sideNav: {
+      size: "none"
+    },
+    topNav: {
+      position: "fixed"
+    }
   }
-}]
+]
+
+
+export default Routes
