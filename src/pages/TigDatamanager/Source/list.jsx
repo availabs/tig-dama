@@ -7,6 +7,7 @@ import { useParams } from "react-router-dom";
 import { DamaContext } from "~/pages/DataManager/store";
 import { SourceAttributes, ViewAttributes, getAttributes } from "~/pages/DataManager/Source/attributes";
 import baseUserViewAccess  from "../Utils/authLevel";
+import { RecentActivityStream } from "./recentActivityStream";
 
 const SourceThumb = ({ source }) => {
   const { falcor, falcorCache } = useFalcor();
@@ -129,10 +130,7 @@ const SourcesList = () => {
         </div>
         <div className='w-full md:w-[450px]'>
           <div className="p-4">
-            <div className="flex items-center border-t-2 border-[#679d89]">
-              <div className='py-4 px-6 bg-[#679d89] text-gray-100 text-sm'> Recent Activity </div>
-              
-            </div>
+              <RecentActivityStream />
           </div>
         </div>
       </div>
