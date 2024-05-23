@@ -5,7 +5,9 @@ import { useMemo, useState, useContext, useEffect, useCallback } from "react";
 import { DamaContext } from "~/pages/DataManager/store";
 import { ETL_CONTEXT_ATTRS } from "~/pages/DataManager/Tasks/TaskList";
 
-export const RecentActivityStream = (props) => {
+const HOVER_LINK_CLASS = 'hover:text-[#E47B44]';
+
+export const RecentActivityStream = () => {
   return (
     <div>
       <ActivityStreamHeader />
@@ -14,11 +16,29 @@ export const RecentActivityStream = (props) => {
   );
 };
 
-const ActivityStreamHeader = () => (
-  <div className="flex items-center border-t-2 mb-4 border-[#679d89]">
-    <div className="py-3 px-6 bg-[#679d89] text-lg text-gray-100">Recent Activity</div>
-  </div>
-);
+const ActivityStreamHeader = () => {
+  const { baseUrl } = useContext(DamaContext);
+  const navigate = useNavigate();
+  const showMore = useCallback((e) => {
+      if (e.ctrlKey) {
+        window.open(`${baseUrl}/tasks`, "_blank");
+      } else {
+        navigate(`${baseUrl}/tasks`);
+      }
+    },
+    [navigate]
+  );
+  return (
+    <div className="flex items-center border-t-2 mb-4 border-[#679d89]">
+      <div
+        onClick={showMore}
+        className="py-3 px-6 bg-[#679d89] text-lg text-gray-100 hover:cursor-pointer hover:text-[#bbd4cb]"
+      >
+        Recent Activity
+      </div>
+    </div>
+  );
+};
 const INITIAL_PAGE_SIZE = 10;
 
 const ActivityStreamList = () => {
@@ -31,8 +51,6 @@ const ActivityStreamList = () => {
       pageIndex * INITIAL_PAGE_SIZE + INITIAL_PAGE_SIZE
     );
   }, [pageIndex, INITIAL_PAGE_SIZE]);
-
-  const dataLengthPath = ["dama", pgEnv, "latest", "events", "length"];
 
   const dataFetchPath = [
     "dama",
@@ -89,7 +107,7 @@ const ActivityStreamList = () => {
         }
         return r;
       })
-      .filter((r) => Boolean(r.etl_context_id));
+      .filter((r) => typeof r.source_name === 'string' && Boolean(r.etl_context_id));
   }, [indices, falcorCache]);
 
   const navigate = useNavigate();
@@ -106,6 +124,16 @@ const ActivityStreamList = () => {
     [navigate]
   );
 
+  const showMore = useCallback((e) => {
+    if (e.ctrlKey) {
+      window.open(`${baseUrl}/tasks`, "_blank");
+    } else {
+      navigate(`${baseUrl}/tasks`);
+    }
+  },
+  [navigate]
+);
+
   return (
     <>
       {parsedData.map((etlCtx) => {
@@ -121,7 +149,7 @@ const ActivityStreamList = () => {
         return (
           <div key={`recent_activity_${etlCtx?.etl_context_id}`} className="text-xs py-4 flex items-center border-t border-[#679d89]">
             <div
-              className="flex items-center hover:underline hover:cursor-pointer hover:text-[#E47B44]"
+              className={`flex items-center hover:underline hover:cursor-pointer ${HOVER_LINK_CLASS}`}
               onClick={(e) => {
                 onRowClick(e, etlCtx);
               }}
@@ -129,11 +157,12 @@ const ActivityStreamList = () => {
               <div className="italic pr-1">
                 {createdAtDate.toLocaleTimeString(undefined, options)}:
               </div>
-              <div>updated {ctxSourceName}</div>
+              <div>updated '{ctxSourceName}'</div>
             </div>
           </div>
         );
       })}
+      <div className={`text-xs text-right hover:cursor-pointer ${HOVER_LINK_CLASS}`} onClick={showMore}>Show More</div>
     </>
   );
 };

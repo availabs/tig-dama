@@ -130,7 +130,7 @@ const SourcesList = () => {
         </div>
         <div className='w-full md:w-[450px]'>
           <div className="p-4">
-              <RecentActivityStream />
+            <RecentActivityStream />
           </div>
         </div>
       </div>
