@@ -429,7 +429,7 @@ const TablePage = ({
           node={ref}
         />
       </div>
-      <div style={{ height: "800px" }} ref={setRef}>
+      <div style={{ height: "800px", overflow:"hidden" }} ref={setRef}>
         {data?.length ? (
           <>
             {chartType === "line" ? <LineChart lineData={data} /> : null}
