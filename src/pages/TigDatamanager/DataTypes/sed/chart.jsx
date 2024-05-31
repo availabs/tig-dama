@@ -240,284 +240,25 @@ const BarChart = ({ barData, year }) => {
 };
 const AreaChart = ({ areaData }) => {
   console.log("areaData", areaData);
-  <ResponsiveLine
-    data={[
-      {
-        id: "japan",
-        color: "hsl(13, 70%, 50%)",
-        data: [
-          {
-            x: "plane",
-            y: 155,
-          },
-          {
-            x: "helicopter",
-            y: 221,
-          },
-          {
-            x: "boat",
-            y: 2,
-          },
-          {
-            x: "train",
-            y: 248,
-          },
-          {
-            x: "subway",
-            y: 83,
-          },
-          {
-            x: "bus",
-            y: 246,
-          },
-          {
-            x: "car",
-            y: 134,
-          },
-          {
-            x: "moto",
-            y: 250,
-          },
-          {
-            x: "bicycle",
-            y: 224,
-          },
-          {
-            x: "horse",
-            y: 81,
-          },
-          {
-            x: "skateboard",
-            y: 252,
-          },
-          {
-            x: "others",
-            y: 174,
-          },
-        ],
-      },
-      {
-        id: "france",
-        color: "hsl(33, 70%, 50%)",
-        data: [
-          {
-            x: "plane",
-            y: 209,
-          },
-          {
-            x: "helicopter",
-            y: 134,
-          },
-          {
-            x: "boat",
-            y: 231,
-          },
-          {
-            x: "train",
-            y: 90,
-          },
-          {
-            x: "subway",
-            y: 93,
-          },
-          {
-            x: "bus",
-            y: 49,
-          },
-          {
-            x: "car",
-            y: 129,
-          },
-          {
-            x: "moto",
-            y: 268,
-          },
-          {
-            x: "bicycle",
-            y: 102,
-          },
-          {
-            x: "horse",
-            y: 273,
-          },
-          {
-            x: "skateboard",
-            y: 39,
-          },
-          {
-            x: "others",
-            y: 4,
-          },
-        ],
-      },
-      {
-        id: "us",
-        color: "hsl(130, 70%, 50%)",
-        data: [
-          {
-            x: "plane",
-            y: 223,
-          },
-          {
-            x: "helicopter",
-            y: 220,
-          },
-          {
-            x: "boat",
-            y: 242,
-          },
-          {
-            x: "train",
-            y: 12,
-          },
-          {
-            x: "subway",
-            y: 101,
-          },
-          {
-            x: "bus",
-            y: 102,
-          },
-          {
-            x: "car",
-            y: 119,
-          },
-          {
-            x: "moto",
-            y: 71,
-          },
-          {
-            x: "bicycle",
-            y: 191,
-          },
-          {
-            x: "horse",
-            y: 240,
-          },
-          {
-            x: "skateboard",
-            y: 147,
-          },
-          {
-            x: "others",
-            y: 278,
-          },
-        ],
-      },
-      {
-        id: "germany",
-        color: "hsl(173, 70%, 50%)",
-        data: [
-          {
-            x: "plane",
-            y: 206,
-          },
-          {
-            x: "helicopter",
-            y: 277,
-          },
-          {
-            x: "boat",
-            y: 284,
-          },
-          {
-            x: "train",
-            y: 226,
-          },
-          {
-            x: "subway",
-            y: 46,
-          },
-          {
-            x: "bus",
-            y: 10,
-          },
-          {
-            x: "car",
-            y: 137,
-          },
-          {
-            x: "moto",
-            y: 298,
-          },
-          {
-            x: "bicycle",
-            y: 16,
-          },
-          {
-            x: "horse",
-            y: 65,
-          },
-          {
-            x: "skateboard",
-            y: 46,
-          },
-          {
-            x: "others",
-            y: 166,
-          },
-        ],
-      },
-      {
-        id: "norway",
-        color: "hsl(61, 70%, 50%)",
-        data: [
-          {
-            x: "plane",
-            y: 186,
-          },
-          {
-            x: "helicopter",
-            y: 19,
-          },
-          {
-            x: "boat",
-            y: 163,
-          },
-          {
-            x: "train",
-            y: 231,
-          },
-          {
-            x: "subway",
-            y: 89,
-          },
-          {
-            x: "bus",
-            y: 181,
-          },
-          {
-            x: "car",
-            y: 77,
-          },
-          {
-            x: "moto",
-            y: 19,
-          },
-          {
-            x: "bicycle",
-            y: 9,
-          },
-          {
-            x: "horse",
-            y: 21,
-          },
-          {
-            x: "skateboard",
-            y: 224,
-          },
-          {
-            x: "others",
-            y: 262,
-          },
-        ],
-      },
-    ]}
-    margin={{ top: 50, right: 110, bottom: 50, left: 60 }}
+
+  let minYValue;
+
+  areaData.forEach(area => {
+    area.data.forEach(point => {
+      if(minYValue === undefined || point.y < minYValue ){
+        minYValue = point.y;
+      }
+    })
+  })
+
+  console.log(minYValue);
+  return <ResponsiveLine
+    data={areaData}
+    margin={{ top: 50, right: 200, bottom: 50, left: 75 }}
     xScale={{ type: "point" }}
     yScale={{
       type: "linear",
-      min: "auto",
+      min: 0,
       max: "auto",
       stacked: true,
       reverse: false,
@@ -530,7 +271,7 @@ const AreaChart = ({ areaData }) => {
       tickSize: 5,
       tickPadding: 5,
       tickRotation: 0,
-      legend: "transportation",
+      legend: "year",
       legendOffset: 36,
       legendPosition: "middle",
       truncateTickAt: 0,
@@ -540,20 +281,22 @@ const AreaChart = ({ areaData }) => {
       tickPadding: 5,
       tickRotation: 0,
       legend: "count",
-      legendOffset: -40,
+      legendOffset: -50,
       legendPosition: "middle",
       truncateTickAt: 0,
+      format: v => v.toLocaleString()
     }}
     enableGridX={false}
-    enablePoints={false}
-    pointSize={10}
+    enablePoints={true}
+    pointSize={5}
     pointColor={{ theme: "background" }}
     pointBorderWidth={2}
     pointBorderColor={{ from: "serieColor" }}
     pointLabel="data.yFormatted"
     pointLabelYOffset={-12}
     enableArea={true}
-    areaOpacity={0.15}
+    areaOpacity={0.3}
+    areaBlendMode={"multiply"}
     isInteractive={false}
     enableTouchCrosshair={true}
     legends={[
