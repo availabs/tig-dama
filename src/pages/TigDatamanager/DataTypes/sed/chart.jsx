@@ -11,29 +11,39 @@ import { ResponsivePieCanvas } from "@nivo/pie";
 import { ResponsiveLine } from "@nivo/line";
 import { ResponsiveBar } from "@nivo/bar";
 
-const ViewSelector = ({ views }) => {
-  const { viewId } = useParams();
-
-  return (
-    <div className="flex flex-1">
-      <div className="py-3.5 px-2 text-sm text-gray-400">Version : </div>
-      <div className="flex-1">
-        <select
-          className="pl-3 pr-4 py-2.5 border border-blue-100 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
-          value={viewId}
-        >
-          {views
-            .sort((a, b) => b.view_id - a.view_id)
-            .map((v, i) => (
-              <option key={i} className="ml-2  truncate" value={v.view_id}>
-                {v.version ? v.version : v.view_id}
-              </option>
-            ))}
-        </select>
-      </div>
-    </div>
-  );
-};
+const COLOR_ARRAY = [
+  "#3366cc",
+  "#dc3912",
+  "#ff9900",
+  "#109618",
+  "#990099",
+  "#0099c6",
+  "#dd4477",
+  "#66aa00",
+  "#b82e2e",
+  "#316395",
+  "#994499",
+  "#22aa99",
+  "#aaaa11",
+  "#6633cc",
+  "#e67300",
+  "#8b0707",
+  "#651067",
+  "#329262",
+  "#5574a6",
+  "#3b3eac",
+  "#b77322",
+  "#16d620",
+  "#b91383",
+  "#f4359e",
+  "#9c5935",
+  "#a9c413",
+  "#2a778d",
+  "#668d1c",
+  "#bea413",
+  "#0c5922",
+  "#743411",
+];
 
 const DefaultTableFilter = () => <div />;
 
@@ -123,44 +133,12 @@ const PieChart = ({ pieData, year }) => {
 const LineChart = ({ lineData }) => {
   return (
     <LineGraph
-      colors={[
-        "#3366cc",
-        "#dc3912",
-        "#ff9900",
-        "#109618",
-        "#990099",
-        "#0099c6",
-        "#dd4477",
-        "#66aa00",
-        "#b82e2e",
-        "#316395",
-        "#994499",
-        "#22aa99",
-        "#aaaa11",
-        "#6633cc",
-        "#e67300",
-        "#8b0707",
-        "#651067",
-        "#329262",
-        "#5574a6",
-        "#3b3eac",
-        "#b77322",
-        "#16d620",
-        "#b91383",
-        "#f4359e",
-        "#9c5935",
-        "#a9c413",
-        "#2a778d",
-        "#668d1c",
-        "#bea413",
-        "#0c5922",
-        "#743411",
-      ]}
+      colors={COLOR_ARRAY}
       data={lineData}
       axisBottom={{ tickDensity: 1 }}
       axisLeft={{
         lzabel: "Values",
-        showGridLines: false,
+        showGridLines: true,
         tickDensity: 1,
       }}
       axisRight={{
@@ -251,20 +229,19 @@ const AreaChart = ({ areaData }) => {
     })
   })
 
-  console.log(minYValue);
   return <ResponsiveLine
     data={areaData}
+    colors={COLOR_ARRAY}
     margin={{ top: 50, right: 200, bottom: 50, left: 75 }}
     xScale={{ type: "point" }}
     yScale={{
       type: "linear",
       min: 0,
       max: "auto",
-      stacked: true,
       reverse: false,
     }}
     yFormat=" >-.2f"
-    curve="cardinal"
+    curve="linear"
     axisTop={null}
     axisRight={null}
     axisBottom={{
@@ -296,19 +273,41 @@ const AreaChart = ({ areaData }) => {
     pointLabelYOffset={-12}
     enableArea={true}
     areaOpacity={0.3}
-    areaBlendMode={"multiply"}
-    isInteractive={false}
-    enableTouchCrosshair={true}
+    areaBlendMode={"normal"}
+    isInteractive={true}
+    enableSlices={'x'}
+    enableTouchCrosshair={false}
+    sliceTooltip={(data) => {
+      return (
+        <div className="bg-white rounded p-2 opacity-85">
+          <b>{data.slice.points[0].data.x}</b>
+          {
+            data.slice.points.map(point => {
+              const isMaxVal = data.slice.points.every(iPoint => iPoint.data.y  <= point.data.y);
+              return (
+                <div className={`flex items-center rounded px-2 ${isMaxVal ? 'border-2 border-black' : ''}`}>
+                  <div
+                    style={{background:point.serieColor}}
+                    className={`w-[15px] h-[15px] mr-2`}
+                  />
+                  <div>{point.serieId} {point.data.yFormatted}</div>
+                </div>
+              )
+            })
+          }
+        </div>
+      )
+    }}
     legends={[
       {
         anchor: "bottom-right",
         direction: "column",
         justify: false,
-        translateX: 100,
+        translateX: 150,
         translateY: 0,
         itemsSpacing: 0,
         itemDirection: "left-to-right",
-        itemWidth: 80,
+        itemWidth: 120,
         itemHeight: 20,
         itemOpacity: 0.75,
         symbolSize: 12,
@@ -429,9 +428,8 @@ const TablePage = ({
           setFilters={setFilters}
           node={ref}
         />
-        {/*<ViewSelector views={views} />*/}
       </div>
-      <div style={{ height: "600px" }} ref={setRef}>
+      <div style={{ height: "800px" }} ref={setRef}>
         {data?.length ? (
           <>
             {chartType === "line" ? <LineChart lineData={data} /> : null}
