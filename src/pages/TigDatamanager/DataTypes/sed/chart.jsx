@@ -279,13 +279,13 @@ const AreaChart = ({ areaData }) => {
     enableTouchCrosshair={false}
     sliceTooltip={(data) => {
       return (
-        <div className="bg-white rounded p-2 opacity-85">
+        <div key={data?.slice?.id} className="bg-white rounded p-2 opacity-85">
           <b>{data.slice.points[0].data.x}</b>
           {
             data.slice.points.map(point => {
               const isMaxVal = data.slice.points.every(iPoint => iPoint.data.y  <= point.data.y);
               return (
-                <div className={`flex items-center rounded px-2 ${isMaxVal ? 'border-2 border-black' : ''}`}>
+                <div className={`flex items-center rounded px-1 border-2  ${isMaxVal ? 'border-2 border-black' : 'border-white/85'}`}>
                   <div
                     style={{background:point.serieColor}}
                     className={`w-[15px] h-[15px] mr-2`}
