@@ -7,7 +7,7 @@ import checkAuth  from "~/layout/checkAuth"
 
 import siteConfig from '~/modules/dms/src/patterns/page/siteConfig'
 //import ComponentRegistry from '~/component_registry'
-import Selector, { registerComponents } from "~/modules/dms/src/patterns/page/selector"
+import Selector, { registerComponents } from "~/modules/dms/src/patterns/page/components/selector"
 // import BuildingFootprintsDownload from "./buildings_download"
 
 //registerComponents(ComponentRegistry)
