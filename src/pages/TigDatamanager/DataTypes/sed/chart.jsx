@@ -217,8 +217,6 @@ const BarChart = ({ barData, year }) => {
   );
 };
 const AreaChart = ({ areaData }) => {
-  console.log("areaData", areaData);
-
   let minYValue;
 
   areaData.forEach(area => {

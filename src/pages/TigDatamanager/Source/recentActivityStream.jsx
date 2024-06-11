@@ -105,6 +105,7 @@ const ActivityStreamList = () => {
           ]);
           r.source_name = sourceName;
         }
+        r.source_name = typeof r.source_name === 'string' ? r.source_name : null;
         return r;
       })
       .filter((r) => typeof r.source_name === 'string' && Boolean(r.etl_context_id));
@@ -125,14 +126,14 @@ const ActivityStreamList = () => {
   );
 
   const showMore = useCallback((e) => {
-    if (e.ctrlKey) {
-      window.open(`${baseUrl}/tasks`, "_blank");
-    } else {
-      navigate(`${baseUrl}/tasks`);
-    }
-  },
-  [navigate]
-);
+      if (e.ctrlKey) {
+        window.open(`${baseUrl}/tasks`, "_blank");
+      } else {
+        navigate(`${baseUrl}/tasks`);
+      }
+    },
+    [navigate]
+  );
 
   return (
     <>
@@ -144,8 +145,17 @@ const ActivityStreamList = () => {
           day: "numeric",
         };
 
-        const ctxSourceName =
-          typeof etlCtx?.source_name === "string" ? etlCtx?.source_name : "";
+        let byLine = '';
+        if (typeof etlCtx?.user === 'string' && etlCtx?.user?.includes("@")) {
+          byLine = <><b>{etlCtx?.user}</b> updated '{etlCtx.source_name}'</>;
+        }
+        else if (etlCtx.user !== null) {
+          byLine = <><b>User {etlCtx.user}</b> updated '{etlCtx.source_name}'</>;
+        }
+        else {
+          byLine = `'${etlCtx.source_name}' updated`
+        }
+
         return (
           <div key={`recent_activity_${etlCtx?.etl_context_id}`} className="text-xs py-4 flex items-center border-t border-[#679d89]">
             <div
@@ -157,7 +167,7 @@ const ActivityStreamList = () => {
               <div className="italic pr-1">
                 {createdAtDate.toLocaleTimeString(undefined, options)}:
               </div>
-              <div>updated '{ctxSourceName}'</div>
+              <div>{byLine}</div>
             </div>
           </div>
         );
