@@ -149,7 +149,7 @@ const ActivityStreamList = () => {
         if (typeof etlCtx?.user === 'string' && etlCtx?.user?.includes("@")) {
           byLine = <><b>{etlCtx?.user}</b> updated '{etlCtx.source_name}'</>;
         }
-        else if (etlCtx.user !== null) {
+        else if (typeof etlCtx.user !== 'object') {
           byLine = <><b>User {etlCtx.user}</b> updated '{etlCtx.source_name}'</>;
         }
         else {
