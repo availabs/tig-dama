@@ -11,29 +11,39 @@ import { ResponsivePieCanvas } from "@nivo/pie";
 import { ResponsiveLine } from "@nivo/line";
 import { ResponsiveBar } from "@nivo/bar";
 
-const ViewSelector = ({ views }) => {
-  const { viewId } = useParams();
-
-  return (
-    <div className="flex flex-1">
-      <div className="py-3.5 px-2 text-sm text-gray-400">Version : </div>
-      <div className="flex-1">
-        <select
-          className="pl-3 pr-4 py-2.5 border border-blue-100 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
-          value={viewId}
-        >
-          {views
-            .sort((a, b) => b.view_id - a.view_id)
-            .map((v, i) => (
-              <option key={i} className="ml-2  truncate" value={v.view_id}>
-                {v.version ? v.version : v.view_id}
-              </option>
-            ))}
-        </select>
-      </div>
-    </div>
-  );
-};
+const COLOR_ARRAY = [
+  "#3366cc",
+  "#dc3912",
+  "#ff9900",
+  "#109618",
+  "#990099",
+  "#0099c6",
+  "#dd4477",
+  "#66aa00",
+  "#b82e2e",
+  "#316395",
+  "#994499",
+  "#22aa99",
+  "#aaaa11",
+  "#6633cc",
+  "#e67300",
+  "#8b0707",
+  "#651067",
+  "#329262",
+  "#5574a6",
+  "#3b3eac",
+  "#b77322",
+  "#16d620",
+  "#b91383",
+  "#f4359e",
+  "#9c5935",
+  "#a9c413",
+  "#2a778d",
+  "#668d1c",
+  "#bea413",
+  "#0c5922",
+  "#743411",
+];
 
 const DefaultTableFilter = () => <div />;
 
@@ -123,44 +133,12 @@ const PieChart = ({ pieData, year }) => {
 const LineChart = ({ lineData }) => {
   return (
     <LineGraph
-      colors={[
-        "#3366cc",
-        "#dc3912",
-        "#ff9900",
-        "#109618",
-        "#990099",
-        "#0099c6",
-        "#dd4477",
-        "#66aa00",
-        "#b82e2e",
-        "#316395",
-        "#994499",
-        "#22aa99",
-        "#aaaa11",
-        "#6633cc",
-        "#e67300",
-        "#8b0707",
-        "#651067",
-        "#329262",
-        "#5574a6",
-        "#3b3eac",
-        "#b77322",
-        "#16d620",
-        "#b91383",
-        "#f4359e",
-        "#9c5935",
-        "#a9c413",
-        "#2a778d",
-        "#668d1c",
-        "#bea413",
-        "#0c5922",
-        "#743411",
-      ]}
+      colors={COLOR_ARRAY}
       data={lineData}
       axisBottom={{ tickDensity: 1 }}
       axisLeft={{
         lzabel: "Values",
-        showGridLines: false,
+        showGridLines: true,
         tickDensity: 1,
       }}
       axisRight={{
@@ -239,298 +217,36 @@ const BarChart = ({ barData, year }) => {
   );
 };
 const AreaChart = ({ areaData }) => {
-  console.log("areaData", areaData);
-  <ResponsiveLine
-    data={[
-      {
-        id: "japan",
-        color: "hsl(13, 70%, 50%)",
-        data: [
-          {
-            x: "plane",
-            y: 155,
-          },
-          {
-            x: "helicopter",
-            y: 221,
-          },
-          {
-            x: "boat",
-            y: 2,
-          },
-          {
-            x: "train",
-            y: 248,
-          },
-          {
-            x: "subway",
-            y: 83,
-          },
-          {
-            x: "bus",
-            y: 246,
-          },
-          {
-            x: "car",
-            y: 134,
-          },
-          {
-            x: "moto",
-            y: 250,
-          },
-          {
-            x: "bicycle",
-            y: 224,
-          },
-          {
-            x: "horse",
-            y: 81,
-          },
-          {
-            x: "skateboard",
-            y: 252,
-          },
-          {
-            x: "others",
-            y: 174,
-          },
-        ],
-      },
-      {
-        id: "france",
-        color: "hsl(33, 70%, 50%)",
-        data: [
-          {
-            x: "plane",
-            y: 209,
-          },
-          {
-            x: "helicopter",
-            y: 134,
-          },
-          {
-            x: "boat",
-            y: 231,
-          },
-          {
-            x: "train",
-            y: 90,
-          },
-          {
-            x: "subway",
-            y: 93,
-          },
-          {
-            x: "bus",
-            y: 49,
-          },
-          {
-            x: "car",
-            y: 129,
-          },
-          {
-            x: "moto",
-            y: 268,
-          },
-          {
-            x: "bicycle",
-            y: 102,
-          },
-          {
-            x: "horse",
-            y: 273,
-          },
-          {
-            x: "skateboard",
-            y: 39,
-          },
-          {
-            x: "others",
-            y: 4,
-          },
-        ],
-      },
-      {
-        id: "us",
-        color: "hsl(130, 70%, 50%)",
-        data: [
-          {
-            x: "plane",
-            y: 223,
-          },
-          {
-            x: "helicopter",
-            y: 220,
-          },
-          {
-            x: "boat",
-            y: 242,
-          },
-          {
-            x: "train",
-            y: 12,
-          },
-          {
-            x: "subway",
-            y: 101,
-          },
-          {
-            x: "bus",
-            y: 102,
-          },
-          {
-            x: "car",
-            y: 119,
-          },
-          {
-            x: "moto",
-            y: 71,
-          },
-          {
-            x: "bicycle",
-            y: 191,
-          },
-          {
-            x: "horse",
-            y: 240,
-          },
-          {
-            x: "skateboard",
-            y: 147,
-          },
-          {
-            x: "others",
-            y: 278,
-          },
-        ],
-      },
-      {
-        id: "germany",
-        color: "hsl(173, 70%, 50%)",
-        data: [
-          {
-            x: "plane",
-            y: 206,
-          },
-          {
-            x: "helicopter",
-            y: 277,
-          },
-          {
-            x: "boat",
-            y: 284,
-          },
-          {
-            x: "train",
-            y: 226,
-          },
-          {
-            x: "subway",
-            y: 46,
-          },
-          {
-            x: "bus",
-            y: 10,
-          },
-          {
-            x: "car",
-            y: 137,
-          },
-          {
-            x: "moto",
-            y: 298,
-          },
-          {
-            x: "bicycle",
-            y: 16,
-          },
-          {
-            x: "horse",
-            y: 65,
-          },
-          {
-            x: "skateboard",
-            y: 46,
-          },
-          {
-            x: "others",
-            y: 166,
-          },
-        ],
-      },
-      {
-        id: "norway",
-        color: "hsl(61, 70%, 50%)",
-        data: [
-          {
-            x: "plane",
-            y: 186,
-          },
-          {
-            x: "helicopter",
-            y: 19,
-          },
-          {
-            x: "boat",
-            y: 163,
-          },
-          {
-            x: "train",
-            y: 231,
-          },
-          {
-            x: "subway",
-            y: 89,
-          },
-          {
-            x: "bus",
-            y: 181,
-          },
-          {
-            x: "car",
-            y: 77,
-          },
-          {
-            x: "moto",
-            y: 19,
-          },
-          {
-            x: "bicycle",
-            y: 9,
-          },
-          {
-            x: "horse",
-            y: 21,
-          },
-          {
-            x: "skateboard",
-            y: 224,
-          },
-          {
-            x: "others",
-            y: 262,
-          },
-        ],
-      },
-    ]}
-    margin={{ top: 50, right: 110, bottom: 50, left: 60 }}
+  let minYValue;
+
+  areaData.forEach(area => {
+    area.data.forEach(point => {
+      if(minYValue === undefined || point.y < minYValue ){
+        minYValue = point.y;
+      }
+    })
+  })
+
+  return <ResponsiveLine
+    data={areaData}
+    colors={COLOR_ARRAY}
+    margin={{ top: 50, right: 200, bottom: 50, left: 75 }}
     xScale={{ type: "point" }}
     yScale={{
       type: "linear",
-      min: "auto",
+      min: 0,
       max: "auto",
-      stacked: true,
       reverse: false,
     }}
     yFormat=" >-.2f"
-    curve="cardinal"
+    curve="linear"
     axisTop={null}
     axisRight={null}
     axisBottom={{
       tickSize: 5,
       tickPadding: 5,
       tickRotation: 0,
-      legend: "transportation",
+      legend: "year",
       legendOffset: 36,
       legendPosition: "middle",
       truncateTickAt: 0,
@@ -540,32 +256,56 @@ const AreaChart = ({ areaData }) => {
       tickPadding: 5,
       tickRotation: 0,
       legend: "count",
-      legendOffset: -40,
+      legendOffset: -50,
       legendPosition: "middle",
       truncateTickAt: 0,
+      format: v => v.toLocaleString()
     }}
     enableGridX={false}
-    enablePoints={false}
-    pointSize={10}
+    enablePoints={true}
+    pointSize={5}
     pointColor={{ theme: "background" }}
     pointBorderWidth={2}
     pointBorderColor={{ from: "serieColor" }}
     pointLabel="data.yFormatted"
     pointLabelYOffset={-12}
     enableArea={true}
-    areaOpacity={0.15}
-    isInteractive={false}
-    enableTouchCrosshair={true}
+    areaOpacity={0.3}
+    areaBlendMode={"normal"}
+    isInteractive={true}
+    enableSlices={'x'}
+    enableTouchCrosshair={false}
+    sliceTooltip={(data) => {
+      return (
+        <div key={data?.slice?.id} className="bg-white rounded p-2 opacity-85">
+          <b>{data.slice.points[0].data.x}</b>
+          {
+            data.slice.points.map(point => {
+              const isMaxVal = data.slice.points.every(iPoint => iPoint.data.y  <= point.data.y);
+              return (
+                <div className={`flex items-center rounded px-1 border-2  ${isMaxVal ? 'border-2 border-black' : 'border-white/85'}`}>
+                  <div
+                    style={{background:point.serieColor}}
+                    className={`w-[15px] h-[15px] mr-2`}
+                  />
+                  <div>{point.serieId} {point.data.yFormatted}</div>
+                </div>
+              )
+            })
+          }
+        </div>
+      )
+    }}
     legends={[
       {
         anchor: "bottom-right",
         direction: "column",
         justify: false,
-        translateX: 100,
+        translateX: 150,
         translateY: 0,
         itemsSpacing: 0,
         itemDirection: "left-to-right",
-        itemWidth: 80,
+        itemWidth: 120,
         itemHeight: 20,
         itemOpacity: 0.75,
         symbolSize: 12,
@@ -686,9 +426,8 @@ const TablePage = ({
           setFilters={setFilters}
           node={ref}
         />
-        {/*<ViewSelector views={views} />*/}
       </div>
-      <div style={{ height: "600px" }} ref={setRef}>
+      <div style={{ height: "800px", overflow:"hidden" }} ref={setRef}>
         {data?.length ? (
           <>
             {chartType === "line" ? <LineChart lineData={data} /> : null}

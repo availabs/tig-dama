@@ -397,7 +397,7 @@ const ppdaf = () => {
             }
 
             let sizes = {
-                base: 'sm:max-w-8xl',
+                base: 'sm:max-w-2xl',
                 small: 'w-64',
                 large: 'sm:max-w-5xl',
                 xlarge: 'sm:max-w-8xl'
