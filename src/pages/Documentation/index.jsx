@@ -1,13 +1,13 @@
 //import { useFalcor } from "~/modules/avl-components/src"
-import { dmsPageFactory, registerDataType } from "~/modules/dms/src"
+import { dmsPageFactory, registerDataType, Selector, registerComponents  } from "~/modules/dms/src"
 import { withAuth } from "@availabs/ams" 
 import checkAuth  from "~/layout/checkAuth"
 //import {Logo} from '~/layout/ppdaf-layout'
 //import AuthMenu from "~/pages/Auth/AuthMenu"
 
-import siteConfig from '~/modules/dms/src/patterns/page/siteConfig'
+import {siteConfig} from '~/modules/dms/src/patterns/page/siteConfig'
 //import ComponentRegistry from '~/component_registry'
-import Selector, { registerComponents } from "~/modules/dms/src/patterns/page/selector"
+// import { } from "~/modules/dms/src"
 // import BuildingFootprintsDownload from "./buildings_download"
 
 //registerComponents(ComponentRegistry)
@@ -28,13 +28,10 @@ const Routes = [
       siteConfig({ 
         app: "tig-dama",
         type: "tig-docs2",
-        logo: <></>, 
-        rightMenu: <></>,
         baseUrl: "/docs",
         theme,
         checkAuth: () => true
       }), 
-      "/docs", 
       withAuth
     ),
     authLevel: -1,
