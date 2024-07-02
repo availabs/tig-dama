@@ -1,4 +1,4 @@
-import { HUBBOUND_ATTRIBUTES } from "./constants"
+import { HUBBOUND_ATTRIBUTES, HUBBOUND_COUNT_VARIABLES } from "./constants"
 
 export const aggHubboundByLocation = (data) => {
   return data.reduce((a, tData) => {
@@ -37,17 +37,37 @@ export const aggHubboundByLocation = (data) => {
         tData.count_variable_name
       ]
     ) {
-      a[tData.location_name]["properties"]["routes"][tData.transit_route_name][
-        tData.count_variable_name
-      ] = 0;
+      if(HUBBOUND_COUNT_VARIABLES[tData.count_variable_name]?.aggFunc === "avg"){
+        a[tData.location_name]["properties"]["routes"][tData.transit_route_name][
+          tData.count_variable_name
+        ] = {
+          count: 0,
+          val: 0
+        };
+      }
+      else{
+        a[tData.location_name]["properties"]["routes"][tData.transit_route_name][
+          tData.count_variable_name
+        ] = 0;
+      }
     }
 
-    a[tData.location_name]["properties"]["routes"][
-      tData.transit_route_name
-    ][tData.count_variable_name] += tData.count;
+    if(HUBBOUND_COUNT_VARIABLES[tData.count_variable_name]?.aggFunc === "avg"){
+      a[tData.location_name]["properties"]["routes"][
+        tData.transit_route_name
+      ][tData.count_variable_name]['val'] += tData.count;
 
+      a[tData.location_name]["properties"]["routes"][
+        tData.transit_route_name
+      ][tData.count_variable_name]['count'] += 1;
+    }
+    else{
+      a[tData.location_name]["properties"]["routes"][
+        tData.transit_route_name
+      ][tData.count_variable_name] += tData.count;
+    }   
     return a;
-  }, {})
+  }, {});
 }
 
 export const createHubboundFilterClause = (filters) => {

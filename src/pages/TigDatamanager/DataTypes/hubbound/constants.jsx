@@ -151,14 +151,28 @@ const AGENCY_NAMES = [
 AGENCY_NAMES.sort(alphaSort);
 
 
-const VARIABLE_NAMES = [
-  "Passengers",
-  "Trains",
-  "Cars in Trains",
-  "Buses",
-  "Vehicles",
-  "Occupancy Rates",
-];
+export const HUBBOUND_COUNT_VARIABLES = {
+  "Passengers":{
+    aggFunc: "sum"
+  },
+  "Trains":{
+    aggFunc: "sum"
+  },
+  "Cars in Trains":{
+    aggFunc: "sum"
+  },
+  "Buses":{
+    aggFunc: "sum"
+  },
+  "Vehicles":{
+    aggFunc: "sum"
+  },
+  "Occupancy Rates":{
+    aggFunc: "avg"
+  },
+}
+
+const VARIABLE_NAMES = Object.keys(HUBBOUND_COUNT_VARIABLES);
 VARIABLE_NAMES.sort(alphaSort);
 
 const ROUTE_NAMES = [
