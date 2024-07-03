@@ -122,8 +122,7 @@ const ACSMapFilter = ({
   setTempSymbology,
   tempSymbology,
   activeView,
-  activeViewId,
-  source
+  activeViewId
 }) => {
   const { pgEnv } = useContext(DamaContext);
   const { falcor, falcorCache } = useFalcor();
@@ -391,20 +390,44 @@ const ACSMapFilter = ({
       (newSymbology?.layers || []).forEach((l) => {
         unset(newSymbology, `${l?.id}`);
         // set(newSymbology, `${l?.id}.visibility.default.value`, "none");
-        set(newSymbology, `${l?.id}.fill-color.default.value`, "rgba(0,0,0,0)");
-        // set(newSymbology, `${l?.id}.visibility.default.`, "none");
+        if(l.id !== activeLayerId){
+          //set(newSymbology, `${l?.id}.fill-color.default.value`, "rgba(0,0,0,0)");
+          set(l, 'paint.fill-color', "rgba(0,0,0,0)");
+        }
+        else{
+          set(l, 'paint.fill-color', {
+            [activeVar]: {
+              type: "threshold",
+              settings: {
+                range: range,
+                domain: domain,
+                title: activeVar,
+              },
+              value: output,
+            }
+          });
+        }
       });
 
-      set(newSymbology, `${activeLayer.id}.fill-color.${activeVar}`, {
-        type: "threshold",
-        settings: {
-          range: range,
-          domain: domain,
-          title: activeVar,
-        },
-        value: output,
-      });
-      unset(newSymbology, `${activeLayer.id}.layout`);
+      newSymbology = newSymbology?.layers.reduce((a, c) => {
+        if(c.id === activeLayerId){
+          a[c.id] = {
+            "fill-color": {
+              [activeVar]: {
+                type: "threshold",
+                settings: {
+                  range: range,
+                  domain: domain,
+                  title: activeVar,
+                },
+                value: output,
+              }
+            },
+          };
+        }
+
+        return a;
+      }, newSymbology);
     }
     if (!isEqual(tempSymbology, newSymbology)) {
       setTempSymbology(newSymbology);
