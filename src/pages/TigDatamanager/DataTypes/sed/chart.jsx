@@ -545,7 +545,7 @@ const ChartPage = ({
         />
       </div>
       <div style={{ height: "800px", overflow:"hidden" }} ref={setRef}>
-        {data?.length ? (
+        {data?.length && !data[0]?.data?.every(datum => datum.y === 0) ?  (
           <>
             {chartType === "line" ? <LineChart lineData={data} filters={filters} sourceType={source.type}/> : null}
             {chartType === "area" ? <AreaChart areaData={data} filters={filters} sourceType={source.type}/> : null}
