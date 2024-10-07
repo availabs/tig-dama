@@ -6,7 +6,7 @@
   "dependencies": {
     "@availabs/ams": "^2.0.9",
     "@availabs/dms": "^0.0.7",
-    "@headlessui/react": "^1.7.14",
+    "@headlessui/react": "^2.1.9",
     "@heroicons/react": "^2.0.18",
     "@mapbox/shp-write": "^0.4.3",
     "@mui/material": "^5.14.5",
