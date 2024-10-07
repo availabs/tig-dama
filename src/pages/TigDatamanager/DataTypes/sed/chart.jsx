@@ -11,6 +11,8 @@ import { ResponsivePieCanvas } from "@nivo/pie";
 import { ResponsiveLine } from "@nivo/line";
 import { ResponsiveBar } from "@nivo/bar";
 
+import { sedVars, sedVarsCounty } from "./sedCustom";
+
 const COLOR_ARRAY = [
   "#3366cc",
   "#dc3912",
@@ -57,113 +59,213 @@ const identityMap = (tableData, attributes) => {
   };
 };
 
-const PieChart = ({ pieData, year }) => {
+const Title = (props) => {
+  let { width, height, filters, sourceType } = props;
+  console.log("titleprops", props)
+  if (props.bars) {
+    filters = props.bars[0].data.data.filters;
+    sourceType = props.bars[0].data.data.sourceType;
+  }
+
+  const style = { fontWeight: "bold" };
+
+  let varList = useMemo(() => {
+    return sourceType === "tig_sed_county" ? sedVarsCounty : sedVars;
+  }, [sourceType]);
+
+  const activeVar = filters?.activeVar.value || "";
+
   return (
-    <>
-      <ResponsivePieCanvas
-        data={
-          (pieData || []).map((p) => {
-            return {
-              id: p?.id || "",
-              label: p?.name || "",
-              value: ((p?.data || []).find(
-                (f) => Number(f.x) === Number(year)
-              ) || {})["y"],
-            };
-          }) || []
-        }
-        margin={{ top: 40, right: 200, bottom: 40, left: 80 }}
-        padAngle={0.7}
-        cornerRadius={3}
-        activeOuterRadiusOffset={8}
-        colors={{ scheme: "paired" }}
-        borderColor={{
-          from: "color",
-          modifiers: [["darker", 0.6]],
-        }}
-        arcLinkLabelsSkipAngle={10}
-        arcLinkLabelsTextColor="#333333"
-        arcLinkLabelsThickness={2}
-        arcLinkLabelsColor={{ from: "color" }}
-        arcLabelsSkipAngle={10}
-        arcLabelsTextColor="#333333"
-        defs={[
-          {
-            id: "dots",
-            type: "patternDots",
-            background: "inherit",
-            color: "rgba(255, 255, 255, 0.3)",
-            size: 4,
-            padding: 1,
-            stagger: true,
-          },
-          {
-            id: "lines",
-            type: "patternLines",
-            background: "inherit",
-            color: "rgba(255, 255, 255, 0.3)",
-            rotation: -45,
-            lineWidth: 6,
-            spacing: 10,
-          },
-        ]}
-        // fill={}
-        legends={[
-          {
-            anchor: "right",
-            direction: "column",
-            justify: false,
-            translateX: 140,
-            translateY: 0,
-            itemsSpacing: 2,
-            itemWidth: 60,
-            itemHeight: 14,
-            itemTextColor: "#999",
-            itemDirection: "left-to-right",
-            itemOpacity: 1,
-            symbolSize: 14,
-            symbolShape: "circle",
-          },
-        ]}
-      />
-    </>
+    <text x={10} y={10} style={style}>
+      {varList[activeVar]?.name} by Year
+    </text>
   );
 };
 
-const LineChart = ({ lineData }) => {
+const PieChart = ({ pieData, year, filters, sourceType }) => {
   return (
-    <LineGraph
-      colors={COLOR_ARRAY}
-      data={lineData}
-      axisBottom={{ tickDensity: 1 }}
-      axisLeft={{
-        lzabel: "Values",
-        showGridLines: true,
-        tickDensity: 1,
+    <ResponsivePieCanvas
+      sourceType={sourceType}
+      filters={filters}
+      layers={['arcs', 'arcLinkLabels', 'arcLabels', 'legends', Title]}
+      data={
+        (pieData || []).map((p) => {
+          return {
+            id: p?.id || "",
+            label: p?.name || "",
+            value: ((p?.data || []).find(
+              (f) => Number(f.x) === Number(year)
+            ) || {})["y"],
+          };
+        }) || []
+      }
+      margin={{ top: 40, right: 200, bottom: 40, left: 80 }}
+      padAngle={0.7}
+      cornerRadius={3}
+      activeOuterRadiusOffset={8}
+      colors={{ scheme: "paired" }}
+      borderColor={{
+        from: "color",
+        modifiers: [["darker", 0.6]],
       }}
-      axisRight={{
-        label: "Year",
-        showGridLines: false,
-      }}
-      hoverComp={{
-        idFormat: (id, data) => data.name,
-        yFormat: ",.2f",
-        showTotals: false,
-      }}
-      margin={{
-        top: 20,
-        bottom: 25,
-        left: 80,
-        right: 30,
-      }}
+      arcLinkLabelsSkipAngle={10}
+      arcLinkLabelsTextColor="#333333"
+      arcLinkLabelsThickness={2}
+      arcLinkLabelsColor={{ from: "color" }}
+      arcLabelsSkipAngle={10}
+      arcLabelsTextColor="#333333"
+      defs={[
+        {
+          id: "dots",
+          type: "patternDots",
+          background: "inherit",
+          color: "rgba(255, 255, 255, 0.3)",
+          size: 4,
+          padding: 1,
+          stagger: true,
+        },
+        {
+          id: "lines",
+          type: "patternLines",
+          background: "inherit",
+          color: "rgba(255, 255, 255, 0.3)",
+          rotation: -45,
+          lineWidth: 6,
+          spacing: 10,
+        },
+      ]}
+      // fill={}
+      legends={[
+        {
+          anchor: "right",
+          direction: "column",
+          justify: false,
+          translateX: 140,
+          translateY: 0,
+          itemsSpacing: 2,
+          itemWidth: 60,
+          itemHeight: 14,
+          itemTextColor: "#999",
+          itemDirection: "left-to-right",
+          itemOpacity: 1,
+          symbolSize: 14,
+          symbolShape: "circle",
+        },
+      ]}
     />
   );
 };
 
-const BarChart = ({ barData, year }) => {
+const LineChart = ({ lineData, filters, sourceType }) => {
+  return <ResponsiveLine
+    sourceType={sourceType}
+    filters={filters}
+    layers={['grid', 'markers', 'axes', 'areas', 'crosshair', 'lines', 'points', 'slices', 'mesh', 'legends', Title]}
+    data={lineData}
+    colors={COLOR_ARRAY}
+    margin={{ top: 50, right: 200, bottom: 50, left: 75 }}
+    xScale={{ type: "point" }}
+    yScale={{
+      type: "linear",
+      min: 0,
+      max: "auto",
+      reverse: false,
+    }}
+    yFormat=" >-.2f"
+    curve="linear"
+    axisTop={null}
+    axisRight={null}
+    axisBottom={{
+      tickSize: 5,
+      tickPadding: 5,
+      tickRotation: 0,
+      legend: "year",
+      legendOffset: 36,
+      legendPosition: "middle",
+      truncateTickAt: 0,
+    }}
+    axisLeft={{
+      tickSize: 5,
+      tickPadding: 5,
+      tickRotation: 0,
+      legend: "count",
+      legendOffset: -50,
+      legendPosition: "middle",
+      truncateTickAt: 0,
+      format: v => v.toLocaleString()
+    }}
+    gridXValues={[0]}
+    gridYValues={[0]}
+    enableGridX={true}
+    enableGridY={true}
+    enablePoints={true}
+    pointSize={5}
+    pointColor={{ theme: "background" }}
+    pointBorderWidth={2}
+    pointBorderColor={{ from: "serieColor" }}
+    pointLabel="data.yFormatted"
+    pointLabelYOffset={-12}
+    enableArea={false}
+    areaOpacity={0.3}
+    areaBlendMode={"normal"}
+    isInteractive={true}
+    enableSlices={'x'}
+    enableTouchCrosshair={false}
+    legends={[
+      {
+        anchor: "bottom-right",
+        direction: "column",
+        justify: false,
+        translateX: 150,
+        translateY: 0,
+        itemsSpacing: 0,
+        itemDirection: "left-to-right",
+        itemWidth: 120,
+        itemHeight: 20,
+        itemOpacity: 0.75,
+        symbolSize: 12,
+        symbolShape: "circle",
+        symbolBorderColor: "rgba(0, 0, 0, .5)",
+        effects: [
+          {
+            on: "hover",
+            style: {
+              itemBackground: "rgba(0, 0, 0, .03)",
+              itemOpacity: 1,
+            },
+          },
+        ],
+      },
+    ]}
+    sliceTooltip={(data) => {
+      return (
+        <div key={data?.slice?.id} className="bg-white rounded p-2 opacity-85">
+          <b>{data.slice.points[0].data.x}</b>
+          {
+            data.slice.points.map(point => {
+              const isMaxVal = data.slice.points.every(iPoint => iPoint.data.y  <= point.data.y);
+              return (
+                <div key={`${point.serieId}_slicetooltip_${point.data.yFormatted}`} className={`flex items-center rounded px-1 border-2  ${isMaxVal ? 'border-2 border-black' : 'border-white/85'}`}>
+                  <div
+                    style={{background:point.serieColor}}
+                    className={`w-[15px] h-[15px] mr-2`}
+                  />
+                  <div>{point.serieId} {point.data.yFormatted}</div>
+                </div>
+              )
+            })
+          }
+        </div>
+      )
+    }}
+  />;
+};
+
+const BarChart = ({ barData, year, filters, sourceType }) => {
   return (
     <>
       <ResponsiveBar
+        layers={['grid', 'axes', 'bars', 'totals', 'markers', 'legends', 'annotations', Title]}
         data={
           (barData || []).map((b) => {
             return {
@@ -172,6 +274,8 @@ const BarChart = ({ barData, year }) => {
               value: ((b?.data || []).find(
                 (f) => Number(f.x) === Number(year)
               ) || {})["y"],
+              filters,
+              sourceType
             };
           }) || []
         }
@@ -216,7 +320,7 @@ const BarChart = ({ barData, year }) => {
     </>
   );
 };
-const AreaChart = ({ areaData }) => {
+const AreaChart = ({ areaData, filters, sourceType }) => {
   let minYValue;
 
   areaData.forEach(area => {
@@ -228,6 +332,9 @@ const AreaChart = ({ areaData }) => {
   })
 
   return <ResponsiveLine
+    sourceType={sourceType}
+    filters={filters}
+    layers={['grid', 'markers', 'axes', 'areas', 'crosshair', 'lines', 'points', 'slices', 'mesh', 'legends', Title]}
     data={areaData}
     colors={COLOR_ARRAY}
     margin={{ top: 50, right: 200, bottom: 50, left: 75 }}
@@ -261,7 +368,10 @@ const AreaChart = ({ areaData }) => {
       truncateTickAt: 0,
       format: v => v.toLocaleString()
     }}
-    enableGridX={false}
+    gridXValues={[0]}
+    gridYValues={[0]}
+    enableGridX={true}
+    enableGridY={true}
     enablePoints={true}
     pointSize={5}
     pointColor={{ theme: "background" }}
@@ -283,7 +393,7 @@ const AreaChart = ({ areaData }) => {
             data.slice.points.map(point => {
               const isMaxVal = data.slice.points.every(iPoint => iPoint.data.y  <= point.data.y);
               return (
-                <div className={`flex items-center rounded px-1 border-2  ${isMaxVal ? 'border-2 border-black' : 'border-white/85'}`}>
+                <div key={`${point.serieId}_slicetooltip_${point.data.yFormatted}`} className={`flex items-center rounded px-1 border-2  ${isMaxVal ? 'border-2 border-black' : 'border-white/85'}`}>
                   <div
                     style={{background:point.serieColor}}
                     className={`w-[15px] h-[15px] mr-2`}
@@ -325,7 +435,7 @@ const AreaChart = ({ areaData }) => {
   />;
 };
 
-const TablePage = ({
+const ChartPage = ({
   source,
   views,
   transform = identityMap,
@@ -430,17 +540,18 @@ const TablePage = ({
       <div style={{ height: "800px", overflow:"hidden" }} ref={setRef}>
         {data?.length ? (
           <>
-            {chartType === "line" ? <LineChart lineData={data} /> : null}
-            {chartType === "area" ? <AreaChart areaData={data} /> : null}
+            {chartType === "line" ? <LineChart lineData={data} filters={filters} sourceType={source.type}/> : null}
+            {chartType === "area" ? <AreaChart areaData={data} filters={filters} sourceType={source.type}/> : null}
             {chartType === "bar" ? (
               <BarChart
                 barData={data}
                 year={years[Number(year)]}
-                activeVar={filters?.activeVar.value || ""}
+                filters={filters}
+                sourceType={source.type}
               />
             ) : null}
             {chartType === "pie" ? (
-              <PieChart pieData={data} year={years[Number(year)]} />
+              <PieChart pieData={data} year={years[Number(year)]} filters={filters} sourceType={source.type}/>
             ) : null}
           </>
         ) : (
@@ -456,4 +567,4 @@ const TablePage = ({
   );
 };
 
-export default TablePage;
+export default ChartPage;
