@@ -61,7 +61,6 @@ const identityMap = (tableData, attributes) => {
 
 const Title = (props) => {
   let { width, height, filters, sourceType } = props;
-  console.log("titleprops", props)
   if (props.bars) {
     filters = props.bars[0].data.data.filters;
     sourceType = props.bars[0].data.data.sourceType;
@@ -74,20 +73,28 @@ const Title = (props) => {
   }, [sourceType]);
 
   const activeVar = filters?.activeVar.value || "";
+  const summarize = filters?.summarize.value || "";
+  const area = filters?.area.value || "";
+
+  function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  }
 
   return (
-    <text x={10} y={10} style={style}>
-      {varList[activeVar]?.name} by Year
-    </text>
+    <>
+      <text x={5} y={15} style={style}>
+        {varList[activeVar]?.name} by Year by {capitalizeFirstLetter(summarize)}
+      </text>
+      <text x={5} y={35} style={style}>
+        {area === "all" ? "All Areas" : capitalizeFirstLetter(area)} 
+      </text>
+    </>
   );
 };
 
 const PieChart = ({ pieData, year, filters, sourceType }) => {
   return (
     <ResponsivePieCanvas
-      sourceType={sourceType}
-      filters={filters}
-      layers={['arcs', 'arcLinkLabels', 'arcLabels', 'legends', Title]}
       data={
         (pieData || []).map((p) => {
           return {
