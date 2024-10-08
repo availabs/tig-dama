@@ -39,8 +39,6 @@ export const BPMChartFilters = ({
   const timePeriod = filters['period']?.value || null;
   const functionalClass = filters['functional_class']?.value || null;
 
-  console.log('filters', activeVar, area,summarize, timePeriod,functionalClass)
-
   function onlyUnique(value, index, array) {
     return array.indexOf(value) === index;
   }
@@ -98,7 +96,6 @@ export const BPMChartFilters = ({
     if (!summarize) {
       update.summarize = { value: "county" };
     }
-    console.log('update', update)
     setFilters(update);
   }, []);
  
@@ -307,27 +304,14 @@ export const BPMChartTransform = ({ valueMap, filters }) => {
   
   const filterKeys = Object.keys(filters);
   
- console.log('valueMap', filters, valueMap)
   let data = valueMap.filter(d => {
     return d['functional_class'] == filters['functional_class']?.value  && 
     d['period'] == filters['period']?.value
   })
-
-  console.log('filtered data', data)
-  // filterKeys.forEach((key, i) => {
-  //   data = data.reduce((acc, val) => {
-  //     if(filters[key].value == val[key]) {
-  //         acc.push(val);
-  //     } 
-  //     return acc;
-  //   }, []);
-  // });
-
   
   let aggFunc =  get(filters, "aggregate.value", "sum");
   let summarize = get(filters, "summarize.value", "county");
   let area = get(filters, "area.value", "all");
-  console.log('chart Transform', data)
 
   const areaToGeos = getAreaToGeos(regionalData, fips2Name);
 
@@ -337,7 +321,6 @@ export const BPMChartTransform = ({ valueMap, filters }) => {
   const accessor = variableAccessors?.[filters?.activeVar?.value] || 'vehicle_miles_traveled'
 
   const getRegions = (summarize, county) => {
-    //console.log('what is my key', summarize)
     if(summarize === 'county') {
       return [county]
     }
@@ -387,7 +370,7 @@ export const BPMChartTransform = ({ valueMap, filters }) => {
       bar.value = bar.value / bar.count
     })
   }
-  console.log({finalchartData})
+
   finalchartData.sort((a,b) => a.value - b.value);
 
   return {

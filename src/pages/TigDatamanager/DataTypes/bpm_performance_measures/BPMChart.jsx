@@ -4,28 +4,52 @@ import { get } from "lodash";
 
 import { DamaContext } from "~/pages/DataManager/store";
 import { ResponsiveBar } from "@nivo/bar";
+const summarizeVars = {
+  subRegion: { name: "Sub Region" },
+  region: { name: "Region" },
+  county: {name: "County" }
+};
 
-const ViewSelector = ({ views }) => {
-  const { viewId } = useParams();
+const Title = (props) => {
+  let { width, height, filters, sourceType } = props;
+  if (props.bars && props.bars.length > 0) {
+    filters = props.bars[0].data.data.filters;
+    sourceType = props.bars[0].data.data.sourceType;
+  }
+
+  const style = { fontWeight: "bold", textTransform: "capitalize" };
+
+
+
+  const activeVar = filters?.activeVar.value || "";
+  const summarize = filters?.summarize.value || "";
+  const area = filters?.area.value || "";
+  const aggFunc = filters?.aggregate?.value || "";
+  const timePeriod = filters?.['period']?.value || null;
+  const functionalClass = filters?.['functional_class']?.value || null;
+
+  function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  }
+
+  const transformAggFunc = {
+    'avg' : "Average",
+    'sum' : "Sum"
+  }
+
 
   return (
-    <div className="flex flex-1">
-      <div className="py-3.5 px-2 text-sm text-gray-400">Version : </div>
-      <div className="flex-1">
-        <select
-          className="pl-3 pr-4 py-2.5 border border-blue-100 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
-          value={viewId}
-        >
-          {views
-            .sort((a, b) => b.view_id - a.view_id)
-            .map((v, i) => (
-              <option key={i} className="ml-2  truncate" value={v.view_id}>
-                {v.version ? v.version : v.view_id}
-              </option>
-            ))}
-        </select>
-      </div>
-    </div>
+    <>
+      <text x={5} y={-50} style={style}>
+        {activeVar} {`by ${summarizeVars[summarize]?.name}`}
+      </text>
+      <text x={5} y={-30} style={style}>
+        {functionalClass} | {timePeriod?.replace("_"," ")}
+      </text>
+      <text x={5} y={-10} style={style}>
+        {area === "all" ? "All Areas" : capitalizeFirstLetter(area)} {summarize !== 'county' ? `| ${transformAggFunc[aggFunc]} of Counties within ${summarizeVars[summarize]?.name}` : ''}
+      </text>
+    </>
   );
 };
 
@@ -131,11 +155,14 @@ const ChartPage = ({
         
       </div>
       <div style={{ height: "600px" }} ref={setRef}>
+      {data?.length ?  (
         <ResponsiveBar
-          data={data}
+          layers={['grid', 'axes', 'bars', 'totals', 'markers', 'legends', 'annotations', Title]}
+          filters={filters}
+          data={data.map(datum => ({...datum, filters}))}
           keys={["value"]}
           indexBy="id"
-          margin={{ top: 20, right: 60, bottom: 50, left: 130 }}
+          margin={{ top: 75, right: 60, bottom: 50, left: 100 }}
           pixelRatio={2}
           padding={0.15}
           innerPadding={0}
@@ -190,7 +217,14 @@ const ChartPage = ({
           }}
           isInteractive={true}
           legends={[]}
-        />
+        />) : (
+          <div
+            className="text-center justify-content-center"
+            style={{ height: "600px", lineHeight: "600px" }}
+          >
+            No Chart Data Available
+          </div>
+        )} 
       </div>
     </div>
   );
