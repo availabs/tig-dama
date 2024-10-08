@@ -35,38 +35,12 @@ const SedChartFilterCounty = ({ years, filters, setFilters, node }) => {
   let activeVar = useMemo(() => get(filters, "activeVar.value", ""), [filters]);
   let area = useMemo(() => get(filters, "area.value", ""), [filters]);
   let summarize = useMemo(() => get(filters, "summarize.value", ""), [filters]);
+  let aggFunc = useMemo(() => get(filters, "aggregate.value", ""), [filters]);
   let year = useMemo(() => get(filters, "year.value", "0"), [filters]);
   let chartType = useMemo(
     () => get(filters, "chartType.value", "line"),
     [filters]
   );
-
-  // React.useEffect(() => {
-  //   if (!get(filters, "activeVar.value", null)) {
-  //     setFilters({
-  //       ...filters,
-  //       area: { value: "all" },
-  //       activeVar: { value: "tot_pop" },
-  //       summarize: { value: "region" },
-  //     });
-  //   }
-  //   if (!get(filters, "area.value", null)) {
-  //     setFilters({
-  //       ...filters,
-  //       area: { value: "all" },
-  //       activeVar: { value: "tot_pop" },
-  //       summarize: { value: "region" },
-  //     });
-  //   }
-  //   if (!get(filters, "summarize.value", null)) {
-  //     setFilters({
-  //       ...filters,
-  //       area: { value: "all" },
-  //       activeVar: { value: "tot_pop" },
-  //       summarize: { value: "region" },
-  //     });
-  //   }
-  // }, []);
 
   const [searchParams] = useSearchParams();
   const searchVar = searchParams.get("variable");
@@ -84,6 +58,9 @@ const SedChartFilterCounty = ({ years, filters, setFilters, node }) => {
     }
   }, [activeVar, setFilters, searchVar]);
 
+  /**
+   * Sets default filters
+   */
   React.useEffect(() => {
     const update = {};
     if (!get(filters, "area.value", null)) {
@@ -91,6 +68,10 @@ const SedChartFilterCounty = ({ years, filters, setFilters, node }) => {
     }
     if (!get(filters, "summarize.value", null)) {
       update.summarize = { value: "region" };
+    }
+    if (!get(filters, "aggregate.value", null)) {
+      const defaultAggFunc = sedVars[activeVar]?.aggFunc === "avg" ? "avg" : "sum";
+      update.aggregate = { value: defaultAggFunc };
     }
     if (!get(filters, "chartType.value", null)) {
       update.chartType = { value: "line" };
@@ -164,7 +145,27 @@ const SedChartFilterCounty = ({ years, filters, setFilters, node }) => {
           ) : null}
         </select>
       </div>
-
+      {summarize !== "county" && <>
+        <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">
+          Aggregation:{" "}
+        </div>
+        <div className="flex">
+          <select
+            className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
+            value={aggFunc}
+            onChange={(e) =>
+              setFilters({ ...filters, aggregate: { value: e.target.value } })
+            }
+          >
+            <option className="ml-2  truncate" value={"sum"}>
+              Sum
+            </option>
+            <option className="ml-2  truncate" value={"avg"}>
+              Average
+            </option>
+          </select>
+        </div>
+      </>}
       <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">
         Chart Type:{" "}
       </div>
@@ -276,6 +277,9 @@ const SedChartTransformCounty = (
   flag
 ) => {
   let activeVar = get(filters, "activeVar.value", "tot_pop");
+
+  const defaultAggFunc = sedVars[activeVar].aggFunc === "avg" ? "avg" : "sum";
+  let aggFunc = get(filters, "aggregate.value", defaultAggFunc);
   let summarize = get(filters, "summarize.value", "county");
   let area = get(filters, "area.value", "all");
 
@@ -338,8 +342,7 @@ const SedChartTransformCounty = (
 
           let yValue = sum.sum;
           if (
-            sedVars[activeVar].aggFunc &&
-            sedVars[activeVar].aggFunc === "avg"
+            aggFunc === "avg"
           ) {
             yValue = yValue / sum.count;
           }

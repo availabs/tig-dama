@@ -47,6 +47,12 @@ const COLOR_ARRAY = [
   "#743411",
 ];
 
+const summarizeVars = {
+  subRegion: { name: "Sub Region" },
+  region: { name: "Region" },
+  county: {name: "County" }
+};
+
 const DefaultTableFilter = () => <div />;
 
 const identityMap = (tableData, attributes) => {
@@ -75,18 +81,24 @@ const Title = (props) => {
   const activeVar = filters?.activeVar.value || "";
   const summarize = filters?.summarize.value || "";
   const area = filters?.area.value || "";
+  const aggFunc = filters?.aggregate?.value || "";
 
   function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
 
+  const transformAggFunc = {
+    'avg' : "Average",
+    'sum' : "Sum"
+  }
+
   return (
     <>
-      <text x={5} y={15} style={style}>
-        {varList[activeVar]?.name} by Year by {capitalizeFirstLetter(summarize)}
+      <text x={5} y={-35} style={style}>
+        {varList[activeVar]?.name} by Year {summarize === 'county' ? `by ${summarizeVars[summarize].name}` : ''}
       </text>
-      <text x={5} y={35} style={style}>
-        {area === "all" ? "All Areas" : capitalizeFirstLetter(area)} 
+      <text x={5} y={-15} style={style}>
+        {area === "all" ? "All Areas" : capitalizeFirstLetter(area)} {summarize !== 'county' ? `| ${transformAggFunc[aggFunc]} of Counties within ${summarizeVars[summarize].name}` :''}
       </text>
     </>
   );
@@ -106,7 +118,7 @@ const PieChart = ({ pieData, year, filters, sourceType }) => {
           };
         }) || []
       }
-      margin={{ top: 40, right: 200, bottom: 40, left: 80 }}
+      margin={{ top: 40, right: 200, bottom: 40, left: 110 }}
       padAngle={0.7}
       cornerRadius={3}
       activeOuterRadiusOffset={8}
@@ -147,7 +159,7 @@ const PieChart = ({ pieData, year, filters, sourceType }) => {
           anchor: "right",
           direction: "column",
           justify: false,
-          translateX: 140,
+          translateX: 100,
           translateY: 0,
           itemsSpacing: 2,
           itemWidth: 60,
@@ -170,7 +182,7 @@ const LineChart = ({ lineData, filters, sourceType }) => {
     layers={['grid', 'markers', 'axes', 'areas', 'crosshair', 'lines', 'points', 'slices', 'mesh', 'legends', Title]}
     data={lineData}
     colors={COLOR_ARRAY}
-    margin={{ top: 50, right: 200, bottom: 50, left: 75 }}
+    margin={{ top: 75, right: 200, bottom: 50, left: 75 }}
     xScale={{ type: "point" }}
     yScale={{
       type: "linear",
@@ -288,7 +300,7 @@ const BarChart = ({ barData, year, filters, sourceType }) => {
         }
         keys={["value"]}
         indexBy="id"
-        margin={{ top: 20, right: 60, bottom: 50, left: 100 }}
+        margin={{ top: 65, right: 60, bottom: 50, left: 100 }}
         pixelRatio={2}
         padding={0.15}
         innerPadding={0}
@@ -344,7 +356,7 @@ const AreaChart = ({ areaData, filters, sourceType }) => {
     layers={['grid', 'markers', 'axes', 'areas', 'crosshair', 'lines', 'points', 'slices', 'mesh', 'legends', Title]}
     data={areaData}
     colors={COLOR_ARRAY}
-    margin={{ top: 50, right: 200, bottom: 50, left: 75 }}
+    margin={{ top:70, right: 200, bottom: 50, left: 75 }}
     xScale={{ type: "point" }}
     yScale={{
       type: "linear",
