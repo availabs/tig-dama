@@ -33,6 +33,7 @@ export const BPMChartFilters = ({
 
   let activeVar = useMemo(() => get(filters, "activeVar.value", ""), [filters]);
   let area = filters['area']?.value || null;// useMemo(() => get(filters, "area.value", ""), [filters]);
+  let aggFunc = get(filters, "aggregate.value", null);
   let summarize = filters['summarize']?.value || null; //useMemo(() => get(filters, "summarize.value", ""), [filters]);
   const timePeriod = filters['period']?.value || null;
   const functionalClass = filters['functional_class']?.value || null;
@@ -87,11 +88,14 @@ export const BPMChartFilters = ({
     if(!activeVar){
       update.activeVar = { value: 'VMT'};
     }
+    if (!aggFunc) {
+      update.aggregate = { value: "sum" };
+    }
     if (!area) {
       update.area = { value: "all" };
     }
     if (!summarize) {
-      update.summarize = { value: "region" };
+      update.summarize = { value: "county" };
     }
     console.log('update', update)
     setFilters(update);
@@ -161,6 +165,27 @@ export const BPMChartFilters = ({
             ))}
         </select>
       </div>
+      {summarize !== "county" && activeVar !== 'AvgSpeed' && <>
+        <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">
+          Aggregation:{" "}
+        </div>
+        <div className="flex">
+          <select
+            className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
+            value={aggFunc}
+            onChange={(e) =>
+              setFilters({ ...filters, aggregate: { value: e.target.value } })
+            }
+          >
+            <option className="ml-2  truncate" value={"sum"}>
+              Sum
+            </option>
+            <option className="ml-2  truncate" value={"avg"}>
+              Average
+            </option>
+          </select>
+        </div>
+      </>}
       <div className='flex py-3.5 px-2 text-sm text-gray-400 capitalize'>Time period : </div>
       <div className='flex'>
         <select
@@ -255,7 +280,7 @@ export const BPMChartTransform = ({ valueMap, filters }) => {
   // });
 
   
-
+  let aggFunc =  get(filters, "aggregate.value", "sum");
   let summarize = get(filters, "summarize.value", "county");
   let area = get(filters, "area.value", "all");
   console.log('chart Transform', data)
@@ -293,7 +318,7 @@ export const BPMChartTransform = ({ valueMap, filters }) => {
   const activeVar = get(filters, "activeVar.value");
 
   finalchartData = Object.values(data.reduce((out,d) =>  {
-    let regions = getRegions(filters?.summarize?.value || 'region', d.area)
+    let regions = getRegions(summarize, d.area)
     regions.forEach((region) => {
         if(!out[region]) { 
         out[region] = {
@@ -310,7 +335,7 @@ export const BPMChartTransform = ({ valueMap, filters }) => {
     return out
   },{}))
 
-  if(activeVar === 'AvgSpeed'){
+  if(aggFunc === "avg" || activeVar === 'AvgSpeed'){
     finalchartData.forEach(bar => {
       bar.value = bar.value / bar.count
     })
