@@ -14,6 +14,7 @@ const summarizeVars = {
   region: { name: "Region" },
 };
 
+//TODO remove `NYBPM Counties` from regional dropdown? 
 const areas = [
   ...Object.keys(regionalData?.regions || {}),
   ...Object.keys(regionalData?.sub_regions || {}),
@@ -128,6 +129,33 @@ export const BPMChartFilters = ({
 
   return (
     <div className="flex justify-start content-center flex-wrap w-full p-1">
+      <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">
+        Area:{" "}
+      </div>
+      <div className="flex">
+        <select
+          className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
+          value={area}
+          onChange={(e) =>
+            setFilters({
+              ...filters,
+              area: { value: e.target.value },
+              summarize: {
+                value: e.target.value === "all" ? summarize : "county",
+              },
+            })
+          }
+        >
+          <option className="ml-2  truncate" value={"all"}>
+            All
+          </option>
+          {(areas || []).map((area, i) => (
+            <option key={i} className="ml-2  truncate" value={area}>
+              {area}
+            </option>
+          ))}
+        </select>
+      </div>
       <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">Summarize: </div>
       <div className="flex">
         <select
@@ -259,6 +287,22 @@ const getAreaToGeos = (regionalData, fips2Name) => {
   return temp;
 };
 
+
+const getSelectedArea = (area, groupByTableData) => {
+  let selectedGroupByTableData = {};
+  if (regionalData?.regions?.hasOwnProperty(area)) {
+    regionalData?.regions[area]?.forEach((key) => {
+      selectedGroupByTableData[key] = groupByTableData.find(datum => datum.id === key);
+    });
+  } else if (regionalData?.sub_regions?.hasOwnProperty(area)) {
+    regionalData?.sub_regions[area]?.forEach((key) => {
+      selectedGroupByTableData[key] = groupByTableData.find(datum => datum.id === key);
+    });
+  }
+  
+  return Object.values(selectedGroupByTableData);
+};
+
 export const BPMChartTransform = ({ valueMap, filters }) => {
   
   const filterKeys = Object.keys(filters);
@@ -291,7 +335,6 @@ export const BPMChartTransform = ({ valueMap, filters }) => {
   let keys = [];
 
   const accessor = variableAccessors?.[filters?.activeVar?.value] || 'vehicle_miles_traveled'
-
 
   const getRegions = (summarize, county) => {
     //console.log('what is my key', summarize)
@@ -335,12 +378,16 @@ export const BPMChartTransform = ({ valueMap, filters }) => {
     return out
   },{}))
 
+  if (area !== "all") {
+    finalchartData = getSelectedArea(area, finalchartData);
+  }
+  
   if(aggFunc === "avg" || activeVar === 'AvgSpeed'){
     finalchartData.forEach(bar => {
       bar.value = bar.value / bar.count
     })
   }
-
+  console.log({finalchartData})
   finalchartData.sort((a,b) => a.value - b.value);
 
   return {
