@@ -154,7 +154,7 @@ const ChartPage = ({
         />
         
       </div>
-      <div style={{ height: "600px" }} ref={setRef}>
+      <div style={{ height: "800px" }} ref={setRef}>
       {data?.length ?  (
         <ResponsiveBar
           layers={['grid', 'axes', 'bars', 'totals', 'markers', 'legends', 'annotations', Title]}
@@ -162,7 +162,7 @@ const ChartPage = ({
           data={data.map(datum => ({...datum, filters}))}
           keys={["value"]}
           indexBy="id"
-          margin={{ top: 75, right: 60, bottom: 50, left: 100 }}
+          margin={{ top: 75, right: 60, bottom: 50, left: 150 }}
           pixelRatio={2}
           padding={0.15}
           innerPadding={0}
