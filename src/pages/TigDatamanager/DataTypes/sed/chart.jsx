@@ -74,8 +74,10 @@ const Title = (props) => {
 
   const style = { fontWeight: "bold" };
 
+  const isSedCountyTitle = sourceType === "tig_sed_county"
+
   let varList = useMemo(() => {
-    return sourceType === "tig_sed_county" ? sedVarsCounty : sedVars;
+    return isSedCountyTitle ? sedVarsCounty : sedVars;
   }, [sourceType]);
 
   const activeVar = filters?.activeVar.value || "";
@@ -92,13 +94,15 @@ const Title = (props) => {
     'sum' : "Sum"
   }
 
+  const dataType = isSedCountyTitle ? 'Counties' : 'TAZ'
+
   return (
     <>
       <text x={5} y={-35} style={style}>
-        {varList[activeVar]?.name} by Year {summarize === 'county' ? `by ${summarizeVars[summarize].name}` : ''}
+        {varList[activeVar]?.name} by Year {summarize === 'county' && isSedCountyTitle ? `by ${summarizeVars[summarize].name}` : ''}
       </text>
       <text x={5} y={-15} style={style}>
-        {area === "all" ? "All Areas" : capitalizeFirstLetter(area)} {summarize !== 'county' ? `| ${transformAggFunc[aggFunc]} of Counties within ${summarizeVars[summarize].name}` :''}
+        {area === "all" ? "All Areas" : capitalizeFirstLetter(area)} {summarize !== 'county' || !isSedCountyTitle ? `| ${transformAggFunc[aggFunc]} of ${dataType} within ${summarizeVars[summarize].name}` :''}
       </text>
     </>
   );
