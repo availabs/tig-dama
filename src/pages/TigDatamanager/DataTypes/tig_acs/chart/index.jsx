@@ -81,6 +81,10 @@ const BarChart = ({ barData, activeVar }) => {
   );
 };
 const PieChart = ({ pieData }) => {
+  const totalVal = pieData.reduce((acc, curr) => {
+    return acc + curr.value
+  }, 0)
+
   return (
     <>
       <ResponsivePieCanvas
@@ -89,7 +93,7 @@ const PieChart = ({ pieData }) => {
             return {
               id: p?.id || "",
               label: p?.name || "",
-              value: p?.value,
+              value: p?.value / totalVal,
             };
           }) || []
         }
@@ -102,6 +106,7 @@ const PieChart = ({ pieData }) => {
           from: "color",
           modifiers: [["darker", 0.6]],
         }}
+        valueFormat={(d) => `${(d*100).toFixed(2)} %`}
         arcLinkLabelsSkipAngle={10}
         arcLinkLabelsTextColor="#333333"
         arcLinkLabelsThickness={2}
@@ -278,6 +283,7 @@ const ChartPage = ({
   );
 
   const [ref, setRef] = React.useState(null);
+  console.log("ACS chart page!!")
   return (
     <div>
       <div className="flex">

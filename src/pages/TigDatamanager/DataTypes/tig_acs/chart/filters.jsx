@@ -135,7 +135,10 @@ export const AcsChartFilters = ({
             setFilters({ ...filters, activeVar: { value: e.target.value } })
           }
         >
-          {(variables || []).map((k, i) => (
+          {(variables.filter((v) => {
+            const hasNoDivisorKey = !v?.value?.divisorKeys || v?.value?.divisorKeys === "" || v?.value?.divisorKeys?.length === 0;
+            return filters?.chartType?.value !== 'pie' || hasNoDivisorKey
+          }) || []).map((k, i) => (
             <option key={i} className="ml-2  truncate" value={k.label}>
               {k.label}
             </option>
