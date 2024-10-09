@@ -7,7 +7,7 @@ import { HUBBOUND_ATTRIBUTES } from "../constants";
 import { BAR_CHART_PROPS, LINE_GRAPH_PROPS } from "./chartConstants";
 import { DamaContext } from "~/pages/DataManager/store";
 import { ResponsiveBar } from "@nivo/bar";
-import { LineGraph } from "~/modules/avl-graph/src";
+import { ResponsiveLine } from "@nivo/line";
 
 const ChartPage = (props) => {
   const {
@@ -35,6 +35,8 @@ const ChartPage = (props) => {
   const activeDataVersionId = parseInt(searchParams.get("variable")) || activeViewId || views?.[0].view_id;
   const count_variable_name = useMemo(() => get(filters, "count_variable_name.value"), [filters]);
   const year = useMemo(() => get(filters, "year.value"), [filters]);
+  const sectorName = useMemo(() => get(chartFilters, "sector_name.value"), [filters]);
+  const direction = useMemo(() => get(chartFilters, "direction.value"), [filters]);
 
   //initialize data filters
   useEffect(() => {
@@ -47,6 +49,13 @@ const ChartPage = (props) => {
         value: HUBBOUND_ATTRIBUTES["count_variable_name"].values[0],
       };
     }
+    if(!sectorName) {
+      newFilters.sector_name = { value: HUBBOUND_ATTRIBUTES['sector_name'].values[0] };
+    }
+    if(!direction) {
+      newFilters.direction = { value: HUBBOUND_ATTRIBUTES['direction'].values[0] };
+    }
+
     setFilters(newFilters);
   }, []);
 
@@ -145,9 +154,9 @@ const ChartPage = (props) => {
         </div>
       );
     } else {
-      return generateChart(data, chartType, countAxisName, count_variable_name);
+      return generateChart(data, chartType, countAxisName, count_variable_name, {...filters, ...chartFilters});
     }
-  }, [data, chartType, countAxisName, isLoading]);
+  }, [data, chartType, countAxisName, isLoading, filters, chartFilters]);
 
   const [ref, setRef] = useState(null);
   return (
@@ -171,20 +180,99 @@ const ChartPage = (props) => {
   );
 };
 
-const generateChart = (data, chartType, countAxisName, count_variable_name) => {
+const Title = (props) => {
+  let { width, height, filters, sourceType } = props;
+  if (props.bars) {
+    filters = props.bars[0].data.data.filters;
+    sourceType = props.bars[0].data.data.sourceType;
+  }
+
+  const style = { fontWeight: "bold", textTransform: "capitalize" };
+
+  const aggregation = filters?.aggregation?.value || "";
+  const series = filters?.series?.value || "";
+  const count_variable_name = filters?.count_variable_name?.value || "";
+  const year = filters?.year?.value || "";
+  const direction = filters?.direction?.value || "";
+  const transit_mode_name = filters?.transit_mode_name?.value || "";
+  const sector_name = filters?.sector_name?.value || "";
+  
+  return (
+    <>
+      <text x={5} y={-55} style={style}>
+        {aggregation} {aggregation === "Sum" ? "of" : "number of"} {count_variable_name} by {series}
+      </text>
+      <text x={5} y={-35} style={style}>
+        {transit_mode_name === "all" ? 'All Modes' : transit_mode_name} {direction === "all" ? 'Both Directions' : direction}
+      </text>
+      <text x={5} y={-15} style={style}>
+        {sector_name === "all" ? 'All Sectors' : sector_name} | {year}
+      </text>
+    </>
+  );
+}
+
+const generateChart = (
+  data,
+  chartType,
+  countAxisName,
+  count_variable_name,
+  filters
+) => {
   switch (chartType) {
     case "bar":
-      const barAxisBottomConfig = {...BAR_CHART_PROPS?.axisBottom, legend: countAxisName}
-      const barChartProps ={ ...BAR_CHART_PROPS, axisBottom: barAxisBottomConfig, keys:[count_variable_name]}
-      return <ResponsiveBar {...barChartProps} data={data} />;
+      const barAxisBottomConfig = {
+        ...BAR_CHART_PROPS?.axisBottom,
+        legend: countAxisName,
+      };
+      const barChartProps = {
+        ...BAR_CHART_PROPS,
+        axisBottom: barAxisBottomConfig,
+        keys: [count_variable_name],
+        layers: [
+          "grid",
+          "axes",
+          "bars",
+          "totals",
+          "markers",
+          "legends",
+          "annotations",
+          Title,
+        ],
+      };
+      return (
+        <ResponsiveBar
+          {...barChartProps}
+          data={data.map((d) => ({ ...d, filters: filters }))}
+        />
+      );
     case "line":
-      const lineAxisLeftConfig = {...LINE_GRAPH_PROPS?.axisLeft, label: countAxisName};
-      const lineChartProps ={ ...LINE_GRAPH_PROPS, axisLeft: lineAxisLeftConfig}
-      return <LineGraph {...lineChartProps} data={data} />;
+      const lineAxisLeftConfig = {
+        ...LINE_GRAPH_PROPS?.axisLeft,
+        label: countAxisName,
+      };
+      const lineChartProps = {
+        ...LINE_GRAPH_PROPS,
+        axisLeft: lineAxisLeftConfig,
+        layers: [
+          "grid",
+          "markers",
+          "axes",
+          "areas",
+          "crosshair",
+          "lines",
+          "points",
+          "slices",
+          "mesh",
+          "legends",
+          Title,
+        ],
+      };
+      return <ResponsiveLine {...lineChartProps} data={data} filters={filters} />;
     default:
       console.error("no chart type detected::", chartType);
-      return <>No Chart Type</>
-    }
+      return <>No Chart Type</>;
+  }
 };
 
 export default ChartPage;

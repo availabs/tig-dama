@@ -119,6 +119,7 @@ const SECTOR_NAMES = [
   "New Jersey",
 ];
 SECTOR_NAMES.sort(alphaSort);
+SECTOR_NAMES.unshift("all");
 
 const TRANSIT_MODES = [
   "Rail Rapid Transit - Local",
@@ -133,7 +134,7 @@ const TRANSIT_MODES = [
   'Public Ferry'
 ];
 TRANSIT_MODES.sort(alphaSort);
-
+TRANSIT_MODES.unshift("all");
 const AGENCY_NAMES = [
   "New Jersey Transit",
   "Private Ferries",
