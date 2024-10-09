@@ -24,6 +24,7 @@ const defaultDomain = [0, 872, 2047, 3649, 6934, 14119, 28578];
 const summarizeVars = {
   subRegion: { name: "Sub Region" },
   region: { name: "Region" },
+  county: {name: "County" }
 };
 
 const areas = [

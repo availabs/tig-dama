@@ -31,14 +31,46 @@ const ViewSelector = ({ views }) => {
   );
 };
 
-const BarChart = ({ barData, activeVar }) => {
+const summarizeVars = {
+  subRegion: { name: "Sub Region" },
+  region: { name: "Region" },
+  county: {name: "County" }
+};
+
+const Title = (props) => {
+  let { width, height, filters, sourceType } = props;
+  if (props.bars) {
+    filters = props.bars[0].data.data.filters;
+    sourceType = props.bars[0].data.data.sourceType;
+  }
+
+  const style = { fontWeight: "bold", textTransform: "capitalize" };
+
+  const activeVar = filters?.activeVar?.value || "";
+  const summarize = filters?.summarize?.value || "";
+  const area = filters?.area?.value || "";
+
+  return (
+    <>
+      <text x={5} y={-35} style={style}>
+        {activeVar} by Year {`by ${summarizeVars[summarize].name}`}
+      </text>
+      <text x={5} y={-15} style={style}>
+        {area === "all" ? "All Areas" : area}
+      </text>
+    </>
+  );
+};
+
+const BarChart = ({ barData, activeVar, filters }) => {
   return (
     <>
       <ResponsiveBar
-        data={barData}
+        layers={['grid', 'axes', 'bars', 'totals', 'markers', 'legends', 'annotations', Title]}
+        data={barData.map(d => ({...d, filters: filters}))}
         keys={["value"]}
         indexBy="id"
-        margin={{ top: 20, right: 60, bottom: 50, left: 100 }}
+        margin={{ top: 100, right: 60, bottom: 50, left: 150 }}
         pixelRatio={2}
         padding={0.15}
         innerPadding={0}
@@ -283,7 +315,7 @@ const ChartPage = ({
   );
 
   const [ref, setRef] = React.useState(null);
-  console.log("ACS chart page!!")
+
   return (
     <div>
       <div className="flex">
@@ -295,11 +327,11 @@ const ChartPage = ({
           node={ref}
         />
       </div>  
-      <div style={{ height: "600px" }} ref={setRef}>
+      <div style={{ height: "800px" }} ref={setRef}>
         {data?.length ? (
           <>
             {chartType === "bar" ? (
-              <BarChart barData={data} activeVar={filters?.activeVar?.value} />
+              <BarChart barData={data} activeVar={filters?.activeVar?.value} filters={filters}/>
             ) : null}
             {chartType === "pie" ? (
               <PieChart pieData={data} year={years[Number(year)]} />
