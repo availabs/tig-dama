@@ -8,6 +8,7 @@ import { Button } from "~/modules/avl-components/src";
 import { fips2Name, regionalData } from "../constants";
 import { variableAccessors } from './BPMConstants'
 import { DamaContext } from "~/pages/DataManager/store"
+import { FilterControlContainer } from "../controls/FilterControlContainer";
 
 const summarizeVars = {
   subRegion: { name: "Sub Region" },
@@ -125,121 +126,125 @@ export const BPMChartFilters = ({
   }, [node, activeVar]);
 
   return (
-    <div className="flex justify-start content-center flex-wrap w-full p-1">
-      <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">
-        Area:{" "}
-      </div>
-      <div className="flex">
-        <select
-          className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
-          value={area}
-          onChange={(e) =>
-            setFilters({
-              ...filters,
-              area: { value: e.target.value },
-              summarize: {
-                value: e.target.value === "all" ? summarize : "county",
-              },
-            })
-          }
-        >
-          <option className="ml-2  truncate" value={"all"}>
-            All
-          </option>
-          {(areas || []).map((area, i) => (
-            <option key={i} className="ml-2  truncate" value={area}>
-              {area}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">Summarize: </div>
-      <div className="flex">
-        <select
-          className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
-          value={summarize}
-          onChange={(e) =>
-            setFilters({ ...filters, summarize: { value: e.target.value } })
-          }
-        >
-          <option className="ml-2  truncate" value={"county"}>
-            county
-          </option>
-          {area === "all" ? (
-            <>
-              {Object.keys(summarizeVars).map((k, i) => (
-                <option key={i} className="ml-2  truncate" value={k}>
-                  {summarizeVars[k]?.name}
-                </option>
-              ))}
-            </>
-          ) : null}
-        </select>
-      </div>
-      <div className='flex py-3.5 px-2 text-sm text-gray-400 capitalize'>Variable : </div>
-      <div className='flex'>
-        <select
-            className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
-            value={activeVar || ''}
-            onChange={(e) => setFilters({'activeVar' :{ value: e.target.value}})}
-          >
-            {variableClasses?.filter(d => d).map((v,i) => (
-              <option key={i} className="ml-2  truncate" value={v}>
-                {v}
-              </option>
-            ))}
-        </select>
-      </div>
-      {summarize !== "county" && activeVar !== 'AvgSpeed' && <>
-        <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">
-          Aggregation:{" "}
-        </div>
-        <div className="flex">
-          <select
-            className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
-            value={aggFunc}
+    <div className="flex w-full p-1">
+      <div className="flex flex-wrap">
+        <FilterControlContainer 
+          header={"Area: "}
+          input={({className}) => (<select
+            className={className}
+            value={area}
             onChange={(e) =>
-              setFilters({ ...filters, aggregate: { value: e.target.value } })
+              setFilters({
+                ...filters,
+                area: { value: e.target.value },
+                summarize: {
+                  value: e.target.value === "all" ? summarize : "county",
+                },
+              })
             }
           >
-            <option className="ml-2  truncate" value={"sum"}>
-              Sum
+            <option className="ml-2  truncate" value={"all"}>
+              All
             </option>
-            <option className="ml-2  truncate" value={"avg"}>
-              Average
-            </option>
-          </select>
-        </div>
-      </>}
-      <div className='flex py-3.5 px-2 text-sm text-gray-400 capitalize'>Time period : </div>
-      <div className='flex'>
-        <select
-            className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
-            value={timePeriod || ''}
-            onChange={(e) => setFilters({'period' :{ value: e.target.value}})}
-          >
-            {allTimePeriods?.filter(d => d && d !== 'null').map((v,i) => (
-              <option key={i} className="ml-2  truncate" value={v}>
-                {v?.replace("_"," ")}
+            {(areas || []).map((area, i) => (
+              <option key={i} className="ml-2  truncate" value={area}>
+                {area}
               </option>
             ))}
-        </select>
-      </div>
-      <div className='flex py-3.5 px-2 text-sm text-gray-400 capitalize'>Functional class : </div>
-      <div className='flex'>
-        <select
-            className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
-            value={functionalClass || ''}
-            onChange={(e) => setFilters({'functional_class' :{ value: e.target.value}})}
+          </select>)}
+        />
+        <FilterControlContainer 
+          header={"Summarize: "}
+          input={({className}) => (<select
+            className={className}
+            value={summarize}
+            onChange={(e) =>
+              setFilters({ ...filters, summarize: { value: e.target.value } })
+            }
           >
-            {allFunctionalClasses?.filter(d => d && d !== 'null').map((v,i) => (
-              <option key={i} className="ml-2  truncate" value={v}>
-                {v}
+            <option className="ml-2  truncate" value={"county"}>
+              county
+            </option>
+            {area === "all" ? (
+              <>
+                {Object.keys(summarizeVars).map((k, i) => (
+                  <option key={i} className="ml-2  truncate" value={k}>
+                    {summarizeVars[k]?.name}
+                  </option>
+                ))}
+              </>
+            ) : null}
+          </select>)}
+        />
+        <FilterControlContainer 
+          header={'Variable:'}
+          input={({className}) => (
+            <select
+              className={className}
+              value={activeVar || ''}
+              onChange={(e) => setFilters({'activeVar' :{ value: e.target.value}})}
+            >
+              {variableClasses?.filter(d => d).map((v,i) => (
+                <option key={i} className="ml-2  truncate" value={v}>
+                  {v}
+                </option>
+              ))}
+            </select>
+          )}
+        />
+        {summarize !== "county" && activeVar !== 'AvgSpeed' && 
+          <FilterControlContainer 
+            header={"Aggregation: "}
+            input={({className}) => (<select
+              className={className}
+              value={aggFunc}
+              onChange={(e) =>
+                setFilters({ ...filters, aggregate: { value: e.target.value } })
+              }
+            >
+              <option className="ml-2  truncate" value={"sum"}>
+                Sum
               </option>
-            ))}
-        </select>
+              <option className="ml-2  truncate" value={"avg"}>
+                Average
+              </option>
+            </select>)}
+          />
+        }
+        <FilterControlContainer 
+          header={'Time period:'}
+          input={({className}) => (
+            <select
+              className={className}
+              value={timePeriod || ''}
+              onChange={(e) => setFilters({'period' :{ value: e.target.value}})}
+            >
+              {allTimePeriods?.filter(d => d && d !== 'null').map((v,i) => (
+                <option key={i} className="ml-2  truncate" value={v}>
+                  {v?.replace("_"," ")}
+                </option>
+              ))}
+            </select>
+          )}
+        />
+        <FilterControlContainer 
+          header={'Functional class:'}
+          input={({className}) => (
+            <select
+              className={className}
+              value={functionalClass || ''}
+              onChange={(e) => setFilters({'functional_class' :{ value: e.target.value}})}
+            >
+              {allFunctionalClasses?.filter(d => d && d !== 'null').map((v,i) => (
+                <option key={i} className="ml-2  truncate" value={v}>
+                  {v}
+                </option>
+              ))}
+            </select>
+          )}
+        />
       </div>
-      <div className='flex ml-auto'>
+      <div className="ml-auto mt-5 mr-1">
         <Button
           themeOptions={{ size: "sm", color: "primary" }}
           onClick={downloadImage}
