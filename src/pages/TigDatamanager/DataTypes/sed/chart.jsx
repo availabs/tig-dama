@@ -301,6 +301,7 @@ const BarChart = ({ barData, year, filters, sourceType }) => {
             };
           }) || []
         }
+        valueFormat={v => v.toLocaleString()}
         keys={["value"]}
         indexBy="id"
         margin={{ top: 65, right: 60, bottom: 50, left: 100 }}
@@ -326,6 +327,7 @@ const BarChart = ({ barData, year, filters, sourceType }) => {
           tickSize: 5,
           tickPadding: 5,
           tickRotation: 0,
+          format: v => v.toLocaleString()
         }}
         axisLeft={{
           tickSize:0
