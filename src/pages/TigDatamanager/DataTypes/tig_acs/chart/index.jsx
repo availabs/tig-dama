@@ -49,14 +49,19 @@ const Title = (props) => {
   const activeVar = filters?.activeVar?.value || "";
   const summarize = filters?.summarize?.value || "";
   const area = filters?.area?.value || "";
+  const aggregate = filters?.aggregate?.value || "";
 
+  const transformAggFunc = {
+    'avg' : "Average",
+    'sum' : "Sum"
+  }
   return (
     <>
       <text x={5} y={-35} style={style}>
         {activeVar} by Year {`by ${summarizeVars[summarize].name}`}
       </text>
       <text x={5} y={-15} style={style}>
-        {area === "all" ? "All Areas" : area}
+        {area === "all" ? "All Areas" : area} {summarize !== 'county' ? `| ${transformAggFunc[aggregate]} of Counties within ${summarizeVars[summarize]?.name}` : ''}
       </text>
     </>
   );

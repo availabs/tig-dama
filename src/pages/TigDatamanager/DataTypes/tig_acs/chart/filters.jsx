@@ -29,6 +29,7 @@ export const AcsChartFilters = ({
   let area = useMemo(() => get(filters, "area.value", "all"), [filters]);
   let year = useMemo(() => get(filters, "year.value", ""), [filters]);
   let summarize = useMemo(() => get(filters, "summarize.value", ""), [filters]);
+  let aggFunc = useMemo(() => get(filters, "aggregate.value", ""), [filters]);
   let chartType = useMemo(
     () => get(filters, "chartType.value", "bar"),
     [filters]
@@ -58,8 +59,14 @@ export const AcsChartFilters = ({
     if (!get(filters, "year.value", null)) {
       update.year = { value: "2019" };
     }
+    if (!get(filters, "area.value", null)) {
+      update.area = { value: "all" };
+    }
     if (!get(filters, "chartType.value", null)) {
       update.chartType = { value: "bar" };
+    }
+    if (!get(filters, "chartType.aggregate", null)) {
+      update.aggregate = { value: "sum" };
     }
     setFilters(update);
   }, [variables]);
@@ -126,6 +133,23 @@ export const AcsChartFilters = ({
             </select>
           )}
         />
+        {summarize !== "county" && <FilterControlContainer 
+          header={"Aggregation: "}
+          input={({className}) => (<select
+            className={className}
+            value={aggFunc}
+            onChange={(e) =>
+              setFilters({ ...filters, aggregate: { value: e.target.value } })
+            }
+          >
+            <option className="ml-2  truncate" value={"sum"}>
+              Sum
+            </option>
+            <option className="ml-2  truncate" value={"avg"}>
+              Average
+            </option>
+          </select>)}
+        />}
         <FilterControlContainer 
           header={"Variable:"}
           input={({className}) => (
@@ -234,6 +258,7 @@ const getAreaToGeos = (regionalData, fips2Name) => {
 export const ACSChartTransform = ({ valueMap, filters, isDivisor }) => {
   let summarize = get(filters, "summarize.value", "county");
   let area = get(filters, "area.value", "all");
+  let aggFunc = get(filters, "aggregate.value", "");
 
   const areaToGeos = getAreaToGeos(regionalData, fips2Name);
 
@@ -257,7 +282,7 @@ export const ACSChartTransform = ({ valueMap, filters, isDivisor }) => {
     finalchartData = keys.map((key) => ({
       id: key,
       name: key,
-      value: isDivisor
+      value: isDivisor || aggFunc === 'avg'
         ? `${
             Math.round(
               mean(
@@ -266,7 +291,7 @@ export const ACSChartTransform = ({ valueMap, filters, isDivisor }) => {
                   .filter(Boolean) || []
               )
             ) || 0
-          }%`
+          }${isDivisor ? "%" : ''}`
         : sum(
             areaToGeos[`${key}`]
               .map((val) => valueMap[`${val}`])
