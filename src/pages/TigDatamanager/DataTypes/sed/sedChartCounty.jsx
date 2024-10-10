@@ -130,15 +130,20 @@ const SedChartFilterCounty = ({ years, filters, setFilters, node }) => {
               setFilters({ ...filters, summarize: { value: e.target.value } })
             }
           >
-            {area === "all" ? (
-              <>
-                {Object.keys(summarizeVars).map((k, i) => (
-                  <option key={i} className="ml-2  truncate" value={k}>
-                    {summarizeVars[k]?.name}
-                  </option>
-                ))}
-              </>
-            ) : null}
+            {
+              area === "all" ? (
+                <>
+                  {Object.keys(summarizeVars).map((k, i) => (
+                    <option key={i} className="ml-2  truncate" value={k}>
+                      {summarizeVars[k]?.name}
+                    </option>
+                  ))}
+                </>
+              ) : 
+              <option className="ml-2  truncate" value={"county"}>
+                county
+              </option>
+            }
           </select>)}
         />
         {summarize !== "county" && <FilterControlContainer 
