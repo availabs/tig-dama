@@ -169,7 +169,7 @@ const ChartPage = (props) => {
             node={ref}
           />
         </div>
-        <div className="flex mt-4">
+        <div className="flex">
           <HubboundFilter filters={filters} setFilters={setFilters} filterType={"chartFilter"}/>
         </div>
       </div>

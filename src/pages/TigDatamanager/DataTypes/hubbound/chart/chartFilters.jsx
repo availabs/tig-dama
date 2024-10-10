@@ -5,6 +5,7 @@ import download from "downloadjs";
 
 import { Button } from "~/modules/avl-components/src";
 import { CHART_TYPES, AGGREGATION_TYPES, SERIES_TYPES } from "./chartConstants";
+import { FilterControlContainer } from "../../controls/FilterControlContainer";
 
 export const HubboundChartFilters = ({
   filters,
@@ -24,65 +25,73 @@ export const HubboundChartFilters = ({
   }, [node, filters]);
 
   return (
-    <div className="flex justify-start content-center flex-wrap w-full mt-4">
-      <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">Chart Type:</div>
-      <div className="flex" >
-        <select
-          className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
-          value={chartType}
-          onChange={(e) =>
-            setFilters({
-              ...filters,
-              chartType: { value: e.target.value },
-            })
-          }
-        >
-          {(CHART_TYPES || []).map((cType, i) => (
-            <option key={i} className="ml-2 truncate " value={cType}>
-              {cType}
-            </option>
-          ))}
-        </select>
+    <div className="flex w-full">
+      <div className="flex flex-wrap">
+        <FilterControlContainer 
+          header={'Chart Type:'}
+          input={({className}) => (
+            <select
+              className={className}
+              value={chartType}
+              onChange={(e) =>
+                setFilters({
+                  ...filters,
+                  chartType: { value: e.target.value },
+                })
+              }
+            >
+              {(CHART_TYPES || []).map((cType, i) => (
+                <option key={i} className="ml-2 truncate " value={cType}>
+                  {cType}
+                </option>
+              ))}
+            </select>
+            )}
+        />
+        <FilterControlContainer 
+          header={'Aggregation:'}
+          input={({className}) => (
+            <select
+              className={className}
+              value={aggregation}
+              onChange={(e) =>
+                setFilters({
+                  ...filters,
+                  aggregation: { value: e.target.value },
+                })
+              }
+            >
+              {(AGGREGATION_TYPES || []).map((aType, i) => (
+                <option key={i} className="ml-2 truncate" value={aType}>
+                  {aType}
+                </option>
+              ))}
+            </select>
+          )}
+        />
+        <FilterControlContainer 
+          header={'Series:'}
+          input={({className}) => (
+            <select
+              className={className}
+              value={series}
+              onChange={(e) =>
+                setFilters({
+                  ...filters,
+                  series: { value: e.target.value },
+                })
+              }
+            >
+              {(SERIES_TYPES || []).map((sType, i) => (
+                <option key={i} className="ml-2 truncate" value={sType}>
+                  {sType.split("_").join(" ")}
+                </option>
+              ))}
+            </select>
+          )}
+        />
       </div>
-      <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">Aggregation:</div>
-      <div className="flex" >
-        <select
-          className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
-          value={aggregation}
-          onChange={(e) =>
-            setFilters({
-              ...filters,
-              aggregation: { value: e.target.value },
-            })
-          }
-        >
-          {(AGGREGATION_TYPES || []).map((aType, i) => (
-            <option key={i} className="ml-2 truncate" value={aType}>
-              {aType}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">Series:</div>
-      <div className="flex" >
-        <select
-          className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
-          value={series}
-          onChange={(e) =>
-            setFilters({
-              ...filters,
-              series: { value: e.target.value },
-            })
-          }
-        >
-          {(SERIES_TYPES || []).map((sType, i) => (
-            <option key={i} className="ml-2 truncate" value={sType}>
-              {sType.split("_").join(" ")}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div className="ml-auto mr-2">
+      <div className="ml-auto mt-5 mr-1">
         <Button
           themeOptions={{ size: "sm", color: "primary" }}
           onClick={downloadImage}
