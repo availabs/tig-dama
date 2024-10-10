@@ -162,6 +162,7 @@ const ChartPage = ({
           data={data.map(datum => ({...datum, filters}))}
           keys={["value"]}
           indexBy="id"
+          valueFormat={v => v.toLocaleString()}
           margin={{ top: 75, right: 60, bottom: 50, left: 150 }}
           pixelRatio={2}
           padding={0.15}
@@ -181,6 +182,9 @@ const ChartPage = ({
               ["opacity", 0.5],
             ],
           }}
+          axisLeft={{
+            tickSize:0
+          }}
           axisBottom={{
             tickSize: 5,
             tickPadding: 5,
@@ -188,6 +192,7 @@ const ChartPage = ({
             legend: filters?.activeVar?.value,
             legendPosition: "middle",
             legendOffset: 36,
+            format: v => v.toLocaleString()
           }}
           tooltip={({ value, color, data } ) => {
             return <div

@@ -70,6 +70,7 @@ const BarChart = ({ barData, activeVar, filters }) => {
         data={barData.map(d => ({...d, filters: filters}))}
         keys={["value"]}
         indexBy="id"
+        valueFormat={v => v.toLocaleString()}
         margin={{ top: 100, right: 60, bottom: 50, left: 150 }}
         pixelRatio={2}
         padding={0.15}
@@ -96,6 +97,10 @@ const BarChart = ({ barData, activeVar, filters }) => {
           legend: activeVar,
           legendPosition: "middle",
           legendOffset: 36,
+          format: v => v.toLocaleString()
+        }}
+        axisLeft={{
+          tickSize:0
         }}
         enableGridX={true}
         enableGridY={false}

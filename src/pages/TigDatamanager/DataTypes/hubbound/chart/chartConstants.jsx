@@ -41,8 +41,8 @@ const BAR_CHART_PROPS = {
   },
   axisLeft: {
     showGridLines: false,
+    tickSize: 0,
     tickDensity: 1,
-    tickRotation: 310
   },
   enableGridX: true,
   enableGridY: false,
@@ -91,6 +91,8 @@ const LINE_GRAPH_PROPS = {
     "#0c5922",
     "#743411",
   ],
+  axisTop:null,
+  axisRight:null,
   axisBottom: {
     tickDensity: 4,
     format: formatHour,
@@ -101,12 +103,13 @@ const LINE_GRAPH_PROPS = {
     label: "Values",
     showGridLines: false,
     tickDensity: 1,
+    format: v => v.toLocaleString()
   },
-  axisRight: {
-    label: "Year",
-    showGridLines: false,
-  },
+  enableGridX:true,
+  gridXValues:[0],
+  enableGridY: true,
   enableSlices:'x',
+  yFormat:v => v.toLocaleString(),
   sliceTooltip:(data) => {
     return (
       <div key={data?.slice?.id} className="bg-white rounded p-2 opacity-85">
@@ -128,11 +131,37 @@ const LINE_GRAPH_PROPS = {
       </div>
     )
   },
+  legends:[
+    {
+      anchor: "bottom-right",
+      direction: "column",
+      justify: false,
+      translateX: 150,
+      translateY: 0,
+      itemsSpacing: 0,
+      itemDirection: "left-to-right",
+      itemWidth: 120,
+      itemHeight: 20,
+      itemOpacity: 0.75,
+      symbolSize: 12,
+      symbolShape: "circle",
+      symbolBorderColor: "rgba(0, 0, 0, .5)",
+      effects: [
+        {
+          on: "hover",
+          style: {
+            itemBackground: "rgba(0, 0, 0, .03)",
+            itemOpacity: 1,
+          },
+        },
+      ],
+    },
+  ],
   margin: {
     top: 100,
     bottom: 55,
     left: 80,
-    right: 30,
+    right: 200,
   },
 };
 

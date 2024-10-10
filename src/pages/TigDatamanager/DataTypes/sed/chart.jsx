@@ -194,7 +194,7 @@ const LineChart = ({ lineData, filters, sourceType }) => {
       max: "auto",
       reverse: false,
     }}
-    yFormat=" >-.2f"
+    yFormat={v => v.toLocaleString()}
     curve="linear"
     axisTop={null}
     axisRight={null}
@@ -218,7 +218,6 @@ const LineChart = ({ lineData, filters, sourceType }) => {
       format: v => v.toLocaleString()
     }}
     gridXValues={[0]}
-    gridYValues={[0]}
     enableGridX={true}
     enableGridY={true}
     enablePoints={true}
@@ -327,6 +326,9 @@ const BarChart = ({ barData, year, filters, sourceType }) => {
           tickSize: 5,
           tickPadding: 5,
           tickRotation: 0,
+        }}
+        axisLeft={{
+          tickSize:0
         }}
         enableGridX={true}
         enableGridY={false}
