@@ -9,6 +9,7 @@ import download from "downloadjs";
 import { useSearchParams } from "react-router-dom";
 
 import { sedVars } from "./sedCustom";
+import { FilterControlContainer } from "../controls/FilterControlContainer";
 const summarizeVars = {
   subRegion: { name: "Sub Region" },
   region: { name: "Region" },
@@ -77,66 +78,60 @@ const SedChartFilter = ({ filters, setFilters, node, years }) => {
   }, [node, activeVar]);
 
   return (
-    <div className="flex border-blue-100 w-full p-1">
-      <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">
-        Area:{" "}
-      </div>
-      <div className="flex">
-        <select
-          className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
-          value={area}
-          onChange={(e) =>
-            setFilters({
-              ...filters,
-              area: { value: e.target.value },
-              summarize: {
-                value: e.target.value === "all" ? summarize : "county",
-              },
-            })
-          }
-        >
-          <option className="ml-2  truncate" value={"all"}>
-            All
-          </option>
-          {(areas || []).map((area, i) => (
-            <option key={i} className="ml-2  truncate" value={area}>
-              {area}
+    <div className="flex w-full p-1">
+      <div className="flex flex-wrap">
+        <FilterControlContainer 
+          header={"Area: "}
+          input={({className}) => (<select
+            className={className}
+            value={area}
+            onChange={(e) =>
+              setFilters({
+                ...filters,
+                area: { value: e.target.value },
+                summarize: {
+                  value: e.target.value === "all" ? summarize : "county",
+                },
+              })
+            }
+          >
+            <option className="ml-2  truncate" value={"all"}>
+              All
             </option>
-          ))}
-        </select>
-      </div>
-      <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">
-        Summarize:{" "}
-      </div>
-      <div className="flex">
-        <select
-          className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
-          value={summarize}
-          onChange={(e) =>
-            setFilters({ ...filters, summarize: { value: e.target.value } })
-          }
-        >
-          <option className="ml-2  truncate" value={"county"}>
-            county
-          </option>
-          {area === "all" ? (
-            <>
-              {Object.keys(summarizeVars).map((k, i) => (
-                <option key={i} className="ml-2  truncate" value={k}>
-                  {summarizeVars[k]?.name}
-                </option>
-              ))}
-            </>
-          ) : null}
-        </select>
-      </div>
-       <>
-        <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">
-          Aggregation:{" "}
-        </div>
-        <div className="flex">
-          <select
-            className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
+            {(areas || []).map((area, i) => (
+              <option key={i} className="ml-2  truncate" value={area}>
+                {area}
+              </option>
+            ))}
+          </select>)}
+        />
+        <FilterControlContainer 
+          header={"Summarize: "}
+          input={({className}) => (<select
+            className={className}
+            value={summarize}
+            onChange={(e) =>
+              setFilters({ ...filters, summarize: { value: e.target.value } })
+            }
+          >
+            <option className="ml-2  truncate" value={"county"}>
+              county
+            </option>
+            {area === "all" ? (
+              <>
+                {Object.keys(summarizeVars).map((k, i) => (
+                  <option key={i} className="ml-2  truncate" value={k}>
+                    {summarizeVars[k]?.name}
+                  </option>
+                ))}
+              </>
+            ) : null}
+          </select>)}
+        />
+        <FilterControlContainer 
+          header={"Aggregation: "}
+          input={({className}) => (<select
+            className={className}
             value={aggFunc}
             onChange={(e) =>
               setFilters({ ...filters, aggregate: { value: e.target.value } })
@@ -148,84 +143,88 @@ const SedChartFilter = ({ filters, setFilters, node, years }) => {
             <option className="ml-2  truncate" value={"avg"}>
               Average
             </option>
-          </select>
-        </div>
-      </>
-      <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">
-        Variable:{" "}
-      </div>
-      <div className="flex">
-        <select
-          className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
-          value={activeVar}
-          onChange={(e) =>
-            setFilters({ ...filters, activeVar: { value: e.target.value } })
-          }
-        >
-          <option className="ml-2  truncate" value={""}>
-            none
-          </option>
-          {Object.keys(sedVars).map((k, i) => (
-            <option key={i} className="ml-2  truncate" value={k}>
-              {sedVars[k].name}
+          </select>)}
+        />
+        <FilterControlContainer 
+          header={"Variable: "}
+          input={({className}) => (<select
+            className={className}
+            value={activeVar}
+            onChange={(e) =>
+              setFilters({ ...filters, activeVar: { value: e.target.value } })
+            }
+          >
+            <option className="ml-2  truncate" value={""}>
+              none
             </option>
-          ))}
-        </select>
-      </div>
-      <div className="flex">
-        <select
-          className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
-          value={chartType}
-          onChange={(e) =>
-            setFilters({ ...filters, chartType: { value: e.target.value } })
-          }
-        >
-          <option className="ml-2 truncate" value="line">
-            Line
-          </option>
-          <option className="ml-2 truncate" value="area">
-            Area
-          </option>
-          <option className="ml-2 truncate" value="bar">
-            Bar
-          </option>
-          <option className="ml-2 truncate" value="pie">
-            Pie
-          </option>
-        </select>
-      </div>
-      {chartType === "pie" || chartType === "bar" ? (
-        <div className="flex-1">
-          <div className="px-6">
-            <input
-              type="range"
-              min="0"
-              max={years.length - 1}
-              id="my-range"
-              list="my-datalist"
-              className="w-full"
-              value={year}
-              onChange={(e) =>
-                setFilters({
-                  year: { value: e.target.value },
-                })
-              }
-            />
-          </div>
-          <datalist id="my-datalist" className="w-full flex">
-            {(years || ["2010"]).map((k, i) => (
-              <option
-                key={i}
-                value={i}
-                className={`flex-1 text-gray-500 text-center text-xs`}
-              >
-                {k}
+            {Object.keys(sedVars).map((k, i) => (
+              <option key={i} className="ml-2  truncate" value={k}>
+                {sedVars[k].name}
               </option>
             ))}
-          </datalist>
-        </div>
-      ) : null}
-      <div className="flex ml-auto">
+          </select>)}
+        />
+        <FilterControlContainer 
+          header={"Chart Type: "}
+          input={({className}) => (  <select
+            className={className}
+            value={chartType}
+            onChange={(e) =>
+              setFilters({ ...filters, chartType: { value: e.target.value } })
+            }
+          >
+            <option className="ml-2 truncate" value="line">
+              Line
+            </option>
+            <option className="ml-2 truncate" value="area">
+              Area
+            </option>
+            <option className="ml-2 truncate" value="bar">
+              Bar
+            </option>
+            <option className="ml-2 truncate" value="pie">
+              Pie
+            </option>
+          </select>)}
+        />
+        {chartType === "pie" || chartType === "bar" ? (
+          <FilterControlContainer 
+            header={"Year: "}
+            input={({className}) => (
+              <div className={className}>
+                <div className="px-6">
+                  <input
+                    type="range"
+                    min="0"
+                    max={years.length - 1}
+                    id="my-range"
+                    list="my-datalist"
+                    className="w-full"
+                    value={year}
+                    onChange={(e) =>
+                      setFilters({
+                        year: { value: e.target.value },
+                      })
+                    }
+                  />
+                </div>
+                <datalist id="my-datalist" className="w-full flex">
+                  {(years || ["2010"]).map((k, i) => (
+                    <option
+                      key={i}
+                      value={i}
+                      className={`flex-1 text-gray-500 text-center text-xs`}
+                    >
+                      {k}
+                    </option>
+                  ))}
+                </datalist>
+              </div>
+            )}
+          />) : null
+        }
+      </div>
+      <div className="ml-auto mt-5 mr-1">
         <Button
           themeOptions={{ size: "sm", color: "primary" }}
           onClick={downloadImage}
