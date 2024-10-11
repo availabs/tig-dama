@@ -3,7 +3,7 @@ import Signup from "./components/signup"
 import ResetPassword from "./components/resetPassword"
 import SetPassword from "./components/setPassword"
 
-import  { amsFactory, wrappers } from "@availabs/ams"
+import  { amsFactory, wrappers } from '~/modules/ams/src'//"@availabs/ams"
 
 
 
