@@ -50,6 +50,7 @@ const TigDropDown = ({buttonText, items}) => {
 const TigUserMenu = ({user}) => {
 
     const userItems = [
+        {name: 'Profile', link: '/auth/profile'},
         {name: 'Catalog', link: '/'},
         {name: 'My Settings', link: '/'},
         {name: 'My Study Areas', link: '/'},
