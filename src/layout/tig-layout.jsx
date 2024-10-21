@@ -70,7 +70,7 @@ const TigUserMenu = ({user}) => {
         {name:"Data Settings", link: '/settings'},
         {name:"Add Source", link: '/create/source'},
         {name:"Edit Docs", link: '/docs/edit/docs'},
-        {name:"Users", link: '/'},
+        {name:"Users", link: '/auth/project-management'},
         {name:"Agencies", link: '/'},
         {name:"All Comments", link: '/'},
         {name:"All Uploads", link: '/'},
