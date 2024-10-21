@@ -308,114 +308,117 @@ const ppdaf = () => {
                     tabLocation: tabLocations
                 }
             }
-        },
-        button: (opts = {}) => {
-            const {color = 'white', size = 'base', width = 'block'} = opts
-            let colors = {
-                white: `
-                    border border-gray-300  text-gray-700 bg-white hover:text-gray-500
-                    focus:outline-none focus:shadow-outline-blue focus:border-blue-300
-                    active:text-gray-800 active:bg-gray-50 transition duration-150 ease-in-out
-                    disabled:cursor-not-allowed
-                `,
-                cancel: `
-                    border border-red-300  text-red-700 bg-white hover:text-red-500
-                    focus:outline-none focus:shadow-outline-blue focus:border-blue-300
-                    active:text-red-800 active:bg-gray-50 transition duration-150 ease-in-out
-                    disabled:cursor-not-allowed
-                `,
-                transparent: `
-                    border border-gray-300  text-gray-700 bg-white hover:text-gray-500
-                    focus:outline-none focus:shadow-outline-blue focus:border-blue-300
-                    active:text-gray-800 active:bg-gray-50 transition duration-150 ease-in-out
-                    disabled:cursor-not-allowed
-                `,
-                primary: `
-                    border border-transparent shadow 
-                    text-sm leading-4 rounded-sm text-white bg-blue-600 hover:bg-blue-700 
-                    focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500`,
-                danger: ''
-            }
+    },
+    button: (opts = {}) => {
+        const {color = 'white', size = 'base', width = 'block'} = opts
+        let colors = {
+            white: `
+                border border-gray-300  text-gray-700 bg-white hover:text-gray-500
+                focus:outline-none focus:shadow-outline-blue focus:border-blue-300
+                active:text-gray-800 active:bg-gray-50 transition duration-150 ease-in-out
+                disabled:cursor-not-allowed
+            `,
+            cancel: `
+                border border-red-300  text-red-700 bg-white hover:text-red-500
+                focus:outline-none focus:shadow-outline-blue focus:border-blue-300
+                active:text-red-800 active:bg-gray-50 transition duration-150 ease-in-out
+                disabled:cursor-not-allowed
+            `,
+            transparent: `
+                border border-gray-300  text-gray-700 bg-white hover:text-gray-500
+                focus:outline-none focus:shadow-outline-blue focus:border-blue-300
+                active:text-gray-800 active:bg-gray-50 transition duration-150 ease-in-out
+                disabled:cursor-not-allowed
+            `,
+            primary: `
+                border border-transparent shadow 
+                text-sm leading-4 rounded-sm text-white bg-blue-600 hover:bg-blue-700 
+                focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500`,
+            danger: ''
+        }
 
-            let sizes  = { 
-                base: 'px-4 py-4 leading-5 font-medium',
-                sm: 'text-sm px-2 py-2 leading-5 font-medium',
-                lg: 'text-lg px-6 py-6 leading-5 font-medium',
-                xl: 'text-2xl px-12 py-8 leading-5 font-medium'
-            }
+        let sizes  = { 
+            base: 'px-4 py-4 leading-5 font-medium',
+            sm: 'text-sm px-2 py-2 leading-5 font-medium',
+            lg: 'text-lg px-6 py-6 leading-5 font-medium',
+            xl: 'text-2xl px-12 py-8 leading-5 font-medium'
+        }
 
-            let widths = {
-                'block': '',
-                'full' : 'w-full'
-            }
+        let widths = {
+            'block': '',
+            'full' : 'w-full'
+        }
 
-            return {
-                button: `
-                  ${colors[color]} ${sizes[size]} ${widths[width]}
-                `,
-                vars: {
-                    color: colors,
-                    size: sizes,
-                    width: widths
-                }
-            } 
-        },
-        input: (opts = {}) => {
-            const {color = 'white', size = 'small', width = 'block'} = opts
-            let colors = {
-                white: 'bg-white',
-                gray: 'bg-gray-100'
+        return {
+            button: `
+              ${colors[color]} ${sizes[size]} ${widths[width]}
+            `,
+            vars: {
+                color: colors,
+                size: sizes,
+                width: widths
             }
+        } 
+    },
+    input: (opts = {}) => {
+        const {color = 'white', size = 'small', width = 'block'} = opts
+        let colors = {
+            white: 'bg-white',
+            gray: 'bg-gray-100'
+        }
 
-            let sizes  = {
-                base: 'px-4 py-4 font-medium',
-                small: 'text-sm px-2 py-2 font-medium text-xs',
-                large: 'text-lg px-6 py-6 font-medium text-xl'
+        let sizes  = {
+            base: 'px-4 py-4 font-medium',
+            small: 'text-sm px-2 py-2 font-medium text-xs',
+            large: 'text-lg px-6 py-6 font-medium text-xl'
+        }
+
+        let widths = {
+            'block': '',
+            'full' : 'w-full'
+        }
+
+        return {
+            input: `
+              ${colors[color]} ${sizes[size]} ${widths[width]}
+            `,
+            vars: {
+                color: colors,
+                size: sizes,
+                width: widths
             }
+        }
+    },
+    modal: (opts = {}) => {
+        const {size = 'base', overlay = 'default'} = opts
+        let overlays = {
+            default: 'fixed  inset-0 bg-gray-500 opacity-75',
+            none: ''
+        }
 
-            let widths = {
-                'block': '',
-                'full' : 'w-full'
+        let sizes = {
+            base: 'sm:max-w-2xl',
+            small: 'w-64',
+            large: 'sm:max-w-5xl',
+            xlarge: 'sm:max-w-8xl'
+        }
+        
+        return {
+            modalContainer: `${overlay === 'default' ? '' : 'pointer-events-none'} fixed bottom-0 inset-x-0 px-4 pb-4 inset-0 flex items-center justify-center`,
+            modalOverlay: overlays[overlay],
+            modal: `${sizes[size]} p-6 w-full max-h-[900px] pointer-events-auto bg-white rounded-lg overflow-auto shadow-xl transform transition-all`,
+            vars: {
+                size: sizes,
+                overlay: overlays
             }
-
-            return {
-                input: `
-                 ${colors[color]} ${sizes[size]} ${widths[width]}
-                `,
-                vars: {
-                    color: colors,
-                    size: sizes,
-                    width: widths
-                }
-            }
-        },
-        modal: (opts = {}) => {
-            const {size = 'base', overlay = 'default'} = opts
-            let overlays = {
-                default: 'fixed  inset-0 bg-gray-500 opacity-75',
-                none: ''
-            }
-
-            let sizes = {
-                base: 'sm:max-w-2xl',
-                small: 'w-64',
-                large: 'sm:max-w-5xl',
-                xlarge: 'sm:max-w-8xl'
-            }
-            
-            return {
-                modalContainer: `${overlay === 'default' ? '' : 'pointer-events-none'} fixed bottom-0 inset-x-0 px-4 pb-4 inset-0 flex items-center justify-center`,
-                modalOverlay: overlays[overlay],
-                modal: `${sizes[size]} p-6 w-full max-h-[900px] pointer-events-auto bg-white rounded-lg overflow-auto shadow-xl transform transition-all`,
-                vars: {
-                    size: sizes,
-                    overlay: overlays
-                }
-            }
-        },
-
-
-
+        }
+    },
+    auth: (opts = {}) => {
+      return {
+        background: 'white',
+        tile: "bg-tigGray-50 py-8 px-10  border-t-4 border-[#679d89]  rounded-t"
+      }
+    },
     /* ------------------------- */
     shadow: "shadow",
     ySpace: "py-4",
