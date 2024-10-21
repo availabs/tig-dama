@@ -334,7 +334,10 @@ const ppdaf = () => {
                 border border-transparent shadow 
                 text-sm leading-4 rounded-sm text-white bg-blue-600 hover:bg-blue-700 
                 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500`,
-            danger: ''
+            danger: `
+                border border-transparent shadow 
+                text-sm leading-4 rounded-sm text-white bg-red-600 hover:bg-red-700 
+                focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500`
         }
 
         let sizes  = { 
@@ -416,7 +419,10 @@ const ppdaf = () => {
     auth: (opts = {}) => {
       return {
         background: 'white',
-        tile: "bg-tigGray-50 py-8 px-10  border-t-4 border-[#679d89]  rounded-t"
+        tile: "bg-tigGray-50 py-8 px-10  border-t-4 border-[#679d89]  rounded-t",
+        button : {
+          default : 'bg-tigGray-200'
+        }
       }
     },
     /* ------------------------- */
