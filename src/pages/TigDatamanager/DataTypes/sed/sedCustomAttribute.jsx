@@ -1,5 +1,5 @@
 import React from "react";
-import { Input } from "~/modules/avl-components/src";
+import { Input, Button } from "~/modules/avl-components/src";
 
 export const CustomYears = ({ state, dispatch }) => {
   let {
@@ -36,15 +36,15 @@ export const CustomYears = ({ state, dispatch }) => {
 
   return (
     <>
-      <button
+      <Button
         onClick={() => setAddNewColumn()}
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
+        themeOptions={{color: 'tig'}}
       >
         Add a new year{" "}
         <span className="my-2 mx-2 cursor-pointer">
           <i className="fa fa-plus" />
         </span>
-      </button>
+      </Button>
 
       <div className="grid grid-cols-3 gap-4 my-2">
         {years &&

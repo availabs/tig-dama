@@ -226,7 +226,7 @@ const SedChartFilter = ({ filters, setFilters, node, years }) => {
       </div>
       <div className="ml-auto mt-5 mr-1">
         <Button
-          themeOptions={{ size: "sm", color: "primary" }}
+          themeOptions={{ size: "sm", color: "tig" }}
           onClick={downloadImage}
         >
           Download

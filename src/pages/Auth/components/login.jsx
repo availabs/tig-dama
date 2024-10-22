@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom'
+import { Button } from "~/modules/avl-components/src/";
 
 const LoginComp = ({ email, password, update, canSubmit, handleSubmit }) => {
   return (
@@ -63,15 +64,15 @@ const LoginComp = ({ email, password, update, canSubmit, handleSubmit }) => {
               </div>
             </div>      
           </div>
-          <div>
-            <button
+          <div className="mt-3">
+            <Button
               type="submit"
               onClick={handleSubmit}
-              className="my-4 justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium text-gray-800 bg-[#d2d2d2] hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              themeOptions={{color: 'tig'}}
             >
               Sign in
-            </button>
-            <div className="text-sm mt-3 text-right" style={{float: "right"}}>
+            </Button>
+            <div className="text-sm text-right" style={{float: "right"}}>
               <Link to='/auth/signup' className="font-medium text-blue-600 hover:text-blue-500">
                 Sign up
               </Link>

@@ -400,7 +400,7 @@ const MapDataDownloader = ({ activeViewId, activeVar, variable, year }) => {
 
   return (
 
-      <Button themeOptions={{size:'sm', color: 'primary'}}
+      <Button themeOptions={{size:'sm', color: 'tig'}}
         onClick={ downloadData }
         disabled={ loading }
       >
@@ -498,7 +498,7 @@ const SedTableFilter = ({ source, filters, setFilters, data, columns }) => {
         </div>
       </div>
       <div className="px-2 m-2">
-        <Button themeOptions={{size:'sm', color: 'primary'}}
+        <Button themeOptions={{size:'sm', color: 'tig'}}
           onClick={ downloadData }
         >
           Download

@@ -310,16 +310,16 @@ const ppdaf = () => {
             }
     },
     button: (opts = {}) => {
-        const {color = 'white', size = 'base', width = 'block'} = opts
+        const {color = 'tig', size = 'base', width = 'block'} = opts
         let colors = {
-          //TODO fixup tig button style a bit
-            gray: `border border-gray-300  text-gray-700 bg-tigGray-200 hover:text-gray-500
-                focus:outline-none focus:shadow-outline-blue focus:border-blue-300
-                active:text-gray-800 active:bg-gray-50 transition duration-150 ease-in-out`,
             white: `
                 border border-gray-300  text-gray-700 bg-white hover:text-gray-500
                 focus:outline-none focus:shadow-outline-blue focus:border-blue-300
                 active:text-gray-800 active:bg-gray-50 transition duration-150 ease-in-out
+            `,
+            tig:`
+                p-4 h-full hover:bg-tigGray-50 hover:text-yellow-500 hover:cursor-pointer 
+                bg-tigGray-200 text-[13px] font-light md:mr-2
             `,
             cancel: `
                 border border-red-300  text-red-700 bg-white hover:text-red-500
