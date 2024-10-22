@@ -240,7 +240,7 @@ const ppdaf = () => {
         menuWrapper: `bg-${colors[color]} my-1`,
         menuItemActive: `px-4 py-2 cursor-not-allowed bg-${accent}-200 border-1 focus:border-${accent}-300`,
         menuItem: `px-4 py-2 cursor-pointer hover:bg-blue-100 border-1 border-${colors[color]} focus:border-blue-300`,
-        select: `bg-${colors[color]} w-full flex flex-row flex-wrap py-2 cursor-pointer focus:border-blue-300`,
+        select: `rounded px-1 bg-${colors[color]} w-full flex flex-row flex-wrap py-2 cursor-pointer focus:border-blue-300`,
         selectIcon: `fal fa-angle-down text-gray-400 pt-1`,
         valueItem: `overflow-hidden text-ellipsis whitespace-nowrap`,
         itemText: `w-32  text-gray-400`,
@@ -312,23 +312,24 @@ const ppdaf = () => {
     button: (opts = {}) => {
         const {color = 'white', size = 'base', width = 'block'} = opts
         let colors = {
+          //TODO fixup tig button style a bit
+            gray: `border border-gray-300  text-gray-700 bg-tigGray-200 hover:text-gray-500
+                focus:outline-none focus:shadow-outline-blue focus:border-blue-300
+                active:text-gray-800 active:bg-gray-50 transition duration-150 ease-in-out`,
             white: `
                 border border-gray-300  text-gray-700 bg-white hover:text-gray-500
                 focus:outline-none focus:shadow-outline-blue focus:border-blue-300
                 active:text-gray-800 active:bg-gray-50 transition duration-150 ease-in-out
-                disabled:cursor-not-allowed
             `,
             cancel: `
                 border border-red-300  text-red-700 bg-white hover:text-red-500
                 focus:outline-none focus:shadow-outline-blue focus:border-blue-300
                 active:text-red-800 active:bg-gray-50 transition duration-150 ease-in-out
-                disabled:cursor-not-allowed
             `,
             transparent: `
                 border border-gray-300  text-gray-700 bg-white hover:text-gray-500
                 focus:outline-none focus:shadow-outline-blue focus:border-blue-300
                 active:text-gray-800 active:bg-gray-50 transition duration-150 ease-in-out
-                disabled:cursor-not-allowed
             `,
             primary: `
                 border border-transparent shadow 
@@ -354,6 +355,7 @@ const ppdaf = () => {
 
         return {
             button: `
+              disabled:cursor-not-allowed cursor-pointer
               ${colors[color]} ${sizes[size]} ${widths[width]}
             `,
             vars: {
@@ -416,15 +418,8 @@ const ppdaf = () => {
             }
         }
     },
-    auth: (opts = {}) => {
-      return {
-        background: 'white',
-        tile: "bg-tigGray-50 py-8 px-10  border-t-4 border-[#679d89]  rounded-t",
-        button : {
-          default : 'bg-tigGray-200'
-        }
-      }
-    },
+    tile: "bg-tigGray-50 py-8 px-10  border-t-4 border-tigGreen-100 rounded-t",
+    background: "white",
     /* ------------------------- */
     shadow: "shadow",
     ySpace: "py-4",
