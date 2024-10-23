@@ -1,4 +1,4 @@
-import { Reducers, messages } from "@availabs/ams";
+import { Reducers, messages } from "~/modules/ams/src";
 import { configureStore } from "@reduxjs/toolkit";
 
 export default configureStore({
@@ -6,11 +6,9 @@ export default configureStore({
     ...Reducers,
     messages,
   },
+  middleware: getDefaultMiddleware =>
+    getDefaultMiddleware({
+      serializableCheck: false,
+      immutableCheck: false
+    })
 });
-//   middleware: getDefaultMiddleware =>
-//     getDefaultMiddleware({
-//       serializableCheck: false,
-//       // immutableCheck: false
-//     })
-// });
-

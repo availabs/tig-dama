@@ -3,8 +3,7 @@ import MapPage from "~/pages/DataManager/DataTypes/gis_dataset/pages/Map";
 import { npmrdsMapFilter } from "./map/npmrdsMapFilter";
 import {npmrdsHoverComp} from './map/npmrdsHoverComp'
 import CreatePage from "./pages/Create";
-import ManagePage from ".pages/manage";
-//import CreatePage from "~/pages/DataManager/DataTypes/gis_dataset/pages/Create";
+import ManagePage from "./pages/manage";
 import TigOverview from "../TigOverview";
 import { npmrdsTableTransform } from "./table/npmrdsTableTransform";
 import config from "~/config.json"

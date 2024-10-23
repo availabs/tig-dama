@@ -8,16 +8,14 @@ import LayoutWrapper from './layout/LayoutWrapper'
 import get from 'lodash/get'
 import {/*getDomain,*/getSubdomain} from './utils'
 
-// import 
-//   Messages
-//  from "~/modules/avl-components/src/messages"
+import {
+  Messages
+} from "~/modules/ams/src"
 
 import tig from './sites/tig'
 
 
 const App = (props) => {
-  
-
   const WrappedRoutes =  useMemo(() => {
     const Routes = [...tig.Routes, ...DefaultRoutes]
     return LayoutWrapper(Routes, Layout)
@@ -28,7 +26,7 @@ const App = (props) => {
       <RouterProvider 
         router={createBrowserRouter(WrappedRoutes)} 
       />
-      {/*<Messages />*/}
+      <Messages />
     </>
   )
 
