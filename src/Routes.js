@@ -9,7 +9,7 @@ import { PG_ENV } from '~/config'
 // const pgEnv = 'tig_dama_dev'
 
 import { useFalcor } from "~/modules/avl-components/src"
-import { useAuth } from "@availabs/ams"
+import { useAuth } from "~/modules/ams/src"
 
 import tigDataTypes from '~/pages/TigDatamanager/DataTypes'
 
