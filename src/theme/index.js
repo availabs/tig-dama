@@ -318,7 +318,7 @@ const ppdaf = () => {
                 active:text-gray-800 active:bg-gray-50 transition duration-150 ease-in-out
             `,
             tig:`
-                p-4 h-full hover:bg-tigGray-50 hover:text-yellow-500 hover:cursor-pointer 
+                h-full hover:bg-tigGray-50 hover:text-yellow-500 hover:cursor-pointer 
                 bg-tigGray-200 text-[13px] font-light md:mr-2
             `,
             cancel: `
@@ -355,7 +355,7 @@ const ppdaf = () => {
 
         return {
             button: `
-              disabled:cursor-not-allowed cursor-pointer
+              capitalize disabled:cursor-not-allowed cursor-pointer
               ${colors[color]} ${sizes[size]} ${widths[width]}
             `,
             vars: {
