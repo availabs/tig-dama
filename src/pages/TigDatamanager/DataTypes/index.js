@@ -8,8 +8,9 @@ import tig_project from './project'
 
 import hubbound from './hubbound';
 import npmrds from './npmrds';
-
-import tiger_full from './tiger_full'
+import npmrds_meta from './npmrds_meta';
+import npmrds_raw from './npmrds_raw';
+import tiger_full from './tiger_full';
 
 
 const tigDataTypes = {
@@ -24,7 +25,8 @@ const tigDataTypes = {
   tig_project,
   upwp_projects,
   npmrds,
-
+  npmrds_meta,
+  npmrds_raw,
   //ACS
   tiger_full
 
