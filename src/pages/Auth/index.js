@@ -64,6 +64,10 @@ const AuthConfig = {
     // Optional prop. This prop can be applied to any AMS child.
     // If set, users must have equal or higher authLevel to view this page.
       props: { authLevel: 5 }
+    },
+    { type: "ams-users",
+      path:"users",
+      props: { authLevel: 5 }
     }
   ]
 }
