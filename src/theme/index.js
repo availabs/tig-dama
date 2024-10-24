@@ -385,6 +385,7 @@ const ppdaf = () => {
 
         return {
             input: `
+              border-b border-gray-300  disabled:bg-gray-200
               ${colors[color]} ${sizes[size]} ${widths[width]}
             `,
             vars: {
