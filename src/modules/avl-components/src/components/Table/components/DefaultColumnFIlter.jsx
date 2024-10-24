@@ -5,7 +5,8 @@ export const DefaultColumnFilter = ({column}) => {
     const {
         filterValue = "",
         // preFilteredRows,
-        setFilter
+        setFilter,
+        filterPlaceholder = "Search...",
     } = column;
     // count = preFilteredRows.length;
     const theme = useTheme().table();
@@ -14,7 +15,7 @@ export const DefaultColumnFilter = ({column}) => {
             <input className={theme.inputSmall}
                    value={filterValue} onChange={e => setFilter(e.target.value)}
                    onClick={e => e.stopPropagation()}
-                   placeholder={`Search...`}/>
+                   placeholder={filterPlaceholder}/>
         </div>
     )
 }
