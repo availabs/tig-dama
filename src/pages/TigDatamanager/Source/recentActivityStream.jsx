@@ -55,10 +55,18 @@ const ActivityStreamHeader = () => {
 };
 const INITIAL_PAGE_SIZE = 10;
 
+const COLLAPSED_PAGE_SIZE = 5;
+const EXPANDED_PAGE_SIZE = 10;
+
 const ActivityStreamList = ({preferences}) => {
   const { pgEnv, falcor, falcorCache, baseUrl } = useContext(DamaContext);
   const [pageIndex, setPageIndex] = useState(0);
-  const pageSize = preferences?.maxRecent ?? INITIAL_PAGE_SIZE;
+  const [showMore, setShowMore] = useState(false);
+
+  const numCollapsedActivities = preferences?.maxRecent ?? COLLAPSED_PAGE_SIZE;
+  const numExpandedActivities = preferences?.maxExpanded ?? EXPANDED_PAGE_SIZE;
+  const pageSize = showMore ? numExpandedActivities : numCollapsedActivities;
+
   const indices = useMemo(() => {
     return d3range(
       pageIndex * pageSize,
@@ -139,7 +147,7 @@ const ActivityStreamList = ({preferences}) => {
     [navigate]
   );
 
-  const showMore = useCallback((e) => {
+  const showAll = useCallback((e) => {
       if (e.ctrlKey) {
         window.open(`${baseUrl}/tasks`, "_blank");
       } else {
@@ -186,7 +194,8 @@ const ActivityStreamList = ({preferences}) => {
           </div>
         );
       })}
-      <div className={`text-xs text-right hover:cursor-pointer ${HOVER_LINK_CLASS}`} onClick={showMore}>Show More</div>
+      <div className={`text-xs text-right hover:cursor-pointer ${HOVER_LINK_CLASS}`} onClick={() => setShowMore(!showMore)}>Show {showMore ? 'Less' :'More'}</div>
+      <div className={`text-xs text-right hover:cursor-pointer ${HOVER_LINK_CLASS}`} onClick={showAll}>Show All</div>
     </>
   );
 };
