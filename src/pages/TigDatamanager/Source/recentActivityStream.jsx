@@ -4,17 +4,31 @@ import get from "lodash/get";
 import { useMemo, useState, useContext, useEffect, useCallback } from "react";
 import { DamaContext } from "~/pages/DataManager/store";
 import { ETL_CONTEXT_ATTRS } from "~/pages/DataManager/Tasks/TaskList";
-
+import { wrappers } from '~/modules/ams/src'
 const HOVER_LINK_CLASS = 'hover:text-[#E47B44]';
 
-export const RecentActivityStream = () => {
+const amsReduxWrapper = wrappers["ams-redux"];
+const amsPreferencesWrapper = wrappers["with-preferences"];
+
+
+export const RecentActivityStream = amsReduxWrapper((props) => {
+  useEffect(() => {
+    if(props.user.token){
+      props.getUserPreferences();
+    }
+  }, [props.user.token])
+  return <RecentActivityStreamComponent />
+})
+
+
+const RecentActivityStreamComponent = amsPreferencesWrapper(({preferences}) => {
   return (
     <div>
       <ActivityStreamHeader />
-      <ActivityStreamList />
+      <ActivityStreamList preferences={preferences}/>
     </div>
   );
-};
+});
 
 const ActivityStreamHeader = () => {
   const { baseUrl } = useContext(DamaContext);
@@ -41,16 +55,16 @@ const ActivityStreamHeader = () => {
 };
 const INITIAL_PAGE_SIZE = 10;
 
-const ActivityStreamList = () => {
+const ActivityStreamList = ({preferences}) => {
   const { pgEnv, falcor, falcorCache, baseUrl } = useContext(DamaContext);
-
   const [pageIndex, setPageIndex] = useState(0);
+  const pageSize = preferences?.maxRecent ?? INITIAL_PAGE_SIZE;
   const indices = useMemo(() => {
     return d3range(
-      pageIndex * INITIAL_PAGE_SIZE,
-      pageIndex * INITIAL_PAGE_SIZE + INITIAL_PAGE_SIZE
+      pageIndex * pageSize,
+      pageIndex * pageSize + pageSize
     );
-  }, [pageIndex, INITIAL_PAGE_SIZE]);
+  }, [pageIndex, pageSize]);
 
   const dataFetchPath = [
     "dama",
