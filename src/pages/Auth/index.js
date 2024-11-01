@@ -2,6 +2,7 @@ import Login from "./components/login"
 import Signup from "./components/signup"
 import ResetPassword from "./components/resetPassword"
 import SetPassword from "./components/setPassword"
+import AgencyManagement from "./components/AgencyManagement";
 
 import  { amsFactory, wrappers } from '~/modules/ams/src'//"@availabs/ams"
 
@@ -60,6 +61,13 @@ const AuthConfig = {
 
     { type: "ams-project-management", 
       path: "project-management",
+    // @props.authLevel
+    // Optional prop. This prop can be applied to any AMS child.
+    // If set, users must have equal or higher authLevel to view this page.
+      props: { authLevel: 5 }
+    },
+    { type: wrappers["ams-project-management"](AgencyManagement), 
+      path: "agencies",
     // @props.authLevel
     // Optional prop. This prop can be applied to any AMS child.
     // If set, users must have equal or higher authLevel to view this page.
