@@ -1,19 +1,19 @@
 import React from "react"
 
 import { matchSorter } from 'match-sorter'
-import { Button } from '~/modules/avl-components/src'
+import { Button, Input } from '~/modules/avl-components/src'
 
 const UserHeader = ({ value, onChange, ...props }) =>
   <div className="grid grid-cols-9 font-bold gap-3">
     <div className="col-span-4 border-b-2">
       <div>User Email</div>
       <div className="mb-1">
-        <input small showClear placeholder="Searh users..."
-          value={ value } onChange={ e => onChange(e.target.value) }/>
+        <Input themeOptions={{size:"small"}}  placeholder="Search users..."
+          value={ value } onChange={ e => onChange(e) }/>
       </div>
     </div>
     <div className="col-span-3 border-b-2 flex justify-center items-end">
-      Remove from Group
+      Remove from Agency
     </div>
     <div className="col-span-2 border-b-2 flex justify-center items-end">
       Delete User
@@ -58,7 +58,7 @@ const UserNotInGroup = ({ group, User, assignToGroup, ...props }) => {
           themeOptions={{size:"sm"}} 
           onClick={ e => assignToGroup(User.email, group.name) }
         >
-          add to group
+          add to agency
         </Button>
       </div>
     </div>

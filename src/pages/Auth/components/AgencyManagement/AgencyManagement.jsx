@@ -33,13 +33,13 @@ export default (props) => {
     <div className={props.className}>
       <div className="flex flex-wrap mt-10">
         <div className={`text-3xl w-full`}>Group Management</div>
-        <GroupManagementTile tileWidth="w-[49%] mr-4" title="Assign Group to Project">
+        <GroupManagementTile tileWidth="w-[49%] mr-4" title="Assign Agency to Project">
           <AssignToProject {...props} />
         </GroupManagementTile>
-        <GroupManagementTile tileWidth="w-[49%]" title="Create Group">
+        <GroupManagementTile tileWidth="w-[49%]" title="Create Agency">
           <CreateGroup {...props} />
         </GroupManagementTile>
-        <GroupManagementTile tileWidth="w-full" title="Groups within Project">
+        <GroupManagementTile tileWidth="w-full" title="Agencies assigned to Project">
           <GroupsInProject {...props} />
         </GroupManagementTile>
       </div>

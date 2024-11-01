@@ -3,18 +3,17 @@ import React from "react"
 import UsersInGroup from "./UsersInGroup"
 
 import get from "lodash/get"
-import { Button } from '~/modules/avl-components/src'
+import { Button, Input } from '~/modules/avl-components/src'
 import { ThemeContext } from "~/modules/avl-components/src";
 
 
 
 export const GroupHeader = ({ onChange, value }) =>
   <div className="grid grid-cols-12 gap-3 text-center font-bold mb-1">
-    <div className="col-span-4 text-left border-b-2 text-xl">
-      <div>Groups in Project</div>
+    <div className="col-span-4 text-left border-b-2 text-xl mb-1">
       <div className="mb-1">
-        <input small showClear placeholder="Search groups..."
-          value={ value } onChange={ e => onChange(e.target.value) }/>
+        <Input themeOptions={{size:"small"}} placeholder="Search agencies..."
+          value={ value } onChange={ e => onChange(e) }/>
       </div>
     </div>
     <div className="col-span-3 border-b-2 flex justify-center items-end">

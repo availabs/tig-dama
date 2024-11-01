@@ -17,7 +17,7 @@ export default ({
     <>
       <div className=" mb-1">
         <div className="grid grid-cols-4 gap-1">
-          <div className="col-span-2 font-bold">Group</div>
+          <div className="col-span-2 font-bold">Agency</div>
           <div className="col-span-1">Authority Level</div>
         </div>
       </div>
@@ -29,18 +29,17 @@ export default ({
               accessor={(g) => g.name}
               value={group}
               onChange={(e) => update({ group: e })}
-              placeholder="Select a group..."
+              placeholder="Select a agency..."
             />
           </div>
           <div className="col-span-1">
-            <input
-              className={`h-full ${numericInputClass}`}
+            <Input
               type="number"
               min="0"
               max={user.authLevel}
               required
               value={authLevel}
-              onChange={(v) => update({ authLevel: v.target.value })}
+              onChange={(v) => update({ authLevel: v })}
             />
           </div>
           <div className="col-span-1 grid">
