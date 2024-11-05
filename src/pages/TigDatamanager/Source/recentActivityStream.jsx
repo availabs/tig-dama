@@ -63,8 +63,8 @@ const ActivityStreamList = ({preferences}) => {
   const [pageIndex, setPageIndex] = useState(0);
   const [showMore, setShowMore] = useState(false);
 
-  const numCollapsedActivities = preferences?.maxRecent ?? COLLAPSED_PAGE_SIZE;
-  const numExpandedActivities = preferences?.maxExpanded ?? EXPANDED_PAGE_SIZE;
+  const numCollapsedActivities = preferences?.recent_activity_dashboard_limit ?? COLLAPSED_PAGE_SIZE;
+  const numExpandedActivities = preferences?.recent_activity_expanded_limit ?? EXPANDED_PAGE_SIZE;
   const pageSize = showMore ? numExpandedActivities : numCollapsedActivities;
 
   const indices = useMemo(() => {

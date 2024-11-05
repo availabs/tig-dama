@@ -3,6 +3,7 @@ import Signup from "./components/signup"
 import ResetPassword from "./components/resetPassword"
 import SetPassword from "./components/setPassword"
 import AgencyManagement from "./components/AgencyManagement";
+import Profile from "./components/profile";
 
 import  { amsFactory, wrappers } from '~/modules/ams/src'//"@availabs/ams"
 
@@ -38,7 +39,7 @@ const AuthConfig = {
       props: {title: "NYMTC TIG"}
     },
     { 
-      type: "ams-profile", 
+      type: wrappers['ams-profile'](Profile), 
       path: "profile" 
     },
     { 
