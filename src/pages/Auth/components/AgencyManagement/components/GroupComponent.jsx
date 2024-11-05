@@ -69,8 +69,8 @@ export default ({ group, project, adjustAuthLevel, deleteGroup, removeFromProjec
           <form onSubmit={ submit }>
             <div className="grid grid-cols-12 gap-1 flex items-center">
               <div className="col-span-6">
-                <input type="number" min="0" max="10" required
-                  value={ authLevel } onChange={ e => setAuthLevel(e.target.value) }/>
+                <Input type="number" min="0" max="10" required
+                  value={ authLevel } onChange={ e => setAuthLevel(e) }/>
               </div>
               <div className="col-span-6">
                 <Button 

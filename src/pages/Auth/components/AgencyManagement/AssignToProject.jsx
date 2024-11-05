@@ -1,5 +1,5 @@
 import React from "react";
-import { ThemeContext, Button } from "~/modules/avl-components/src";
+import { ThemeContext, Button, Input } from "~/modules/avl-components/src";
 import Select from "~/modules/avl-components/src/components/Inputs/select";
 
 export default ({
