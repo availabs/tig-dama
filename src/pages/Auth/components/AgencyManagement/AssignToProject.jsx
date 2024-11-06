@@ -1,18 +1,24 @@
 import React from "react";
-import { ThemeContext, Button, Input } from "~/modules/avl-components/src";
+import { Button, Input } from "~/modules/avl-components/src";
 import Select from "~/modules/avl-components/src/components/Inputs/select";
 
-export default ({
-  groups,
-  user,
-  group,
-  authLevel,
-  update,
-  canSubmit,
-  handleSubmit,
-}) => {
-  const myTheme = React.useContext(ThemeContext);
-  const numericInputClass = myTheme.input().input;
+export default (props) => {
+  const {
+    otherGroups,
+    user,
+    assignToProject
+  } = props;
+
+  const [selectedAgency, setSelectedAgency] = React.useState({});
+  const [authLevel, setAuthLevel] = React.useState(-1);
+
+  console.log("groups in assignToProj",props)
+
+  const canSubmit = selectedAgency && (authLevel >= 0) && (user.authLevel >= authLevel);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    assignToProject(selectedAgency.name, authLevel);
+  }
   return (
     <>
       <div className=" mb-1">
@@ -25,10 +31,10 @@ export default ({
         <div className="grid grid-cols-4 gap-1">
           <div className="col-span-2">
             <Select
-              domain={groups}
+              domain={otherGroups}
               accessor={(g) => g.name}
-              value={group}
-              onChange={(e) => update({ group: e })}
+              value={selectedAgency}
+              onChange={(e) => setSelectedAgency(e)}
               placeholder="Select a agency..."
             />
           </div>
@@ -39,7 +45,7 @@ export default ({
               max={user.authLevel}
               required
               value={authLevel}
-              onChange={(v) => update({ authLevel: v })}
+              onChange={(v) => setAuthLevel(v)}
             />
           </div>
           <div className="col-span-1 grid">

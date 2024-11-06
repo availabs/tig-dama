@@ -32,7 +32,7 @@ export default (props) => {
   return (
     <div className={props.className}>
       <div className="flex flex-wrap mt-10">
-        <div className={`text-3xl w-full`}>Group Management</div>
+        <div className={`text-3xl w-full`}>Agencies</div>
         <GroupManagementTile tileWidth="w-[49%] mr-4" title="Assign Agency to Project">
           <AssignToProject {...props} />
         </GroupManagementTile>

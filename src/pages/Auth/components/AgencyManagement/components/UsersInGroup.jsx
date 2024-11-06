@@ -83,12 +83,31 @@ export default ({ group, users, ...props }) => {
   usersInGroup.sort((a, b) => a.email < b.email ? -1 : a.email > b.email ? 1 : 0);
 
   const otherSearch = matchSorter(otherUsers, otherUserSearch, { keys: ["email"] });
+  const groupMeta = JSON.parse(group.meta);
 
   return (
     <div>
       <div className="mb-5 grid grid-cols-3 gap-2">
+        <div className="col-span-3 flex gap-8">
+          {groupMeta?.description && <div className="flex flex-col pt-2">
+            <div className="flex pb-1 text-sm text-gray-400 capitalize">
+              Description: 
+            </div>
+            <div>
+              {groupMeta?.description}
+            </div>
+          </div>}
+          {groupMeta?.url && <div className="flex flex-col pt-2">
+            <div className="flex pb-1 text-sm text-gray-400 capitalize">
+              Link: 
+            </div>
+            <div>
+              <a href={groupMeta?.url} target="_blank">{groupMeta?.url}</a>
+            </div>
+          </div>}
+        </div>
         <div className="col-span-1 relative">
-          <input value={ otherUserSearch } onChange={ e => setOtherUserSearch(e.target.value) }
+          <Input value={ otherUserSearch } onChange={ e => setOtherUserSearch(e) }
             placeholder="Search for another user..." showClear/>
           { otherUserSearch && otherSearch.length ?
             <div className="absolute left-0 bottom-0 right-0">
