@@ -108,7 +108,7 @@ export default ({ group, users, ...props }) => {
         </div>
         <div className="col-span-1 relative">
           <Input value={ otherUserSearch } onChange={ e => setOtherUserSearch(e) }
-            placeholder="Search for another user..." showClear/>
+            placeholder="Search for another user..."/>
           { otherUserSearch && otherSearch.length ?
             <div className="absolute left-0 bottom-0 right-0">
               { otherSearch.length <= 5 ? null :
