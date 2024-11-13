@@ -14,7 +14,7 @@ export default ({ user, assignToProject, createAndAssign }) => {
   const [agency, setAgency] = useState(INTITIAL_AGENCY);
 
   const canSubmit = agency.name !== "";
-  console.log("creater group. createAndAssign::", createAndAssign);
+
   return (
     <div className="flex w-full justify-between">
       <div className="flex flex-wrap w-full">
