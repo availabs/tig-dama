@@ -66,8 +66,10 @@ const UserNotInGroup = ({ group, User, assignToGroup, ...props }) => {
 }
 
 export default ({ group, users, ...props }) => {
-
+  const groupMeta = JSON.parse(group.meta);
   const [num, setNum] = React.useState(5),
+    [groupDescription, setGroupDescription] = React.useState(groupMeta?.description ?? ''),
+    [groupLink, setGroupLink] = React.useState(groupMeta?.url ?? ''),
     [userSearch, setUserSearch] = React.useState(""),
     [otherUserSearch, setOtherUserSearch] = React.useState(""),
     [usersInGroup, otherUsers] = users.reduce(([a1, a2], c) => {
@@ -83,32 +85,61 @@ export default ({ group, users, ...props }) => {
   usersInGroup.sort((a, b) => a.email < b.email ? -1 : a.email > b.email ? 1 : 0);
 
   const otherSearch = matchSorter(otherUsers, otherUserSearch, { keys: ["email"] });
-  const groupMeta = JSON.parse(group.meta);
+
 
   return (
     <div>
       <div className="mb-5 grid grid-cols-3 gap-2">
         <div className="col-span-3 flex gap-8">
-          {groupMeta?.description && <div className="flex flex-col pt-2">
+          <div className="flex flex-col pt-2">
             <div className="flex pb-1 text-sm text-gray-400 capitalize">
               Description: 
             </div>
             <div>
-              {groupMeta?.description}
+              <Input
+                value={groupDescription}
+                onChange={ e => setGroupDescription(e) }
+                placeholder="Agency Description..."
+              />
             </div>
-          </div>}
-          {groupMeta?.url && <div className="flex flex-col pt-2">
+          </div>
+          <div className="flex flex-col pt-2">
             <div className="flex pb-1 text-sm text-gray-400 capitalize">
               Link: 
             </div>
             <div>
-              <a href={groupMeta?.url} target="_blank">{groupMeta?.url}</a>
+              <Input
+                value={groupLink}
+                onChange={ e => setGroupLink(e) }
+                placeholder="Agency link..."
+              />
             </div>
-          </div>}
+          </div>
+          <div className="flex flex-col pt-2">
+            <Button 
+              themeOptions={{size:"sm"}}
+              onClick={() => {
+                console.log("TODO -- API route to change a Group/Agency")
+              }}
+            >
+              Save changes
+              </Button>
+          </div>
         </div>
         <div className="col-span-1 relative">
-          <Input value={ otherUserSearch } onChange={ e => setOtherUserSearch(e) }
-            placeholder="Search for another user..."/>
+          <div className="flex flex-col pt-2">
+            <div className="flex pb-1 text-sm text-gray-400 capitalize">
+              Add user to agency: 
+            </div>
+            <div>
+              <Input
+                value={ otherUserSearch }
+                onChange={ e => setOtherUserSearch(e) }
+                placeholder="User email..."
+              />
+            </div>
+          </div>
+
           { otherUserSearch && otherSearch.length ?
             <div className="absolute left-0 bottom-0 right-0">
               { otherSearch.length <= 5 ? null :

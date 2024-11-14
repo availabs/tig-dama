@@ -36,7 +36,7 @@ export default (props) => {
         <GroupManagementTile tileWidth="w-full" title="Create Agency">
           <CreateGroup {...props} />
         </GroupManagementTile>
-        <GroupManagementTile tileWidth="w-full" title="Agencies assigned to Project">
+        <GroupManagementTile tileWidth="w-full" title="">
           <GroupsInProject {...props} />
         </GroupManagementTile>
       </div>
