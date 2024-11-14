@@ -9,7 +9,7 @@ import { ThemeContext } from "~/modules/avl-components/src";
 
 
 export const GroupHeader = ({ onChange, value }) =>
-  <div className="grid grid-cols-12 gap-3 text-center font-bold mb-1">
+  <div className="grid grid-cols-9 gap-3 text-center font-bold mb-1">
     <div className="col-span-4 text-left border-b-2 text-xl mb-1">
       <div className="mb-1">
         <Input themeOptions={{size:"small"}} placeholder="Search agencies..."
@@ -18,9 +18,6 @@ export const GroupHeader = ({ onChange, value }) =>
     </div>
     <div className="col-span-3 border-b-2 flex justify-center items-end">
       Adjust Project Authority
-    </div>
-    <div className="col-span-3 border-b-2 flex justify-center items-end">
-      Remove from Project
     </div>
     <div className="col-span-2 border-b-2 flex justify-center items-end">
       Delete Group
@@ -49,9 +46,7 @@ export default ({ group, project, adjustAuthLevel, deleteGroup, removeFromProjec
     <div className={ `
         mb-1 py-1 px-2 rounded ${ opened ? theme.accent1 : "" }`
       }>
-
-      <div className="grid grid-cols-12 gap-3">
-
+      <div className="grid grid-cols-9 gap-3">
         <div className="col-span-4 flex items-center">
           <div className={ `
               px-2 py-1 mr-1 cursor-pointer rounded flex justify-center
@@ -64,10 +59,9 @@ export default ({ group, project, adjustAuthLevel, deleteGroup, removeFromProjec
           </div>
           <div className="flex-1">{ group.name }</div>
         </div>
-
         <div className="col-span-3">
           <form onSubmit={ submit }>
-            <div className="grid grid-cols-12 gap-1 flex items-center">
+            <div className="flex justify-center gap-2 ">
               <div className="col-span-6">
                 <Input type="number" min="0" max="10" required
                   value={ authLevel } onChange={ e => setAuthLevel(e) }/>
@@ -84,17 +78,6 @@ export default ({ group, project, adjustAuthLevel, deleteGroup, removeFromProjec
             </div>
           </form>
         </div>
-
-        <div className="col-span-3 flex justify-center">
-          <Button
-            themeOptions={{size:"sm", color:'cancel'}}
-            showConfirm
-            onClick={ e => removeFromProject(group.name) }
-          >
-            remove
-          </Button>
-        </div>
-
         <div className="col-span-2 flex justify-center">
           <Button
             themeOptions={{size:"sm", color:'danger'}}
@@ -104,7 +87,6 @@ export default ({ group, project, adjustAuthLevel, deleteGroup, removeFromProjec
             delete
           </Button>
         </div>
-
       </div>
       { !opened ? null :
         <div className="mx-10 mt-2">
