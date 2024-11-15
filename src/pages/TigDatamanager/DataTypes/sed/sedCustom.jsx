@@ -45,7 +45,6 @@ export const sedVarsCounty = {
     "gq_pop": {name: 'Group Quarters Population (in 000s)', domain: [1,5,9,20,29,79], range: defaultRange},
     "hh_num": {name: 'Households (in 000s)', domain: [28,86,166,274,398,1044], range: defaultRange},
     "hh_size": {name: 'Household Size', domain: [1.98,2.54,2.69,2.77,2.92,3.26], range: defaultRange, aggFunc: 'avg'},
-    "emplf": {name: 'Employed Labor Force (in 000s)', domain: [872,204,364,693,1411,2857], range: defaultRange},
     "lf": {name: 'Labor Force  (in 000s)', domain: [33,116,237,366,557,1383], range: defaultRange}
 }
 const GEOM_TYPES = {
