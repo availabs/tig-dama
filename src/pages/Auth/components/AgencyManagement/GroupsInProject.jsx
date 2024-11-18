@@ -1,13 +1,18 @@
-import React from "react";
+import React, {useState} from "react";
+import { matchSorter } from 'match-sorter'
 
 import GroupComponent, { GroupHeader } from "./components/GroupComponent";
 
+export default ({ groups, ...props }) => {
+  const [groupSearch, setGroupSearch] = useState('');
 
-export default ({ groups, groupSearch, setGroupSearch, ...props }) => (
-  <>
-    <GroupHeader value={groupSearch} onChange={setGroupSearch} />
-    {groups.map((group) => (
-      <GroupComponent key={group.name} {...props} group={group} />
-    ))}
-  </>
-);
+  const filteredGroups = matchSorter(groups, groupSearch, { keys: ["name"] });
+  return (
+    <>
+      <GroupHeader value={groupSearch} onChange={setGroupSearch} />
+      {filteredGroups.map((group) => (
+        <GroupComponent key={group.name} {...props} group={group} groupSearch={groupSearch} setGroupSearch={setGroupSearch}/>
+      ))}
+    </>
+  );
+};

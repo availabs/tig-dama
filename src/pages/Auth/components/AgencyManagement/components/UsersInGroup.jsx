@@ -65,11 +65,10 @@ const UserNotInGroup = ({ group, User, assignToGroup, ...props }) => {
   )
 }
 
-export default ({ group, users, ...props }) => {
-  const groupMeta = JSON.parse(group.meta);
+export default ({ group, users, updateGroupMeta, ...props }) => {
+  const defaultGroupMeta = JSON.parse(group.meta) ?? {description:'', url:''};
   const [num, setNum] = React.useState(5),
-    [groupDescription, setGroupDescription] = React.useState(groupMeta?.description ?? ''),
-    [groupLink, setGroupLink] = React.useState(groupMeta?.url ?? ''),
+    [groupMeta, setGroupMeta] = React.useState(defaultGroupMeta),
     [userSearch, setUserSearch] = React.useState(""),
     [otherUserSearch, setOtherUserSearch] = React.useState(""),
     [usersInGroup, otherUsers] = users.reduce(([a1, a2], c) => {
@@ -97,8 +96,8 @@ export default ({ group, users, ...props }) => {
             </div>
             <div>
               <Input
-                value={groupDescription}
-                onChange={ e => setGroupDescription(e) }
+                value={groupMeta.description}
+                onChange={ e => setGroupMeta({...groupMeta, description:e}) }
                 placeholder="Agency Description..."
               />
             </div>
@@ -109,8 +108,8 @@ export default ({ group, users, ...props }) => {
             </div>
             <div>
               <Input
-                value={groupLink}
-                onChange={ e => setGroupLink(e) }
+                value={groupMeta.url}
+                onChange={ e => setGroupMeta({...groupMeta, url:e}) }
                 placeholder="Agency link..."
               />
             </div>
@@ -119,7 +118,7 @@ export default ({ group, users, ...props }) => {
             <Button 
               themeOptions={{size:"sm"}}
               onClick={() => {
-                console.log("TODO -- API route to change a Group/Agency")
+                updateGroupMeta(group.name, groupMeta)
               }}
             >
               Save changes
