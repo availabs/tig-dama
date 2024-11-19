@@ -1,25 +1,21 @@
-import React from "react"
+import React from "react";
+import {  Link  } from "react-router-dom";
 
-import { useLocation, Link  } from "react-router-dom"
-import { DamaContext } from "~/pages/DataManager/store"
+const SOURCE_AUTH_CONFIG = {
+  "VIEW": 1,
+  "DOWNLOAD": 2,
+  "EDIT": 3,
+  "ADMIN" : 5
+};
 
 
 
-const Overview = ({ searchParams, setSearchParams, source, views, activeViewId, getVariables, filterButtons=[] }) => {
+const Overview = ({ searchParams, setSearchParams, source, views, activeViewId, getVariables, filterButtons=[], userHighestAuth }) => {
   const [variables,setVariables] = React.useState([])
-  
-  // const variables = React.useMemo(() => {
-  //   console.log('vars', source, views, activeViewId)
-  //   return getVariables(source, views, activeViewId)
-  // }, [source, views, activeViewId, getVariables])
-  
-  const { user } = React.useContext(DamaContext)
 
   const activeVariable = React.useMemo(() => {
     return searchParams.get("variable") || variables[0]?.key;
   }, [searchParams, variables]);
-
-  
   React.useEffect(() => {
     async function fetch () {
       let vars = await getVariables(source,views,activeViewId)
@@ -27,22 +23,17 @@ const Overview = ({ searchParams, setSearchParams, source, views, activeViewId, 
     }
     fetch()
   },[source, views, activeViewId, getVariables])
-  
 
   const buttons = [
     {name: 'Map', icon: 'fad fa-location-dot', to: `/source/${source.source_id}/map`},
     {name: 'Table', icon: 'fad fa-table', to: `/source/${source.source_id}/table`},
     {name: 'Chart', icon: 'fad fa-bar-chart', to: `/source/${source.source_id}/chart`},
-    {name: 'Watch', icon: 'fad fa-eye', authLevel: 1, to: `/source/${source.source_id}`},
-    {name: 'Edit Metadata', icon: 'fad fa-wrench', authLevel: 5, to: `/source/${source.source_id}/meta`},
+    {name: 'Watch', icon: 'fad fa-eye', authLevel: SOURCE_AUTH_CONFIG['VIEW'], to: `/source/${source.source_id}`},
+    {name: 'Edit Metadata', icon: 'fad fa-wrench', authLevel: SOURCE_AUTH_CONFIG['EDIT'], to: `/source/${source.source_id}/meta`},
     {name: 'View Metadata', icon: 'fad fa-info-circle', to: `/source/${source.source_id}/meta`},
-    {name: 'Access Controls', icon: 'fad fa-gears',  authLevel: 5, to: `/source/${source.source_id}/admin`},  
-    {name: 'Delete', icon: 'fad fa-trash',  authLevel: 5, to: `/delete/source/${source.source_id}`} 
-  
-  ]
-
-  console.log(variables, activeVariable)
-  
+    {name: 'Access Controls', icon: 'fad fa-gears',  authLevel: SOURCE_AUTH_CONFIG['ADMIN'], to: `/source/${source.source_id}/admin`},  
+    {name: 'Delete', icon: 'fad fa-trash',  authLevel: SOURCE_AUTH_CONFIG['ADMIN'], to: `/delete/source/${source.source_id}`} 
+  ];
   return (
     <div className='flex md:flex-row flex-col '>
       <div className="w-full md:w-[600px] border-b-2 border-tigGreen-100 pb-4" >
@@ -65,7 +56,7 @@ const Overview = ({ searchParams, setSearchParams, source, views, activeViewId, 
           buttons
             .filter(b => !filterButtons.includes(b.name))
             .filter(b => {
-              return !b.authLevel || user.authLevel >= b.authLevel
+              return !b.authLevel || userHighestAuth >= b.authLevel
             })
             .map(b => {
             return (
