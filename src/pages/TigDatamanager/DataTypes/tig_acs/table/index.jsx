@@ -58,7 +58,8 @@ const TablePage = ({
   transform = identityMap,
   filterData = {},
   TableFilter = DefaultTableFilter,
-  fullWidth = false
+  fullWidth = false,
+  userHighestAuth
 }) => {
   const { viewId } = useParams();
   const [filters, _setFilters] = useState(filterData);
@@ -305,6 +306,7 @@ const TablePage = ({
       <div className="flex">
         <div className="flex-1 pl-3 pr-4 py-2">Table View</div>
         <TableFilter
+          userHighestAuth={userHighestAuth}
           filters={filters}
           setFilters={setFilters}
           variables={variablesToCensusKeys}

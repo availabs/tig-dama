@@ -10,6 +10,7 @@ import {
   unset,
   uniq,
 } from "lodash";
+import { SOURCE_AUTH_CONFIG } from "~/pages/DataManager/Source/attributes";
 
 // import { download as shpDownload } from "~/pages/DataManager/utils/shp-write";
 import shpwrite from  '@mapbox/shp-write';
@@ -122,7 +123,8 @@ const ACSMapFilter = ({
   setTempSymbology,
   tempSymbology,
   activeView,
-  activeViewId
+  activeViewId,
+  userHighestAuth
 }) => {
   const { pgEnv } = useContext(DamaContext);
   const { falcor, falcorCache } = useFalcor();
@@ -512,7 +514,7 @@ const ACSMapFilter = ({
         </select>
       </div>
 
-      <div className=" flex px-2 ml-auto">
+     {userHighestAuth >= SOURCE_AUTH_CONFIG['DOWNLOAD'] && <div className=" flex px-2 ml-auto">
         <MapDataDownloader
           activeViewId={activeViewId}
           variable={activeVar}
@@ -523,7 +525,7 @@ const ACSMapFilter = ({
           geoids={geometry === "county" ? counties : subGeoids}
           viewDependency={activeView?.view_dependencies}
         />
-      </div>
+      </div>}
     </div>
   );
 };

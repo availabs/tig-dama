@@ -202,6 +202,7 @@ const ChartPage = ({
   transform = () => null,
   filterData = {},
   ChartFilter = <div />,
+  userHighestAuth
 }) => {
   const { viewId } = useParams();
   const { falcor, falcorCache } = React.useContext(DamaContext);
@@ -330,6 +331,7 @@ const ChartPage = ({
     <div>
       <div className="flex">
         <ChartFilter
+          userHighestAuth={userHighestAuth}
           filters={filters}
           setFilters={setFilters}
           variables={variables}

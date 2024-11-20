@@ -3,6 +3,7 @@ import Select, { components } from "react-select";
 import { Button } from "~/modules/avl-components/src";
 import download from "downloadjs"
 import makeAnimated from "react-select/animated";
+import { SOURCE_AUTH_CONFIG } from "~/pages/DataManager/Source/attributes";
 
 const Option = (props) => {
   return (
@@ -70,6 +71,7 @@ const AcsTableFilter = ({
   setFilters,
   tableColumns,
   setTableColumns,
+  userHighestAuth
 }) => {
   const [geometry, year] = useMemo(() => {
     return [filters?.geometry?.value || "county", filters?.year?.value || 2019];
@@ -162,11 +164,11 @@ const AcsTableFilter = ({
           ))}
         </select>
       </div>
-      <Button themeOptions={{size:'sm', color: 'primary'}}
+      {userHighestAuth >= SOURCE_AUTH_CONFIG['DOWNLOAD'] && <Button themeOptions={{size:'sm', color: 'primary'}}
           onClick={ downloadData }
         >
           Download
-        </Button>
+        </Button>}
     </div>
   );
 };
