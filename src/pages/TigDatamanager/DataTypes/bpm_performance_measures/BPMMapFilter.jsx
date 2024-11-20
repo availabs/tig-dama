@@ -5,6 +5,7 @@ import get from 'lodash/get'
 import mapboxgl from "maplibre-gl";
 import ckmeans from "~/pages/DataManager/utils/ckmeans";
 import { getColorRange } from "~/modules/avl-components/src";
+import { SOURCE_AUTH_CONFIG } from "~/pages/DataManager/Source/attributes";
 
 import { DamaContext } from "~/pages/DataManager/store"
 import { fips2Name } from '../constants';
@@ -116,7 +117,8 @@ export const BPMMapFilter = ({
     setTempSymbology,
     tempSymbology,
     activeViewId,
-    layer
+    layer,
+    userHighestAuth
   }) => { 
 
   const { falcor, falcorCache, pgEnv } = React.useContext(DamaContext);
@@ -445,7 +447,7 @@ export const BPMMapFilter = ({
               ))}
           </select>
         </div>
-        <div className="flex px-2 ml-auto">
+        {userHighestAuth >= SOURCE_AUTH_CONFIG['DOWNLOAD'] && <div className="flex px-2 ml-auto">
           <MapDataDownloader
             timePeriod={timePeriod}
             functionalClass={functionalClass}
@@ -453,7 +455,7 @@ export const BPMMapFilter = ({
             activeViewId={ activeViewId }
             activeVar={ variable }
           />
-        </div>
+        </div>}
 
       </div>
   )

@@ -3,7 +3,7 @@ import { get, sum, mean } from "lodash";
 import { useSearchParams } from "react-router-dom";
 import { toPng } from "html-to-image";
 import download from "downloadjs";
-
+import { SOURCE_AUTH_CONFIG } from "~/pages/DataManager/Source/attributes";
 import { Button } from "~/modules/avl-components/src";
 import { fips2Name, regionalData } from "../constants";
 import { variableAccessors } from './BPMConstants'
@@ -28,7 +28,8 @@ export const BPMChartFilters = ({
   variables,
   years,
   node,
-  activeViewId
+  activeViewId,
+  userHighestAuth
 }) => {
 
   const { pgEnv, falcor, falcorCache  } = React.useContext(DamaContext);
@@ -244,14 +245,14 @@ export const BPMChartFilters = ({
           )}
         />
       </div>
-      <div className="ml-auto mt-5 mr-1">
+      {userHighestAuth >= SOURCE_AUTH_CONFIG['DOWNLOAD'] && <div className="ml-auto mt-5 mr-1">
         <Button
           themeOptions={{ size: "sm", color: "primary" }}
           onClick={downloadImage}
         >
           Download
         </Button>
-      </div>
+      </div>}
     </div>
   );
 };

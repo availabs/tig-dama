@@ -2,8 +2,9 @@ import React, { useEffect } from "react";
 import { Button } from "~/modules/avl-components/src"
 import download from "downloadjs"
 import { variableAccessors, BPM_DISPLAY_DIVISOR, variableLabels } from "./BPMConstants";
+import { SOURCE_AUTH_CONFIG } from "~/pages/DataManager/Source/attributes";
 
-export const HBTableFilter = ({ filters, setFilters, data, columns }) => {
+export const HBTableFilter = ({ filters, setFilters, data, columns, userHighestAuth }) => {
     const timePeriod = filters['period']?.value || null;
     const functionalClass = filters['functional_class']?.value || null;
 
@@ -62,13 +63,13 @@ export const HBTableFilter = ({ filters, setFilters, data, columns }) => {
               ))}
           </select>
         </div>
-        <div className="flex ml-auto">
+        {userHighestAuth >= SOURCE_AUTH_CONFIG['DOWNLOAD'] && <div className="flex ml-auto">
           <Button themeOptions={{size:'sm', color: 'primary'}}
             onClick={ downloadData }
           >
             Download
           </Button>
-        </div>
+        </div>}
       </div>
     )
 }
