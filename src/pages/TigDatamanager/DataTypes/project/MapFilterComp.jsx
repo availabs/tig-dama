@@ -8,6 +8,7 @@ import mapboxgl from "maplibre-gl";
 import { Button } from "~/modules/avl-components/src";
 import shpwrite from  '@mapbox/shp-write'
 import { range as d3range } from "d3-array"
+import { SOURCE_AUTH_CONFIG } from "~/pages/DataManager/Source/attributes";
 
 const ptypes_colors = {
   BIKE: "#38A800",
@@ -102,6 +103,7 @@ const ProjectMapFilter = ({
   tempSymbology,
   activeViewId,
   layer,
+  userHighestAuth
 }) => {
   const { falcor, falcorCache, pgEnv } = React.useContext(DamaContext);
   const [searchParams] = useSearchParams();
@@ -389,13 +391,13 @@ const ProjectMapFilter = ({
           </div>
         </>
       )}
-      <div className="flex mx-2">
+      {userHighestAuth >= SOURCE_AUTH_CONFIG['DOWNLOAD'] && <div className="flex mx-2">
         <MapDataDownloader
           activeViewId={activeDataVersionId}
           projectKey={projectKey}
           metadataColumns={metadataColumns}
         />
-      </div>
+      </div>}
     </div>
   );
 };
