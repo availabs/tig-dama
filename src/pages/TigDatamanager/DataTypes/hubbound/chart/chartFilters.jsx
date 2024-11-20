@@ -2,6 +2,7 @@ import React, { useMemo } from "react";
 import { get } from "lodash";
 import { toPng } from "html-to-image";
 import download from "downloadjs";
+import { SOURCE_AUTH_CONFIG } from "~/pages/DataManager/Source/attributes";
 
 import { Button } from "~/modules/avl-components/src";
 import { CHART_TYPES, AGGREGATION_TYPES, SERIES_TYPES } from "./chartConstants";
@@ -11,6 +12,7 @@ export const HubboundChartFilters = ({
   filters,
   setFilters,
   node,
+  userHighestAuth
 }) => {
   let chartType = useMemo(() => get(filters, "chartType.value", ""), [filters]);
   let aggregation = useMemo(() => get(filters, "aggregation.value", ""), [filters]);
@@ -91,7 +93,7 @@ export const HubboundChartFilters = ({
           )}
         />
       </div>
-      <div className="ml-auto mt-5 mr-1">
+      {userHighestAuth >= SOURCE_AUTH_CONFIG['DOWNLOAD'] && <div className="ml-auto mt-5 mr-1">
         <Button
           themeOptions={{ size: "sm", color: "primary" }}
           onClick={downloadImage}
@@ -99,7 +101,7 @@ export const HubboundChartFilters = ({
         >
           Download
         </Button>
-      </div>
+      </div>}
     </div>
   );
 };

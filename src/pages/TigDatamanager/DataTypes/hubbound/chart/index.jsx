@@ -16,7 +16,8 @@ const ChartPage = (props) => {
     transform = () => null,
     filterData = {},
     ChartFilter = <div />,
-    HubboundFilter = <div />
+    HubboundFilter = <div />,
+    userHighestAuth
   } = props;
 
   const [searchParams] = useSearchParams();
@@ -164,6 +165,7 @@ const ChartPage = (props) => {
       <div className="flex justify-start content-center flex-wrap">
         <div className="flex w-full">
           <ChartFilter
+            userHighestAuth={userHighestAuth}
             filters={chartFilters}
             setFilters={setChartFilters}
             node={ref}
