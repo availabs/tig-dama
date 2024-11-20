@@ -5,7 +5,7 @@ import { regionalData } from "../constants/index";
 import { Button } from "~/modules/avl-components/src";
 import { toPng } from "html-to-image";
 import download from "downloadjs";
-
+import { SOURCE_AUTH_CONFIG } from "~/pages/DataManager/Source/attributes";
 import { useSearchParams } from "react-router-dom";
 
 import { sedVars } from "./sedCustom";
@@ -20,7 +20,7 @@ const areas = [
   ...Object.keys(regionalData?.sub_regions || {}),
 ];
 
-const SedChartFilter = ({ filters, setFilters, node, years }) => {
+const SedChartFilter = ({ filters, setFilters, node, years, userHighestAuth }) => {
   let activeVar = useMemo(() => get(filters, "activeVar.value", ""), [filters]);
   let area = useMemo(() => get(filters, "area.value", ""), [filters]);
   let summarize = useMemo(() => get(filters, "summarize.value", ""), [filters]);
@@ -224,14 +224,14 @@ const SedChartFilter = ({ filters, setFilters, node, years }) => {
           />) : null
         }
       </div>
-      <div className="ml-auto mt-5 mr-1">
+      {userHighestAuth >= SOURCE_AUTH_CONFIG['DOWNLOAD'] && <div className="ml-auto mt-5 mr-1">
         <Button
           themeOptions={{ size: "sm", color: "tig" }}
           onClick={downloadImage}
         >
           Download
         </Button>
-      </div>
+      </div>}
     </div>
   );
 };

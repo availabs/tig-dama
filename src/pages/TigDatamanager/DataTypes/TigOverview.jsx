@@ -1,12 +1,7 @@
 import React from "react";
 import {  Link  } from "react-router-dom";
 
-const SOURCE_AUTH_CONFIG = {
-  "VIEW": 1,
-  "DOWNLOAD": 2,
-  "EDIT": 3,
-  "ADMIN" : 5
-};
+import { SOURCE_AUTH_CONFIG } from "~/pages/DataManager/Source/attributes";
 
 
 

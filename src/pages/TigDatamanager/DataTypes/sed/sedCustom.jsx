@@ -3,7 +3,7 @@ import get from "lodash/get";
 import mapboxgl from "maplibre-gl";
 import { useSearchParams } from "react-router-dom";
 import isEqual from 'lodash/isEqual'
-import cloneDeep from 'lodash/cloneDeep'
+import { SOURCE_AUTH_CONFIG } from "~/pages/DataManager/Source/attributes";
 import { DamaContext } from "~/pages/DataManager/store"
 import { Button } from "~/modules/avl-components/src"
 import * as d3scale from "d3-scale"
@@ -65,6 +65,7 @@ const SedMapFilter = (props) => {
     tempSymbology,
     activeViewId,
     layer,
+    userHighestAuth
   } = props;
   const { falcor, falcorCache, pgEnv } = React.useContext(DamaContext)
   let activeVar = useMemo(() => get(filters, "activeVar.value", ""), [filters]);
@@ -327,11 +328,11 @@ const SedMapFilter = (props) => {
           ))}
         </select>
       </div>
-      <MapDataDownloader
+      {userHighestAuth >= SOURCE_AUTH_CONFIG['DOWNLOAD'] && <MapDataDownloader
         variable={ get(varList, [varType, "name"]) }
         activeViewId={ activeViewId }
         activeVar={ activeVar }
-        year={ get(metaData, ["years", year]) }/>
+        year={ get(metaData, ["years", year]) }/>}
     </div>
   );
 };
@@ -409,7 +410,7 @@ const MapDataDownloader = ({ activeViewId, activeVar, variable, year }) => {
   )
 }
 
-const SedTableFilter = ({ source, filters, setFilters, data, columns }) => {
+const SedTableFilter = ({ source, filters, setFilters, data, columns, userHighestAuth }) => {
   let activeVar = useMemo(() => get(filters, "activeVar.value", ""), [filters]);
   let area = useMemo(() => get(filters, "area.value", ""), [filters]);
 
@@ -496,13 +497,13 @@ const SedTableFilter = ({ source, filters, setFilters, data, columns }) => {
           </select>
         </div>
       </div>
-      <div className="px-2 m-2">
+      {userHighestAuth >= SOURCE_AUTH_CONFIG['DOWNLOAD'] && <div className="px-2 m-2">
         <Button themeOptions={{size:'sm', color: 'tig'}}
           onClick={ downloadData }
         >
           Download
         </Button>
-      </div>
+      </div>}
     </div>
   );
 };
@@ -534,7 +535,7 @@ const SedTableTransform = (tableData, attributes, filters, years, source) => {
     columns.push({
       Header: `20${y}`,
       accessor: `${activeVar}_${i}`,
-      Cell: ({ value }) => (value?.toFixed(2))?.toLocaleString(),
+      Cell: ({ value }) => value && value.toFixed ? (value?.toFixed(2))?.toLocaleString() : null,
     });
   });
 

@@ -468,6 +468,7 @@ const ChartPage = ({
   transform = identityMap,
   filterData = {},
   TableFilter = DefaultTableFilter,
+  userHighestAuth = 0
 }) => {
   const { viewId } = useParams();
   const [filters, _setFilters] = useState(filterData);
@@ -558,6 +559,7 @@ const ChartPage = ({
     <div>
       <div className="flex">
         <TableFilter
+          userHighestAuth={userHighestAuth}
           years={years}
           filters={filters}
           setFilters={setFilters}
