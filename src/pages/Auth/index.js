@@ -2,6 +2,7 @@ import Login from "./components/login"
 import Signup from "./components/signup"
 import ResetPassword from "./components/resetPassword"
 import SetPassword from "./components/setPassword"
+import VerifyRequest from "./components/verifyRequest"
 import AgencyManagement from "./components/AgencyManagement";
 import Profile from "./components/profile";
 
@@ -35,15 +36,14 @@ const AuthConfig = {
     { 
       type: wrappers['ams-signup'](Signup), 
       path: "signup",
-      props: { addToGroup: "123" },
-      props: {title: "NYMTC TIG"}
+      props: { addToGroup: "Guest", title: "NYMTC TIG" },
     },
     { 
       type: wrappers['ams-profile'](Profile), 
       path: "profile" 
     },
     { 
-      type: "ams-verify-request" , 
+      type:  wrappers["ams-verify-request"](VerifyRequest), 
       path: "verify-request"
     }, 
     { 

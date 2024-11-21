@@ -49,7 +49,6 @@ const TigDropDown = ({buttonText, items}) => {
 }
 
 const TigUserMenu = ({user}) => {
-
     const userItems = [
         {name: 'Profile', link: '/auth/profile'},
         {name: 'Catalog', link: '/'},
@@ -111,7 +110,7 @@ const TigUserMenu = ({user}) => {
     return (
         <div className='flex h-12 flex-col md:flex-row'>
             {userMenu}
-            {adminMenu}
+            {user.authLevel > 0 && adminMenu}
             {contributorMenu}
             {librarianMenu}
             <a href={'/auth/logout'} className='p-4 h-full hover:bg-tigGray-50 hover:text-yellow-500 hover:cursor-pointer bg-tigGray-200 text-[13px] font-light md:mr-2'>Logout</a>
