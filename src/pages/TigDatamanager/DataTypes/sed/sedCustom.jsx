@@ -535,7 +535,7 @@ const SedTableTransform = (tableData, attributes, filters, years, source) => {
     columns.push({
       Header: `20${y}`,
       accessor: `${activeVar}_${i}`,
-      Cell: ({ value }) => value && value.toFixed ? (value?.toFixed(2))?.toLocaleString() : null,
+      Cell: ({ value }) => value && parseInt(value).toFixed ? (parseInt(value)?.toFixed(2))?.toLocaleString() : '',
     });
   });
 
