@@ -18,11 +18,13 @@ import { regionalData } from "../constants/index";
 // [1112,1588,2112,2958,56390]
 const defaultRange = ['#ffffb2', '#fed976',  '#fd8d3c', '#fc4e2a', '#e31a1c', '#b10026']
 const defaultDomain = [0,872,2047,3649,6934,14119,28578]
+
+//Default `displayPrecision` is 0 (no digits after decimal)
 export const sedVars = {
   totpop: { name: "Total Population", domain: [872,2047,3649,6934,14119,28578], range: defaultRange},
   hhpop: { name: "Households", domain: [1112,1588,2112,2958,20000, 56390], range: defaultRange},
   hhnum: { name: "Household Population", domain: [2995,4270,5680,7883,64124,177720], range: defaultRange},
-  hhsize: { name: "Household Size", domain: [2.3,2.62,2.83,3.08,7], range: defaultRange, aggFunc: 'avg'},
+  hhsize: { name: "Household Size", domain: [2.3,2.62,2.83,3.08,7], range: defaultRange, aggFunc: 'avg', displayPrecision: 2},
   hhincx: { name: "Household Income", domain: [44787,61304,80355,113880,1109731], range: defaultRange},
   elf: { name: "Employed Labor Force", domain: [1351,2054,2782,3910,78160], range: defaultRange},
   emptot: { name: "Total Employment", domain: [560,1005,1699,3555,80093], range: defaultRange},
@@ -44,7 +46,7 @@ export const sedVarsCounty = {
     "hh_pop": {name: 'Household Population (in 000s)', domain: [69,207,473,729,1099,2761], range: defaultRange},
     "gq_pop": {name: 'Group Quarters Population (in 000s)', domain: [1,5,9,20,29,79], range: defaultRange},
     "hh_num": {name: 'Households (in 000s)', domain: [28,86,166,274,398,1044], range: defaultRange},
-    "hh_size": {name: 'Household Size', domain: [1.98,2.54,2.69,2.77,2.92,3.26], range: defaultRange, aggFunc: 'avg'},
+    "hh_size": {name: 'Household Size', domain: [1.98,2.54,2.69,2.77,2.92,3.26], range: defaultRange, aggFunc: 'avg', displayPrecision: 2},
     "lf": {name: 'Labor Force  (in 000s)', domain: [33,116,237,366,557,1383], range: defaultRange}
 }
 const GEOM_TYPES = {
@@ -531,11 +533,16 @@ const SedTableTransform = (tableData, attributes, filters, years, source) => {
     },
   ];
 
+  const varList = source.type === 'tig_sed_county' ? sedVarsCounty : sedVars;
+
+  const displayPrecision = varList[activeVar]?.displayPrecision ?? 0;
+  const displayFunc = (value) => parseFloat(value)?.toFixed(displayPrecision);
+
   updatedYears.forEach((y, i) => {
     columns.push({
       Header: `20${y}`,
       accessor: `${activeVar}_${i}`,
-      Cell: ({ value }) => value && parseFloat(value).toFixed ? (parseFloat(value)?.toFixed(2))?.toLocaleString() : '',
+      Cell: ({ value }) => value && parseFloat(value).toFixed ? (displayFunc(value))?.toLocaleString() : '',
     });
   });
 

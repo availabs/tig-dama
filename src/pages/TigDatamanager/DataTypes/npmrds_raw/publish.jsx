@@ -4,8 +4,7 @@ import { DamaContext } from "~/pages/DataManager/store";
 import { ScalableLoading } from "~/modules/avl-components/src";
 import { DAMA_HOST } from "~/config";
 
-const submitUpload = (props, navigate, pgEnv) => {
-  const {baseUrl} = React.useContext(DamaContext)
+const submitUpload = ({props, navigate, pgEnv, baseUrl}) => {
   props.setLoading(true);
   const runPublishNpmrdsRaw = async () => {
     try {
@@ -49,13 +48,14 @@ const submitUpload = (props, navigate, pgEnv) => {
 };
 
 export default function PublishNpmrdsRaw(props) {
+  const { baseUrl } = React.useContext(DamaContext)
   const navigate = useNavigate();
   const { loading, pgEnv } = props;
   return (
     <>
       <button
         className={`cursor-pointer bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded`}
-        onClick={() => submitUpload(props, navigate, pgEnv)}
+        onClick={() => submitUpload({props, navigate, pgEnv, baseUrl})}
       >
         {" "}
         {loading ? (
