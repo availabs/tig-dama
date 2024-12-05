@@ -359,7 +359,7 @@ const ProjectMapFilter = ({
         header={`Sponsor`}
         input={({className}) => (
           <select
-            className={className + " max-2-[200px]"}
+            className={className + " max-w-[200px]"}
             value={sponsorFilterValue || ""}
             onChange={(e) => setFilters({ sponsor_id: { value: e.target.value } })}
           >
