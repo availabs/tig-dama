@@ -9,6 +9,7 @@ import { Button } from "~/modules/avl-components/src";
 import shpwrite from  '@mapbox/shp-write'
 import { range as d3range } from "d3-array"
 import { SOURCE_AUTH_CONFIG } from "~/pages/DataManager/Source/attributes";
+import { FilterControlContainer } from "../controls/FilterControlContainer";
 
 const ptypes_colors = {
   BIKE: "#38A800",
@@ -316,67 +317,69 @@ const ProjectMapFilter = ({
 
   return (
     <div className="flex justify-start content-center flex-wrap p-1 gap-y-2">
-      <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">
-        {projectKey === "rtp_id" ? "RTP" : "TIP"} ID :{" "}
-      </div>
-      <div className="flex">
-        <select
-          className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
-          value={projectIdFilterValue || ""}
-          onChange={(e) => setFilters({ projectId: { value: e.target.value } })}
-        >
-          <option className="ml-2  truncate" value={""}>
-            None
-          </option>
-          {allProjectIds.map((v, i) => (
-            <option key={i} className="ml-2  truncate" value={v}>
-              {v}
+      <FilterControlContainer 
+        header={`${projectKey === "rtp_id" ? "RTP" : "TIP"} ID`}
+        input={({className}) => (
+          <select
+            className={className}
+            value={projectIdFilterValue || ""}
+            onChange={(e) => setFilters({ projectId: { value: e.target.value } })}
+          >
+            <option className="ml-2  truncate" value={""}>
+              None
             </option>
-          ))}
-        </select>
-      </div>
-      <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">Project Type: </div>
-      <div className="flex">
-        <select
-          className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
-          value={projectTypeFilterValue || ""}
-          onChange={(e) => setFilters({ [typeKey]: { value: e.target.value } })}
-        >
-          <option className="ml-2  truncate" value={""}>
-            None
-          </option>
-          {allProjectTypes?.map((v, i) => (
-            <option key={i} className="ml-2  truncate" value={v}>
-              {v}
+            {allProjectIds.map((v, i) => (
+              <option key={i} className="ml-2  truncate" value={v}>
+                {v}
+              </option>
+            ))}
+          </select>
+        )}
+      />
+      <FilterControlContainer 
+        header={`Project Type`}
+        input={({className}) => (
+          <select
+            className={className}
+            value={projectTypeFilterValue || ""}
+            onChange={(e) => setFilters({ [typeKey]: { value: e.target.value } })}
+          >
+            <option className="ml-2  truncate" value={""}>
+              None
             </option>
-          ))}
-        </select>
-      </div>
-      <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">Sponsor: </div>
-      <div className="flex">
-        <select
-          className="w-56 text-ellipsis overflow-hidden bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
-          value={sponsorFilterValue || ""}
-          onChange={(e) => setFilters({ sponsor_id: { value: e.target.value } })}
-        >
-          <option className="ml-2  truncate" value={""}>
-            None
-          </option>
-          {allSponsors?.map((v, i) => (
-            <option key={i} className="ml-2  truncate" value={v}>
-              {v}
+            {allProjectTypes?.map((v, i) => (
+              <option key={i} className="ml-2  truncate" value={v}>
+                {v}
+              </option>
+            ))}
+          </select>
+        )}
+      />
+      <FilterControlContainer 
+        header={`Sponsor`}
+        input={({className}) => (
+          <select
+            className={className}
+            value={sponsorFilterValue || ""}
+            onChange={(e) => setFilters({ sponsor_id: { value: e.target.value } })}
+          >
+            <option className="ml-2  truncate" value={""}>
+              None
             </option>
-          ))}
-        </select>
-      </div>
+            {allSponsors?.map((v, i) => (
+              <option key={i} className="ml-2  truncate" value={v}>
+                {v}
+              </option>
+            ))}
+          </select>
+        )}
+      />
       {projectKey === "rtp_id" && (
-        <>
-          <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">
-            Plan Portion:{" "}
-          </div>
-          <div className="flex">
+        <FilterControlContainer 
+          header={`Plan Portion`}
+          input={({className}) => (
             <select
-              className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
+              className={className}
               value={planPortionFilterValue || ""}
               onChange={(e) =>
                 setFilters({ plan_portion: { value: e.target.value } })
@@ -391,10 +394,10 @@ const ProjectMapFilter = ({
                 </option>
               ))}
             </select>
-          </div>
-        </>
+          )}
+        />
       )}
-      {userHighestAuth >= SOURCE_AUTH_CONFIG['DOWNLOAD'] && <div className="flex mx-2">
+      {userHighestAuth >= SOURCE_AUTH_CONFIG['DOWNLOAD'] && <div className="ml-auto mt-5 mr-1">
         <MapDataDownloader
           activeViewId={activeDataVersionId}
           projectKey={projectKey}
