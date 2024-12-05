@@ -222,18 +222,21 @@ const ProjectMapFilter = ({
     .filter(onlyUnique)
     .filter((val) => val !== "null");
   const projectTypeFilterValue = filters[typeKey]?.value || null;
+  allProjectTypes.sort();
 
   const allSponsors = Object.values(dataById)
     ?.map((val, i) => val.sponsor_id)
     .filter(onlyUnique)
     .filter((val) => val !== "null");
   const sponsorFilterValue = filters["sponsor_id"]?.value || null;
+  allSponsors.sort();
 
   const allPlanPortions = Object.values(dataById)
     ?.map((val, i) => val["plan_portion"])
     .filter(onlyUnique)
     .filter((val) => val !== "null");
   const planPortionFilterValue = filters["plan_portion"]?.value || null;
+  allPlanPortions.sort();
 
   let filteredData;
 
