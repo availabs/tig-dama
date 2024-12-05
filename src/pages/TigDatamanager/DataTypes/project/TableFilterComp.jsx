@@ -42,7 +42,7 @@ export const ProjectTableTransform = (tableData, attributes, filters, years, sou
 
     return a;
   }, {}) : {};
-
+  const typeKey = projectKey === "rtp_id" ? "ptype" : "ptype_id";
   const generateColumn = (columnName) => {
     let filterProperties = {};
     if(columnName !== "cost"){
@@ -57,7 +57,7 @@ export const ProjectTableTransform = (tableData, attributes, filters, years, sou
     if(columnName === "description"){
       filterProperties.filter = "text";
     }
-    const typeKey = projectKey === "rtp_id" ? "ptype" : "ptype_id";
+
     const VARIABLE_LABELS = generateVariableLabels(typeKey)
     const column = {
       Header: VARIABLE_LABELS[columnName],
@@ -79,9 +79,6 @@ export const ProjectTableTransform = (tableData, attributes, filters, years, sou
     return column;
   };
 
-
-
-  
   const dependentColumns =
     projectKey === "rtp_id"
       ? [generateColumn("plan_portion"), generateColumn("year")]
