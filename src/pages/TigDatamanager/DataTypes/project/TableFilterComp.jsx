@@ -4,14 +4,14 @@ import download from "downloadjs"
 import { Button } from "~/modules/avl-components/src"
 
 const VARIABLE_LABELS = {
-  ptype: "Project Type",
+  ptype_id: "Project Type",
   rtp_id: "RTP ID",
   tip_id: "TIP ID",
   cost: "Cost",
-  mpo: "MPO",
+  mpo_id: "MPO",
   county: "County",
   plan_portion: "Plan Portion",
-  sponsor: "Sponsor",
+  sponsor_id: "Sponsor",
   description: "Description",
   year: "Year",
 };
@@ -83,14 +83,14 @@ export const ProjectTableTransform = (tableData, attributes, filters, years, sou
   const dependentColumns =
     projectKey === "rtp_id"
       ? [generateColumn("plan_portion"), generateColumn("year")]
-      : [generateColumn("mpo")];
+      : [generateColumn("mpo_id")];
   const columns = [
     generateColumn(projectKey),
-    generateColumn("ptype"),
+    generateColumn("ptype_id"),
     generateColumn("cost"),
     ...dependentColumns,
     generateColumn("county"),
-    generateColumn("sponsor"),
+    generateColumn("sponsor_id"),
     generateColumn("description"),
   ];
 

@@ -68,6 +68,7 @@ const GisDatasetConfig = {
     component: (props) => (
       <CreatePage
         {...props}
+        useMbTiles={true}
         tippecanoeOptions={{flags: ['-b0']}}
         defaultTilesColumns={['ptype']}
       />

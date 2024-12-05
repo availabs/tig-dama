@@ -49,15 +49,15 @@ const TipHoverComp = ({ data, layer }) => {
     {col:'rtp_id', name: 'Link to table', display: d => <LinkRow feature={d} sourceId={source_id} />},
     {col:'year', name: 'Year', display: d => d},
     {col:'plan_portion', name: 'Plan Portion', display: d => d},
-    {col:'sponsor', name: 'Sponsor', display: d => d},
-    {col:'ptype', name: 'Project Type', display: d => d},
+    {col:'sponsor_id', name: 'Sponsor', display: d => d},
+    {col:'ptype_id', name: 'Project Type', display: d => d},
     {col:'cost', name: 'Cost', display: d => d && d !== 'null' ? `$${d}M` : ''},
   ] : [
     {col:'tip_id', name: 'Project Id', display: d => d},
     {col:'tip_id', name: 'Link to table', display: d => <LinkRow feature={d} sourceId={source_id} />},
-    {col:'sponsor', name: 'Sponsor', display: d => d},
-    {col:'mpo', name: 'MPO', display: d => d},
-    {col:'ptype', name: 'Project Type', display: d => d},
+    {col:'sponsor_id', name: 'Sponsor', display: d => d},
+    {col:'mpo_id', name: 'MPO', display: d => d},
+    {col:'ptype_id', name: 'Project Type', display: d => d},
     {col:'cost', name: 'Cost', display: d => d ? `$${d}M` : ''},
   ]
 

@@ -64,7 +64,7 @@ const tipRtpMapStyles = {
     paint: {
       "line-color": [
         "get",
-        ["upcase", ["to-string", ["get", "ptype"]]],
+        ["upcase", ["to-string", ["get", "ptype_id"]]],
         ["literal", ptypes_colors],
       ],
       "line-width": 3,
@@ -74,7 +74,7 @@ const tipRtpMapStyles = {
   circle: {
     type: "symbol",
     layout: {
-      "icon-image": ["upcase", ["get", "ptype"]], // reference the image
+      "icon-image": ["upcase", ["get", "ptype_id"]], // reference the image
       "icon-size": 0.1,
       "icon-allow-overlap": true,
     },
@@ -85,7 +85,7 @@ const tipRtpMapStyles = {
     paint: {
       "fill-color": [
         "get",
-        ["upcase", ["to-string", ["get", "ptype"]]],
+        ["upcase", ["to-string", ["get", "ptype_id"]]],
         ["literal", ptypes_colors],
       ],
       "fill-opacity": 0.5,
@@ -172,6 +172,8 @@ const ProjectMapFilter = ({
   const allProjectIds = dataIds[projectKey]
     .filter(onlyUnique)
     .filter((val) => val !== "");
+
+  allProjectIds.sort();
   const projectIdFilterValue = filters["projectId"]?.value || null;
 
   const featureId = searchParams.get("featureId");
@@ -214,16 +216,16 @@ const ProjectMapFilter = ({
 
   //To Populate menu/select/dropdown menu stuffs
   const allProjectTypes = Object.values(dataById)
-    ?.map((val, i) => val.ptype)
+    ?.map((val, i) => val.ptype_id)
     .filter(onlyUnique)
     .filter((val) => val !== "null");
-  const projectTypeFilterValue = filters["ptype"]?.value || null;
+  const projectTypeFilterValue = filters["ptype_id"]?.value || null;
 
   const allSponsors = Object.values(dataById)
-    ?.map((val, i) => val.sponsor)
+    ?.map((val, i) => val.sponsor_id)
     .filter(onlyUnique)
     .filter((val) => val !== "null");
-  const sponsorFilterValue = filters["sponsor"]?.value || null;
+  const sponsorFilterValue = filters["sponsor_id"]?.value || null;
 
   const allPlanPortions = Object.values(dataById)
     ?.map((val, i) => val["plan_portion"])
@@ -281,7 +283,7 @@ const ProjectMapFilter = ({
 
   //Custom legend stuff
   const idToUrlColorMap = Object.values(dataById)
-    .map(d => d.ptype)
+    .map(d => d.ptype_id)
     .filter(onlyUnique)
     .filter(d => d !== "null")
     .reduce((acc, ptype) => {
@@ -337,7 +339,7 @@ const ProjectMapFilter = ({
         <select
           className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
           value={projectTypeFilterValue || ""}
-          onChange={(e) => setFilters({ ptype: { value: e.target.value } })}
+          onChange={(e) => setFilters({ ptype_id: { value: e.target.value } })}
         >
           <option className="ml-2  truncate" value={""}>
             None
@@ -354,7 +356,7 @@ const ProjectMapFilter = ({
         <select
           className="w-56 text-ellipsis overflow-hidden bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
           value={sponsorFilterValue || ""}
-          onChange={(e) => setFilters({ sponsor: { value: e.target.value } })}
+          onChange={(e) => setFilters({ sponsor_id: { value: e.target.value } })}
         >
           <option className="ml-2  truncate" value={""}>
             None
