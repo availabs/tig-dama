@@ -124,7 +124,6 @@ const LinkCell = ({feature, sourceId}) => {
   const [searchParams] = useSearchParams();
   const variable = searchParams.get("variable");
   const { viewId } = useParams() || "";
-  console.log(feature, sourceId)
   return (<div>
     <Link onClick={(e) => navigate(`/source/${sourceId}/map/${viewId}?variable=${variable}&featureId=${feature}`)}> Link to map </Link>
   </div>)
