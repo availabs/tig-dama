@@ -50,7 +50,7 @@ const TipHoverComp = ({ data, layer }) => {
     {col:'year', name: 'Year', display: d => d},
     {col:'plan_portion', name: 'Plan Portion', display: d => d},
     {col:'sponsor_id', name: 'Sponsor', display: d => d},
-    {col:'ptype_id', name: 'Project Type', display: d => d},
+    {col:'ptype', name: 'Project Type', display: d => d},
     {col:'cost', name: 'Cost', display: d => d && d !== 'null' ? `$${d}M` : ''},
   ] : [
     {col:'tip_id', name: 'Project Id', display: d => d},

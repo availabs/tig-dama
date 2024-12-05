@@ -57,42 +57,43 @@ const GEOM_TYPES = {
 function onlyUnique(value, index, array) {
   return array.indexOf(value) === index;
 }
-
-const tipRtpMapStyles = {
-  line: {
-    type: "line",
-    paint: {
-      "line-color": [
-        "get",
-        ["upcase", ["to-string", ["get", "ptype_id"]]],
-        ["literal", ptypes_colors],
-      ],
-      "line-width": 3,
+const generateMapStyles = (typeKey) => {
+  return {
+    line: {
+      type: "line",
+      paint: {
+        "line-color": [
+          "get",
+          ["upcase", ["to-string", ["get", typeKey]]],
+          ["literal", ptypes_colors],
+        ],
+        "line-width": 3,
+      },
+      filter: ["all", ["==", ["geometry-type"], "LineString"]],
     },
-    filter: ["all", ["==", ["geometry-type"], "LineString"]],
-  },
-  circle: {
-    type: "symbol",
-    layout: {
-      "icon-image": ["upcase", ["get", "ptype_id"]], // reference the image
-      "icon-size": 0.1,
-      "icon-allow-overlap": true,
+    circle: {
+      type: "symbol",
+      layout: {
+        "icon-image": ["upcase", ["get", typeKey]], // reference the image
+        "icon-size": 0.1,
+        "icon-allow-overlap": true,
+      },
+      filter: ["all", ["==", ["geometry-type"], "Point"]],
     },
-    filter: ["all", ["==", ["geometry-type"], "Point"]],
-  },
-  fill: {
-    type: "fill",
-    paint: {
-      "fill-color": [
-        "get",
-        ["upcase", ["to-string", ["get", "ptype_id"]]],
-        ["literal", ptypes_colors],
-      ],
-      "fill-opacity": 0.5,
+    fill: {
+      type: "fill",
+      paint: {
+        "fill-color": [
+          "get",
+          ["upcase", ["to-string", ["get", typeKey]]],
+          ["literal", ptypes_colors],
+        ],
+        "fill-opacity": 0.5,
+      },
+      filter: ["all", ["==", ["geometry-type"], "Polygon"]],
     },
-    filter: ["all", ["==", ["geometry-type"], "Polygon"]],
-  },
-};
+  }
+}
 
 const ProjectMapFilter = ({
   source,
@@ -213,13 +214,13 @@ const ProjectMapFilter = ({
       }, new mapboxgl.LngLatBounds(coordinates[0], coordinates[0]));
     }
   }
-
+  const typeKey = projectKey === "rtp_id" ? "ptype" : "ptype_id";
   //To Populate menu/select/dropdown menu stuffs
   const allProjectTypes = Object.values(dataById)
-    ?.map((val, i) => val.ptype_id)
+    ?.map((val, i) => val[typeKey])
     .filter(onlyUnique)
     .filter((val) => val !== "null");
-  const projectTypeFilterValue = filters["ptype_id"]?.value || null;
+  const projectTypeFilterValue = filters[typeKey]?.value || null;
 
   const allSponsors = Object.values(dataById)
     ?.map((val, i) => val.sponsor_id)
@@ -248,16 +249,16 @@ const ProjectMapFilter = ({
   });
 
   const filteredIds = filteredData.map((d) => d.ogc_fid);
-
   if (!newSymbology?.source) {
     newSymbology.sources = metaData?.tiles?.sources || [];
     const source_id = newSymbology?.sources?.[0]?.id || "0";
     const source_layer = `s${source.source_id}_v${activeDataVersionId}`;
 
+    const mapStyles = generateMapStyles(typeKey)
     newSymbology.layers = ["line", "circle", "fill"].map((type) => {
       return {
         id: `source_layer_${type}`,
-        ...tipRtpMapStyles[type],
+        ...mapStyles[type],
         source: source_id,
         "source-layer": source_layer,
       };
@@ -283,7 +284,7 @@ const ProjectMapFilter = ({
 
   //Custom legend stuff
   const idToUrlColorMap = Object.values(dataById)
-    .map(d => d.ptype_id)
+    .map(d => d[typeKey])
     .filter(onlyUnique)
     .filter(d => d !== "null")
     .reduce((acc, ptype) => {
@@ -339,7 +340,7 @@ const ProjectMapFilter = ({
         <select
           className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
           value={projectTypeFilterValue || ""}
-          onChange={(e) => setFilters({ ptype_id: { value: e.target.value } })}
+          onChange={(e) => setFilters({ [typeKey]: { value: e.target.value } })}
         >
           <option className="ml-2  truncate" value={""}>
             None

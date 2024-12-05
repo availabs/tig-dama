@@ -3,18 +3,20 @@ import { useSearchParams, useParams, Link, useNavigate } from "react-router-dom"
 import download from "downloadjs"
 import { Button } from "~/modules/avl-components/src"
 
-const VARIABLE_LABELS = {
-  ptype_id: "Project Type",
-  rtp_id: "RTP ID",
-  tip_id: "TIP ID",
-  cost: "Cost",
-  mpo_id: "MPO",
-  county: "County",
-  plan_portion: "Plan Portion",
-  sponsor_id: "Sponsor",
-  description: "Description",
-  year: "Year",
-};
+const generateVariableLabels = (typeKey) => {
+  return {
+    [typeKey]: "Project Type",
+    rtp_id: "RTP ID",
+    tip_id: "TIP ID",
+    cost: "Cost",
+    mpo_id: "MPO",
+    county: "County",
+    plan_portion: "Plan Portion",
+    sponsor_id: "Sponsor",
+    description: "Description",
+    year: "Year",
+  }
+}
 
 function onlyUnique(value, index, array) {
   return array.indexOf(value) === index && value !== "null" && value !== 0;
@@ -55,8 +57,8 @@ export const ProjectTableTransform = (tableData, attributes, filters, years, sou
     if(columnName === "description"){
       filterProperties.filter = "text";
     }
-
-
+    const typeKey = projectKey === "rtp_id" ? "ptype" : "ptype_id";
+    const VARIABLE_LABELS = generateVariableLabels(typeKey)
     const column = {
       Header: VARIABLE_LABELS[columnName],
       accessor: columnName,
@@ -86,7 +88,7 @@ export const ProjectTableTransform = (tableData, attributes, filters, years, sou
       : [generateColumn("mpo_id")];
   const columns = [
     generateColumn(projectKey),
-    generateColumn("ptype_id"),
+    generateColumn(typeKey),
     generateColumn("cost"),
     ...dependentColumns,
     generateColumn("county"),
@@ -125,7 +127,7 @@ const LinkCell = ({feature, sourceId}) => {
   const [searchParams] = useSearchParams();
   const variable = searchParams.get("variable");
   const { viewId } = useParams() || "";
-
+  console.log(feature, sourceId)
   return (<div>
     <Link onClick={(e) => navigate(`/source/${sourceId}/map/${viewId}?variable=${variable}&featureId=${feature}`)}> Link to map </Link>
   </div>)
