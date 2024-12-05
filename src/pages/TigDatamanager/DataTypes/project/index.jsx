@@ -5,6 +5,7 @@ import Table from "~/pages/DataManager/DataTypes/gis_dataset/pages/Table";
 import ProjectHoverComp from './MapHoverComp'
 import ProjectMapFilter from './MapFilterComp'
 import { ProjectTableTransform } from './TableFilterComp'
+import Overview from "~/pages/DataManager/DataTypes/default/Overview";
 
 import TigOverview from '../TigOverview'
 import TigMetadata from '../TigMetadata'
@@ -35,6 +36,12 @@ const GisDatasetConfig = {
     path: "/meta",
     hidden: false,
     component: TigMetadata,
+  },
+  source_meta: {
+    name: "Source Metadata",
+    path: "/source_meta",
+    hidden: true,
+    component: Overview,
   },
   map: {
     name: "Map",
