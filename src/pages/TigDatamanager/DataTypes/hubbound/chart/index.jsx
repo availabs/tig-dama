@@ -43,7 +43,7 @@ const ChartPage = (props) => {
   useEffect(() => {
     const newFilters = { ...filters };
     if (!year) {
-      newFilters.year = { value: 2019 };
+      newFilters.year = { value: 2022 };
     }
     if (!count_variable_name) {
       newFilters.count_variable_name = {

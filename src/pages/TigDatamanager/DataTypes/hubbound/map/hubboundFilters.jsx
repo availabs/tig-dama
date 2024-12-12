@@ -16,7 +16,7 @@ const HubboundFilters = ({ filters, setFilters, filterType = "mapFilter" }) => {
   useEffect(() => {
     const newFilters = {...filters};
     if (!year) {
-      newFilters.year = { value: 2019 }
+      newFilters.year = { value: 2022 }
     }    
     setFilters(newFilters)
   }, []);

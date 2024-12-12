@@ -45,7 +45,7 @@ export default function PublishButton({ state, dispatch }) {
       get(buttonStates, publishStatus, buttonStates['AWAITING'])
   , [publishStatus]) 
 
-  if (!layerName || uploadErrMsg || lyrAnlysErrMsg || !tableDescriptor) {
+  if (!gisUploadId || uploadErrMsg || lyrAnlysErrMsg) {
     return "";
   }
 
@@ -73,11 +73,12 @@ export default function PublishButton({ state, dispatch }) {
           etlContextId,
           customViewAttributes,
           mbtilesOptions,
+          fileName: state?.uploadedFile?.name
         };
 
         console.log('publish', publishData)
 
-        const res = await fetch(`${state.damaServerPath}/gis-dataset/publish`, 
+        const res = await fetch(`${state.damaServerPath}/hubbound/publish`, 
         {
           method: "POST",
           body: JSON.stringify(publishData),

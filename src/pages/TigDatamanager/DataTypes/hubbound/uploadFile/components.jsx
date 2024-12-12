@@ -11,10 +11,11 @@ export function ProgressBar({ progress }) {
     margin: 50,
   };
 
+  const divWidth = (progress) * .9;
   const Childdiv = {
     display: "inline-block",
     height: "84%",
-    width: `${progress}`,
+    width: `${divWidth}%`,
     backgroundColor: "#3b82f680",
     borderRadius: 40,
     textAlign: "right",
@@ -40,7 +41,7 @@ export function ProgressBar({ progress }) {
       </span>
 
       <div style={Childdiv}>
-        <span style={progresstext}>{`${progress}`}</span>
+        <span style={progresstext}>{`${progress}%`}</span>
       </div>
     </div>
   );
@@ -49,16 +50,14 @@ export function ProgressBar({ progress }) {
 
 export function GisDatasetUploadStatusElem({ fileUploadStatus }) {
   let fileUploadStatusElem;
-
   if (!fileUploadStatus) {
     fileUploadStatusElem = (
       <td className="py-4 text-center">Sending Hubbound File to server</td>
     );
   } else {
     const { type, payload } = fileUploadStatus;
-console.log("fileUploadStatus ryan",fileUploadStatus)
-    if (/GIS_FILE_UPLOAD_PROGRESS$/.test(type)) {
-      fileUploadStatusElem = <ProgressBar progress={payload.progress} />;
+    if (/GIS_FILE_UPLOAD_PROGRESS$/.test(type) && payload?.data !== 100) {
+      fileUploadStatusElem = <ProgressBar progress={payload?.data} />;
     } else if (/GIS_FILE_RECEIVED$/.test(type)) {
       fileUploadStatusElem = (
         <td className="py-4 text-center">File Received</td>
@@ -72,7 +71,7 @@ console.log("fileUploadStatus ryan",fileUploadStatus)
         <td className="py-4 text-center">GIS File Analysis Complete</td>
       );
     } else {
-      fileUploadStatusElem = <td className="py-4 text-center">Processing</td>;
+      fileUploadStatusElem = <td className="py-4 text-center">Complete</td>;
     }
   }
 

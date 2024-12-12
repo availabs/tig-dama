@@ -1,6 +1,6 @@
 import Table from "./table";
 import MapPage from "~/pages/DataManager/DataTypes/gis_dataset/pages/Map";
-import CreatePage from "~/pages/DataManager/DataTypes/gis_dataset/pages/Create";
+import CreatePage from "./create";
 import TigOverview from "../TigOverview";
 import { HubboundTableTransform } from "./table/hubboundTableTransform";
 import { HubboundMapFilter } from "./map/HubboundMapFilter";
@@ -41,7 +41,7 @@ const hubboundConfig = {
       <Table
         {...props}
         transform={HubboundTableTransform}
-        filterData={{ year: { value: [2019] } }}
+        filterData={{ year: { value: [2022] } }}
         fullWidth={true}
       />
     ),

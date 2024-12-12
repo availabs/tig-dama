@@ -37,7 +37,7 @@ export default function UploadGisDataset({ state, dispatch }) {
       
       console.log('sending upload')
       const res = await fetch(
-        `${damaServerPath}/gis-dataset/upload`,
+        `${damaServerPath}/hubbound/upload`,
         { method: "POST", body: formData }
       );
       console.log('sending upload finished ')

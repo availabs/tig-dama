@@ -62,7 +62,7 @@ const TablePage = ({
   useEffect(() => {
     const newFilters = {...filters};
     if (!year) {
-      newFilters.year = { value: 2019 }
+      newFilters.year = { value: 2022 }
     }
     if(!direction){
       newFilters.direction = { value: "all" }

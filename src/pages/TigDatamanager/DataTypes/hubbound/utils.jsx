@@ -73,7 +73,7 @@ export const aggHubboundByLocation = (data) => {
 export const createHubboundFilterClause = (filters) => {
   const filterClause = Object.keys(filters).reduce((a, c) => {
     if (shouldCreateFilter(filters[c].value)) {
-      if (HUBBOUND_ATTRIBUTES[c].type === "range") {
+      if (HUBBOUND_ATTRIBUTES[c]?.type === "range") {
         const rangeLength =
           filters[c].value.length === 2
             ? Math.abs(filters[c].value[1] - filters[c].value[0]) + 1

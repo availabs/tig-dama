@@ -56,7 +56,7 @@ export const HubboundMapFilter = (props) => {
   useEffect(() => {
     const newFilters = {...filters};
     if (!year) {
-      newFilters.year = { value: 2019 }
+      newFilters.year = { value: 2022 }
     }  
     if (!hour) {
       newFilters.hour = { value: [6, 12] }
@@ -219,13 +219,18 @@ export const HubboundMapFilter = (props) => {
       const dataObjs = aggHubboundByLocation(tableData);
       const activeLocationNames = Object.keys(dataObjs);
       newSymbology.filter = activeLocationNames;
-
       if (!isEqual(newSymbology, tempSymbology)) {
         console.log("setting new newSymbology, FILTER useEffect");
         setTempSymbology(newSymbology);
       }
     }
-    //RYAN TODO maybe try adjusting this dependency array?
+    else {
+      newSymbology.filter = [''];
+      if (!isEqual(newSymbology, tempSymbology)) {
+        console.log("ELSE setting new newSymbology, FILTER useEffect");
+        setTempSymbology(newSymbology);
+      }
+    }
   }, [tableData, hubboundDetailsPath, hubboundDetailsOptions, filters, locationsData]);
 
   return (
