@@ -75,7 +75,7 @@ export const createHubboundFilterClause = (filters) => {
     if (shouldCreateFilter(filters[c].value)) {
       if (HUBBOUND_ATTRIBUTES[c]?.type === "range") {
         const rangeLength =
-          filters[c].value.length === 2
+          filters[c].value.length === 2 && (filters[c].value[1] - filters[c].value[0] !== 0)
             ? Math.abs(filters[c].value[1] - filters[c].value[0]) + 1
             : 1;
 
