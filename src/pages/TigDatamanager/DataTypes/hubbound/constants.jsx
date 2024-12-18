@@ -130,7 +130,7 @@ const TRANSIT_MODES = [
   'Private Ferry',
   'Bicycle',
   'Local Bus',
-  'Vehicles (Auto+Taxi+Trucks+Comm. Vans)',
+  'Vehicles (Bus+Auto+Taxi+Trucks+Commercial Vans)',
   'Public Ferry'
 ];
 TRANSIT_MODES.sort(alphaSort);
