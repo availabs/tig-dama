@@ -224,7 +224,7 @@ export const HUBBOUND_ATTRIBUTES = {
     filterRemovable: true,
   },
   hour: {
-    values: Array.from({ length: 24 }, (_, i) => -1 + 1 + i),
+    values: Array.from({ length: 25 }, (_, i) => -1 + 1 + i),
     type: "range",
     mapFilter: true,
     tableFilter: true,

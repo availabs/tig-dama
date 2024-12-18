@@ -59,13 +59,13 @@ export const HubboundMapFilter = (props) => {
       newFilters.year = { value: 2022 }
     }  
     if (!hour) {
-      newFilters.hour = { value: [6, 12] }
+      newFilters.hour = { value: [0, 1] }
     }    
     if (!transit_mode_name) {
-      newFilters.transit_mode_name = { value: HUBBOUND_ATTRIBUTES['transit_mode_name'].values[6] }
+      newFilters.transit_mode_name = { value: HUBBOUND_ATTRIBUTES['transit_mode_name'].values[0] }
     }
     if(!direction){
-      newFilters.direction = { value: HUBBOUND_ATTRIBUTES['direction'].values[0] }
+      newFilters.direction = { value: HUBBOUND_ATTRIBUTES['direction'].values[2] }
     } 
     setFilters(newFilters)
   }, []);

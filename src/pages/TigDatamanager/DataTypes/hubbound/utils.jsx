@@ -74,18 +74,22 @@ export const createHubboundFilterClause = (filters) => {
   const filterClause = Object.keys(filters).reduce((a, c) => {
     if (shouldCreateFilter(filters[c].value)) {
       if (HUBBOUND_ATTRIBUTES[c]?.type === "range") {
+        //Data is represented as:
+        //Trips occuring from 12:00 to 12:59
+        //Therefore, if range is from 12 to 2, only return trips with hour = 12 or hour = 1
+        //If range is from 12 to 1, only return trips with hour = 12
         const rangeLength =
-          filters[c].value.length === 2 && (filters[c].value[1] - filters[c].value[0] !== 0)
-            ? Math.abs(filters[c].value[1] - filters[c].value[0]) + 1
+          filters[c].value.length === 2
+            ? Math.abs(filters[c].value[1] - filters[c].value[0])
             : 1;
-
         const rangeStart = filters[c].value[0] > filters[c].value[1] ? filters[c].value[1] : filters[c].value[0]
         a[c] = [
           Array.from(
             { length: rangeLength },
-            (_, i) => -1 + 1 + i + rangeStart
+            (_, i) => i + rangeStart
           ),
         ];
+
       } else {
         a[c] = [filters[c].value];
       }

@@ -9,6 +9,26 @@ import { FilterControlContainer } from "../../controls/FilterControlContainer";
 const SLIDER_TRACK_CLASSNAME = " track"
 const INACTIVE_TRACK_CLASSNAME = " bg-gray-100";
 const ACTIVE_TRACK_CLASSNAME = " bg-blue-700"
+
+const transformHour = (rawHour) => {
+  let formattedHour = rawHour;
+  if(rawHour === 0 || rawHour === 24) {
+    formattedHour = "12 AM"
+  }
+  else if (rawHour === 12) {
+    formattedHour += " PM";
+  }
+  else if(rawHour > 12) {
+    formattedHour = formattedHour - 12;
+    formattedHour += " PM";
+  }
+  else {
+    formattedHour += " AM"
+  }
+
+  return formattedHour;
+}
+
 //`count` is excluded because API endpoint currently does not support `<` or `>` operations
 const HubboundFilters = ({ filters, setFilters, filterType = "mapFilter" }) => {
   const year =  filters?.year?.value;
@@ -58,44 +78,43 @@ const FilterInput = ({ attribute, name, value, setFilters, filters }) => {
             </select>
           </div>
         ) :  (
-          <div className="grid p-2 mx-2 bg-blue-100 rounded">
+          <div className="grid p-4 pt-2 mx-2 bg-blue-100 rounded">
+            <div className="flex justify-self-center text-sm">From:<b className="pl-1">{transformHour(value[0])} to {transformHour(value[1])}</b></div>
             <div className="flex">
               <ReactSlider
-                  className="w-64 h-8 mt-2 self-center"
-                  thumbClassName="bg-gray-100 self-center rounded-lg border border-black w-3 h-3"
-                  trackClassName={`h-3 self-center rounded  border border-blue-300 ${SLIDER_TRACK_CLASSNAME}`}
-                  markClassName="bg-blue-500 w-px h-1 mt-3 ml-1 text-xs"
-                  thumbActiveClassName="bg-gray-300"
-                  marks={true}
-                  min={values[0]}
-                  max={values[values.length-1]}
-                  pearling
-                  renderMark={(props) => {return <span {...props} >{props.key % 4 === 3 ? props.key : ''}</span>}}
-                  value={filters?.[name]?.value}
-                  onAfterChange={(value, thumbIndex) => {
-                    setFilters({
-                      ...filters,
-                      [name]: { value },
-                    })
-                  }}
-                  renderTrack={(props, state) => {
-                    let { className, key } = props;
-                    if (key.includes(`${SLIDER_TRACK_CLASSNAME}-0`) || key.includes(`${SLIDER_TRACK_CLASSNAME}-2`)) {
-                      className += INACTIVE_TRACK_CLASSNAME;
-                      key += INACTIVE_TRACK_CLASSNAME;
-                    }
-                    else {
-                      className += ACTIVE_TRACK_CLASSNAME;
-                      key += ACTIVE_TRACK_CLASSNAME;
-                    }
-                    const newProps = { ...props, className, key };
-                    return <div { ...newProps } />
-                  }}
-  
+                className="w-64 h-8 mt-2 self-center"
+                thumbClassName="bg-gray-100 self-center rounded-lg border border-black w-3 h-3"
+                trackClassName={`h-3 self-center rounded  border border-blue-300 ${SLIDER_TRACK_CLASSNAME}`}
+                markClassName="bg-blue-500 w-px h-1 mt-3 ml-1 text-xs"
+                thumbActiveClassName="bg-gray-300"
+                marks={true}
+                min={values[0]}
+                max={values[values.length-1]}
+                pearling
+                minDistance={1}
+                renderMark={(props) => {return <span {...props} >{props.key % 6 === 0 ? transformHour(props.key) : ''}</span>}}
+                value={filters?.[name]?.value}
+                onAfterChange={(value, thumbIndex) => {
+                  setFilters({
+                    ...filters,
+                    [name]: { value },
+                  })
+                }}
+                renderTrack={(props, state) => {
+                  let { className, key } = props;
+                  if (key.includes(`${SLIDER_TRACK_CLASSNAME}-0`) || key.includes(`${SLIDER_TRACK_CLASSNAME}-2`)) {
+                    className += INACTIVE_TRACK_CLASSNAME;
+                    key += INACTIVE_TRACK_CLASSNAME;
+                  }
+                  else {
+                    className += ACTIVE_TRACK_CLASSNAME;
+                    key += ACTIVE_TRACK_CLASSNAME;
+                  }
+                  const newProps = { ...props, className, key };
+                  return <div { ...newProps } />
+                }}
               />
-  
             </div>
-            <div className="flex justify-self-center text-sm">From: {value[0]} To: {value[1]}</div>
           </div>
         )
       }}
