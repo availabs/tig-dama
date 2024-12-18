@@ -6,7 +6,7 @@ const HubboundTableTransform = (tableData, attributes, filters, setFilters) => {
   //One day we might do this when we upload the data instead
   const cleanedData = tableData.map(tRow => {
     const newRow = Object.keys(tRow).reduce((accRow, curKey) => {
-      accRow[curKey] = tRow[curKey] === "NULL" ? "" : tRow[curKey]
+      accRow[curKey] = (typeof tRow[curKey] === 'object' || tRow[curKey] === "NULL") ? "" : tRow[curKey]
 
       return accRow;
     }, {})
