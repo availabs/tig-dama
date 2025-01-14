@@ -1,4 +1,4 @@
-const finishYear = 2022;
+const finishYear = 2023;
 const startYear = 2018;
 
 function alphaSort(a, b) {
