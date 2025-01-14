@@ -1,7 +1,9 @@
 import Table from "./table";
 import MapPage from "~/pages/DataManager/DataTypes/gis_dataset/pages/Map";
 import CreatePage from "./create";
-import TigOverview from "../TigOverview";
+import TigOverview from '../TigOverview';
+import TigMetadata from '../TigMetadata';
+import Overview from "~/pages/DataManager/DataTypes/default/Overview";
 import { HubboundTableTransform } from "./table/hubboundTableTransform";
 import { HubboundMapFilter } from "./map/HubboundMapFilter";
 import { HubboundFilters } from "./map/hubboundFilters";
@@ -29,6 +31,18 @@ const hubboundConfig = {
     component: (props) => (
       <TigOverview {...props} getVariables={getVariables} />
     ),
+  },
+  meta: {
+    name: "Metadata",
+    path: "/meta",
+    hidden: false,
+    component: TigMetadata,
+  },
+  source_meta: {
+    name: "Source Metadata",
+    path: "/source_meta",
+    hidden: true,
+    component: Overview,
   },
   sourceCreate: {
     name: "Create",
