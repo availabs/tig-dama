@@ -126,12 +126,12 @@ export const BPMTableTransform = (tableData, attributes, filters) => {
       {
         Header: variableLabels.VMT,
         accessor: variableAccessors.VMT,
-        Cell: (d) => <div>{Math.round(d.value/BPM_DISPLAY_DIVISOR).toLocaleString()}</div>
+        Cell: (d) => <div>{Math.round(d.value).toLocaleString()}</div>
       },
       {
         Header: variableLabels.VHT,
         accessor: variableAccessors.VHT,
-        Cell: (d) => <div>{Math.round(d.value/BPM_DISPLAY_DIVISOR).toLocaleString()}</div>
+        Cell: (d) => <div>{Math.round(d.value).toLocaleString()}</div>
       },
       {
         Header: variableLabels.AvgSpeed,
