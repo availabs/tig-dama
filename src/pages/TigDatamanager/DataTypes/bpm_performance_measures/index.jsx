@@ -5,7 +5,7 @@ import CreatePage from "~/pages/DataManager/DataTypes/gis_dataset/pages/Create";
 import Table from "~/pages/DataManager/DataTypes/gis_dataset/pages/Table";
 import TigOverview from '../TigOverview'
 import TigMetadata from '../TigMetadata'
-
+import Overview from "~/pages/DataManager/DataTypes/default/Overview";
 import {BPMTableTransform, HBTableFilter} from './BPMTableFilter'
 import {BPMMapFilter} from './BPMMapFilter'
 import {BPMHoverComp} from './BPMHoverComp'
@@ -39,6 +39,12 @@ const config = {
     path: "/meta",
     hidden: false,
     component: TigMetadata,
+  },
+  source_meta: {
+    name: "Source Metadata",
+    path: "/source_meta",
+    hidden: true,
+    component: Overview,
   },
   table: {
     name: "Table",
