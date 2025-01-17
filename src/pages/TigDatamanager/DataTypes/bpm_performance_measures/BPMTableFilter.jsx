@@ -102,7 +102,7 @@ export const BPMTableTransform = (tableData, attributes, filters) => {
     sumAll[d?.area] = {
       [variableAccessors.VMT]: Number(d?.[variableAccessors.VMT]) + sumAll[d?.area][variableAccessors.VMT] || 0,
       [variableAccessors.VHT]: Number(d?.[variableAccessors.VHT]) + sumAll[d?.area][variableAccessors.VHT] || 0,
-      total_speed: d?.ave_speed + sumAll[d?.area].total_speed || 0,
+      total_speed: Number(d?.ave_speed) + sumAll[d?.area].total_speed || 0,
       count: 1+sumAll[d?.area]?.count || 0
     }
     return sumAll
