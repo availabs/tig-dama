@@ -391,7 +391,7 @@ export const BPMMapFilter = ({
 
 
   return (
-    <div className='flex justify-start content-center flex-wrap w-full p-1'>
+    <div className='flex justify-start content-center flex-wrap w-[85%] p-1'>
         <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">ID :</div>
         <div className="flex">
           <select

@@ -53,7 +53,7 @@ const config = {
       <Table
         {...props}
         striped={true}
-        showViewSelector={false}
+        showViewSelector={true}
         transform={BPMTableTransform}
         TableFilter={HBTableFilter}
       />
@@ -65,7 +65,7 @@ const config = {
     component: (props) => (
       <Map
         {...props}
-         showViewSelector={false}
+         showViewSelector={true}
          MapFilter={BPMMapFilter}
          HoverComp={{Component: BPMHoverComp, isPinnable: true}}
          displayPinnedGeomBorder={true}
