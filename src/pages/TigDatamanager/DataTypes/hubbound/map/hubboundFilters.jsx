@@ -52,7 +52,7 @@ const HubboundFilters = ({ filters, setFilters, filterType = "mapFilter", active
         "years",
       ],
       []
-    ).map(yearString => Number.parseInt(yearString));
+    );
   }, [pgEnv, falcorCache, activeViewId]);
 
   useEffect(() => {

@@ -111,8 +111,8 @@ const shouldCreateFilter = (filterValue) => {
   //check if value is array with 1 element of "all" (to lower case)
 
   if (Array.isArray(filterValue)) {
-    return filterValue.length > 0 && filterValue[0].toString().toLowerCase() !== "all";
+    return filterValue.length > 0 && filterValue[0]?.toString()?.toLowerCase() !== "all";
   } else {
-    return filterValue !== null && filterValue.toString().toLowerCase() !== "all";
+    return filterValue !== null && filterValue?.toString()?.toLowerCase() !== "all";
   }
 };

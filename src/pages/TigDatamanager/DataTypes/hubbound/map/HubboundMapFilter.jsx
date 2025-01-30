@@ -68,7 +68,7 @@ export const HubboundMapFilter = (props) => {
         "years",
       ],
       []
-    ).map(yearString => Number.parseInt(yearString));
+    );
   }, [pgEnv, falcorCache, activeViewId]);
 
   useEffect(() => {

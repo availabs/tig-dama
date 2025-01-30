@@ -49,15 +49,15 @@ const ChartPage = (props) => {
         pgEnv,
         "views",
         "byId",
-        activeViewId,
+        activeDataVersionId,
         "attributes",
         "metadata",
         "value",
         "years",
       ],
       []
-    ).map(yearString => Number.parseInt(yearString));
-  }, [pgEnv, falcorCache, activeViewId]);
+    );
+  }, [pgEnv, falcorCache, activeDataVersionId]);
 
   useEffect(() => {
     const newFilters = { ...filters };

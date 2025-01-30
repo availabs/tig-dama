@@ -75,7 +75,7 @@ const TablePage = ({
         "years",
       ],
       []
-    ).map(yearString => Number.parseInt(yearString));
+    );
   }, [pgEnv, falcorCache, activeViewId]);
 
   useEffect(() => {
