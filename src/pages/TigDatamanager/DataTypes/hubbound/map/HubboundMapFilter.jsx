@@ -53,10 +53,28 @@ export const HubboundMapFilter = (props) => {
   const transit_mode_name = filters?.transit_mode_name?.value;
   const direction = filters?.direction?.value;
 
+  const yearRange = useMemo(() => {
+    return get(
+      falcorCache,
+      [
+        "dama",
+        pgEnv,
+        "views",
+        "byId",
+        activeViewId,
+        "attributes",
+        "metadata",
+        "value",
+        "years",
+      ],
+      []
+    ).map(yearString => Number.parseInt(yearString));
+  }, [pgEnv, falcorCache, activeViewId]);
+
   useEffect(() => {
     const newFilters = {...filters};
     if (!year) {
-      newFilters.year = { value: 2022 }
+      newFilters.year = { value: yearRange[0] }
     }  
     if (!hour) {
       newFilters.hour = { value: [0, 1] }

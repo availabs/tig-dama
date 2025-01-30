@@ -55,7 +55,6 @@ const hubboundConfig = {
       <Table
         {...props}
         transform={HubboundTableTransform}
-        filterData={{ year: { value: [2022] } }}
         fullWidth={true}
       />
     ),

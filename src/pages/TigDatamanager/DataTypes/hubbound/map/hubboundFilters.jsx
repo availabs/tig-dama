@@ -52,7 +52,7 @@ const HubboundFilters = ({ filters, setFilters, filterType = "mapFilter", active
         "years",
       ],
       []
-    );
+    ).map(yearString => Number.parseInt(yearString));
   }, [pgEnv, falcorCache, activeViewId]);
 
   useEffect(() => {
@@ -63,6 +63,7 @@ const HubboundFilters = ({ filters, setFilters, filterType = "mapFilter", active
     setFilters(newFilters)
   }, []);
 
+  //The range of years is kept inside of view metadata 
   HUBBOUND_ATTRIBUTES.year.values = yearRange;
   return (
     <div className="flex flex-wrap flex-1 border-blue-100 pb-1 justify-start gap-y-2">

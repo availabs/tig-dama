@@ -40,10 +40,29 @@ const ChartPage = (props) => {
   const direction = useMemo(() => get(chartFilters, "direction.value"), [filters]);
 
   //initialize data filters
+
+  const yearRange = useMemo(() => {
+    return get(
+      falcorCache,
+      [
+        "dama",
+        pgEnv,
+        "views",
+        "byId",
+        activeViewId,
+        "attributes",
+        "metadata",
+        "value",
+        "years",
+      ],
+      []
+    ).map(yearString => Number.parseInt(yearString));
+  }, [pgEnv, falcorCache, activeViewId]);
+
   useEffect(() => {
     const newFilters = { ...filters };
     if (!year) {
-      newFilters.year = { value: 2022 };
+      newFilters.year = { value: yearRange[0] };
     }
     if (!count_variable_name) {
       newFilters.count_variable_name = {
@@ -173,7 +192,7 @@ const ChartPage = (props) => {
           />
         </div>
         <div className="flex">
-          <HubboundFilter filters={filters} setFilters={setFilters} filterType={"chartFilter"}/>
+          <HubboundFilter activeViewId={activeDataVersionId} filters={filters} setFilters={setFilters} filterType={"chartFilter"}/>
         </div>
       </div>
       <div style={{ height: "600px" }} className="grid" ref={setRef}>

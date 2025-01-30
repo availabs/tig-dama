@@ -1,6 +1,6 @@
 import { HUBBOUND_ATTRIBUTES } from "../constants";
 
-const HubboundTableTransform = (tableData, attributes, filters, setFilters) => {
+const HubboundTableTransform = (tableData, attributes, filters, setFilters, yearRange) => {
 
   //Clean out any `null` values
   //One day we might do this when we upload the data instead
@@ -12,8 +12,10 @@ const HubboundTableTransform = (tableData, attributes, filters, setFilters) => {
     }, {})
 
     return newRow;
-  })
+  });
 
+  //The range of years is kept inside of view metadata 
+  HUBBOUND_ATTRIBUTES.year.values = yearRange.map(yearStr => Number.parseInt(yearStr));
   return {
     data: cleanedData,
     columns: attributes

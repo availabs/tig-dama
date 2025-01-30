@@ -59,10 +59,29 @@ const TablePage = ({
 
   const year = filters?.year?.value;
   const direction = filters?.direction?.value;
+
+  const yearRange = useMemo(() => {
+    return get(
+      falcorCache,
+      [
+        "dama",
+        pgEnv,
+        "views",
+        "byId",
+        activeViewId,
+        "attributes",
+        "metadata",
+        "value",
+        "years",
+      ],
+      []
+    ).map(yearString => Number.parseInt(yearString));
+  }, [pgEnv, falcorCache, activeViewId]);
+
   useEffect(() => {
     const newFilters = {...filters};
     if (!year) {
-      newFilters.year = { value: 2022 }
+      newFilters.year = { value:[ yearRange[0]] }
     }
     if(!direction){
       newFilters.direction = { value: "all" }
@@ -116,8 +135,8 @@ const TablePage = ({
   }, [activeViewId, falcorCache, tableColumns, hubboundDetailsPath]);
 
   const { data, columns } = useMemo(() => {
-    return transform(tableData, tableColumns, filters, setFilters);
-  }, [tableData, tableColumns, filters, setFilters]);
+    return transform(tableData, tableColumns, filters, setFilters, yearRange);
+  }, [tableData, tableColumns, filters, setFilters, yearRange]);
 
   //Without this, would be unable to remove filters that result in 0 rows
   if(data.length === 0){
