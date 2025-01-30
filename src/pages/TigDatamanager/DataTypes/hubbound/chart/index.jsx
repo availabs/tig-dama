@@ -165,6 +165,7 @@ const ChartPage = (props) => {
       <div className="flex justify-start content-center flex-wrap">
         <div className="flex w-full">
           <ChartFilter
+            activeViewId={activeDataVersionId}
             userHighestAuth={userHighestAuth}
             filters={chartFilters}
             setFilters={setChartFilters}

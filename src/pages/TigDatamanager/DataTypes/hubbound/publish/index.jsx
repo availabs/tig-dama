@@ -67,8 +67,6 @@ export default function PublishButton({ state, dispatch }) {
   const existingHubboundSources = useMemo(() => {
     return get(falcorCache, hubboundSourcesPath, {})?.value
   },[falcorCache])
-  console.log({existingHubboundSourceId,existingHubboundViewId})
-  console.log(existingHubboundSources);
 
   useEffect(() => {
     async function getData() {

@@ -236,7 +236,7 @@ export const HubboundMapFilter = (props) => {
 
   return (
     <div>
-      <HubboundFilters filters={filters} setFilters={setFilters} />
+      <HubboundFilters filters={filters} setFilters={setFilters} activeViewId={activeViewId}/>
     </div>
   );
 };

@@ -1,10 +1,13 @@
 import React, {
   useEffect,
+  useContext,
+  useMemo
 } from "react";
 import ReactSlider from 'react-slider';
-
+import { get } from "lodash";
 import { HUBBOUND_ATTRIBUTES } from "../constants";
 import { FilterControlContainer } from "../../controls/FilterControlContainer";
+import { DamaContext } from "~/pages/DataManager/store";
 
 const SLIDER_TRACK_CLASSNAME = " track"
 const INACTIVE_TRACK_CLASSNAME = " bg-gray-100";
@@ -30,17 +33,37 @@ const transformHour = (rawHour) => {
 }
 
 //`count` is excluded because API endpoint currently does not support `<` or `>` operations
-const HubboundFilters = ({ filters, setFilters, filterType = "mapFilter" }) => {
+const HubboundFilters = ({ filters, setFilters, filterType = "mapFilter", activeViewId }) => {
   const year =  filters?.year?.value;
+  const { falcorCache, pgEnv } = useContext(DamaContext);
+
+  const yearRange = useMemo(() => {
+    return get(
+      falcorCache,
+      [
+        "dama",
+        pgEnv,
+        "views",
+        "byId",
+        activeViewId,
+        "attributes",
+        "metadata",
+        "value",
+        "years",
+      ],
+      []
+    );
+  }, [pgEnv, falcorCache, activeViewId]);
 
   useEffect(() => {
     const newFilters = {...filters};
     if (!year) {
-      newFilters.year = { value: 2022 }
+      newFilters.year = { value: yearRange[0] }
     }    
     setFilters(newFilters)
   }, []);
 
+  HUBBOUND_ATTRIBUTES.year.values = yearRange;
   return (
     <div className="flex flex-wrap flex-1 border-blue-100 pb-1 justify-start gap-y-2">
       {Object.keys(HUBBOUND_ATTRIBUTES).filter(attrKey => HUBBOUND_ATTRIBUTES[attrKey][filterType]).map(attrName => {
