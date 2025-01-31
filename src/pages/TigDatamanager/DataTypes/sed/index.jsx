@@ -1,6 +1,5 @@
 import React from "react";
-
-import MapPage from "~/pages/DataManager/DataTypes/gis_dataset/pages/Map";
+import MapPage from "~/pages/TigDatamanager/Utils/gisMap";
 import Overview from "~/pages/DataManager/DataTypes/default/Overview";
 import CreatePage from "~/pages/DataManager/DataTypes/gis_dataset/pages/Create";
 import Table from "~/pages/DataManager/DataTypes/gis_dataset/pages/Table";

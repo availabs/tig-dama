@@ -1,5 +1,5 @@
 import React from 'react'
-import MapPage from "~/pages/DataManager/DataTypes/gis_dataset/pages/Map";
+import MapPage from "~/pages/TigDatamanager/Utils/gisMap";
 import CreatePage from "~/pages/DataManager/DataTypes/gis_dataset/pages/Create";
 import Table from "~/pages/DataManager/DataTypes/gis_dataset/pages/Table";
 import ProjectHoverComp from './MapHoverComp'

@@ -1,7 +1,7 @@
 import React from "react";
 import Create from "./create";
 import Update from "./update";
-import MapPage from "~/pages/DataManager/DataTypes/gis_dataset/pages/Map";
+import MapPage from "~/pages/TigDatamanager/Utils/gisMap";
 import ACSMapFilter from "./map";
 import Chart from "./chart";
 

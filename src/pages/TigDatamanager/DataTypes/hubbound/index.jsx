@@ -1,5 +1,5 @@
 import Table from "./table";
-import MapPage from "~/pages/DataManager/DataTypes/gis_dataset/pages/Map";
+import MapPage from "~/pages/TigDatamanager/Utils/gisMap";
 import CreatePage from "./create";
 import TigOverview from '../TigOverview';
 import TigMetadata from '../TigMetadata';

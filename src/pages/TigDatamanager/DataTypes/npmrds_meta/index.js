@@ -1,4 +1,4 @@
-import MapPage from "~/pages/DataManager/DataTypes/gis_dataset/pages/Map";
+import MapPage from "~/pages/TigDatamanager/Utils/gisMap";
 
 const NpmrdsMetaConfig = {
   map: {

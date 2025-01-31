@@ -1,5 +1,5 @@
 import NpmrdsTable from "./table"
-import MapPage from "~/pages/DataManager/DataTypes/gis_dataset/pages/Map";
+import MapPage from "~/pages/TigDatamanager/Utils/gisMap";
 import { npmrdsMapFilter } from "./map/npmrdsMapFilter";
 import {npmrdsHoverComp} from './map/npmrdsHoverComp'
 import CreatePage from "./pages/Create";
