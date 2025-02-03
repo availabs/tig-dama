@@ -40,6 +40,7 @@ export default function PublishButton({ state, dispatch }) {
     etlContextId,
     gisUploadId,
     userId,
+    email,
     customViewAttributes,
     sourceType,
     mbtilesOptions,
@@ -137,6 +138,7 @@ export default function PublishButton({ state, dispatch }) {
             type: sourceType || 'gis_dataset'
           },
           user_id: userId,
+          email,
           tableDescriptor,
           gisUploadId,
           layerName,

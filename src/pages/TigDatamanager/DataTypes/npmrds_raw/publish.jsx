@@ -16,6 +16,7 @@ const submitUpload = ({props, navigate, pgEnv, baseUrl}) => {
         endDate: props?.endDate,
         states: props?.states,
         user_id: props?.user_id,
+        email: props?.email,
         pgEnv: pgEnv || props?.pgEnv,
       };
 

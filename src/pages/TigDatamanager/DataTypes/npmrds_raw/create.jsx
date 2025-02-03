@@ -287,6 +287,7 @@ const Create = ({ source }) => {
             endDate={endDate}
             states={states}
             user_id={user?.id}
+            email={user?.email}
             pgEnv={pgEnv}
           />
         </>
