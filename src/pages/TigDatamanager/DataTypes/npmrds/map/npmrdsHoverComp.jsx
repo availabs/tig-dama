@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from "react";
 import get from "lodash/get";
-import { falcorGraph } from "~/modules/avl-components/src";
-
-const API_HOST = "https://tigtest2.nymtc.org/api2/graph";
-const tig_falcor = falcorGraph(API_HOST);
+import { DamaContext } from "~/pages/DataManager/store"
 
 const npmrdsHoverComp = (props) => {
   const { data, layer } = props;
@@ -15,7 +12,9 @@ const npmrdsHoverComp = (props) => {
 
   const mapData = layerProps?.symbology?.data;
   const mapTmcData = mapData[tmcId];
-
+  const { falcor, falcorCache, pgEnv } = React.useContext(DamaContext);
+  const tig_falcor = falcor;
+console.log("in map hover")
   useEffect(() => {
     async function getTmcData() {
       const tmcData = await tig_falcor.get([

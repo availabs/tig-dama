@@ -304,12 +304,12 @@ export default function NpmrdsManage({
     "Tmcs",
     "",
   ];
-
   const updateNpmrds = async () => {
     const publishData = {
       source_id: source?.source_id || null,
-      view_id: activeView?.view_id,
-      user_id: ctxUser?.user_id,
+      view_id: activeViewId,
+      user_id: ctxUser?.id || ctxUser.user_id,
+      email: ctxUser?.email,
       npmrds_raw_view_ids: selectedViews.map((svs) => svs.value),
       name: source?.name,
       type: "npmrds",
@@ -329,7 +329,7 @@ export default function NpmrdsManage({
       const { source_id } = publishFinalEvent;
 
       setLoading(false);
-      navigate(`/datasources/source/${source_id}`);
+      navigate(`/source/${source_id}`);
     } catch (err) {
       setLoading(false);
     }
@@ -377,7 +377,7 @@ export default function NpmrdsManage({
       const { source_id } = publishFinalEvent;
 
       setLoading(false);
-      navigate(`/datasources/source/${source_id}`);
+      navigate(`/source/${source_id}`);
     } catch (err) {
       setLoading(false);
     }

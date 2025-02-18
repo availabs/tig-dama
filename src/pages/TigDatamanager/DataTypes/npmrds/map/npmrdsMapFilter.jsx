@@ -1,21 +1,17 @@
-import {useEffect, useState, useMemo} from "react";
+import {useEffect, useState, useContext} from "react";
 import cloneDeep from 'lodash/cloneDeep'
 import isEqual from 'lodash/isEqual'
 import { NPMRDS_ATTRIBUTES } from "../constants";
 import * as d3scale from "d3-scale"
 import mapboxgl from "maplibre-gl";
 import get from "lodash/get";
-import {
-  falcorGraph,
-} from "~/modules/avl-components/src"
+import { DamaContext } from "~/pages/DataManager/store"
 
 import {LAYERS, LEGEND_RANGE, LEGEND_DOMAIN, SOURCES} from './mapConstants'
 import { NpmrdsFilters } from "../filters";
 const GEOM_TYPES = {
   LineString: "LineString",
 };
-const API_HOST = 'https://tigtest2.nymtc.org/api2/graph'
-const tig_falcor = falcorGraph(API_HOST)
 const GEO_LEVEL = 'COUNTY';
 //TODO
 //How to get available months/years? tig22 doesn't list all months for all years
@@ -25,8 +21,12 @@ const npmrdsMapFilter = ({
   filters,
   setFilters,
   tempSymbology, 
-  setTempSymbology
+  setTempSymbology,
+  activeViewId,
+  source
 }) => {
+  const { falcor, falcorCache, pgEnv } = useContext(DamaContext);
+  const tig_falcor = falcor;
   const [allTmcs, setAllTmcs] = useState([]);
   const [tmcBounds, setTmcBounds] = useState();
   let newSymbology = cloneDeep(tempSymbology);
@@ -35,14 +35,14 @@ const npmrdsMapFilter = ({
   const hour = filters?.hour?.value;
   const direction = filters?.direction?.value;
   const tmc = filters?.tmc?.value;
-
+  console.log("npmrds map filter",{activeViewId})
   useEffect(() => {
     const newFilters = { ...filters };
     if (!year) {
-      newFilters.year = { value: 2020 };
+      newFilters.year = { value: 2024 };
     }
     if (!month) {
-      newFilters.month = { value:  NPMRDS_ATTRIBUTES["month"].values[5] };
+      newFilters.month = { value:  NPMRDS_ATTRIBUTES["month"].values[1] };
     }
     if (!hour) {
       newFilters.hour = { value: NPMRDS_ATTRIBUTES["hour"].values[0] };
@@ -85,21 +85,52 @@ const npmrdsMapFilter = ({
     async function getData() {    
       // geoids = filters.geography.domain.filter(d => d.name === filters.geography.value)[0].value,
 
-      let requests = NPMRDS_ATTRIBUTES['counties'].values.reduce((a, c) => {
-          a.push(['tig', 'npmrds', `${month}|${year}`, `${GEO_LEVEL}|${c}`, 'data'])
+//npmrds_geometry_view_id 
+//make a query to the backend using npmrds_tmc_meta_source_id
+//Backend will find the tile info.
+//['dama', pgEnv, 'npmrds','geometry', source?.metadata?.npmrds_tmc_meta_source_id, year]
+
+    const tileResp = await tig_falcor.get([
+      "dama",
+      pgEnv,
+      "npmrds",
+      "geometry",
+      source?.metadata?.npmrds_tmc_meta_source_id,
+      year,
+    ]);
+
+    const tileData =           get(
+      tileResp,
+      [
+        "json",
+        "dama",
+        pgEnv,
+        "npmrds",
+        "geometry",
+        source?.metadata?.npmrds_tmc_meta_source_id,
+      ],
+      {}
+    )
+
+    let requests = NPMRDS_ATTRIBUTES['counties'].values.reduce((a, c) => {
+          a.push(['dama', pgEnv, 'npmrds', source?.source_id, activeViewId, `${month}|${year}`, `${GEO_LEVEL}|${c}`, 'data'])
           // a.push(["geo", GEO_LEVEL.toLowerCase(), `${c}`, "geometry"]);
           return a;
       }, [])
 
+      
       const response = await tig_falcor.get(...requests);
-      const data = NPMRDS_ATTRIBUTES['counties'].values
+      const data = NPMRDS_ATTRIBUTES["counties"].values
         .map((d) =>
           get(
             response,
             [
               "json",
-              "tig",
+              "dama",
+              pgEnv,
               "npmrds",
+              source?.source_id,
+              activeViewId,
               `${month}|${year}`,
               `${GEO_LEVEL}|${d}`,
               "data",
@@ -109,7 +140,37 @@ const npmrdsMapFilter = ({
         )
         .reduce((out, d) => ({ ...out, ...d }), {});
 
-      newSymbology.sources = SOURCES;
+      const featArray = Object.keys(data).map(tmc => {
+        const d = data[tmc];
+        const {geometry, ...rest} = d;
+        return {
+          type: "Feature",
+          id:tmc,
+          name: tmc,
+          properties: {
+            tmc,
+            geoid: tmc,
+            ...rest,
+          },
+          geometry: geometry,
+        }
+      
+      }).filter(feat => Object.keys(feat.geometry).length !== 0);
+
+      const source_layer_id = `s${source.source_id}_v${activeViewId}`;
+      const newSource = {
+        id: source_layer_id,
+        source: {
+          type: "geojson",
+          data: {
+            type:"FeatureCollection",
+            features: featArray,
+          }
+        },
+        type: "geojson",
+      };
+      console.log("newSource::", newSource)
+      newSymbology.sources = [newSource];
       newSymbology.data = data;
 
       setAllTmcs(Object.keys(data));
@@ -122,23 +183,29 @@ const npmrdsMapFilter = ({
           a[c] = val ? val : 'hsla(185, 0%, 27%,0.8)'
           return a;
       }, {});
+      const layer_layer_id = `${source_layer_id}_${"line"}`;
+      const newLayer = {
+        id: layer_layer_id,
+        source: source_layer_id,
+        type:"line",
+        paint: {
+          "line-color": [
+            "case",
+            ["has", ["to-string", ["get", 'tmc']], ["literal", colors]],
+            ["get", ["to-string", ["get", 'tmc']], ["literal", colors]],
+            "hsla(185, 0%, 27%,0.0)",
+        ],
+          "line-width": 3,
+        },
+        layout: {
+          visibility: 'visible'
+        }
+      };
 
-      newSymbology.layers = [...(newSymbology.layers ?? LAYERS)].map(layer => ({
-        ...layer,
-          paint: {
-            "line-color": [
-              "case",
-              ["has", ["to-string", ["get", 'tmc']], ["literal", colors]],
-              ["get", ["to-string", ["get", 'tmc']], ["literal", colors]],
-              "hsla(185, 0%, 27%,0.0)",
-          ],
-            "line-width": 3,
-          },
-          layout: {
-            ...layer.layout,
-            visibility: layer.id.includes(year) ? 'visible' : 'none'
-          }
-      }));
+      const initialLayers = tileData.layers;
+      console.log("newSymbology.layers::",initialLayers);
+      newSymbology.layers = [newLayer]
+
 
       newSymbology.legend =  {
         type: "threshold",
@@ -216,6 +283,7 @@ const npmrdsMapFilter = ({
     }
 
     if(year && month) {
+      console.log("gonna get some d ata")
       getData();
     }
 

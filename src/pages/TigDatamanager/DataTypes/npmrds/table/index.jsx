@@ -9,16 +9,11 @@ import { get } from "lodash";
 import { Table } from "~/modules/avl-components/src";
 import { useParams } from "react-router-dom";
 import { NpmrdsFilters } from "../filters";
-import {
-  falcorGraph,
-} from "~/modules/avl-components/src"
-
 import { NPMRDS_ATTRIBUTES } from "../constants";
 
 const GEO_LEVEL = 'COUNTY';
 
-const API_HOST = 'https://tigtest2.nymtc.org/api2/graph'
-const tig_falcor = falcorGraph(API_HOST)
+import { DamaContext } from "~/pages/DataManager/store"
 
 const DefaultTableFilter = () => <div />;
 
@@ -40,6 +35,8 @@ const NpmrdsTable = ({
   TableFilter = DefaultTableFilter,
   fullWidth = false
 }) => {
+  const { falcor, falcorCache, pgEnv } = React.useContext(DamaContext);
+  const tig_falcor = falcor;
   const { viewId, sourceId } = useParams();
   const [filters, _setFilters] = useState(filterData);
   const [tableData, setTableData] = useState([]);

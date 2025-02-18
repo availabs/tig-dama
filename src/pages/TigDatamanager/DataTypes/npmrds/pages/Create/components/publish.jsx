@@ -6,7 +6,6 @@ import { DAMA_HOST } from "~/config";
 
 const npmrdsPublish = async (props, navigate, pgEnv) => {
   props.setLoading(true);
-  
   const publishData = {
     source_id: props?.source_id || null,
     user_id: props?.user_id,
@@ -33,7 +32,7 @@ const npmrdsPublish = async (props, navigate, pgEnv) => {
     console.log(source_id);
     props.setLoading(false);
     if (source_id) {
-      navigate(`/datasources/source/${source_id}`);
+      navigate(`/source/${source_id}`);
     }
   } catch (err) {
     props.setLoading(false);
