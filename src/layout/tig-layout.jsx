@@ -2,7 +2,7 @@ import React, {Fragment}  from "react"
 import { TopNav, /*useTheme*/ } from '~/modules/avl-components/src'
 import { withAuth } from '~/modules/ams/src'
 import { Listbox, Transition } from '@headlessui/react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 
 
 
@@ -113,20 +113,19 @@ const TigUserMenu = ({user}) => {
             {user.authLevel > 0 && adminMenu}
             {contributorMenu}
             {librarianMenu}
-            <a href={'/auth/logout'} className='p-4 h-full hover:bg-tigGray-50 hover:text-yellow-500 hover:cursor-pointer bg-tigGray-200 text-[13px] font-light md:mr-2'>Logout</a>
+            <Link to={'/auth/logout'} className='p-4 h-full hover:bg-tigGray-50 hover:text-yellow-500 hover:cursor-pointer bg-tigGray-200 text-[13px] font-light md:mr-2'>Logout</Link>
         </div> 
     )
 }
 
-
-
 const TigNav = withAuth(({user}) => {
+    const location = useLocation();
     const userMenu = user.id ? 
         <TigUserMenu user={user} /> : 
         <div className='flex h-12 flex-col md:flex-row'>
             <a className='p-4 h-full bg-tigGray-200 my-2 md:my-0 md:mr-2 text-[13px] font-bold '>Welcome!</a>
-            <a href={'/auth/signup'} className='p-4 h-full hover:bg-tigGray-50 hover:text-yellow-500 hover:cursor-pointer bg-tigGray-200 mt-2 md:my-0 md:mr-2 text-[13px] font-light'>Sign up</a>
-            <a href={'/auth/login'} className='p-4 h-full hover:bg-tigGray-50 hover:text-yellow-500 hover:cursor-pointer bg-tigGray-200 text-[13px] font-light md:mr-2'>Login</a>
+            <Link to={'/auth/signup'} state={{redirectTo: location.pathname}} className='p-4 h-full hover:bg-tigGray-50 hover:text-yellow-500 hover:cursor-pointer bg-tigGray-200 mt-2 md:my-0 md:mr-2 text-[13px] font-light'>Sign up</Link>
+            <Link to={'/auth/login'} state={{redirectTo: location.pathname}} className='p-4 h-full hover:bg-tigGray-50 hover:text-yellow-500 hover:cursor-pointer bg-tigGray-200 text-[13px] font-light md:mr-2'>Login</Link>
         </div>
                      
     return (
@@ -142,7 +141,6 @@ const TigNav = withAuth(({user}) => {
         </div>
     )
 })
-
 
 const TigLayout = withAuth(({children}) => {
     return (
