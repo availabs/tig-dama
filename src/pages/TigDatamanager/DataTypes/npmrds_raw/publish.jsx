@@ -14,7 +14,6 @@ const submitUpload = ({props, navigate, pgEnv, baseUrl}) => {
   const npmrdsRequestAreas = Object.keys(fips2Name).reduce(
     (acc, curr) => {
       //Object should have 3 top level keys, 1 for each state
-      console.log("first 2 digits of fips code::", curr.substring(0, 2));
       switch (curr.substring(0, 2)) {
         case "34":
           acc["NJ"].push(fips2Name[curr]);
@@ -36,7 +35,7 @@ const submitUpload = ({props, navigate, pgEnv, baseUrl}) => {
       CT: [],
     }
   );
-  console.log("npmrdsRequestAreas", npmrdsRequestAreas)
+
   const runPublishNpmrdsRaw = async () => {
     try {
       const publishData = {
