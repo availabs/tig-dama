@@ -3,9 +3,40 @@ import { useNavigate } from "react-router-dom";
 import { DamaContext } from "~/pages/DataManager/store";
 import { ScalableLoading } from "~/modules/avl-components/src";
 import { DAMA_HOST } from "~/config";
-
+import { fips2Name } from "../constants";
 const submitUpload = ({props, navigate, pgEnv, baseUrl}) => {
   props.setLoading(true);
+  //Need to map from 
+  //FIPS_Code: County Name
+  //To
+  //State_Abbr:[County Names]
+
+  const npmrdsRequestAreas = Object.keys(fips2Name).reduce(
+    (acc, curr) => {
+      //Object should have 3 top level keys, 1 for each state
+      console.log("first 2 digits of fips code::", curr.substring(0, 2));
+      switch (curr.substring(0, 2)) {
+        case "34":
+          acc["NJ"].push(fips2Name[curr]);
+          break;
+        case "36":
+          acc["NY"].push(fips2Name[curr]);
+          break;
+        case "09":
+        default:
+          acc["CT"].push(fips2Name[curr]);
+          break;
+      }
+
+      return acc;
+    },
+    {
+      NY: [],
+      NJ: [],
+      CT: [],
+    }
+  );
+  console.log("npmrdsRequestAreas", npmrdsRequestAreas)
   const runPublishNpmrdsRaw = async () => {
     try {
       const publishData = {
@@ -14,7 +45,7 @@ const submitUpload = ({props, navigate, pgEnv, baseUrl}) => {
         type: props?.type,
         startDate: props?.startDate,
         endDate: props?.endDate,
-        states: props?.states,
+        states: npmrdsRequestAreas,
         user_id: props?.user_id,
         email: props?.email,
         pgEnv: pgEnv || props?.pgEnv,
@@ -52,10 +83,11 @@ export default function PublishNpmrdsRaw(props) {
   const { baseUrl } = React.useContext(DamaContext)
   const navigate = useNavigate();
   const { loading, pgEnv } = props;
+
   return (
     <>
       <button
-        className={`cursor-pointer bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded`}
+        className={`cursor-pointer bg-blue-500 hover:bg-blue-700 text-white font-bold my-4 py-2 px-4 rounded`}
         onClick={() => submitUpload({props, navigate, pgEnv, baseUrl})}
       >
         {" "}

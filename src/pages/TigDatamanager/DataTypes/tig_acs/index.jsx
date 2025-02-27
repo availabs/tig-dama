@@ -4,7 +4,7 @@ import Update from "./update";
 import MapPage from "~/pages/TigDatamanager/Utils/gisMap";
 import ACSMapFilter from "./map";
 import Chart from "./chart";
-
+import Overview from "~/pages/DataManager/DataTypes/default/Overview";
 import { ACSHoverComp } from "./map/hover";
 import Table from "./table";
 import { AcsTableFilter, AcsTableTransform } from "./table/acsFilters";
@@ -33,6 +33,12 @@ const TigAcsConfig = {
     path: "/meta",
     hidden: false,
     component: TigMetadata,
+  },
+  source_meta: {
+    name: "Source Metadata",
+    path: "/source_meta",
+    hidden: false,
+    component: Overview,
   },
   map: {
     name: "Map",

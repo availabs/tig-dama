@@ -93,7 +93,6 @@ const fips2Name = {
   "34041": "Warren",
   "36005": "Bronx",
   "36027": "Dutchess",
-  //"36031": "Essex",
   "36047": "Kings",
   "36059": "Nassau",
   "36061": "New York",
@@ -103,11 +102,10 @@ const fips2Name = {
   "36085": "Richmond",
   "36087": "Rockland",
   "36103": "Suffolk",
-  //"36113": "Warren",
   "36119": "Westchester",
   "09001": "Fairfield",
   "09005": "Litchfield",
-  "09007": "Middlesex,ct",
+  "09007": "Middlesex", //I removed `ct` from the end of this, if the app implodes, we know why.
   "09009": "New Haven",
 };
 

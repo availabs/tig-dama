@@ -124,8 +124,8 @@ const TigNav = withAuth(({user}) => {
         <TigUserMenu user={user} /> : 
         <div className='flex h-12 flex-col md:flex-row'>
             <a className='p-4 h-full bg-tigGray-200 my-2 md:my-0 md:mr-2 text-[13px] font-bold '>Welcome!</a>
-            <Link to={'/auth/signup'} state={{redirectTo: location.pathname}} className='p-4 h-full hover:bg-tigGray-50 hover:text-yellow-500 hover:cursor-pointer bg-tigGray-200 mt-2 md:my-0 md:mr-2 text-[13px] font-light'>Sign up</Link>
-            <Link to={'/auth/login'} state={{redirectTo: location.pathname}} className='p-4 h-full hover:bg-tigGray-50 hover:text-yellow-500 hover:cursor-pointer bg-tigGray-200 text-[13px] font-light md:mr-2'>Login</Link>
+            <Link to={'/auth/signup'} className='p-4 h-full hover:bg-tigGray-50 hover:text-yellow-500 hover:cursor-pointer bg-tigGray-200 mt-2 md:my-0 md:mr-2 text-[13px] font-light'>Sign up</Link>
+            <Link to={'/auth/login'} className='p-4 h-full hover:bg-tigGray-50 hover:text-yellow-500 hover:cursor-pointer bg-tigGray-200 text-[13px] font-light md:mr-2'>Login</Link>
         </div>
                      
     return (

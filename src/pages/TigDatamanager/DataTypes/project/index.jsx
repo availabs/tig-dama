@@ -40,7 +40,7 @@ const GisDatasetConfig = {
   source_meta: {
     name: "Source Metadata",
     path: "/source_meta",
-    hidden: true,
+    hidden: false,
     component: Overview,
   },
   map: {

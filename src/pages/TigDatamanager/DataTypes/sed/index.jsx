@@ -82,6 +82,12 @@ export const tig_sed_taz = {
     hidden: false,
     component: TigMetadata,
   },
+  source_meta: {
+    name: "Source Metadata",
+    path: "/source_meta",
+    hidden: false,
+    component: Overview,
+  },
   sourceCreate: {
     name: "Create",
     component: (props) => (
@@ -155,9 +161,15 @@ export const tig_sed_county = {
       />
     ),
   },
-   meta: {
+  meta: {
     name: "Metadata",
     path: "/meta",
+    hidden: false,
+    component: TigMetadata,
+  },
+  source_meta: {
+    name: "Source Metadata",
+    path: "/source_meta",
     hidden: false,
     component: Overview,
   },

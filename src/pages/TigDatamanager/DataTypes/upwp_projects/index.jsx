@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import CreatePage from "~/pages/DataManager/DataTypes/gis_dataset/pages/Create";
 import Table from "~/pages/DataManager/DataTypes/gis_dataset/pages/Table";
-
+import Overview from "~/pages/DataManager/DataTypes/default/Overview";
 import {UPWPTableTransform, HBTableFilter} from './TableFilters.jsx'
 
 
@@ -38,7 +38,12 @@ const config = {
       />
     ),
   },
-
+  source_meta: {
+    name: "Source Metadata",
+    path: "/source_meta",
+    hidden: false,
+    component: Overview,
+  },
   sourceCreate: {
     name: "Create",
     component: CreatePage
