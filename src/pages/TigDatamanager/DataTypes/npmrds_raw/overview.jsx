@@ -4,6 +4,7 @@ import { groupBy, orderBy } from "lodash";
 export default function NpmrdsRawOverview({
   views,
 }) {
+  console.log({views})
   const groupbyState = useMemo(() => {
     return groupBy(
       orderBy(
@@ -16,7 +17,6 @@ export default function NpmrdsRawOverview({
   }, [views]);
 
   const headers = [
-    "State",
     "View Id",
     "Version",
     "Start Date",
@@ -38,7 +38,7 @@ export default function NpmrdsRawOverview({
         </div>
       </div>
 
-      {Object.keys(groupbyState).length ? (
+      {views.length ? (
         <div className="overflow-x-auto px-5 py-3">
           <table className="min-w-full bg-white">
             <thead>
@@ -54,76 +54,68 @@ export default function NpmrdsRawOverview({
               </tr>
             </thead>
             <tbody>
-              {Object.keys(groupbyState).map((group) => (
-                <React.Fragment key={group}>
-                  {groupbyState[group].map((item, index) => (
+              {views.map((view, index) => {
+                return (
+                  <>
                     <tr key={index}>
-                      {index === 0 && (
-                        <td
-                          rowSpan={groupbyState[group].length}
-                          className="py-2 px-4 border-b font-bold"
-                        >
-                          {group}
-                        </td>
-                      )}
                       <td
-                        key={`${group}.${item?.view_id}`}
+                        key={`${view?.view_id}`}
                         className="py-2 px-4 border-b"
                       >
-                        {item?.view_id}
+                        {view?.view_id}
                       </td>
                       <td
-                        key={`${group}.npmrds_version.${index}`}
+                        key={`npmrds_version.${index}`}
                         className="py-2 px-4 border-b"
                       >
-                        {item?.metadata?.npmrds_version}
+                        {view?.metadata?.npmrds_version}
                       </td>
                       <td
-                        key={`${group}.start_date.${index}`}
+                        key={`start_date.${index}`}
                         className="py-2 px-4 border-b"
                       >
-                        {item?.metadata?.start_date}
+                        {view?.metadata?.start_date}
                       </td>
                       <td
-                        key={`${group}.end_date.${index}`}
+                        key={`end_date.${index}`}
                         className="py-2 px-4 border-b"
                       >
-                        {item?.metadata?.end_date}
+                        {view?.metadata?.end_date}
                       </td>
                       <td
-                        key={`${group}.total.${index}`}
+                        key={`total.${index}`}
                         className="py-2 px-4 border-b"
                       >
-                        {item?.statistics?.total && Math.round(item?.statistics?.total * 100) / 100}
+                        {view?.statistics?.total && Math.round(view?.statistics?.total * 100) / 100}
                       </td>
                       <td
-                        key={`${group}.interstate_percentage.${index}`}
+                        key={`interstate_percentage.${index}`}
                         className="py-2 px-4 border-b"
                       >
-                        {item?.statistics?.interstate_percentage && Math.round(item?.statistics?.interstate_percentage * 100) / 100}
+                        {view?.statistics?.interstate_percentage && Math.round(view?.statistics?.interstate_percentage * 100) / 100}
                       </td>
                       <td
-                        key={`${group}.non_interstate_percentage.${index}`}
+                        key={`non_interstate_percentage.${index}`}
                         className="py-2 px-4 border-b"
                       >
-                        {item?.statistics?.non_interstate_percentage && Math.round(item?.statistics?.non_interstate_percentage * 100) / 100}
+                        {view?.statistics?.non_interstate_percentage && Math.round(view?.statistics?.non_interstate_percentage * 100) / 100}
                       </td>
                       <td
-                        key={`${group}.extended_tmc_percentage.${index}`}
+                        key={`extended_tmc_percentage.${index}`}
                         className="py-2 px-4 border-b"
                       >
-                        {item?.statistics?.extended_tmc_percentage && Math.round(item?.statistics?.extended_tmc_percentage * 100) / 100}
+                        {view?.statistics?.extended_tmc_percentage && Math.round(view?.statistics?.extended_tmc_percentage * 100) / 100}
                       </td>
                       <td
-                        key={`${group}.${item?.metadata?.no_of_tmc}`}
+                        key={`${view?.metadata?.no_of_tmc}`}
                         className="py-2 px-4 border-b"
                       >
-                        {item?.metadata?.no_of_tmc}
+                        {view?.metadata?.no_of_tmc}
                       </td>
                     </tr>
-                  ))}
-                </React.Fragment>
-              ))}
+                  </>
+                )}
+              )}
             </tbody>
           </table>
         </div>
