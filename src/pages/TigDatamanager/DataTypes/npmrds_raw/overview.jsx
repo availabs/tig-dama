@@ -1,21 +1,8 @@
 import React, { useMemo } from "react";
-import { groupBy, orderBy } from "lodash";
 
 export default function NpmrdsRawOverview({
   views,
 }) {
-  console.log({views})
-  const groupbyState = useMemo(() => {
-    return groupBy(
-      orderBy(
-        views.filter(v => v && v.metadata),
-        ["metadata.start_date", "metadata.end_date"],
-        ["asc", "asc"]
-      ),
-      (v) => v?.metadata?.state_code
-    );
-  }, [views]);
-
   const headers = [
     "View Id",
     "Version",
