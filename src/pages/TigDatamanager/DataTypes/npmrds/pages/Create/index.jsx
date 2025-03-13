@@ -50,7 +50,8 @@ export default function NpmrdsCreate({
           loading={loading}
           setLoading={setLoading}
           source_id={sourceId}
-          user_id={user?.id ?? ctxUser.id}
+          user_id={state.userId}
+          email={state.email}
           name={source?.name}
           type={source?.type}
           pgEnv={pgEnv}

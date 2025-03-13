@@ -9,6 +9,7 @@ const npmrdsPublish = async (props, navigate, pgEnv) => {
   const publishData = {
     source_id: props?.source_id || null,
     user_id: props?.user_id,
+    email: props?.email,
     name: props?.name,
     type: props?.type || "npmrds",
     pgEnv: pgEnv || props?.pgEnv,
