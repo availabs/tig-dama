@@ -89,6 +89,23 @@ export const HubboundMapFilter = (props) => {
     setFilters(newFilters)
   }, []);
 
+
+  useEffect(() => {
+    /**
+     * This is a hackaround for a prod-only bug
+     * Where the locations on the map are not properly filtered on initial render
+     */
+    setTimeout(() =>{
+      const newFilters = {...filters};
+      newFilters.year = { value: yearRange[1] }
+      setFilters(newFilters)
+    }, 500);
+    setTimeout(() =>{
+      const newFilters = {...filters};
+      newFilters.year = { value: yearRange[0] }
+      setFilters(newFilters)
+    }, 1000);
+  }, []);
   const hubboundDetailsOptions = useMemo(() => {
     return createHubboundFilterClause(filters);
   }, [filters]);

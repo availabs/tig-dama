@@ -48,7 +48,7 @@ const submitUpload = ({props, navigate, pgEnv, baseUrl}) => {
         user_id: props?.user_id,
         email: props?.email,
         pgEnv: pgEnv || props?.pgEnv,
-        averagingWindowSize: 60,
+        // averagingWindowSize: 60,
       };
 
       const res = await fetch(
