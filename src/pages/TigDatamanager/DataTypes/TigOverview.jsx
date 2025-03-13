@@ -1,6 +1,7 @@
 import React from "react";
 import {  Link  } from "react-router-dom";
-
+import { dmsDataTypes } from "~/modules/dms/src"
+import { makeLexicalFormat } from "~/pages/DataManager/DataTypes/default/Overview";
 import { SOURCE_AUTH_CONFIG } from "~/pages/DataManager/Source/attributes";
 
 
@@ -30,10 +31,17 @@ const Overview = ({ searchParams, setSearchParams, source, views, activeViewId, 
     {name: 'Access Controls', icon: 'fad fa-gears',  authLevel: SOURCE_AUTH_CONFIG['ADMIN'], to: `/source/${source.source_id}/admin`},  
     {name: 'Delete', icon: 'fad fa-trash',  authLevel: SOURCE_AUTH_CONFIG['ADMIN'], to: `/delete/source/${source.source_id}`} 
   ];
+  const Lexical = dmsDataTypes.lexical.ViewComp;
+  const descValue = source.description // makeLexicalFormat(source.description);
+  console.log("source::", source)
   return (
     <div className='flex md:flex-row flex-col '>
       <div className="w-full md:w-[600px] border-b-2 border-tigGreen-100 pb-4" >
-        <div className="border-b border-gray-800 p-4 text-sm">{source?.description || 'Source description'}</div>
+        <div className="border-b border-gray-800 p-4 text-sm">
+          {
+            source.description ? <Lexical value={makeLexicalFormat(descValue)}/> :
+                <div className={'min-h-10'}>No Description</div>
+          }</div>
         <div className='pl-2 text-lg font-semibold'>{source.name}</div>
         { variables.map(({ key, name }) => (
             <Variable 
