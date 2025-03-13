@@ -274,7 +274,7 @@ export default function NpmrdsManage({
 
   const availableViewOptions = useMemo(() => {
     return availableViews.map((av) => ({
-      label: `${av?.metadata?.name} From ${av?.metadata?.start_date} to ${av?.metadata?.end_date}`,
+      label: `${av?.metadata?.dama_source_name} From ${av?.metadata?.start_date} to ${av?.metadata?.end_date}`,
       value: av?.view_id,
       metadata: av?.metadata,
     }));
