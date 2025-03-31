@@ -90,6 +90,13 @@ const npmrdsMapFilter = ({
 //Backend will find the tile info.
 //['dama', pgEnv, 'npmrds','geometry', source?.metadata?.npmrds_tmc_meta_source_id, year]
 
+    // replace the below with a call to dama options to the tmc_metadata view for prod
+    // this call should take into account npmrds counties as a filter for this call
+   // and should return just tmc 
+   // use this route to get a list of TMCS from meta
+   // dama[{keys:pgEnvs}].viewsbyId[{keys:viewIds}].options[{keys:options}].length
+  // dama[{keys:pgEnvs}].viewsbyId[{keys:viewIds}].options[{keys:options}].databyIndex[{integers:indices}][{keys:attributes}]
+
     const tileResp = await tig_falcor.get([
       "dama",
       pgEnv,
@@ -112,6 +119,14 @@ const npmrdsMapFilter = ({
       {}
     )
 
+    // use this view to get the npmrds data by hour for all tmcs 
+    // routes[{keys:pgEnvs}].view[{integers:viewIds}].data[{keys:requestKeys}]
+    /*
+
+    [["routes","data",
+      "120P04992,120+04993,120P04993,120+04994,120P04994,120+04995,120P04995,120+04996,120P04996,120+04997,120P04997,120+04998,120P04998,120+04999,120P04999,120+05000,120P05000,120+05001,120P05001,120+05002,120P05002,120+05003,120P05003,120+05004,120P05004,120+05005,120P05005,120+05006,120P05006,120+05007,120P05007,120+05008,120P05008,120+05009,120P05009,120+05010,120P05010
+      |20230201|20230228|0|288|monday,tuesday,wednesday,thursday,friday|hour|travel_time_all|none|%7B%7D|ny"]]
+    */
     let requests = NPMRDS_ATTRIBUTES['counties'].values.reduce((a, c) => {
           a.push(['dama', pgEnv, 'npmrds', source?.source_id, activeViewId, `${month}|${year}`, `${GEO_LEVEL}|${c}`, 'data'])
           // a.push(["geo", GEO_LEVEL.toLowerCase(), `${c}`, "geometry"]);
@@ -139,6 +154,13 @@ const npmrdsMapFilter = ({
           )
         )
         .reduce((out, d) => ({ ...out, ...d }), {});
+      /*
+       data = {
+        // tmc id
+        "NP1050603" : [65.2,61,60 ... 64.2] //length 24
+        ...
+      }
+      */
 
       const featArray = Object.keys(data).map(tmc => {
         const d = data[tmc];
@@ -184,27 +206,42 @@ const npmrdsMapFilter = ({
           return a;
       }, {});
       const layer_layer_id = `${source_layer_id}_${"line"}`;
-      const newLayer = {
-        id: layer_layer_id,
-        source: source_layer_id,
-        type:"line",
-        paint: {
-          "line-color": [
-            "case",
-            ["has", ["to-string", ["get", 'tmc']], ["literal", colors]],
-            ["get", ["to-string", ["get", 'tmc']], ["literal", colors]],
-            "hsla(185, 0%, 27%,0.0)",
-        ],
-          "line-width": 3,
-        },
-        layout: {
-          visibility: 'visible'
-        }
-      };
+      // const newLayer = {
+      //   id: layer_layer_id,
+      //   source: source_layer_id,
+      //   type:"line",
+      //   paint: {
+      //     "line-color": [
+      //       "case",
+      //       ["has", ["to-string", ["get", 'tmc']], ["literal", colors]],
+      //       ["get", ["to-string", ["get", 'tmc']], ["literal", colors]],
+      //       "hsla(185, 0%, 27%,0.0)",
+      //   ],
+      //     "line-width": 3,
+      //   },
+      //   layout: {
+      //     visibility: 'visible'
+      //   }
+      // };
 
       const initialLayers = tileData.layers;
       console.log("newSymbology.layers::",initialLayers);
-      newSymbology.layers = [newLayer]
+      newSymbology.layers = newSymbology.layers = [...(newSymbology.layers ?? LAYERS)].map(layer => ({
+        ...layer,
+          paint: {
+            "line-color": [
+              "case",
+              ["has", ["to-string", ["get", 'tmc']], ["literal", colors]],
+              ["get", ["to-string", ["get", 'tmc']], ["literal", colors]],
+              "hsla(185, 0%, 27%,0.0)",
+          ],
+            "line-width": 3,
+          },
+          layout: {
+            ...layer.layout,
+            visibility:'visble' //layer.id.includes(year) ? 'visible' : 'none'
+          }
+      })); //[newLayer]
 
 
       newSymbology.legend =  {
@@ -289,7 +326,10 @@ const npmrdsMapFilter = ({
 
   },[filters, tmcBounds]);
 
-  const filterSettings = {...NPMRDS_ATTRIBUTES, tmc: {...NPMRDS_ATTRIBUTES.tmc, values: [""].concat(allTmcs)}};
+  const filterSettings = {
+    ...NPMRDS_ATTRIBUTES, 
+    tmc: {...NPMRDS_ATTRIBUTES.tmc, values: [""].concat(allTmcs)}
+  };
   return <NpmrdsFilters filterSettings={filterSettings} filterType={"mapFilter"} filters={filters} setFilters={setFilters}/>
 };
 
