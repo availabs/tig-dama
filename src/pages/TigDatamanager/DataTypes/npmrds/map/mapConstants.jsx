@@ -43,25 +43,7 @@ const npmrdsPaint = {
   }
 }
 
-const NpmrdsLayers = ['2016','2017','2018','2019','2020','2021']
-  .map(year => {
-    return {
-      id: `tmc-${year}`,
-      type: 'line',
-      source: 'npmrds',
-      beneath: 'waterway-label',
-      'source-layer': `npmrds_${year}`,
-      layout: {
-        'visibility': 'none',
-        'line-join': 'round',
-        'line-cap': 'round'
-      },
-      paint: npmrdsPaint
-    }
-  })
-
-
-const NpmrdsLayers2 = ['allyears']
+const NpmrdsLayers = ['allyears']
   .map(year => {
     return {
       "id": "s510_v476_tMultiLineString",
@@ -78,17 +60,7 @@ const NpmrdsLayers2 = ['allyears']
     }
   })
 
-
-// const NpmrdsSources = [
-//   { id: "npmrds",
-//     source: {
-//       type: "vector",
-//       url: "https://tiles.availabs.org/data/npmrds.json"
-//     }
-//   }
-// ]
-
-const NpmrdsSources2 = 
+const NpmrdsSources = 
   [
    {
       "id": "tig_dama_dev_s510_v476_2023_1741874052524",
@@ -111,12 +83,12 @@ const TrafficSignalsSources = [
   }
 ]
 const SOURCES = [
-  ...NpmrdsSources2,
+  ...NpmrdsSources,
   ...TrafficSignalsSources
 ]
 const LAYERS = [
   // ...ConflationLayerCase,
-  ...NpmrdsLayers2,
+  ...NpmrdsLayers,
   // ...TrafficSignalsLayers,
 ]
 

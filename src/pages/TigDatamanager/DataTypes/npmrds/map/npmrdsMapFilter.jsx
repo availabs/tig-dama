@@ -39,13 +39,13 @@ const npmrdsMapFilter = ({
   useEffect(() => {
     const newFilters = { ...filters };
     if (!year) {
-      newFilters.year = { value: 2024 };
+      newFilters.year = { value: 2023 };
     }
     if (!month) {
       newFilters.month = { value:  NPMRDS_ATTRIBUTES["month"].values[1] };
     }
     if (!hour) {
-      newFilters.hour = { value: NPMRDS_ATTRIBUTES["hour"].values[0] };
+      newFilters.hour = { value: NPMRDS_ATTRIBUTES["hour"].values[2] };
     }
     if (!direction) {
       newFilters.direction = {
@@ -58,28 +58,28 @@ const npmrdsMapFilter = ({
     setFilters(newFilters);
   }, []);
 
-  useEffect(() => {
-    async function getTmcGeom() {
-      const tmcGeometryPath = ["tmc", tmc, "year", year, "geometries"];
-      let getTmcResponse = await tig_falcor.get(tmcGeometryPath);
+  // useEffect(() => {
+  //   async function getTmcGeom() {
+  //     const tmcGeometryPath = ["tmc", tmc, "year", year, "geometries"];
+  //     let getTmcResponse = await tig_falcor.get(tmcGeometryPath);
 
-      const tmcGeom = get(getTmcResponse, ["json", ...tmcGeometryPath]);
-      console.log("filtered to geometries::", tmcGeom);
-      if (tmcGeom?.type === GEOM_TYPES["LineString"]) {
-        const coordinates = tmcGeom.coordinates;
-        setTmcBounds(coordinates.reduce((bounds, coord) => {
-          return bounds.extend(coord);
-        }, new mapboxgl.LngLatBounds(coordinates[0], coordinates[0])));
-      }
-    }
+  //     const tmcGeom = get(getTmcResponse, ["json", ...tmcGeometryPath]);
+  //     console.log("filtered to geometries::", tmcGeom);
+  //     if (tmcGeom?.type === GEOM_TYPES["LineString"]) {
+  //       const coordinates = tmcGeom.coordinates;
+  //       setTmcBounds(coordinates.reduce((bounds, coord) => {
+  //         return bounds.extend(coord);
+  //       }, new mapboxgl.LngLatBounds(coordinates[0], coordinates[0])));
+  //     }
+  //   }
 
-    if (tmc && tmc !== "") {
-      getTmcGeom();
-    }
-    else{
-      setTmcBounds();
-    }
-  }, [tmc]);
+  //   if (tmc && tmc !== "") {
+  //     getTmcGeom();
+  //   }
+  //   else{
+  //     setTmcBounds();
+  //   }
+  // }, [tmc]);
 
   useEffect(() => {
     async function getData() {    
@@ -96,103 +96,95 @@ const npmrdsMapFilter = ({
    // use this route to get a list of TMCS from meta
    // dama[{keys:pgEnvs}].viewsbyId[{keys:viewIds}].options[{keys:options}].length
   // dama[{keys:pgEnvs}].viewsbyId[{keys:viewIds}].options[{keys:options}].databyIndex[{integers:indices}][{keys:attributes}]
+    console.log(
+      " source?.metadata?.npmrds_production_meta_view_id",
+      source?.metadata?.npmrds_production_meta_view_id
+    );
 
-    const tileResp = await tig_falcor.get([
+    const tmcListLengthPath = [
       "dama",
       pgEnv,
-      "npmrds",
-      "geometry",
-      source?.metadata?.npmrds_tmc_meta_source_id,
-      year,
-    ]);
+      "viewsbyId",
+      '480',
+      "data",
+      "length"
+    ];
+    const lenRes = await falcor.get(tmcListLengthPath)
 
-    const tileData =           get(
-      tileResp,
-      [
-        "json",
-        "dama",
-        pgEnv,
-        "npmrds",
-        "geometry",
-        source?.metadata?.npmrds_tmc_meta_source_id,
-      ],
-      {}
-    )
+    let len = get(lenRes, ["json", ...tmcListLengthPath], 0);
+
+    // // const test = await falcor.get(["dama", pgEnv, "viewsbyId", 476, "data", "length"])
+
+    /**
+     * TODO
+     * if I switch to using the `options` route
+     * I could filter tmcs by direction here
+     */
+    const tmcListDataPath = [
+      "dama",
+      pgEnv,
+      "viewsbyId",
+      '480',
+      "databyIndex",
+      { from: 0, to: len - 1 },
+      ["tmc", "miles", "direction", "nhs", 'road', "avg_speedlimit"],
+    ];
+
+    const tmcIdRes = await falcor.get(tmcListDataPath);
+
+    //Also applying direction filter here
+    const tmcs = Object.values(
+      get(
+        tmcIdRes,
+        ["json", "dama", pgEnv, "viewsbyId", "480", "databyIndex"],
+        {}
+      )
+    ).filter(tmcRow => direction === "All" || tmcRow['direction']?.toLowerCase() === direction.toLowerCase());
+
+    const tmcIds = tmcs.map((row) => row.tmc);
+    //console.log("tmcIds", tmcIds);
 
     // use this view to get the npmrds data by hour for all tmcs 
     // routes[{keys:pgEnvs}].view[{integers:viewIds}].data[{keys:requestKeys}]
-    /*
 
+    /**
+     * loop thru all tmcs, getting data for 500 at a time
+     */
+    /**
+     * TODO -- month filter is a little tricky, because we have to pass exact dates...
+     */
+    const data = {};
+    for(let i=0; i<(tmcIds.length+500); i=i+500) {
+      const startEpoch = parseInt(hour) * 12;
+      const endEpoch = (parseInt(hour)+1) * 12;
+      const tmcDataReqKey = `${tmcIds.slice(i, i+500).join(",")}|20230101|20231231|${startEpoch}|${endEpoch}|monday,tuesday,wednesday,thursday,friday|hour|travel_time_all|travelTime|%7B%7D|ny`
+      const tmcDataBasePath = ['routes', pgEnv, 'view', activeViewId, 'data', tmcDataReqKey];
+  
+      const tmcDataRes = await falcor.get(tmcDataBasePath);
+      //console.log("tmcDataRes new NEWNEW", tmcDataRes)
+
+      const tmcData = get(tmcDataRes, ["json", "routes", pgEnv, 'view', activeViewId, 'data', tmcDataReqKey])
+      tmcData.reduce((acc, curr) => {
+        const tmcMetaRow = tmcs.find(tmcRow => tmcRow.tmc === curr.tmc);
+        const tmcLength = tmcMetaRow?.miles;
+        //value is in seconds;
+        //TODO VALIDATE THIS MATH??? maybe this is correct??
+        const speed = (tmcLength / curr.value) * 60 * 60 ;
+
+        acc[curr.tmc] = {...curr, speed, ...tmcMetaRow};
+
+
+        return acc;
+      }, data);
+    }
+
+    /*
     [["routes","data",
       "120P04992,120+04993,120P04993,120+04994,120P04994,120+04995,120P04995,120+04996,120P04996,120+04997,120P04997,120+04998,120P04998,120+04999,120P04999,120+05000,120P05000,120+05001,120P05001,120+05002,120P05002,120+05003,120P05003,120+05004,120P05004,120+05005,120P05005,120+05006,120P05006,120+05007,120P05007,120+05008,120P05008,120+05009,120P05009,120+05010,120P05010
       |20230201|20230228|0|288|monday,tuesday,wednesday,thursday,friday|hour|travel_time_all|none|%7B%7D|ny"]]
     */
-    let requests = NPMRDS_ATTRIBUTES['counties'].values.reduce((a, c) => {
-          a.push(['dama', pgEnv, 'npmrds', source?.source_id, activeViewId, `${month}|${year}`, `${GEO_LEVEL}|${c}`, 'data'])
-          // a.push(["geo", GEO_LEVEL.toLowerCase(), `${c}`, "geometry"]);
-          return a;
-      }, [])
 
-      
-      const response = await tig_falcor.get(...requests);
-      const data = NPMRDS_ATTRIBUTES["counties"].values
-        .map((d) =>
-          get(
-            response,
-            [
-              "json",
-              "dama",
-              pgEnv,
-              "npmrds",
-              source?.source_id,
-              activeViewId,
-              `${month}|${year}`,
-              `${GEO_LEVEL}|${d}`,
-              "data",
-            ],
-            []
-          )
-        )
-        .reduce((out, d) => ({ ...out, ...d }), {});
-      /*
-       data = {
-        // tmc id
-        "NP1050603" : [65.2,61,60 ... 64.2] //length 24
-        ...
-      }
-      */
-
-      const featArray = Object.keys(data).map(tmc => {
-        const d = data[tmc];
-        const {geometry, ...rest} = d;
-        return {
-          type: "Feature",
-          id:tmc,
-          name: tmc,
-          properties: {
-            tmc,
-            geoid: tmc,
-            ...rest,
-          },
-          geometry: geometry,
-        }
-      
-      }).filter(feat => Object.keys(feat.geometry).length !== 0);
-
-      const source_layer_id = `s${source.source_id}_v${activeViewId}`;
-      const newSource = {
-        id: source_layer_id,
-        source: {
-          type: "geojson",
-          data: {
-            type:"FeatureCollection",
-            features: featArray,
-          }
-        },
-        type: "geojson",
-      };
-      console.log("newSource::", newSource)
-      newSymbology.sources = [newSource];
+      newSymbology.sources = SOURCES;
       newSymbology.data = data;
 
       setAllTmcs(Object.keys(data));
@@ -201,31 +193,10 @@ const npmrdsMapFilter = ({
         .range(LEGEND_RANGE)
 
       const colors = Object.keys(data).reduce((a, c) => {
-          const val = scale(get(data[c], `s[${hour}]`, 0))
+          const val = scale(get(data[c], `speed`, 0))
           a[c] = val ? val : 'hsla(185, 0%, 27%,0.8)'
           return a;
       }, {});
-      const layer_layer_id = `${source_layer_id}_${"line"}`;
-      // const newLayer = {
-      //   id: layer_layer_id,
-      //   source: source_layer_id,
-      //   type:"line",
-      //   paint: {
-      //     "line-color": [
-      //       "case",
-      //       ["has", ["to-string", ["get", 'tmc']], ["literal", colors]],
-      //       ["get", ["to-string", ["get", 'tmc']], ["literal", colors]],
-      //       "hsla(185, 0%, 27%,0.0)",
-      //   ],
-      //     "line-width": 3,
-      //   },
-      //   layout: {
-      //     visibility: 'visible'
-      //   }
-      // };
-
-      const initialLayers = tileData.layers;
-      console.log("newSymbology.layers::",initialLayers);
       newSymbology.layers = newSymbology.layers = [...(newSymbology.layers ?? LAYERS)].map(layer => ({
         ...layer,
           paint: {
@@ -239,10 +210,9 @@ const npmrdsMapFilter = ({
           },
           layout: {
             ...layer.layout,
-            visibility:'visble' //layer.id.includes(year) ? 'visible' : 'none'
+            visibility:'visible' //layer.id.includes(year) ? 'visible' : 'none'
           }
-      })); //[newLayer]
-
+      }));
 
       newSymbology.legend =  {
         type: "threshold",
@@ -254,61 +224,28 @@ const npmrdsMapFilter = ({
         units: "Average Speed (mph)"
       }
 
-      // newSymbology.sources.push({
-      //   id: "geo-boundaries-source",
-      //   source: {
-      //     type: "geojson",
-      //     data: {
-      //       type: "FeatureCollection",
-      //       features: NPMRDS_ATTRIBUTES['counties'].values.map((f) => ({
-      //         type: "Feature",
-      //         properties: { geoid: f },
-      //         geometry: get(
-      //           response,
-      //           ["geo", GEO_LEVEL.toLowerCase(), `${f}`, "geometry", "value"],
-      //           null
-      //         ),
-      //       })),
-      //     },
-      //   },
-      // });
+      //Determine which filters are active;
+      const directionFilterActive = direction && direction.toLowerCase() !== "all";
+      const filteredData = Object.keys(data)
+        .filter((tmcId) => data[tmcId].direction === direction.substring(0, 1))
+        .map((tmcId) => (tmcId))
+      
 
-      // newSymbology.layers.push({
-      //   id: "geo-boundaries",
-      //   type: "line",
-      //   source: "geo-boundaries-source",
-      //   paint: {
-      //     "line-color": "#000000",
-      //     "line-width": 10,
-      //   },
-      //   layout: {
-      //     visibility:'visible'
-      //   }
-      // });
-
-
-        //Determine which filters are active;
-        const directionFilterActive = direction && direction.toLowerCase() !== "all";
-        const filteredData = Object.keys(data)
-          .filter((tmcId) => data[tmcId].direction === direction.substring(0, 1))
-          .map((tmcId) => (tmcId))
-        
-
-        if (directionFilterActive) {
-          newSymbology.filter = {};
-          newSymbology.filter.dataIds = filteredData;
-          newSymbology.filter.dataKey = "tmc"
-        } else {
-          newSymbology.filter = null;
-        }
-        if (tmcBounds) {
-          newSymbology.fitToBounds = tmcBounds;
-          newSymbology.fitZoom = 14.5;
-        }
-        else {
-          newSymbology.fitToBounds = null;
-          newSymbology.fitZoom = null;
-        }
+      if (directionFilterActive) {
+        newSymbology.filter = {};
+        newSymbology.filter.dataIds = filteredData;
+        newSymbology.filter.dataKey = "tmc"
+      } else {
+        newSymbology.filter = null;
+      }
+      if (tmcBounds) {
+        newSymbology.fitToBounds = tmcBounds;
+        newSymbology.fitZoom = 14.5;
+      }
+      else {
+        newSymbology.fitToBounds = null;
+        newSymbology.fitZoom = null;
+      }
 
 
       if (!isEqual(newSymbology, tempSymbology)) {
