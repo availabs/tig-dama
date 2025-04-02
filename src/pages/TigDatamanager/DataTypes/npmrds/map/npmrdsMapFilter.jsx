@@ -6,6 +6,7 @@ import * as d3scale from "d3-scale"
 import mapboxgl from "maplibre-gl";
 import get from "lodash/get";
 import { DamaContext } from "~/pages/DataManager/store"
+import moment from 'moment'
 
 import {LAYERS, LEGEND_RANGE, LEGEND_DOMAIN, SOURCES} from './mapConstants'
 import { NpmrdsFilters } from "../filters";
@@ -42,7 +43,7 @@ const npmrdsMapFilter = ({
       newFilters.year = { value: 2023 };
     }
     if (!month) {
-      newFilters.month = { value:  NPMRDS_ATTRIBUTES["month"].values[1] };
+      newFilters.month = { value:  NPMRDS_ATTRIBUTES["month"].values[0] };
     }
     if (!hour) {
       newFilters.hour = { value: NPMRDS_ATTRIBUTES["hour"].values[2] };
@@ -150,14 +151,17 @@ const npmrdsMapFilter = ({
     /**
      * loop thru all tmcs, getting data for 500 at a time
      */
-    /**
-     * TODO -- month filter is a little tricky, because we have to pass exact dates...
-     */
+    console.log({year, month})
+
+    const startOfMonth = moment([year, month - 1]).startOf('month').format('YYYYMMDD');
+    const endOfMonth = moment([year, month - 1]).endOf('month').format('YYYYMMDD');
+
     const data = {};
+    console.log("retreiving data for tmcs")
     for(let i=0; i<(tmcIds.length+500); i=i+500) {
       const startEpoch = parseInt(hour) * 12;
       const endEpoch = (parseInt(hour)+1) * 12;
-      const tmcDataReqKey = `${tmcIds.slice(i, i+500).join(",")}|20230101|20231231|${startEpoch}|${endEpoch}|monday,tuesday,wednesday,thursday,friday|hour|travel_time_all|travelTime|%7B%7D|ny`
+      const tmcDataReqKey = `${tmcIds.slice(i, i+500).join(",")}|${startOfMonth}|${endOfMonth}|${startEpoch}|${endEpoch}|monday,tuesday,wednesday,thursday,friday|hour|travel_time_all|travelTime|%7B%7D|ny`
       const tmcDataBasePath = ['routes', pgEnv, 'view', activeViewId, 'data', tmcDataReqKey];
   
       const tmcDataRes = await falcor.get(tmcDataBasePath);
@@ -177,7 +181,7 @@ const npmrdsMapFilter = ({
         return acc;
       }, data);
     }
-
+    console.log("data for tmcs fetched")
     /*
     [["routes","data",
       "120P04992,120+04993,120P04993,120+04994,120P04994,120+04995,120P04995,120+04996,120P04996,120+04997,120P04997,120+04998,120P04998,120+04999,120P04999,120+05000,120P05000,120+05001,120P05001,120+05002,120P05002,120+05003,120P05003,120+05004,120P05004,120+05005,120P05005,120+05006,120P05006,120+05007,120P05007,120+05008,120P05008,120+05009,120P05009,120+05010,120P05010
