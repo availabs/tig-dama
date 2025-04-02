@@ -1,4 +1,4 @@
-import {useEffect, useState, useContext} from "react";
+import {useEffect, useState, useContext, useMemo} from "react";
 import cloneDeep from 'lodash/cloneDeep'
 import isEqual from 'lodash/isEqual'
 import { NPMRDS_ATTRIBUTES } from "../constants";
@@ -15,16 +15,14 @@ const GEOM_TYPES = {
 };
 const GEO_LEVEL = 'COUNTY';
 //TODO
-//How to get available months/years? tig22 doesn't list all months for all years
-//What is `day of week`?
-//What is `vehicle class`?
+//`day of week`?
+//`vehicle class`?
 const npmrdsMapFilter = ({
   filters,
   setFilters,
   tempSymbology, 
   setTempSymbology,
   activeViewId,
-  source
 }) => {
   const { falcor, falcorCache, pgEnv } = useContext(DamaContext);
   const tig_falcor = falcor;
@@ -59,135 +57,107 @@ const npmrdsMapFilter = ({
     setFilters(newFilters);
   }, []);
 
-  // useEffect(() => {
-  //   async function getTmcGeom() {
-  //     const tmcGeometryPath = ["tmc", tmc, "year", year, "geometries"];
-  //     let getTmcResponse = await tig_falcor.get(tmcGeometryPath);
-
-  //     const tmcGeom = get(getTmcResponse, ["json", ...tmcGeometryPath]);
-  //     console.log("filtered to geometries::", tmcGeom);
-  //     if (tmcGeom?.type === GEOM_TYPES["LineString"]) {
-  //       const coordinates = tmcGeom.coordinates;
-  //       setTmcBounds(coordinates.reduce((bounds, coord) => {
-  //         return bounds.extend(coord);
-  //       }, new mapboxgl.LngLatBounds(coordinates[0], coordinates[0])));
-  //     }
-  //   }
-
-  //   if (tmc && tmc !== "") {
-  //     getTmcGeom();
-  //   }
-  //   else{
-  //     setTmcBounds();
-  //   }
-  // }, [tmc]);
+  useEffect(() => {
+    if (tmc && tmc !== "") {
+      const tmcs = Object.values(get(falcorCache, ["dama", pgEnv, "viewsbyId", "480", "databyId"], {})).filter(
+        (tmcRow) => direction === "All" || tmcRow["direction"]?.toLowerCase() === direction?.toLowerCase());
+      const curZoomTmc = tmcs.find((tmcRow) => tmcRow.tmc === tmc);
+      const { start_longitude, start_latitude, end_longitude, end_latitude } =
+        curZoomTmc;
+      const startCoord = [start_longitude, start_latitude];
+      const endCoord = [end_longitude, end_latitude];
+      const coordinates = [startCoord, endCoord];
+      setTmcBounds(
+        coordinates.reduce((bounds, coord) => {
+          return bounds.extend(coord);
+        }, new mapboxgl.LngLatBounds(coordinates[0], coordinates[0]))
+      );
+    } else {
+      setTmcBounds();
+    }
+  }, [tmc]);
 
   useEffect(() => {
     async function getData() {    
-      // geoids = filters.geography.domain.filter(d => d.name === filters.geography.value)[0].value,
+      const tmcListLengthPath = [
+        "dama",
+        pgEnv,
+        "viewsbyId",
+        '480',
+        "data",
+        "length"
+      ];
+      const lenRes = await falcor.get(tmcListLengthPath)
 
-//npmrds_geometry_view_id 
-//make a query to the backend using npmrds_tmc_meta_source_id
-//Backend will find the tile info.
-//['dama', pgEnv, 'npmrds','geometry', source?.metadata?.npmrds_tmc_meta_source_id, year]
+      let len = get(lenRes, ["json", ...tmcListLengthPath], 0);
 
-    // replace the below with a call to dama options to the tmc_metadata view for prod
-    // this call should take into account npmrds counties as a filter for this call
-   // and should return just tmc 
-   // use this route to get a list of TMCS from meta
-   // dama[{keys:pgEnvs}].viewsbyId[{keys:viewIds}].options[{keys:options}].length
-  // dama[{keys:pgEnvs}].viewsbyId[{keys:viewIds}].options[{keys:options}].databyIndex[{integers:indices}][{keys:attributes}]
-    console.log(
-      " source?.metadata?.npmrds_production_meta_view_id",
-      source?.metadata?.npmrds_production_meta_view_id
-    );
+      // // const test = await falcor.get(["dama", pgEnv, "viewsbyId", 476, "data", "length"])
 
-    const tmcListLengthPath = [
-      "dama",
-      pgEnv,
-      "viewsbyId",
-      '480',
-      "data",
-      "length"
-    ];
-    const lenRes = await falcor.get(tmcListLengthPath)
+      /**
+       * TODO
+       * if I switch to using the `options` route
+       * I could filter tmcs by direction here
+       */
+      const tmcListDataPath = [
+        "dama",
+        pgEnv,
+        "viewsbyId",
+        '480',
+        "databyIndex",
+        { from: 0, to: len - 1 },
+        ["tmc", "miles", "direction", "nhs", 'road', "avg_speedlimit", "start_latitude",	"start_longitude",	"end_latitude",	"end_longitude"],
+      ];
 
-    let len = get(lenRes, ["json", ...tmcListLengthPath], 0);
+      const tmcIdRes = await falcor.get(tmcListDataPath);
 
-    // // const test = await falcor.get(["dama", pgEnv, "viewsbyId", 476, "data", "length"])
+      //Also applying direction filter here
+      const tmcs = Object.values(
+        get(
+          tmcIdRes,
+          ["json", "dama", pgEnv, "viewsbyId", "480", "databyIndex"],
+          {}
+        )
+      ).filter(tmcRow => direction === "All" || tmcRow['direction']?.toLowerCase() === direction.toLowerCase());
 
-    /**
-     * TODO
-     * if I switch to using the `options` route
-     * I could filter tmcs by direction here
-     */
-    const tmcListDataPath = [
-      "dama",
-      pgEnv,
-      "viewsbyId",
-      '480',
-      "databyIndex",
-      { from: 0, to: len - 1 },
-      ["tmc", "miles", "direction", "nhs", 'road', "avg_speedlimit"],
-    ];
+      const tmcIds = tmcs.map((row) => row.tmc);
+      //console.log("tmcIds", tmcIds);
 
-    const tmcIdRes = await falcor.get(tmcListDataPath);
+      // use this view to get the npmrds data by hour for all tmcs 
+      // routes[{keys:pgEnvs}].view[{integers:viewIds}].data[{keys:requestKeys}]
 
-    //Also applying direction filter here
-    const tmcs = Object.values(
-      get(
-        tmcIdRes,
-        ["json", "dama", pgEnv, "viewsbyId", "480", "databyIndex"],
-        {}
-      )
-    ).filter(tmcRow => direction === "All" || tmcRow['direction']?.toLowerCase() === direction.toLowerCase());
+      /**
+       * loop thru all tmcs, getting data for 500 at a time
+       */
+      console.log({year, month})
 
-    const tmcIds = tmcs.map((row) => row.tmc);
-    //console.log("tmcIds", tmcIds);
+      const startOfMonth = moment([year, month - 1]).startOf('month').format('YYYYMMDD');
+      const endOfMonth = moment([year, month - 1]).endOf('month').format('YYYYMMDD');
 
-    // use this view to get the npmrds data by hour for all tmcs 
-    // routes[{keys:pgEnvs}].view[{integers:viewIds}].data[{keys:requestKeys}]
+      const data = {};
+      console.log("retreiving data for tmcs")
+      for(let i=0; i<(tmcIds.length+500); i=i+500) {
+        const startEpoch = parseInt(hour) * 12;
+        const endEpoch = (parseInt(hour)+1) * 12;
+        const tmcDataReqKey = `${tmcIds.slice(i, i+500).join(",")}|${startOfMonth}|${endOfMonth}|${startEpoch}|${endEpoch}|monday,tuesday,wednesday,thursday,friday|hour|travel_time_all|travelTime|%7B%7D|ny`
+        const tmcDataBasePath = ['routes', pgEnv, 'view', activeViewId, 'data', tmcDataReqKey];
+    
+        const tmcDataRes = await falcor.get(tmcDataBasePath);
+        //console.log("tmcDataRes new NEWNEW", tmcDataRes)
 
-    /**
-     * loop thru all tmcs, getting data for 500 at a time
-     */
-    console.log({year, month})
+        const tmcData = get(tmcDataRes, ["json", "routes", pgEnv, 'view', activeViewId, 'data', tmcDataReqKey])
+        tmcData.reduce((acc, curr) => {
+          const tmcMetaRow = tmcs.find(tmcRow => tmcRow.tmc === curr.tmc);
+          const tmcLength = tmcMetaRow?.miles;
 
-    const startOfMonth = moment([year, month - 1]).startOf('month').format('YYYYMMDD');
-    const endOfMonth = moment([year, month - 1]).endOf('month').format('YYYYMMDD');
+          //value is in seconds;
+          //TODO VALIDATE THIS MATH??? maybe this is correct??
+          const speed = (tmcLength / curr.value) * 60 * 60 ;
 
-    const data = {};
-    console.log("retreiving data for tmcs")
-    for(let i=0; i<(tmcIds.length+500); i=i+500) {
-      const startEpoch = parseInt(hour) * 12;
-      const endEpoch = (parseInt(hour)+1) * 12;
-      const tmcDataReqKey = `${tmcIds.slice(i, i+500).join(",")}|${startOfMonth}|${endOfMonth}|${startEpoch}|${endEpoch}|monday,tuesday,wednesday,thursday,friday|hour|travel_time_all|travelTime|%7B%7D|ny`
-      const tmcDataBasePath = ['routes', pgEnv, 'view', activeViewId, 'data', tmcDataReqKey];
-  
-      const tmcDataRes = await falcor.get(tmcDataBasePath);
-      //console.log("tmcDataRes new NEWNEW", tmcDataRes)
-
-      const tmcData = get(tmcDataRes, ["json", "routes", pgEnv, 'view', activeViewId, 'data', tmcDataReqKey])
-      tmcData.reduce((acc, curr) => {
-        const tmcMetaRow = tmcs.find(tmcRow => tmcRow.tmc === curr.tmc);
-        const tmcLength = tmcMetaRow?.miles;
-        //value is in seconds;
-        //TODO VALIDATE THIS MATH??? maybe this is correct??
-        const speed = (tmcLength / curr.value) * 60 * 60 ;
-
-        acc[curr.tmc] = {...curr, speed, ...tmcMetaRow};
-
-
-        return acc;
-      }, data);
-    }
-    console.log("data for tmcs fetched")
-    /*
-    [["routes","data",
-      "120P04992,120+04993,120P04993,120+04994,120P04994,120+04995,120P04995,120+04996,120P04996,120+04997,120P04997,120+04998,120P04998,120+04999,120P04999,120+05000,120P05000,120+05001,120P05001,120+05002,120P05002,120+05003,120P05003,120+05004,120P05004,120+05005,120P05005,120+05006,120P05006,120+05007,120P05007,120+05008,120P05008,120+05009,120P05009,120+05010,120P05010
-      |20230201|20230228|0|288|monday,tuesday,wednesday,thursday,friday|hour|travel_time_all|none|%7B%7D|ny"]]
-    */
-
+          acc[curr.tmc] = {...curr, speed, ...tmcMetaRow};
+          return acc;
+        }, data);
+      }
+      console.log("data for tmcs fetched")
       newSymbology.sources = SOURCES;
       newSymbology.data = data;
 
@@ -214,7 +184,7 @@ const npmrdsMapFilter = ({
           },
           layout: {
             ...layer.layout,
-            visibility:'visible' //layer.id.includes(year) ? 'visible' : 'none'
+            visibility: 'visible' //layer.id.includes(year) ? 'visible' : 'none'
           }
       }));
 
@@ -251,13 +221,10 @@ const npmrdsMapFilter = ({
         newSymbology.fitZoom = null;
       }
 
-
       if (!isEqual(newSymbology, tempSymbology)) {
         console.log("setting new newSymbology, newSymb layers");
         setTempSymbology(newSymbology);
       }
-
-  
     }
 
     if(year && month) {
@@ -265,7 +232,23 @@ const npmrdsMapFilter = ({
       getData();
     }
 
-  },[filters, tmcBounds]);
+  },[year, month, hour, direction]);
+
+  useEffect(() => {
+    if (tmcBounds) {
+      newSymbology.fitToBounds = tmcBounds;
+      newSymbology.fitZoom = 14.5;
+    }
+    else {
+      newSymbology.fitToBounds = null;
+      newSymbology.fitZoom = null;
+    }
+
+    if (!isEqual(newSymbology, tempSymbology)) {
+      console.log("setting new newSymbology, tmcBounds");
+      setTempSymbology(newSymbology);
+    }
+  }, [tmcBounds]);
 
   const filterSettings = {
     ...NPMRDS_ATTRIBUTES, 
