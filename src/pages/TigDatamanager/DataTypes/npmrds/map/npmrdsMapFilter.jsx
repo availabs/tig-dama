@@ -35,7 +35,7 @@ const npmrdsMapFilter = ({
   useEffect(() => {
     const newFilters = { ...filters };
     if (!year) {
-      newFilters.year = { value: 2017 };
+      newFilters.year = { value: 2023 };
     }
     if (!month) {
       newFilters.month = { value:  NPMRDS_ATTRIBUTES["month"].values[0] };
@@ -54,7 +54,9 @@ const npmrdsMapFilter = ({
     setFilters(newFilters);
   }, []);
   const metaLayerViewId = useMemo(() => {
-    return source.metadata.npmrds_meta_layer_view_id[year] ?? source.metadata.npmrds_meta_layer_view_id[2017]; //TODO temp hardcode for testing data
+    if(year) {
+      return source?.metadata?.npmrds_meta_layer_view_id[year] ?? source?.metadata?.npmrds_meta_layer_view_id?.[2017]; //TODO temp hardcode for testing data
+    }
   }, [year]);
 
   useEffect(() => {
