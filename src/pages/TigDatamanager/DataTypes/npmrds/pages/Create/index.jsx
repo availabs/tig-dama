@@ -8,6 +8,7 @@ import { DamaContext } from "~/pages/DataManager/store";
 import { DAMA_HOST } from "~/config";
 import { reducer } from "./components/reducer";
 import PublishNpmrds from "./components/publish";
+import SelectSpeedLimitSource from "./components/selectSpeedLimitSource";
 
 const BlankComponent = () => <></>;
 export default function NpmrdsCreate({
@@ -18,7 +19,7 @@ export default function NpmrdsCreate({
 }) {
   const { name: damaSourceName, source_id: sourceId, type } = source;
   const { pgEnv, user: ctxUser } = useContext(DamaContext);
-  console.log("I am NPMRDS create")
+
   const [loading, setLoading] = useState(false);
   const [state, dispatch] = useReducer(reducer, {
     damaSourceId: sourceId,
@@ -29,6 +30,8 @@ export default function NpmrdsCreate({
     dataType: dataType,
     damaServerPath: `${DAMA_HOST}/dama-admin/${"npmrds"}`,
     sourceType: type,
+    selectedViewId: '',
+    selectedSourceId: '',
   });
 
   useEffect(() => {
@@ -44,16 +47,18 @@ export default function NpmrdsCreate({
   }
 
   return (
-    <div className="w-full max-w-lg my-4">
-      <div className="md:flex md:items-center">
+    <div className="w-full my-4">
+      <div className="md:flex md:items-center gap-4">
+        <SelectSpeedLimitSource dispatch={dispatch} selectedViewId={state.selectedViewId} selectedSourceId={state.selectedSourceId}/>
         <PublishNpmrds
           loading={loading}
           setLoading={setLoading}
           source_id={sourceId}
-          user_id={state.userId}
-          email={state.email}
+          user_id={user?.id ?? ctxUser.id}
           name={source?.name}
           type={source?.type}
+          selectedViewId={state.selectedViewId}
+          selectedSourceId={state.selectedSourceId}
           pgEnv={pgEnv}
         />
       </div>
