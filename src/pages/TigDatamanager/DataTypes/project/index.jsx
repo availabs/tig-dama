@@ -1,7 +1,7 @@
 import React from 'react'
 import MapPage from "~/pages/TigDatamanager/Utils/gisMap";
 import CreatePage from "~/pages/DataManager/DataTypes/gis_dataset/pages/Create";
-import Table from "~/pages/DataManager/DataTypes/gis_dataset/pages/Table";
+import Table from "~/pages/TigDatamanager/Utils/gisTable";
 import ProjectHoverComp from './MapHoverComp'
 import ProjectMapFilter from './MapFilterComp'
 import { ProjectTableTransform } from './TableFilterComp'

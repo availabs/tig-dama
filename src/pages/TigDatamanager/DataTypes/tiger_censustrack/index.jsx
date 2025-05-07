@@ -1,7 +1,7 @@
 import React from "react";
 
 import CreatePage from "~/pages/DataManager/DataTypes/gis_dataset/pages/Create";
-import Table from "~/pages/DataManager/DataTypes/gis_dataset/pages/Table";
+import Table from "~/pages/TigDatamanager/Utils/gisTable";
 
 const TigCensustrackConfig = {
   table: {

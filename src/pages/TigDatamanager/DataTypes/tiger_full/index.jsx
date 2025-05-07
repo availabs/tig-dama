@@ -1,5 +1,5 @@
 import Create from "./create";
-import Table from "~/pages/DataManager/DataTypes/gis_dataset/pages/Table";
+import Table from "~/pages/TigDatamanager/Utils/gisTable";
 import Map from "~/pages/TigDatamanager/Utils/gisMap";
 import { TigerMapFilter } from "./TigerMapFilter";
 import { TigerTableFilter, TigerTableTransform } from "./TigerTableFilter";

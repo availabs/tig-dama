@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 
 import Map from "~/pages/TigDatamanager/Utils/gisMap";
 import CreatePage from "~/pages/DataManager/DataTypes/gis_dataset/pages/Create";
-import Table from "~/pages/DataManager/DataTypes/gis_dataset/pages/Table";
+import Table from "~/pages/TigDatamanager/Utils/gisTable";
 import TigOverview from '../TigOverview'
 import TigMetadata from '../TigMetadata'
 import Overview from "~/pages/DataManager/DataTypes/default/Overview";
