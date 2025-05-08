@@ -1,7 +1,6 @@
 import CreatePage from "./create";
 import RawOverview from "./overview";
 import Overview from "~/pages/DataManager/DataTypes/default/Overview";
-import TigMetadata from '../TigMetadata';
 
 const NpmrdsRawConfig = {
   sourceCreate: {
@@ -21,12 +20,6 @@ const NpmrdsRawConfig = {
   meta: {
     name: "Metadata",
     path: "/meta",
-    hidden: false,
-    component: TigMetadata,
-  },
-  source_meta: {
-    name: "Source Metadata",
-    path: "/source_meta",
     hidden: false,
     component: Overview,
   },

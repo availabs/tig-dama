@@ -5,7 +5,6 @@ import {npmrdsHoverComp} from './map/npmrdsHoverComp'
 import CreatePage from "./pages/Create";
 import ManagePage from "./pages/manage";
 import TigOverview from "../TigOverview";
-import TigMetadata from '../TigMetadata';
 import Overview from "~/pages/DataManager/DataTypes/default/Overview";
 import { npmrdsTableTransform } from "./table/npmrdsTableTransform";
 import config from "~/config.json"
@@ -28,12 +27,6 @@ const npmrdsConfig = {
   meta: {
     name: "Metadata",
     path: "/meta",
-    hidden: false,
-    component: TigMetadata,
-  },
-  source_meta: {
-    name: "Source Metadata",
-    path: "/source_meta",
     hidden: false,
     component: Overview,
   },

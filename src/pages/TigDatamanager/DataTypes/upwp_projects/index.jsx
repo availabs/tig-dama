@@ -6,7 +6,6 @@ import {UPWPTableTransform, HBTableFilter} from './TableFilters.jsx'
 
 
 import TigOverview from '../TigOverview'
-import TigMetadata from '../TigMetadata'
 
 const getVariables = (source,views,activeViewId) =>  {
     
@@ -21,12 +20,6 @@ const config = {
     tag: 'test',
     component: (props) => <TigOverview {...props} getVariables={getVariables} filterButtons={['Map','Chart']}/>
   },
-  meta: {
-    name: "Metadata",
-    path: "/meta",
-    hidden: false,
-    component: TigMetadata,
-  },
   table: {
     name: "Table",
     path: "/table",
@@ -38,9 +31,9 @@ const config = {
       />
     ),
   },
-  source_meta: {
-    name: "Source Metadata",
-    path: "/source_meta",
+  meta: {
+    name: "Metadata",
+    path: "/meta",
     hidden: false,
     component: Overview,
   },

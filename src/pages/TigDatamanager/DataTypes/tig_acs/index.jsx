@@ -11,7 +11,6 @@ import { AcsTableFilter, AcsTableTransform } from "./table/acsFilters";
 import { AcsChartFilters, ACSChartTransform } from "./chart/filters";
 
 import TigOverview from '../TigOverview'
-import TigMetadata from '../TigMetadata'
 
 import config from "~/config.json"
 
@@ -31,12 +30,6 @@ const TigAcsConfig = {
   meta: {
     name: "Metadata",
     path: "/meta",
-    hidden: false,
-    component: TigMetadata,
-  },
-  source_meta: {
-    name: "Source Metadata",
-    path: "/source_meta",
     hidden: false,
     component: Overview,
   },

@@ -8,7 +8,6 @@ import { ProjectTableTransform } from './TableFilterComp'
 import Overview from "~/pages/DataManager/DataTypes/default/Overview";
 
 import TigOverview from '../TigOverview'
-import TigMetadata from '../TigMetadata'
 
 import config from "~/config.json"
 
@@ -34,12 +33,6 @@ const GisDatasetConfig = {
   meta: {
     name: "Metadata",
     path: "/meta",
-    hidden: false,
-    component: TigMetadata,
-  },
-  source_meta: {
-    name: "Source Metadata",
-    path: "/source_meta",
     hidden: false,
     component: Overview,
   },
