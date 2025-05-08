@@ -272,9 +272,10 @@ const SedChartTransform = (tableData, attributes, filters, years, flag) => {
    */
   let groupByTableData = (tableData || []).reduce((g, d) => {
     const { county } = d;
-    if (county !== null) {
-      g[`${county}`] = g[`${county}`] ?? [];
-      g[`${county}`].push(d);
+    const transformedCounty = county.split(" County")[0];
+    if (transformedCounty !== null) {
+      g[`${transformedCounty}`] = g[`${transformedCounty}`] ?? [];
+      g[`${transformedCounty}`].push(d);
     }
     return g;
   }, {});
