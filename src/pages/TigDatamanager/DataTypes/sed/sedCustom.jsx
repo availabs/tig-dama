@@ -520,7 +520,7 @@ const SedTableTransform = (tableData, attributes, filters, years, source) => {
 
   if (area !== "all") {
     tableData = (tableData || []).filter((g) =>
-      (selectedArea || []).includes(g.county)
+      (selectedArea || []).includes(g.county.split(" County")[0])
     );
   }
 
@@ -534,6 +534,11 @@ const SedTableTransform = (tableData, attributes, filters, years, source) => {
   ];
 
   const varList = source.type === 'tig_sed_county' ? sedVarsCounty : sedVars;
+
+  //filters out some null/0 rows for taz datasets
+  if (source.type !== "tig_sed_county") {
+    tableData = tableData.filter((d) => d?.taz !== 0 && d?.taz !== "0");
+  }
 
   const displayPrecision = varList[activeVar]?.displayPrecision ?? 0;
   const displayFunc = (value) => parseFloat(value)?.toFixed(displayPrecision);
