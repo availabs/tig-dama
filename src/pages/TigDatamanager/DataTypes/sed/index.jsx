@@ -15,7 +15,6 @@ import dbColsTaz from "./dbColsTaz.json";
 import dbColsCounty from "./dbColsCounty.json";
 // import { getAttributes } from '~/pages/DataManager/components/attributes'
 import TigOverview from "../TigOverview"
-import TigMetadata from '../TigMetadata'
 import config from "~/config.json"
 
 import { sedVars, sedVarsCounty } from "./sedCustom"
@@ -79,12 +78,6 @@ export const tig_sed_taz = {
   meta: {
     name: "Metadata",
     path: "/meta",
-    hidden: false,
-    component: TigMetadata,
-  },
-  source_meta: {
-    name: "Source Metadata",
-    path: "/source_meta",
     hidden: false,
     component: Overview,
   },
@@ -164,12 +157,6 @@ export const tig_sed_county = {
   meta: {
     name: "Metadata",
     path: "/meta",
-    hidden: false,
-    component: TigMetadata,
-  },
-  source_meta: {
-    name: "Source Metadata",
-    path: "/source_meta",
     hidden: false,
     component: Overview,
   },

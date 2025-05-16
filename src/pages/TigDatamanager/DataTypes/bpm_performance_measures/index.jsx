@@ -4,7 +4,6 @@ import Map from "~/pages/TigDatamanager/Utils/gisMap";
 import CreatePage from "~/pages/DataManager/DataTypes/gis_dataset/pages/Create";
 import Table from "~/pages/TigDatamanager/Utils/gisTable";
 import TigOverview from '../TigOverview'
-import TigMetadata from '../TigMetadata'
 import Overview from "~/pages/DataManager/DataTypes/default/Overview";
 import {BPMTableTransform, HBTableFilter} from './BPMTableFilter'
 import {BPMMapFilter} from './BPMMapFilter'
@@ -37,12 +36,6 @@ const config = {
   meta: {
     name: "Metadata",
     path: "/meta",
-    hidden: false,
-    component: TigMetadata,
-  },
-  source_meta: {
-    name: "Source Metadata",
-    path: "/source_meta",
     hidden: false,
     component: Overview,
   },
