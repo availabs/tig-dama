@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import { Button, Input } from "~/modules/avl-components/src/";
 const SignUpComp = ({ email, verify, update, canSubmit, handleSubmit, title="" }) => {
   return (

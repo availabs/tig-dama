@@ -1,6 +1,6 @@
 import {useState} from "react";
 import {RenderFlyout} from "./RenderFlyout";
-import {useMatch, useNavigate} from "react-router-dom";
+import {useMatch, useNavigate} from "react-router";
 
 export const RenderTabs = ({
                                mode = 'desktop',

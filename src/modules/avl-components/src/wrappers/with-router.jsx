@@ -6,7 +6,7 @@ import {
   useLocation,
   useNavigate,
   useParams
-} from "react-router-dom";
+} from "react-router";
 
 export default Component => {
   function ComponentWithRouterProp(props) {

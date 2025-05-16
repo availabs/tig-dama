@@ -22,6 +22,9 @@ const DAMA_ARGS = {
   useFalcor,
   useAuth
 }
+console.log('Documentation', Documentation)
+Documentation[0].element = Documentation[0].Component
+delete Documentation[0].Component
 
 const Routes = [
   ...Auth,

@@ -1,5 +1,5 @@
 import React,  {useMemo} from 'react';
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router";
 
 import DefaultRoutes from './Routes';
 import Layout from './layout/tig-layout'

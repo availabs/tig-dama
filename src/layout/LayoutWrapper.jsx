@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router";
 import { withAuth } from '~/modules/ams/src'
 import cloneDeep from 'lodash/cloneDeep'
 import checkAuth from './checkAuth'
@@ -12,7 +12,7 @@ const LayoutWrapper = withAuth(({
   ...props
 }) => {
 
-  const Child = Element || Comp // support old react router routes
+  const Child = Element || Comp// support old react router routes
   const navigate = useNavigate();
   const location = useLocation();
 

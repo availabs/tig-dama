@@ -4,7 +4,7 @@ import ArrayInput from "./array-input"
 import Select from "./select"
 import ObjectInput from "./object-input"
 import BooleanInput from "./boolean-input"
-import MarkdownInput, { MarkdownViewer } from "./markdown"
+//import MarkdownInput, { MarkdownViewer } from "./markdown"
 import ColorInput from "./color-input"
 
 import { verifyValue, hasValue } from "./utils"
@@ -18,8 +18,8 @@ export {
   Select,
   ObjectInput,
   BooleanInput,
-  MarkdownInput,
-  MarkdownViewer,
+  // MarkdownInput,
+  // MarkdownViewer,
   ColorInput,
   verifyValue,
   hasValue

@@ -6,7 +6,7 @@ import { Button } from "~/modules/avl-components/src";
 import { toPng } from "html-to-image";
 import download from "downloadjs";
 import { SOURCE_AUTH_CONFIG } from "~/pages/DataManager/Source/attributes";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router";
 
 import { sedVars } from "./sedCustom";
 import { FilterControlContainer } from "../controls/FilterControlContainer";

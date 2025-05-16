@@ -1,5 +1,5 @@
 import React, {useMemo, useEffect} from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router'
 
 import get from 'lodash/get'
 

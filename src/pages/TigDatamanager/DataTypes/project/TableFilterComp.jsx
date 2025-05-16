@@ -1,5 +1,5 @@
 import React from 'react'
-import { useSearchParams, useParams, Link, useNavigate } from "react-router-dom";
+import { useSearchParams, useParams, Link, useNavigate } from "react-router";
 import download from "downloadjs"
 import { Button } from "~/modules/avl-components/src"
 

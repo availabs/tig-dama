@@ -1,4 +1,5 @@
 import {useTheme} from "../../../wrappers";
+import defaultTheme from '../defaultTheme'
 import React from "react";
 
 export const DefaultColumnFilter = ({column}) => {
@@ -10,7 +11,8 @@ export const DefaultColumnFilter = ({column}) => {
         filterClassName = "",
     } = column;
     // count = preFilteredRows.length;
-    const theme = useTheme().table();
+    const theme = typeof useTheme === 'function' && useTheme()?.table ? useTheme().table() : defaultTheme();
+
     return (
         <div className="w-3/4">
             <input className={`${theme.inputSmall} ${filterClassName}`}

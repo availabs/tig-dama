@@ -1,5 +1,5 @@
 import React, { useMemo, useEffect } from 'react'
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router";
 import { DamaContext } from "~/pages/DataManager/store"
 import get from 'lodash/get'
 import cloneDeep from 'lodash/cloneDeep'

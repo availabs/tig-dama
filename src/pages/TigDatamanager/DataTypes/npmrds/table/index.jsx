@@ -7,7 +7,7 @@ import React, {
 } from "react";
 import { get } from "lodash";
 import { Table } from "~/modules/avl-components/src";
-import { useParams } from "react-router-dom";
+import { useParams } from "react-router";
 import { NpmrdsFilters } from "../filters";
 import { NPMRDS_ATTRIBUTES } from "../constants";
 

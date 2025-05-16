@@ -1,5 +1,5 @@
 import React from "react";
-import {  Link  } from "react-router-dom";
+import {  Link  } from "react-router";
 import { dmsDataTypes } from "~/modules/dms/src"
 import { makeLexicalFormat } from "~/pages/DataManager/DataTypes/default/Overview";
 import { SOURCE_AUTH_CONFIG } from "~/pages/DataManager/Source/attributes";
