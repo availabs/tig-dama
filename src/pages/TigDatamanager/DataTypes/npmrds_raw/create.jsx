@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -13,90 +13,26 @@ import {
 import { DamaContext } from "~/pages/DataManager/store";
 import PublishNpmrdsRaw from "./publish";
 export const MAX_NPMRDS_SOURCE_NAME_LENGTH = 9;
-const statesObj = {
-  AL: "Alabama",
-  AK: "Alaska",
-  AZ: "Arizona",
-  AR: "Arkansas",
-  CA: "California",
-  CO: "Colorado",
-  CT: "Connecticut",
-  DE: "Delaware",
-  DC: "District of Columbia",
-  FL: "Florida",
-  GA: "Georgia",
-  HI: "Hawaii",
-  ID: "Idaho",
-  IL: "Illinois",
-  IN: "Indiana",
-  IA: "Iowa",
-  KS: "Kansas",
-  KY: "Kentucky",
-  LA: "Louisiana",
-  ME: "Maine",
-  MD: "Maryland",
-  MA: "Massachusetts",
-  MI: "Michigan",
-  MN: "Minnesota",
-  MS: "Mississippi",
-  MO: "Missouri",
-  MT: "Montana",
-  NE: "Nebraska",
-  NV: "Nevada",
-  NH: "New Hampshire",
-  NJ: "New Jersey",
-  NM: "New Mexico",
-  NY: "New York",
-  NC: "North Carolina",
-  ND: "North Dakota",
-  OH: "Ohio",
-  OK: "Oklahoma",
-  OR: "Oregon",
-  PA: "Pennsylvania",
-  PR: "Puerto Rico",
-  RI: "Rhode Island",
-  SC: "South Carolina",
-  SD: "South Dakota",
-  TN: "Tennessee",
-  TX: "Texas",
-  UT: "Utah",
-  VT: "Vermont",
-  VA: "Virginia",
-  VI: "Virgin Islands",
-  WA: "Washington",
-  WV: "West Virginia",
-  WI: "Wisconsin",
-  WY: "Wyoming",
-};
+
 const Create = ({ source }) => {
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
   const [loading, setLoading] = useState(false);
-  const [states, setStates] = useState([]);
 
   const { pgEnv, user } = React.useContext(DamaContext);
-  function isSelected(val) {
-    return (states || []).find((el) => el === val) ? true : false;
-  }
 
-  function handleSelection(val) {
-    const selectedResult = (states || []).filter(
-      (selected) => selected === val
-    );
+  const doesPassNameLengthCheck = !!source?.source_id || source?.name.length <= MAX_NPMRDS_SOURCE_NAME_LENGTH
+  const isButtonEnabled = !!source?.name?.length && doesPassNameLengthCheck && !!startDate && !!endDate;
 
-    if ((selectedResult || []).length > 0) {
-      removeSelect(val);
+  const errorMsg = useMemo(() => {
+    if(!source?.name && !!startDate && !!endDate){
+      return 'Type in a source name';
+    } else if (!doesPassNameLengthCheck) {
+      return `The source name is too long. Please enter a name with ${MAX_NPMRDS_SOURCE_NAME_LENGTH + " "} characters or less`
     } else {
-      setStates((currents) => [...currents, val]);
+      return ''
     }
-  }
-
-  function removeSelect(val) {
-    const removedSelection = (states || []).filter(
-      (selected) => selected !== val
-    );
-    setStates(removedSelection);
-  }
+  }, [source, startDate, endDate])
 
   return (
     <div className="w-full p-5 m-5">
@@ -142,29 +78,24 @@ const Create = ({ source }) => {
           </div>
         </div>
       </div>
-      {source?.name?.length > MAX_NPMRDS_SOURCE_NAME_LENGTH && (
-        <p className="text-red-500">
-          The source name is too long. Please enter a name with{" "}
-          {MAX_NPMRDS_SOURCE_NAME_LENGTH + " "}
-          characters or less.
+      {
+        <p style={{height:'24px'}} className="text-red-500">
+          { errorMsg.length > 0 && errorMsg }
         </p>
-      )}
-      {source?.name && startDate && endDate? (
-        <>
-          <PublishNpmrdsRaw
-            loading={loading}
-            setLoading={setLoading}
-            source_id={source?.source_id || null}
-            name={source?.name}
-            type={source?.type}
-            startDate={startDate}
-            endDate={endDate}
-            user_id={user?.id}
-            email={user?.email}
-            pgEnv={pgEnv}
-          />
-        </>
-      ) : null}
+      }
+      <PublishNpmrdsRaw
+        disabled={!isButtonEnabled}
+        loading={loading}
+        setLoading={setLoading}
+        source_id={source?.source_id || null}
+        name={source?.name}
+        type={source?.type}
+        startDate={startDate}
+        endDate={endDate}
+        user_id={user?.id}
+        email={user?.email}
+        pgEnv={pgEnv}
+      />
     </div>
   );
 };
