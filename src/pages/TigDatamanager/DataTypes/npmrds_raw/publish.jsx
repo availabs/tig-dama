@@ -4,6 +4,7 @@ import { DamaContext } from "~/pages/DataManager/store";
 import { ScalableLoading } from "~/modules/avl-components/src";
 import { DAMA_HOST } from "~/config";
 import { fips2Name } from "../constants";
+import { MAX_NPMRDS_SOURCE_NAME_LENGTH } from "./create";
 const submitUpload = ({props, navigate, pgEnv, baseUrl}) => {
   props.setLoading(true);
   //Need to map from 
@@ -83,11 +84,17 @@ export default function PublishNpmrdsRaw(props) {
   const { baseUrl } = React.useContext(DamaContext)
   const navigate = useNavigate();
   const { loading, pgEnv } = props;
+  const isNameTooLong = props?.name?.length >= MAX_NPMRDS_SOURCE_NAME_LENGTH;
+
+  const buttonClass = isNameTooLong
+    ? "cursor-not-allowed bg-gray-400 text-white font-bold py-2 px-4 rounded"
+    : `cursor-pointer bg-blue-500 hover:bg-blue-700 text-white font-bold my-4 py-2 px-4 rounded`;
 
   return (
     <>
       <button
-        className={`cursor-pointer bg-blue-500 hover:bg-blue-700 text-white font-bold my-4 py-2 px-4 rounded`}
+        className={buttonClass}
+        disabled={isNameTooLong}
         onClick={() => submitUpload({props, navigate, pgEnv, baseUrl})}
       >
         {" "}

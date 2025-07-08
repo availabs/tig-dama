@@ -5,7 +5,8 @@ export default function NpmrdsRawOverview({
 }) {
   const headers = [
     "View Id",
-    "Version",
+    "Date Added",
+    "NPMRDS Version",
     "Start Date",
     "End Date",
     "Total Percent",

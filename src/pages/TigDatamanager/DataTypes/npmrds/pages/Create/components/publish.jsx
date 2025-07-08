@@ -15,6 +15,8 @@ const npmrdsPublish = async (props, navigate, pgEnv) => {
     pgEnv: pgEnv || props?.pgEnv,
     tmcSpeedViewId: props?.selectedViewId,
     tmcSpeedSourceId: props?.selectedSourceId,
+    mpoBoundariesViewId: props?.selectedMpoBoundariesViewId || null,
+    mpoBoundariesSourceId: props?.selectedMpoBoundariesSourceId || null,
   };
 
   try {
@@ -51,14 +53,26 @@ export default function PublishNpmrds(props) {
     npmrdsPublish({ ...restProps, setLoading }, navigate, pgEnv);
   }, [restProps, navigate, setLoading]);
 
-  const isButtonDisabled = (!props.source_id && !props.name) || !props.selectedViewId;
+  const isNameTooLong = props?.name?.length >= MAX_NPMRDS_SOURCE_NAME_LENGTH;
+  const isButtonDisabled = (!props.source_id && !props.name) || !props.selectedViewId || isNameTooLong;
   const buttonClass = isButtonDisabled
     ? "cursor-not-allowed bg-gray-400 text-white font-bold py-2 px-4 rounded"
     : "cursor-pointer bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded";
 
   return (
     <div className="flex flex-col w-[20%]">
-      {(props.source_id || props.name) && !props.selectedViewId && "A TMC Speed Limit Source and View must be selected."}
+      <div className="flex flex-col gap-2">
+        <div>
+          {(props.source_id || props.name) &&
+            !props.selectedViewId &&
+            "A TMC Speed Limit Source and View must be selected."}
+        </div>
+        <div>
+          {(props.source_id || props.name) &&
+            !props.selectedMpoBoundariesViewId &&
+            "An MPO Boundaries Source and View must be selected."}
+        </div>
+      </div>
       <button
         className={buttonClass}
         disabled={(!props.source_id && !props.name) || !props.selectedViewId}
