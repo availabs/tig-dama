@@ -5,7 +5,7 @@ import checkAuth  from "~/layout/checkAuth"
 //import {Logo} from '~/layout/ppdaf-layout'
 //import AuthMenu from "~/pages/Auth/AuthMenu"
 
-import {pagesConfig} from '~/modules/dms/src/patterns/page/siteConfig'
+import pagesConfig from '~/modules/dms/src/patterns/page/siteConfig'
 //import ComponentRegistry from '~/component_registry'
 
 // import BuildingFootprintsDownload from "./buildings_download"
@@ -84,7 +84,7 @@ const theme = {
 const Routes = [
   {
     ...dmsPageFactory(
-      pagesConfig({ 
+      pagesConfig[0]({ 
         app: "tig-dama",
         type: "tig-docs2",
         baseUrl: "/docs",
