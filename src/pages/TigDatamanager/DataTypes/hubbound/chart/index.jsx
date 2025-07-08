@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo, useCallback, useContext } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router";
 import { get } from "lodash";
 
 import { createHubboundFilterClause } from "../utils";

@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useCallback } from "react";
-import { useParams } from "react-router-dom";
+import { useParams } from "react-router";
 import { get } from "lodash";
 
 import { DamaContext } from "~/pages/DataManager/store";

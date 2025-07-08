@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { range as d3range } from "d3-array";
 import get from "lodash/get";
 import { useMemo, useState, useContext, useEffect, useCallback } from "react";

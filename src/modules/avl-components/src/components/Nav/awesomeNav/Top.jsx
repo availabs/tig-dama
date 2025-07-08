@@ -1,5 +1,5 @@
 import {useTheme} from "../../../wrappers";
-import {useMatch, useNavigate} from "react-router-dom";
+import {useMatch, useNavigate} from "react-router";
 import {Children, createRef, useEffect, useLayoutEffect, useMemo, useState} from "react";
 import {RenderExtras} from "./components/RenderExtras";
 import {RenderTabs} from "./components/RenderTabs";

@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 
 import { API_HOST, DAMA_HOST } from "~/config";
 import { DamaContext } from "~/pages/DataManager/store";

@@ -7,7 +7,7 @@ import React, {
 } from "react";
 import { get, uniq } from "lodash";
 import { Table } from "~/modules/avl-components/src";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router";
 
 import { DamaContext } from "~/pages/DataManager/store";
 

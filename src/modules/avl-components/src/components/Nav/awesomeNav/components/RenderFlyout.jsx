@@ -1,5 +1,5 @@
 import {useState} from "react";
-import {useMatch, useNavigate} from "react-router-dom";
+import {useMatch, useNavigate} from "react-router";
 
 export const RenderFlyout = ({display, tabs=[], tabStyle, activeTabStyle, flyoutWrapper, flyoutRightIcon, depthLevel=1}) => {
     const navigate = useNavigate();

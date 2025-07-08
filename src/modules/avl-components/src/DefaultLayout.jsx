@@ -1,7 +1,7 @@
 import React from 'react';
 
 
-import { Route, Navigate, useLocation, Outlet } from "react-router-dom";
+import { Route, Navigate, useLocation, Outlet } from "react-router";
 
 import Layouts from './components/Layouts'
 import LoadingPage from "./components/Loading"

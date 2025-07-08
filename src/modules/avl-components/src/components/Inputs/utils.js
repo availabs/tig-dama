@@ -67,7 +67,7 @@ export const verifyValue = (value, type, verify = null) => {
 }
 
 export const hasValue = value => {
-  if ((value === null) || (value === undefined)) return false;
+  if ((value === null) || (value === undefined) || (value === false)) return false;
   if ((typeof value === "string") && !value.length) return false;
   if (Array.isArray(value)) return value.reduce((a, c) => a || hasValue(c), false);
   if ((typeof value === "number") && isNaN(value)) return false;

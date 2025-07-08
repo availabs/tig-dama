@@ -4,7 +4,7 @@ import {
   useNavigate,
   useSearchParams,
   useParams,
-} from "react-router-dom";
+} from "react-router";
 import { DamaContext } from "~/pages/DataManager/store"
 import get from 'lodash/get'
 

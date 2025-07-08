@@ -24,36 +24,40 @@ import {DefaultExpandedRow} from "./components/DefaultExpandedRow";
 import {Pagination} from "./components/Pagination";
 import {RenderExpandedRow} from "./components/RenderExpandedRow";
 import {RenderCell} from "./components/RenderCell";
+import {CSVLink} from "react-csv";
+import defaultTheme from './defaultTheme'
 
 const EMPTY_ARRAY = [];
 
 export default ({
-                    columns = EMPTY_ARRAY,
-                    data = EMPTY_ARRAY,
-                    sortBy, sortOrder = "",
-                    initialPageSize = 10,
-                    manualPagination, // manual pagination, provide data if not providing fetchData fn
-                    fetchData, // manual pagination, fetch data using this function
-                    onPageChange, // custom function to execute
-                    numRecords, // should be used in case of manual pagination
-                    manualCurrentPage,
-                    pageSize = 5,
-                    onRowClick,
-                    onRowEnter,
-                    onRowLeave,
-                    ExpandRow = DefaultExpandedRow,
-                    disableFilters = false,
-                    disableSortBy = false,
-                    themeOptions = {},
-                    ...props
-                }) => {
+    columns = EMPTY_ARRAY,
+    data = EMPTY_ARRAY,
+    sortBy, sortOrder = "",
+    initialPageSize = 10,
+    manualPagination, // manual pagination, provide data if not providing fetchData fn
+    fetchData, // manual pagination, fetch data using this function
+    onPageChange, // custom function to execute
+    numRecords, // should be used in case of manual pagination
+    manualCurrentPage,
+    pageSize = 5,
+    onRowClick,
+    onRowEnter,
+    onRowLeave,
+    ExpandRow = DefaultExpandedRow,
+    disableFilters = false,
+    disableSortBy = false,
+    csvDownload = false,
+    onCsvDownload,
+    themeOptions = {},
+    ...props
+}) => {
     const [pageData, setPageData] = React.useState(data || []);
     const [totalRecords, setTotalRecords] = React.useState(numRecords || 0);
     const [currentPage, setCurrentPage] = useState(manualCurrentPage || 0);
     const [pageValue, setPageValue] = useState(0);
     const [loading, setLoading] = useState(false);
 
-    const theme = useTheme().table(themeOptions);
+    const theme = typeof useTheme === 'function' && useTheme()?.table ? useTheme().table(themeOptions) : defaultTheme(themeOptions);
 
     const filterTypes = React.useMemo(
         () => ({
@@ -106,7 +110,7 @@ export default ({
             disableSortBy,
             initialState: {
                 pageSize: +pageSize || +initialPageSize,
-                sortBy: [{id: sortBy, desc: sortOrder.toLowerCase() === "desc"}]
+                ...sortBy && {sortBy: [{id: sortBy, desc: sortOrder.toLowerCase() === "desc"}]}
             }
         },
         useFilters,
@@ -190,63 +194,85 @@ export default ({
                     }}>
                     <Loading width={'100%'} height={'100%'}/>
                 </div>}
+                {
+                    csvDownload ?
+                        <div className={'w-full text-right'}>
+                            <CSVLink
+                                data={pageData}
+                                headers={columns.map(c => ({label: c.Header, key: c.accessor}))}
+                                filename={'data.csv'}
+                                className={theme.downloadWrapper}
+                            >
+                                <i className={theme.downloadIcon || 'fa fa-download'} /> <label>csv</label>
+                            </CSVLink>
+                        </div> : null
+                }
                 <table {...getTableProps()} className="w-full">
-                    <thead>
-                    {headerGroups.map(headerGroup =>
-                        <tr {...headerGroup.getHeaderGroupProps()}>
-                            {headerGroup.headers
-                                .map(column =>
-                                    <th {...column.getHeaderProps({
-                                        ...column.getSortByToggleProps(),
-                                        style: {
-                                            minWidth: column.minWidth,
-                                            width: column.width,
-                                            maxWidth: column.maxWidth
-                                        },
-                                    })}
-                                        className={theme.tableHeader}>
-                                        <div className={'flex flex-col'}>
-                                            <div className={`flex justify-between items-center`}>
-                                                <div className="flex-1 pr-1">
-                                                    {column.render("Header")}
+                <thead>
+                    {headerGroups.map(headerGroup => {
+                        const { key: headerGroupKey, ...headerGroupProps } = headerGroup.getHeaderGroupProps();
+                        return (
+                            <tr key={ headerGroupKey } {...headerGroupProps}>
+                                {headerGroup.headers
+                                    .map(column => {
+                                        const { key: columnHeaderKey, ...columnHeaderProps } =
+                                          column.getHeaderProps({
+                                            ...column.getSortByToggleProps(),
+                                            style: {
+                                              minWidth: column.minWidth,
+                                              width: column.width,
+                                              maxWidth: column.maxWidth,
+                                            },
+                                          });
+                                        return (
+                                            <th key={ columnHeaderKey } { ...columnHeaderProps }
+                                                className={theme.tableHeader}>
+                                                <div className={'flex flex-col'}>
+                                                    <div className={`flex justify-between items-center`}>
+                                                        <div className="flex-1 pr-1">
+                                                            {column.render("Header")}
+                                                        </div>
+                                                        <>
+                                                            {
+                                                                column.info &&
+                                                                <i
+                                                                    className={`${theme.infoIcon}`}
+                                                                    title={column.info}
+                                                                />
+                                                            }
+                                                            {!column.canSort ? null :
+                                                                !column.isSorted ?
+                                                                    <i className={`ml-2 pt-1 ${theme.sortIconIdeal}`}/> :
+                                                                    column.isSortedDesc ?
+                                                                        <i className={`ml-2 pt-1 ${theme.sortIconDown}`}/> :
+                                                                        <i className={`ml-2 pt-1 ${theme.sortIconUp}`}/>
+                                                            }
+                                                        </>
+                                                    </div>
+                                                    <div>
+                                                        {!column.canFilter ? null :
+                                                            <div>{column.render(filters[column.filter] || 'Filter')}</div>}
+                                                    </div>
                                                 </div>
-                                                <>
-                                                    {
-                                                        column.info &&
-                                                        <i
-                                                            className={`${theme.infoIcon}`}
-                                                            title={column.info}
-                                                        />
-                                                    }
-                                                    {!column.canSort ? null :
-                                                        !column.isSorted ?
-                                                            <i className={`ml-2 pt-1 ${theme.sortIconIdeal}`}/> :
-                                                            column.isSortedDesc ?
-                                                                <i className={`ml-2 pt-1 ${theme.sortIconDown}`}/> :
-                                                                <i className={`ml-2 pt-1 ${theme.sortIconUp}`}/>
-                                                    }
-                                                </>
-                                            </div>
-                                            <div>
-                                                {!column.canFilter ? null :
-                                                    <div>{column.render(filters[column.filter] || 'Filter')}</div>}
-                                            </div>
-                                        </div>
-                                    </th>
-                                )
-                            }
-                        </tr>
+                                            </th>
+                                        )
+                                    })
+                                }
+                            </tr>
+                        )}
                     )
                     }
-
                     </thead>
                     <tbody {...getTableBodyProps()}>
-                    {page.map((row) => {
+                    {page
+                        .filter(row => !row.original.totalRow)
+                        .map((row) => {
                         const {onClick, expand = []} = row.original;
                         prepareRow(row);
+                        const { key: rowKey, ...rowProps } = row.getRowProps();
                         return (
-                            <React.Fragment key={row.getRowProps().key}>
-                                <tr {...row.getRowProps()}
+                            <React.Fragment key={ rowKey }>
+                                <tr { ...rowProps }
                                     onMouseEnter={typeof onRowEnter === "function" ? e => onRowEnter(e, row) : null}
                                     onMouseLeave={typeof onRowLeave === "function" ? e => onRowLeave(e, row) : null}
                                     className={`
@@ -274,7 +300,42 @@ export default ({
                         )
                     })
                     }
-
+                    {
+                        rows.filter(row => row.original.totalRow)
+                            .map(row => {
+                                const {onClick, expand = []} = row.original;
+                                prepareRow(row);
+                                const { key: rowKey, ...rowProps } = row.getRowProps();
+                                return (
+                                    <React.Fragment key={ rowKey }>
+                                        <tr { ...rowProps }
+                                            onMouseEnter={typeof onRowEnter === "function" ? e => onRowEnter(e, row) : null}
+                                            onMouseLeave={typeof onRowLeave === "function" ? e => onRowLeave(e, row) : null}
+                                            className={`
+                                        ${theme.totalRow}
+                                        ${(onClick || onRowClick) ? "cursor-pointer" : ""}
+                                    `}
+                                            onClick={e => {
+                                                (typeof onRowClick === "function") && onRowClick(e, row);
+                                                (typeof onClick === "function") && onClick(e, row);
+                                            }}>
+                                            {row.cells.map((cell, ii) =>
+                                                <RenderCell
+                                                    key ={ii}
+                                                    {...{
+                                                        ii, cell, row, columns,
+                                                        expand, expanded, toggleRowExpanded,
+                                                        theme
+                                                    }}
+                                                />
+                                            )
+                                            }
+                                        </tr>
+                                        <RenderExpandedRow {...{row, expand, visibleColumns, ExpandRow, theme}} />
+                                    </React.Fragment>
+                                )
+                            })
+                    }
                     </tbody>
                 </table>
             </div>

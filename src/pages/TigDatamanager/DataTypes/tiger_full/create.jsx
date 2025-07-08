@@ -4,7 +4,7 @@ import React, { useState, useContext } from "react";
 //   checkApiResponse,
 //   getDamaApiRoutePrefix,
 // } from "../utils/DamaControllerApi";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 
 import { DAMA_HOST } from '~/config'
 

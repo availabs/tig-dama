@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState, useRef } from 'react';
 import { Button } from "~/modules/avl-components/src"
 import get from 'lodash/get'
 import cloneDeep from 'lodash/cloneDeep'
-import { useParams, useNavigate, useSearchParams } from 'react-router-dom'
+import { useParams, useNavigate, useSearchParams } from 'react-router'
 import { AvlMap, ThemeProvider} from "~/modules/avl-map-2/src"
 import GISDatasetLayer from '~/pages/DataManager/DataTypes/gis_dataset/pages/Map/Layer2'
 import mapTheme from '~/pages/DataManager/DataTypes/gis_dataset/pages/Map/map-theme'

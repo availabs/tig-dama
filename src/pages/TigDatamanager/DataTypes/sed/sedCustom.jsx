@@ -1,7 +1,7 @@
 import React, { useMemo, useEffect} from "react";
 import get from "lodash/get";
 import mapboxgl from "maplibre-gl";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router";
 import isEqual from 'lodash/isEqual'
 import { SOURCE_AUTH_CONFIG } from "~/pages/DataManager/Source/attributes";
 import { DamaContext } from "~/pages/DataManager/store"

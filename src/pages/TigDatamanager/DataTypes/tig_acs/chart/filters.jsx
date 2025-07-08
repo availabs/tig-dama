@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { get, sum, mean } from "lodash";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router";
 import { toPng } from "html-to-image";
 import download from "downloadjs";
 import { SOURCE_AUTH_CONFIG } from "~/pages/DataManager/Source/attributes";

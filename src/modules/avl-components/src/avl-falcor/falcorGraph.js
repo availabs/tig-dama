@@ -36,12 +36,12 @@ import throttle from "lodash/throttle"
 
 class CustomSource extends HttpDataSource {
  onBeforeRequest (config) {
-   if (window && window.localStorage) {
+    if (window && window.localStorage) {
      const userToken = window.localStorage.getItem('userToken');
      if (userToken) {
        config.headers['Authorization'] = userToken;
      }
-   }
+    }
  }
 }
 
