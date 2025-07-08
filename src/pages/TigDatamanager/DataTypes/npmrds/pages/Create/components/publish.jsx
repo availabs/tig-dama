@@ -3,6 +3,7 @@ import { useNavigate } from "react-router";
 
 import { ScalableLoading } from "~/modules/avl-components/src";
 import { DAMA_HOST } from "~/config";
+import { MAX_NPMRDS_SOURCE_NAME_LENGTH } from "../"
 
 const npmrdsPublish = async (props, navigate, pgEnv) => {
   props.setLoading(true);
