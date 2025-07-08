@@ -1,5 +1,5 @@
 import moment from "moment";
-const finishYear = 2024;
+const finishYear = 2025;
 const startYear = 2016;
 
 export const NPMRDS_ATTRIBUTES = {
