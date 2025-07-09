@@ -53,10 +53,10 @@ export default function NpmrdsRawOverview({
                         {view?.view_id}
                       </td>
                       <td
-                        key={`${group}.${item?.['_created_timestamp']}`}
+                        key={`_created_timestamp.${index}`}
                         className="py-2 px-4 border-b"
                       >
-                        {item?.['_created_timestamp'] && moment(item?.['_created_timestamp']).format("YYYY-MM-DD")}
+                        {view?.['_created_timestamp'] && moment(view?.['_created_timestamp']).format("YYYY-MM-DD")}
                       </td>
                       <td
                         key={`npmrds_version.${index}`}
