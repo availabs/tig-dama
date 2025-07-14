@@ -51,7 +51,7 @@ const submitUpload = ({props, navigate, pgEnv, baseUrl}) => {
         pgEnv: pgEnv || props?.pgEnv,
         // averagingWindowSize: 60,
       };
-
+      //console.log("publishData",publishData)
       const res = await fetch(
         `${DAMA_HOST}/dama-admin/${pgEnv}/npmrds-raw/publish`,
         {
