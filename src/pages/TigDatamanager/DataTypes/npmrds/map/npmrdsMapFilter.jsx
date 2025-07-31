@@ -253,7 +253,7 @@ const npmrdsMapFilter = ({
 
   const filterSettings = {
     ...NPMRDS_ATTRIBUTES, 
-    tmc: {...NPMRDS_ATTRIBUTES.tmc, values: [""].concat(tmcData?.map(tmcRow => tmcRow.tmc))}
+    tmc: {...NPMRDS_ATTRIBUTES.tmc, values: tmcData && tmcData.length ? [""].concat(tmcData?.map(tmcRow => tmcRow.tmc)) : []}
   };
   return <NpmrdsFilters filterSettings={filterSettings} filterType={"mapFilter"} filters={filters} setFilters={setFilters}/>
 };
