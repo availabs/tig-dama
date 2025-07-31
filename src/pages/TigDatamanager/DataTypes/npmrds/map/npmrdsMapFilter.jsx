@@ -136,7 +136,7 @@ const npmrdsMapFilter = ({
         "data",
         tmcDataReqKey,
         "value",
-      ]),
+      ], []),
     [falcorCache, tmcDataReqKey]
   );
 
