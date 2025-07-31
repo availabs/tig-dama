@@ -11,6 +11,40 @@ import moment from 'moment'
 import {LAYERS, LEGEND_RANGE, LEGEND_DOMAIN, SOURCES} from './mapConstants'
 import { NpmrdsFilters } from "../filters";
 
+const getInitialYearAndMonth = () => {
+  const CURRENT_YEAR = new Date().getFullYear();
+  const CURRENT_MONTH = new Date().getMonth() + 1;
+  const CURRENT_DAY = new Date().getDate();
+  console.log({CURRENT_YEAR, CURRENT_MONTH, CURRENT_DAY});
+
+  //Want current year and month, unless day <= 21
+    // Then, want previous month
+  //Want current year, unless month === 1 AND day <= 21
+    // Then, want previous year and month = 12
+
+  if (CURRENT_MONTH === 1 && CURRENT_DAY <= 21) {
+    return {
+      year: CURRENT_YEAR - 1,
+      month: 12
+    }
+  } 
+  //TEMP until data is backfilled faster -- `current_day` portion will always fail
+  //initially display previous month
+  else {
+    return {
+      year: CURRENT_YEAR,
+      month: CURRENT_MONTH - 1
+    }
+  }
+  // else {
+  //   return {
+  //     year: CURRENT_YEAR,
+  //     month: CURRENT_MONTH
+  //   }
+  // }
+}
+
+
 //TODO
 //`day of week`?
 //`vehicle class`?
@@ -23,7 +57,6 @@ const npmrdsMapFilter = ({
   source
 }) => {
   const { falcor, falcorCache, pgEnv } = useContext(DamaContext);
-  const [allTmcRows, setAllTmcRows] = useState([]);
   const [tmcBounds, setTmcBounds] = useState();
   let newSymbology = cloneDeep(tempSymbology);
   const year =  filters?.year?.value;
@@ -34,11 +67,15 @@ const npmrdsMapFilter = ({
 
   useEffect(() => {
     const newFilters = { ...filters };
+    const {
+      year: initYear,
+      month: initMonth
+    } = getInitialYearAndMonth()
     if (!year) {
-      newFilters.year = { value: 2023 };
+      newFilters.year = { value: initYear };
     }
     if (!month) {
-      newFilters.month = { value:  NPMRDS_ATTRIBUTES["month"].values[0] };
+      newFilters.month = { value:  initMonth };
     }
     if (!hour) {
       newFilters.hour = { value: NPMRDS_ATTRIBUTES["hour"].values[2] };
@@ -53,67 +90,12 @@ const npmrdsMapFilter = ({
     }
     setFilters(newFilters);
   }, []);
-  const metaLayerViewId = useMemo(() => {
-    if(year) {
-      return source?.metadata?.npmrds_meta_layer_view_id[year] ?? source?.metadata?.npmrds_meta_layer_view_id?.[2017]; //TODO temp hardcode for testing data
-    }
-  }, [year]);
 
-  useEffect(() => {
-    const getTmcMetaData = async () => {
-      console.log("getting tmc metadata")
-      const tmcListLengthPath = [
-        "dama",
-        pgEnv,
-        "viewsbyId",
-        metaLayerViewId,
-        "data",
-        "length"
-      ];
-      const lenRes = await falcor.get(tmcListLengthPath)
-  
-      let len = get(lenRes, ["json", ...tmcListLengthPath], 0);
- 
-      /**
-       * TODO
-       * if I switch to using the `options` route
-       * I could filter tmcs by direction here
-       */
-      const tmcListDataPath = [
-        "dama",
-        pgEnv,
-        "viewsbyId",
-        metaLayerViewId,
-        "databyIndex",
-        { from: 0, to: len - 1 },
-        ["tmc", "miles", "direction", "nhs", 'road', "avg_speedlimit", "start_latitude",	"start_longitude",	"end_latitude",	"end_longitude"],
-      ];
-  
-      const tmcIdRes = await falcor.get(tmcListDataPath);
-      
-      const tmcs = Object.values(
-        get(
-          tmcIdRes,
-          ["json", "dama", pgEnv, "viewsbyId", metaLayerViewId, "databyIndex"],
-          {}
-        )
-      );
-      setAllTmcRows(tmcs)
-    }
-
-    if(metaLayerViewId) {
-      getTmcMetaData();
-    }
-
-  }, [metaLayerViewId]);
 
 
   useEffect(() => {
     if (tmc && tmc !== "") {
-      const tmcs = Object.values(get(falcorCache, ["dama", pgEnv, "viewsbyId", metaLayerViewId, "databyId"], {})).filter(
-        (tmcRow) => direction === "All" || tmcRow["direction"]?.toLowerCase() === direction?.toLowerCase()
-      );
-      const curZoomTmc = tmcs.find((tmcRow) => tmcRow.tmc === tmc);
+      const curZoomTmc = tmcData.find((tmcRow) => tmcRow.tmc === tmc);
       const { start_longitude, start_latitude, end_longitude, end_latitude } =
         curZoomTmc;
       const startCoord = [start_longitude, start_latitude];
@@ -129,38 +111,47 @@ const npmrdsMapFilter = ({
     }
   }, [tmc]);
 
+  const tmcDataReqKey = useMemo(() => {
+    const startOfMonth = moment([year, month - 1]).startOf('month').format('YYYYMMDD');
+    const endOfMonth = moment([year, month - 1]).endOf('month').format('YYYYMMDD');
+    const startEpoch = parseInt(hour) * 12;
+    const endEpoch = (parseInt(hour)+1) * 12;
+    return `${NPMRDS_ATTRIBUTES.counties.values.join(",")}|${startOfMonth}|${endOfMonth}|${startEpoch}|${endEpoch}|monday,tuesday,wednesday,thursday,friday|hour|travel_time_all|speed|%7B%7D|ny`
+  },[year, month, hour])
+
+  const tmcData = useMemo(
+    () =>
+      get(falcorCache, [
+        "routes",
+        pgEnv,
+        "view",
+        activeViewId,
+        "data",
+        tmcDataReqKey,
+        "value",
+      ]),
+    [falcorCache, tmcDataReqKey]
+  );
+
   useEffect(() => {
     async function getData() {    
-
-
+      console.time("------TOTAL getting data and set style-----")
       // use this view to get the npmrds data by hour for all tmcs 
       // routes[{keys:pgEnvs}].view[{integers:viewIds}].data[{keys:requestKeys}]
 
-      console.log({year, month})
-
-      const startOfMonth = moment([year, month - 1]).startOf('month').format('YYYYMMDD');
-      const endOfMonth = moment([year, month - 1]).endOf('month').format('YYYYMMDD');
-
-      const data = {};
-      console.log("retreiving data for tmcs")
-      const startEpoch = parseInt(hour) * 12;
-      const endEpoch = (parseInt(hour)+1) * 12;
-      const tmcDataReqKey = `${NPMRDS_ATTRIBUTES.counties.values.join(",")}|${startOfMonth}|${endOfMonth}|${startEpoch}|${endEpoch}|monday,tuesday,wednesday,thursday,friday|hour|travel_time_all|travelTime|%7B%7D|ny`
+      console.log("START req data for tmcs")
       const tmcDataBasePath = ['routes', pgEnv, 'view', activeViewId, 'data', tmcDataReqKey];
+      console.time("just data REQ")
       const tmcDataRes = await falcor.get(tmcDataBasePath);
+      console.timeEnd("just data REQ")
       const tmcData = get(tmcDataRes, ["json", "routes", pgEnv, 'view', activeViewId, 'data', tmcDataReqKey])
+      const data = {};
+      // console.time("tmc data reduce")
       tmcData.reduce((acc, curr) => {
-        const tmcMetaRow = allTmcRows.find(tmcRow => tmcRow.tmc === curr.tmc);
-        const tmcLength = tmcMetaRow?.miles;
-
-        //value is in seconds;
-        //TODO VALIDATE THIS MATH??? maybe this is correct??
-        const speed = (tmcLength / curr.value) * 60 * 60 ;
-        if( direction === "All" || tmcMetaRow["direction"]?.toLowerCase() === direction?.toLowerCase()) {
-          acc[curr.tmc] = {...curr, speed, ...tmcMetaRow};
-        }
+        acc[curr.tmc] = {...curr};
         return acc;
       }, data);
+      // console.timeEnd("tmc data reduce")
       console.log("data for tmcs fetched")
       newSymbology.sources = SOURCES;
       newSymbology.data = data;
@@ -228,14 +219,14 @@ const npmrdsMapFilter = ({
         console.log("setting new newSymbology, newSymb layers");
         setTempSymbology(newSymbology);
       }
+      console.timeEnd("------TOTAL getting data and set style-----")
     }
-
-    if(year && month && allTmcRows.length) {
+    if(year && month) {
       console.log("gonna get some data")
       getData();
     }
 
-  },[year, month, hour, direction, allTmcRows]);
+  },[year, month, hour, direction]);
 
   useEffect(() => {
     if (tmcBounds) {
@@ -255,7 +246,7 @@ const npmrdsMapFilter = ({
 
   const filterSettings = {
     ...NPMRDS_ATTRIBUTES, 
-    tmc: {...NPMRDS_ATTRIBUTES.tmc, values: [""].concat(allTmcRows.map(tmcRow => tmcRow.tmc))}
+    tmc: {...NPMRDS_ATTRIBUTES.tmc, values: [""].concat(tmcData?.map(tmcRow => tmcRow.tmc))}
   };
   return <NpmrdsFilters filterSettings={filterSettings} filterType={"mapFilter"} filters={filters} setFilters={setFilters}/>
 };

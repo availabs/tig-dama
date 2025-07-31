@@ -180,7 +180,7 @@ const DefaultMapFilter = ({ source, filters, setFilters, activeViewId, layer, se
 }
 
 const MapPage = ({source,views, HoverComp, MapFilter=DefaultMapFilter, filterData = {}, showViewSelector=true, displayPinnedGeomBorder=false, mapStyles, userHighestAuth=0 }) => {
-  console.log("in new copy of map page")
+  //console.log("in new copy of map page")
   const [searchParams] = useSearchParams();
   const urlVariable = searchParams.get("variable")
   const { viewId } = useParams();
