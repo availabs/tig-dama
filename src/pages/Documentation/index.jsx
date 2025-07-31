@@ -15,20 +15,61 @@ registerDataType("selector", Selector)
 
 const theme = {
   page: {
+    container: 'bg-gray-200',
     wrapper1: 'w-full flex-1 flex flex-col bg-white border', // first div inside Layout
     wrapper2: 'w-full h-full flex-1 flex flex-row px-1 md:px-6 py-6', // inside page header, wraps sidebar
     wrapper3: 'flex flex-1 w-full  flex-col   relative text-md font-light leading-7 p-4 min-h-[calc(100vh_-_102px)]' , // content wrapepr
   },
   layout:{
-  wrapper: 'relative isolate flex min-h-svh w-full max-lg:flex-col',
-  wrapper2: 'flex-1 flex items-start flex-col items-stretch max-w-full',
-  wrapper3: 'flex flex-1',
-  childWrapper: 'flex-1 h-full',
-  topnavContainer1:`sticky top-0 left-0 right-0 z-20 `,
-  topnavContainer2:``,
-  sidenavContainer1: 'w-44',
-  sidenavContainer2: 'sticky top-0 h-[calc(100vh_-_50px)]',
-  navTitle: `flex-1 text-[24px] font-['Oswald'] font-[500] leading-[24px] text-[#2D3E4C] py-3 px-4 uppercase`
+    wrapper: 'relative isolate flex min-h-svh w-full max-lg:flex-col',
+    wrapper2: 'flex-1 flex items-start flex-col items-stretch max-w-full',
+    wrapper3: 'flex flex-1',
+    childWrapper: 'flex-1 h-full',
+    topnavContainer1:`sticky top-0 left-0 right-0 z-20 `,
+    topnavContainer2:``,
+    sidenavContainer1: 'w-44',
+    sidenavContainer2: 'sticky top-0 h-[calc(100vh_-_50px)]',
+    navTitle: `flex-1 text-[24px] font-['Oswald'] font-[500] leading-[24px] text-[#2D3E4C] py-3 px-4 uppercase`
+  },
+sectionArray: {
+    container: 'w-full grid grid-cols-6 ', //gap-1 md:gap-[12px]
+    gridSize: 6,
+    layouts: {
+        centered: 'max-w-[1020px] mx-auto',
+        fullwidth: ''
+    },
+    sectionEditWrapper: 'relative group',
+    sectionEditHover: 'absolute inset-0 group-hover:border border-blue-300 border-dashed pointer-events-none z-10',
+    sectionViewWrapper: 'relative group',
+    sectionPadding: 'p-4',
+    gridviewGrid: 'z-0 bg-slate-50 h-full',
+    gridviewItem: 'border-x bg-white border-slate-100/75 border-dashed h-full p-[6px]',
+    defaultOffset: 16,
+    sizes: {
+        "1/3": { className: 'col-span-6 md:col-span-2', iconSize: 33 },
+        "1/2": { className: 'col-span-6 md:col-span-3', iconSize: 50 },
+        "2/3": { className: 'col-span-6 md:col-span-4', iconSize: 66 },
+        "1":   { className: 'col-span-6 md:col-span-6', iconSize: 100 },
+    },
+    rowspans: {
+        "1" : { className: '' },
+        "2" : { className: 'md:row-span-2'},
+        "3" : { className: 'md:row-span-3'},
+        "4" : { className: 'md:row-span-4'},
+        "5" : { className: 'md:row-span-5'},
+        "6" : { className: 'md:row-span-6'},
+        "7" : { className: 'md:row-span-7'},
+        "8" : { className: 'md:row-span-8'},
+    },
+    border: {
+        none: '',
+        full: 'border-8 border-[#bcd3cb] rounded-lg',
+        openLeft: 'border border-[#E0EBF0] border-l-transparent rounded-r-lg',
+        openRight: 'border border-[#E0EBF0] border-r-transparent rounded-l-lg',
+        openTop: 'border border-[#E0EBF0] border-t-transparent rounded-b-lg',
+        openBottom: 'border border-[#E0EBF0] border-b-transparent rounded-t-lg',
+        borderX: 'border border-[#E0EBF0] border-y-transparent'
+    }
 },
   sidenav:{
    "fixed": "",
