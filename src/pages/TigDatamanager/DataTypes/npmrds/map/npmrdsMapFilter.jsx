@@ -11,6 +11,49 @@ import moment from 'moment'
 import {LAYERS, LEGEND_RANGE, LEGEND_DOMAIN, SOURCES} from './mapConstants'
 import { NpmrdsFilters } from "../filters";
 
+const npmrdsPaint = {
+  'line-color': '#ccc',
+  'line-width': [
+    "interpolate",
+    ["linear"],
+    ["zoom"],
+    0,
+    [
+      "match",
+      ["get", "n"],
+      [1, 2],
+      0.5,
+      0
+    ],
+    13,
+    [
+      "match",
+      ["get", "n"],
+      [1, 2],
+      1.5,
+      1
+    ],
+    18,
+    [
+      "match",
+      ["get", "n"],
+      [1, 2],
+      8,
+      5
+    ]
+  ],
+  'line-opacity': [
+    "case",
+    ["boolean", ["feature-state", "hover"], false],
+    0.4,
+    1
+  ],
+  'line-offset': {
+    base: 1.5,
+    stops: [[5, 0], [9, 1], [15, 3], [18, 7]]
+  }
+}
+
 const getInitialYearAndMonth = () => {
   const CURRENT_YEAR = new Date().getFullYear();
   const CURRENT_MONTH = new Date().getMonth() + 1;
@@ -85,7 +128,7 @@ const npmrdsMapFilter = ({
       newFilters.month = { value:  initMonth };
     }
     if (!hour) {
-      newFilters.hour = { value: NPMRDS_ATTRIBUTES["hour"].values[2] };
+      newFilters.hour = { value: NPMRDS_ATTRIBUTES["hour"].values[0] };
     }
     if (!direction) {
       newFilters.direction = {
@@ -175,13 +218,13 @@ const npmrdsMapFilter = ({
       newSymbology.layers = newSymbology.layers = [...(newSymbology.layers ?? LAYERS)].map(layer => ({
         ...layer,
           paint: {
+            ...npmrdsPaint,
             "line-color": [
               "case",
               ["has", ["to-string", ["get", 'tmc']], ["literal", colors]],
               ["get", ["to-string", ["get", 'tmc']], ["literal", colors]],
               "hsla(185, 0%, 27%,0.0)",
           ],
-            "line-width": 3,
           },
           layout: {
             ...layer.layout,
