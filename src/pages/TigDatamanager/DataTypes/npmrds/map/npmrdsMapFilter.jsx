@@ -36,7 +36,7 @@ const getInitialYearAndMonth = () => {
       month: CURRENT_MONTH - 1
     }
   }
-  // else {
+  // zzelse {
   //   return {
   //     year: CURRENT_YEAR,
   //     month: CURRENT_MONTH
@@ -65,6 +65,12 @@ const npmrdsMapFilter = ({
   const direction = filters?.direction?.value;
   const tmc = filters?.tmc?.value;
 
+  const availableYears = useMemo(() => {
+    if(source) {
+      return Object.keys(source?.metadata?.npmrds_meta_layer_view_id).reverse().map(year => parseInt(year));
+    }
+  }, [source]);
+
   useEffect(() => {
     const newFilters = { ...filters };
     const {
@@ -72,7 +78,8 @@ const npmrdsMapFilter = ({
       month: initMonth
     } = getInitialYearAndMonth()
     if (!year) {
-      newFilters.year = { value: initYear };
+      console.log({availableYears})
+      newFilters.year = { value: availableYears.includes(initYear) ? initYear : availableYears[0] };
     }
     if (!month) {
       newFilters.month = { value:  initMonth };
