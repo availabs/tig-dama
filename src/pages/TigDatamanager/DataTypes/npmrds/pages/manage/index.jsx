@@ -403,7 +403,7 @@ export default function NpmrdsManage({
       const { source_id } = publishFinalEvent;
 
       setLoading(false);
-      navigate(`/datasources/source/${source_id}`);
+      navigate(`/source/${source_id}`);
     } catch (err) {
       setLoading(false);
     }
@@ -623,7 +623,7 @@ export default function NpmrdsManage({
       const { source_id } = publishFinalEvent;
 
       setLoading(false);
-      navigate(`/datasources/source/${source_id}`);
+      navigate(`/source/${source_id}`);
     } catch (err) {
       setLoading(false);
     }
