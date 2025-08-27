@@ -9,7 +9,9 @@ import { get } from "lodash";
 import { Table } from "~/modules/avl-components/src";
 import { useParams } from "react-router";
 import { NpmrdsFilters } from "../filters";
+import { getInitialYearAndMonth } from "../map/npmrdsMapFilter";
 import { NPMRDS_ATTRIBUTES } from "../constants";
+import moment from 'moment'
 
 const GEO_LEVEL = 'COUNTY';
 
@@ -63,13 +65,23 @@ const NpmrdsTable = ({
   const direction = filters?.direction?.value;
   const tmc = filters?.tmc?.value;
 
+  const availableYears = useMemo(() => {
+    if(source) {
+      return Object.keys(source?.metadata?.npmrds_meta_layer_view_id).reverse().map(year => parseInt(year));
+    }
+  }, [source]);
+
   useEffect(() => {
+    const {
+      year: initYear,
+      month: initMonth
+    } = getInitialYearAndMonth()
     const newFilters = { ...filters };
     if (!year) {
-      newFilters.year = { value: 2020 };
+      newFilters.year = { value: availableYears.includes(initYear) ? initYear : availableYears[0] };
     }
     if (!month) {
-      newFilters.month = { value:  NPMRDS_ATTRIBUTES["month"].values[5] };
+      newFilters.month = { value:  initMonth };
     }
     if (!direction) {
       newFilters.direction = {
@@ -88,47 +100,44 @@ const NpmrdsTable = ({
     setTableColumns([...columns, ...NPMRDS_ATTRIBUTES["hour"].values]);
   }, []);
 
+  const tmcDataReqKey = useMemo(() => {
+    const startOfMonth = moment([year, month - 1]).startOf('month').format('YYYYMMDD');
+    const endOfMonth = moment([year, month - 1]).endOf('month').format('YYYYMMDD');
+    const startEpoch = 0
+    const endEpoch = (24) * 12;
+    return `${NPMRDS_ATTRIBUTES.counties.values.join(",")}|${startOfMonth}|${endOfMonth}|${startEpoch}|${endEpoch}|monday,tuesday,wednesday,thursday,friday|hour|travel_time_all|speed|%7B%7D|ny`
+  },[year, month])
+
+  const tmcData = useMemo(
+    () =>
+      get(falcorCache, [
+        "routes",
+        pgEnv,
+        "view",
+        activeViewId,
+        "data",
+        tmcDataReqKey,
+        "value",
+      ], []),
+    [falcorCache, tmcDataReqKey]
+  );
 
   useEffect(() => {
-    async function getData() {    
-      // geoids = filters.geography.domain.filter(d => d.name === filters.geography.value)[0].value,
+    const getData = async () => {
+      console.log("START req data for tmcs")
+      const tmcDataBasePath = ['routes', pgEnv, 'view', activeViewId, 'data', tmcDataReqKey];
+      console.time("just data REQ")
+      const tmcDataRes = await falcor.get(tmcDataBasePath);
+      console.timeEnd("just data REQ")
+      const tmcData = get(tmcDataRes, ["json", "routes", pgEnv, 'view', activeViewId, 'data', tmcDataReqKey])
 
-      let requests = NPMRDS_ATTRIBUTES['counties'].values.reduce((a, c) => {
-          a.push(['tig', 'npmrds', `${month}|${year}`, `${GEO_LEVEL}|${c}`, 'data'])
-          // a.push(["geo", GEO_LEVEL.toLowerCase(), `${c}`, "geometry"]);
-          return a;
-      }, [])
-
-      const response = await tig_falcor.get(...requests);
-      const respData = NPMRDS_ATTRIBUTES['counties'].values
-        .map((d) =>
-          get(
-            response,
-            [
-              "json",
-              "tig",
-              "npmrds",
-              `${month}|${year}`,
-              `${GEO_LEVEL}|${d}`,
-              "data",
-            ],
-            []
-          )
-        )
-        .reduce((out, d) => ({ ...out, ...d }), {});
-
-      const tmcArray = Object.keys(respData).map(tmcId => ({
-        tmc: tmcId,
-        ...respData[tmcId]
-      }))
-
-      setTableData(tmcArray);
+      setTableData(tmcData);
     }
 
     if(year && month) {
       getData();
     }
-  }, [year, month])
+  }, [tmcDataReqKey])
 
   const { data, columns } = useMemo(() => {
     return transform(tableData, tableColumns, filters, setFilters);

@@ -1,13 +1,22 @@
 import { NPMRDS_ATTRIBUTES } from "../constants";
 import moment from "moment";
 const npmrdsTableTransform = (tableData, attributes, filters, setFilters) => {
-  const flattenedData = tableData.map((tmcObj) => {
-    const newTmcObj = { ...tmcObj };
-    tmcObj["s"].forEach((value, hourVal) => {
-      newTmcObj[hourVal] = value;
-    });
-    return newTmcObj;
-  });
+  //aggregate data by tmc
+  //must convert to array after this
+  const dataByTmc = tableData.reduce((acc, curr) => {
+    if(!acc[curr.tmc]){
+      acc[curr.tmc] = {
+        ...curr,
+        s: {}
+      };
+    }
+
+    acc[curr.tmc][curr.resolution]=Math.round(curr.value);
+    return acc;
+  }, {})
+
+  const flattenedData = Object.values(dataByTmc);
+
 
   const columns = attributes.map((attr) => {
     const columnConfig = {

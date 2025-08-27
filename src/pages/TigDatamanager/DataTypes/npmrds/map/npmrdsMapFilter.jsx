@@ -54,7 +54,7 @@ const npmrdsPaint = {
   }
 }
 
-const getInitialYearAndMonth = () => {
+export const getInitialYearAndMonth = () => {
   const CURRENT_YEAR = new Date().getFullYear();
   const CURRENT_MONTH = new Date().getMonth() + 1;
   const CURRENT_DAY = new Date().getDate();
