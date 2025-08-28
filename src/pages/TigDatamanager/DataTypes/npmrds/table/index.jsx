@@ -114,8 +114,12 @@ const NpmrdsTable = ({
   //when I pass this function, it should have all the data it needs BESIDES indicies (and sort?)
   const fetchData = async ({currentPage, pageSize}) => {
     const allIndicies = d3range(currentPage * pageSize, currentPage * pageSize + pageSize)
-    const innerMonth = month ?? initMonth;
-    const innerYear = year ?? initYear ?? availableYears[0]
+    // const innerMonth = month ?? initMonth;
+    // const innerYear = year ?? initYear ?? availableYears[0]
+
+    const innerMonth = month ?? 6;//TEMP WHILE MISSING DATA
+    const innerYear = year ?? 2025 ?? availableYears[0]//TEMP WHILE MISSING DATA
+
     const startOfMonth = moment([innerYear, innerMonth - 1]).startOf('month').format('YYYYMMDD');
     const endOfMonth = moment([innerYear, innerMonth - 1]).endOf('month').format('YYYYMMDD');
     //TODO indicies will be via table control, orderBy will be a combination of columnName and Direction
@@ -132,9 +136,9 @@ const NpmrdsTable = ({
     const endEpoch = (24) * 12;
     const dataReqKey = `${NPMRDS_ATTRIBUTES.counties.values.join(",")}|${startOfMonth}|${endOfMonth}|${startEpoch}|${endEpoch}|monday,tuesday,wednesday,thursday,friday|hour|travel_time_all|speed|${indicies}|ny`
     const tmcDataBasePath = ['routes', pgEnv, 'view', activeViewId, 'data', dataReqKey];
-
+    console.time("just data REQ")
     const tmcDataRes = await falcor.get(tmcDataBasePath);
-
+    console.timeEnd("just data REQ")
     const tmcData = get(tmcDataRes, ["json", "routes", pgEnv, 'view', activeViewId, 'data', dataReqKey]);
     return {data: transform(tmcData, tableColumns, filters, setFilters).data, length: tmcLength};
   }
@@ -275,6 +279,7 @@ const NpmrdsTable = ({
         sortBy={"tmc"}
         sortOrder="asc"
         disableFilters
+        disableSortBy
       />
     </div>
   );
