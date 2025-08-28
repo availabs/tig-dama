@@ -11,13 +11,14 @@ const npmrdsHoverComp = (props) => {
   const { props: layerProps } = layer;
 
   const mapData = layerProps?.symbology?.data;
-
+  //console.log({mapData})
   const mapTmcData = mapData[tmcId];
+
   const { falcor, falcorCache, pgEnv } = React.useContext(DamaContext);
   const tig_falcor = falcor;
   const cols = [
     { col: "tmcId", name: "TMC", display: (d) => <>{tmcId}</> },
-    { col: "road", name: "Road name", display: (d) => d },
+    { col: "roadname", name: "Road name", display: (d) => d },
     {
       col: "direction",
       name: "Direction",
@@ -28,12 +29,12 @@ const npmrdsHoverComp = (props) => {
       name: "Avg Speed",
       display: (d) => `${d?.toFixed(2)}mph`
     },
-    {
-      col: "avg_speedlimit",
-      name: "Avg Speed Limit",
-      display: (d) => `${d?.toFixed(2)}mph`
-    },
-    // { col: "f_system", name: "f_system", display: (d) => d },
+    // {
+    //   col: "avg_speedlimit",
+    //   name: "Avg Speed Limit",
+    //   display: (d) => `${d?.toFixed(2)}mph`
+    // },
+    { col: "f_system", name: "f_system", display: (d) => d },
     // { col: "frc", name: "frc", display: (d) => d },
     { col: "miles", name: "Miles", display: (d) => d },
     { col: "nhs", name: "NHS", display: (d) => d },
