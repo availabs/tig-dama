@@ -3,20 +3,19 @@ import moment from "moment";
 const npmrdsTableTransform = (tableData, attributes, filters, setFilters) => {
   //aggregate data by tmc
   //must convert to array after this
-  const dataByTmc = tableData.reduce((acc, curr) => {
-    if(!acc[curr.tmc]){
-      acc[curr.tmc] = {
-        ...curr,
-        s: {}
-      };
-    }
 
-    acc[curr.tmc][curr.resolution]=Math.round(curr.value);
-    return acc;
-  }, {})
+  const flattenedData = tableData.map(dataRow =>{
+    return Object.keys(dataRow).reduce((acc, currKey) => {
+      console.log(dataRow[currKey])
+      if(currKey !== "tmc"){
+      acc[currKey] = Math.round(dataRow[currKey]);
+      } else{
+        acc[currKey] = dataRow[currKey]
+      }
 
-  const flattenedData = Object.values(dataByTmc);
-
+      return acc;
+    }, {})
+  });
 
   const columns = attributes.map((attr) => {
     const columnConfig = {
