@@ -6,7 +6,6 @@ const npmrdsTableTransform = (tableData, attributes, filters, setFilters) => {
 
   const flattenedData = tableData.map(dataRow =>{
     return Object.keys(dataRow).reduce((acc, currKey) => {
-      console.log(dataRow[currKey])
       if(currKey !== "tmc"){
       acc[currKey] = Math.round(dataRow[currKey]);
       } else{

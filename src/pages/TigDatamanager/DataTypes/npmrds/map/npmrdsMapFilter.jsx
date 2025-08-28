@@ -58,7 +58,6 @@ export const getInitialYearAndMonth = () => {
   const CURRENT_YEAR = new Date().getFullYear();
   const CURRENT_MONTH = new Date().getMonth() + 1;
   const CURRENT_DAY = new Date().getDate();
-  console.log({CURRENT_YEAR, CURRENT_MONTH, CURRENT_DAY});
 
   //Want current year and month, unless day <= 21
     // Then, want previous month
@@ -121,7 +120,6 @@ const npmrdsMapFilter = ({
       month: initMonth
     } = getInitialYearAndMonth()
     if (!year) {
-      console.log({availableYears})
       newFilters.year = { value: availableYears.includes(initYear) ? initYear : availableYears[0] };
     }
     if (!month) {
@@ -199,6 +197,7 @@ const npmrdsMapFilter = ({
       // console.time("tmc data reduce")
       tmcData.reduce((acc, curr) => {
         acc[curr.tmc] = {...curr};
+        acc[curr.tmc].speed = curr[hour]
         return acc;
       }, data);
       // console.timeEnd("tmc data reduce")
