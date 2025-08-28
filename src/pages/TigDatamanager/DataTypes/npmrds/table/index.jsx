@@ -29,7 +29,7 @@ const identityMap = (tableData, attributes) => {
     })),
   };
 };
-const INITIAL_PAGE_SIZE = 20;
+const INITIAL_PAGE_SIZE = 50;
 const NpmrdsTable = ({
   source,
   views,
@@ -83,10 +83,12 @@ const NpmrdsTable = ({
     } = getInitialYearAndMonth()
     const newFilters = { ...filters };
     if (!year) {
-      newFilters.year = { value: availableYears.includes(initYear) ? initYear : availableYears[0] };
+      //newFilters.year = { value: availableYears.includes(initYear) ? initYear : availableYears[0] };
+      newFilters.year = {value: 2025};//TEMP until data is more current
     }
     if (!month) {
-      newFilters.month = { value:  initMonth };
+      //newFilters.month = { value:  initMonth };
+      newFilters.month = { value:  '6' };//TEMP until data is more current
     }
     if (!direction) {
       newFilters.direction = {

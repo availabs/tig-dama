@@ -120,10 +120,12 @@ const npmrdsMapFilter = ({
       month: initMonth
     } = getInitialYearAndMonth()
     if (!year) {
-      newFilters.year = { value: availableYears.includes(initYear) ? initYear : availableYears[0] };
+      // newFilters.year = { value: availableYears.includes(initYear) ? initYear : availableYears[0] };
+      newFilters.year = {value: 2025};//TEMP until data is more current
     }
     if (!month) {
-      newFilters.month = { value:  initMonth };
+      //newFilters.month = { value:  initMonth };
+      newFilters.month = { value:  '6' };//TEMP until data is more current
     }
     if (!hour) {
       newFilters.hour = { value: NPMRDS_ATTRIBUTES["hour"].values[0] };
