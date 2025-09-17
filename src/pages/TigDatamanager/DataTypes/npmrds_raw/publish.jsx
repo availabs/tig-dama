@@ -50,6 +50,7 @@ const submitUpload = ({props, navigate, pgEnv, baseUrl}) => {
         email: props?.email,
         pgEnv: pgEnv || props?.pgEnv,
         // averagingWindowSize: 60,
+        include_full_tmc_network: false
       };
       //console.log("publishData",publishData)
       const res = await fetch(
