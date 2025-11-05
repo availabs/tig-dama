@@ -27,6 +27,8 @@ const ptypes_colors = {
   TRANSIT: "#00C5FF",
   TRUCK: "#000",
   NULL: "rgba(0,0,0,0)",
+  CAPITAL: "#dd22a8ff",
+  "BICYCLE AND PEDESTRIAN": "#B1FF00",
   "": "rgba(0,0,0,0)",
 };
 
@@ -43,10 +45,12 @@ const images = [
   { id: "ITS", url: "/mapIcons/its.png", color: "#FF00C5", type: "both" },
   { id: "PARKING", url: "/mapIcons/parking_new.png", color: "#496bff", type: "both" },
   { id: "FREIGHT", url: "/mapIcons/truck.png", color: "#fff", type: "both" },
-  { id: "TRANSIT", url: "/mapIcons/transit.png", color: "#fff", type: "both" },
+  { id: "TRANSIT", url: "/mapIcons/transit.png", color: "#00C5FF", type: "both" },
   { id: "HISTORIC", url: "/mapIcons/historic.png", color: "#ffeb3b", type: "both" },
   { id: "STUDY", url: "/mapIcons/study.png", color: "#FFAA00", type: "both" },
   { id: "MOBILITY", url: "", color: "#B1FF00", type: "both" },
+  { id: "CAPITAL", url: "", color: "#dd22a8ff", type: "both" },
+  { id: "BICYCLE AND PEDESTRIAN", url: "/mapIcons/bike.png", type: "both"}
 ];
 
 const GEOM_TYPES = {
@@ -121,6 +125,8 @@ const ProjectMapFilter = ({
     source?.metadata ||
     []
   ).map((d) => d.name);
+
+  //const metadataColumns = [{name: projectKey, desc: null, type: 'string'}, {name:'ptype', desc: null, type:'string'}, {name:'ogc_fid', desc: null, type:'integer'}, {name:'year', desc: null, type:'integer'}, {name:'cost', desc: null, type:'number'}, {name:'sponsor_id', desc: null, type:'string'}, {name:'county_id', desc: null, type:'string'}, {name:'description', desc: null, type:'string'}, {name:'plan_portion', desc: null, type:'string'}].map((d) => d.name)
 
   React.useEffect(() => {
     const loadSourceData = async () => {
