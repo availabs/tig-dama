@@ -27,7 +27,7 @@ const ptypes_colors = {
   TRANSIT: "#00C5FF",
   TRUCK: "#000",
   NULL: "rgba(0,0,0,0)",
-  CAPITAL: "#dd22a8ff",
+  CAPITAL: "#DD22A8",
   "BICYCLE AND PEDESTRIAN": "#B1FF00",
   "": "rgba(0,0,0,0)",
 };
@@ -49,8 +49,8 @@ const images = [
   { id: "HISTORIC", url: "/mapIcons/historic.png", color: "#ffeb3b", type: "both" },
   { id: "STUDY", url: "/mapIcons/study.png", color: "#FFAA00", type: "both" },
   { id: "MOBILITY", url: "", color: "#B1FF00", type: "both" },
-  { id: "CAPITAL", url: "", color: "#dd22a8ff", type: "both" },
-  { id: "BICYCLE AND PEDESTRIAN", url: "/mapIcons/bike.png", type: "both"}
+  { id: "CAPITAL", url: "", color: "#DD22A8", type: "both" },
+  { id: "BICYCLE AND PEDESTRIAN", color: "#38A800", url: "/mapIcons/bike.png", type: "both"}
 ];
 
 const GEOM_TYPES = {
