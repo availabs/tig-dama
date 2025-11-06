@@ -60,6 +60,9 @@ export default function BreadCrumbs () {
     case 'add_version':
       docsLink = '/docs/administrator_guidance/data_uploading'
       break;
+    case 'version':
+      docsLink = '/docs/administrator_guidance'
+      break;
     case 'map':
       docsLink = '/docs/user_guidance';
       break;
