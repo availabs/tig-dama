@@ -41,12 +41,10 @@ const Source = ({}) => {
   const [ activeViewId, setActiveViewId ] = useState(viewId)
   const { pgEnv, baseUrl, falcor, falcorCache, user } = React.useContext(DamaContext)
   // console.log('source page: ');
-  console.log("IN NEW FANCY CUSTOM SOURCE PAGE")
   useEffect(() => {
     async function fetchData() {
       try {
         //console.time("fetch data");
-        console.log("fetching data")
         const lengthPath = ["dama", pgEnv, "sources", "byId", sourceId, "views", "length"];
         const resp = await falcor.get(lengthPath);
         let data = await falcor.get(
