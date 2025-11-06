@@ -32,7 +32,7 @@ const Overview = ({ searchParams, setSearchParams, source, views, activeViewId, 
   ];
   const Lexical = dmsDataTypes.lexical.ViewComp;
   const descValue = source.description // makeLexicalFormat(source.description);
-  console.log("source::", source)
+
   return (
     <div className='flex md:flex-row flex-col '>
       <div className="w-full md:w-[600px] border-b-2 border-tigGreen-100 pb-4" >

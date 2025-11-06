@@ -46,6 +46,33 @@ export default function BreadCrumbs () {
 
   },[falcorCache,sourceId,pgEnv, cat1, cat2, baseUrl])
 
+  let docsLink;
+  switch(page) {
+    case 'meta':
+      docsLink = '/docs/administrator_guidance'
+      break;
+    case 'meta_advanced':
+      docsLink = '/docs/administrator_guidance'
+      break;
+    case 'admin':
+      docsLink = '/docs/administrator_guidance'
+      break;
+    case 'add_version':
+      docsLink = '/docs/administrator_guidance/data_uploading'
+      break;
+    case 'map':
+      docsLink = '/docs/user_guidance';
+      break;
+    case 'table':
+      docsLink = '/docs/user_guidance';
+      break;
+    case 'chart':
+      docsLink = '/docs/user_guidance';
+      break;
+    default:
+      docsLink = '/docs/user_guidance';
+      break;
+  }
   return (
     <nav className="border-b border-gray-200 flex " aria-label="Breadcrumb">
       <ol className="max-w-screen-xl w-full mx-auto px-4 flex space-x-4 sm:px-6 lg:px-8">
@@ -87,10 +114,10 @@ export default function BreadCrumbs () {
               }
             </div>
             <div className='items-center flex'> 
-              <Link to='/docs'>
-               <i className='fa fa-question' /> 
+              <Link to={docsLink}>
+                <i className='fa fa-question' /> 
               </Link>
-              </div>
+            </div>
           </li>
         ))}
       </ol>
