@@ -6,6 +6,7 @@ import Documentation from "./pages/Documentation"
 
 import List from '~/pages/TigDatamanager/Source/list'
 import View from '~/pages/TigDatamanager/Source/view'
+import Create from '~/pages/TigDatamanager/Source/create'
 
 import { PG_ENV } from '~/config'
 
@@ -18,7 +19,7 @@ const DAMA_ARGS = {
   baseUrl: "",
   defaultPgEnv: PG_ENV,
   auth: false,
-  components: { List, View },
+  components: { List, View, Create },
   dataTypes: tigDataTypes,
   useFalcor,
   useAuth
