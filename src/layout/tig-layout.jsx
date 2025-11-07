@@ -50,13 +50,13 @@ const TigDropDown = ({buttonText, items}) => {
 
 const TigUserMenu = ({user}) => {
     const userItems = [
-        {name: 'Profile', link: '/auth/profile'},
-        {name: 'Catalog', link: '/'},
-        {name: 'My Settings', link: '/'},
-        {name: 'My Study Areas', link: '/'},
-        {name: 'My Snapshots', link: '/'},
-        {name: "What I'm Watching", link: '/'},
-        {name: 'Recent Activity', link: '/'}
+        {name: 'Profile/Settings', link: '/auth/profile'},
+        // {name: 'Catalog', link: '/'},
+        // {name: 'My Settings', link: '/'},
+        // {name: 'My Study Areas', link: '/'},
+        // {name: 'My Snapshots', link: '/'},
+        // {name: "What I'm Watching", link: '/'},
+        // {name: 'Recent Activity', link: '/'}
     ]
 
     const userMenu = (
@@ -67,20 +67,20 @@ const TigUserMenu = ({user}) => {
     )
 
     const adminItems = [
-        {name:"Data Settings", link: '/settings'},
+        // {name:"Data Settings", link: '/settings'},
         {name:"Add Source", link: '/create/source'},
         {name:"Edit Docs", link: '/docs/edit/docs'},
         {name:"Users", link: '/auth/users'},
         {name:"Project Manangement", link: '/auth/project-management'},
         {name:"Agencies", link: '/auth/agencies'},
-        {name:"All Comments", link: '/'},
-        {name:"All Uploads", link: '/'},
-        {name:"All Study Areas", link: '/'},
-        {name:"Data Recovery", link: '/'},
-        {name:"System Usage Report", link: '/'},
-        {name:"System Change Report", link: '/'},
-        {name:"User Activity Report", link: '/'},
-        {name:"Update Help", link: '/'}
+        // {name:"All Comments", link: '/'},
+        // {name:"All Uploads", link: '/'},
+        // {name:"All Study Areas", link: '/'},
+        // {name:"Data Recovery", link: '/'},
+        // {name:"System Usage Report", link: '/'},
+        // {name:"System Change Report", link: '/'},
+        // {name:"User Activity Report", link: '/'},
+        // {name:"Update Help", link: '/'}
     ]
 
     const adminMenu = (
@@ -111,8 +111,8 @@ const TigUserMenu = ({user}) => {
         <div className='flex h-12 flex-col md:flex-row'>
             {userMenu}
             {user.authLevel > 0 && adminMenu}
-            {contributorMenu}
-            {librarianMenu}
+            {/* {contributorMenu}
+            {librarianMenu} */}
             <Link to={'/auth/logout'} className='p-4 h-full hover:bg-tigGray-50 hover:text-yellow-500 hover:cursor-pointer bg-tigGray-200 text-[13px] font-light md:mr-2'>Logout</Link>
         </div> 
     )
@@ -132,9 +132,8 @@ const TigNav = withAuth(({user}) => {
         <div className='z-50'>
             <TopNav
                 leftMenu={(
-                    <a href='/' className={' hover:bg-tigGray-50 h-12'}>
-                        <img alt='NYMTC Logo' className={'bg-tigGray-200 hover:bg-tigGray-50'} style={{height:50}} src='/images/nymtc_logo.svg'/>
-                    </a>)
+                    <Link to={'/'} className={' hover:bg-tigGray-50 h-12'}><img alt='NYMTC Logo' className={'bg-tigGray-200 hover:bg-tigGray-50'} style={{height:50}} src='/images/nymtc_logo.svg'/></Link>
+                   )
                 }
                 rightMenu={userMenu }
             />
