@@ -30,6 +30,7 @@ export default function UploadGisDataset({
       (source?.metadata?.columns || source?.metadata || []).map(d => d.name),
     damaSourceName: damaSourceName,
     userId: user?.id,
+    email: user?.email,
     etlContextId: null,
     customViewAttributes: { years: [] },
     dataType: dataType,

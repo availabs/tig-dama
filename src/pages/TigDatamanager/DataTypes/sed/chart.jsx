@@ -131,6 +131,7 @@ const PieChart = ({ pieData, year, filters, sourceType }) => {
         from: "color",
         modifiers: [["darker", 0.6]],
       }}
+      valueFormat={v => v.toLocaleString()}
       arcLinkLabelsSkipAngle={10}
       arcLinkLabelsTextColor="#333333"
       arcLinkLabelsThickness={2}
@@ -224,7 +225,7 @@ const LineChart = ({ lineData, filters, sourceType }) => {
     pointSize={5}
     pointColor={{ theme: "background" }}
     pointBorderWidth={2}
-    pointBorderColor={{ from: "serieColor" }}
+    pointBorderColor={{ from: "seriesColor" }}
     pointLabel="data.yFormatted"
     pointLabelYOffset={-12}
     enableArea={false}
@@ -267,12 +268,12 @@ const LineChart = ({ lineData, filters, sourceType }) => {
             data.slice.points.map(point => {
               const isMaxVal = data.slice.points.every(iPoint => iPoint.data.y  <= point.data.y);
               return (
-                <div key={`${point.serieId}_slicetooltip_${point.data.yFormatted}`} className={`flex items-center rounded px-1 border-2  ${isMaxVal ? 'border-2 border-black' : 'border-white/85'}`}>
+                <div key={`${point.seriesId}_slicetooltip_${point.data.yFormatted}`} className={`flex items-center rounded px-1 border-2  ${isMaxVal ? 'border-2 border-black' : 'border-white/85'}`}>
                   <div
-                    style={{background:point.serieColor}}
-                    className={`w-[15px] h-[15px] mr-2`}
+                    style={{background:point.seriesColor}}
+                    className={`w-[35px] h-[15px] mr-2`}
                   />
-                  <div>{point.serieId} {point.data.yFormatted}</div>
+                  <div>{point.seriesId} {point.data.yFormatted}</div>
                 </div>
               )
             })
@@ -372,7 +373,7 @@ const AreaChart = ({ areaData, filters, sourceType }) => {
       max: "auto",
       reverse: false,
     }}
-    yFormat=" >-.2f"
+    yFormat={v => v.toLocaleString()}
     curve="linear"
     axisTop={null}
     axisRight={null}
@@ -403,7 +404,7 @@ const AreaChart = ({ areaData, filters, sourceType }) => {
     pointSize={5}
     pointColor={{ theme: "background" }}
     pointBorderWidth={2}
-    pointBorderColor={{ from: "serieColor" }}
+    pointBorderColor={{ from: "seriesColor" }}
     pointLabel="data.yFormatted"
     pointLabelYOffset={-12}
     enableArea={true}
@@ -420,12 +421,12 @@ const AreaChart = ({ areaData, filters, sourceType }) => {
             data.slice.points.map(point => {
               const isMaxVal = data.slice.points.every(iPoint => iPoint.data.y  <= point.data.y);
               return (
-                <div key={`${point.serieId}_slicetooltip_${point.data.yFormatted}`} className={`flex items-center rounded px-1 border-2  ${isMaxVal ? 'border-2 border-black' : 'border-white/85'}`}>
+                <div key={`${point.seriesId}_slicetooltip_${point.data.yFormatted}`} className={`flex items-center rounded px-1 border-2  ${isMaxVal ? 'border-2 border-black' : 'border-white/85'}`}>
                   <div
-                    style={{background:point.serieColor}}
-                    className={`w-[15px] h-[15px] mr-2`}
+                    style={{background:point.seriesColor}}
+                    className={`w-[35px] h-[15px] mr-2`}
                   />
-                  <div>{point.serieId} {point.data.yFormatted}</div>
+                  <div>{point.seriesId} {point.data.yFormatted}</div>
                 </div>
               )
             })

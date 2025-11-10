@@ -113,17 +113,17 @@ const LINE_GRAPH_PROPS = {
   sliceTooltip:(data) => {
     return (
       <div key={data?.slice?.id} className="bg-white rounded p-2 opacity-85">
-        <b>{data.slice.points[0].data.x}</b>
+        <b>{data.slice.points[0].data.x}:00</b>
         {
           data.slice.points.map(point => {
             const isMaxVal = data.slice.points.every(iPoint => iPoint.data.y  <= point.data.y);
             return (
-              <div key={`${point.serieId}_slicetooltip_${point.data.yFormatted}`} className={`flex items-center rounded px-1 border-2  ${isMaxVal ? 'border-2 border-black' : 'border-white/85'}`}>
+              <div key={`${point.seriesId}_slicetooltip_${point.data.yFormatted}`} className={`flex items-center rounded px-1 border-2  ${isMaxVal ? 'border-2 border-black' : 'border-white/85'}`}>
                 <div
-                  style={{background:point.serieColor}}
-                  className={`w-[15px] h-[15px] mr-2`}
+                  style={{background:point.seriesColor}}
+                  className={`w-[35px] h-[15px] mr-2`}
                 />
-                <div>{point.serieId} {point.data.yFormatted}</div>
+                <div>{point.seriesId} {point.data.yFormatted}</div>
               </div>
             )
           })
