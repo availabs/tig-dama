@@ -1,10 +1,10 @@
-import React from "react"
-
+import React, { useState } from "react"
+import { isEqual } from "lodash"
 import { matchSorter } from 'match-sorter'
 import { Button, Input } from '~/modules/avl-components/src'
 
 const UserHeader = ({ value, onChange, ...props }) =>
-  <div className="grid grid-cols-9 font-bold gap-3">
+  <div className="grid grid-cols-11 font-bold">
     <div className="col-span-4 border-b-2">
       <div>User Email</div>
       <div className="mb-1">
@@ -18,30 +18,54 @@ const UserHeader = ({ value, onChange, ...props }) =>
     <div className="col-span-2 border-b-2 flex justify-center items-end">
       Delete User
     </div>
+    <div  className="col-span-2 border-b-2 flex justify-center items-end">
+      Confirm
+    </div>
   </div>
 
 const UserInGroup = ({ group, User, removeFromGroup, deleteUser, ...props }) => {
+  const [stageDelete, setStageDelete] = useState(false);
+  const [stageRemove, setStageRemove] = useState(false);
+
+  const handleConfirmClick = () => {
+    if(stageDelete) {
+      deleteUser(User.email)
+    }
+    if(stageRemove) {
+      removeFromGroup(User.email, group.name)
+    }
+  };
+
+  const isConfirmButtonEnabled = (stageRemove || stageDelete);
   return (
-    <div className="grid grid-cols-9 my-1">
+    <div className="grid grid-cols-11 my-1">
       <div className="col-span-4">
         { User.email }
       </div>
       <div className="col-span-3 flex justify-center">
         <Button 
-          themeOptions={{color:"cancel", size:"sm"}}
-          showConfirm
-          onClick={ e => removeFromGroup(User.email, group.name) }
+          themeOptions={{color: stageRemove ? "transparent" : "cancel", size:"sm"}}
+          onClick={ e => setStageRemove(!stageRemove) }
         >
-          remove
+          { stageRemove ? "Cancel" : "Remove" }
         </Button>
       </div>
       <div className="col-span-2 flex justify-center">
-        <Button 
-          themeOptions={{color:"danger", size:"sm"}}
-          showConfirm 
-          onClick={ e => deleteUser(User.email) }
+        <Button
+          themeOptions={{color: stageDelete ? "transparent" : "danger", size:"sm"}}
+          onClick={ e => setStageDelete(!stageDelete) }
         >
-          delete
+          { stageDelete ? "Cancel" : "Delete" }
+        </Button>
+      </div>
+      <div className="col-span-2 flex justify-center">
+        <Button
+          themeOptions={{ size: "sm", color: stageDelete ? "cancel" : stageRemove ? "cancel" : "transparent" }}
+          type="button"
+          onClick={handleConfirmClick}
+          disabled={!isConfirmButtonEnabled}
+        >
+          Confirm { stageDelete ? " Deletion" : stageRemove ? "" : "" }
         </Button>
       </div>
     </div>
@@ -84,13 +108,13 @@ export default ({ group, users, updateGroupMeta, ...props }) => {
   usersInGroup.sort((a, b) => a.email < b.email ? -1 : a.email > b.email ? 1 : 0);
 
   const otherSearch = matchSorter(otherUsers, otherUserSearch, { keys: ["email"] });
-
+  const canSaveMeta = !isEqual(defaultGroupMeta, groupMeta);
 
   return (
     <div>
       <div className="mb-5 grid grid-cols-3 gap-2">
-        <div className="col-span-3 flex gap-8">
-          <div className="flex flex-col pt-2">
+        <div className="col-span-3 flex gap-8 content-center flex-wrap items-end">
+          <div className="flex flex-col">
             <div className="flex pb-1 text-sm text-gray-400 capitalize">
               Description: 
             </div>
@@ -102,7 +126,7 @@ export default ({ group, users, updateGroupMeta, ...props }) => {
               />
             </div>
           </div>
-          <div className="flex flex-col pt-2">
+          <div className="flex flex-col">
             <div className="flex pb-1 text-sm text-gray-400 capitalize">
               Link: 
             </div>
@@ -114,14 +138,15 @@ export default ({ group, users, updateGroupMeta, ...props }) => {
               />
             </div>
           </div>
-          <div className="flex flex-col pt-2">
+          <div className="flex flex-col">
             <Button 
               themeOptions={{size:"sm"}}
               onClick={() => {
                 updateGroupMeta(group.name, groupMeta)
               }}
+              disabled={!canSaveMeta}
             >
-              Save changes
+              Save meta changes
               </Button>
           </div>
         </div>
