@@ -333,57 +333,59 @@ const MapPage = ({source,views, HoverComp, MapFilter=DefaultMapFilter, filterDat
           mapStyles={mapStyles}/>
       </div>
 
-      {user.authLevel >= 5 ?
-      <div className="border-t border-gray-200 px-4 py-5 sm:p-0">
-        <dl className="sm:divide-y sm:divide-gray-200">
-          {['sources','layers']
-            .map((attr,i) => {
-              let val = JSON.stringify(get(layer,attr,[]),null,3)
-              return (
-                <div key={i} className='flex justify-between group'>
-                  <div  className="flex-1 sm:grid sm:grid-cols-5 sm:gap-4 sm:px-6">
-                    <dt className="text-sm font-medium text-gray-500 py-5">{attr}</dt>
-                    <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-4">
-                      {editing === attr ?
-                        <div className='pt-3 pr-8'>
-                          <Edit
-                            startValue={val}
-                            attr={attr}
-                            viewId={activeViewId}
-                            parentData={get(activeView,`metadata`,{tiles:{}})}
-                            cancel={() => setEditing(null)}
-                          />
-                        </div> :
-                        <div className='py-3 pl-2 pr-8'>
-                          <pre className='bg-gray-100 tracking-tighter overflow-auto scrollbar-xs'>
-                            {val}
-                          </pre>
-                        </div>
-                      }
-                    </dd>
-                  </div>
+      {
+        // user.authLevel >= 5 ?
+        // <div className="border-t border-gray-200 px-4 py-5 sm:p-0">
+        //   <dl className="sm:divide-y sm:divide-gray-200">
+        //     {['sources','layers']
+        //       .map((attr,i) => {
+        //         let val = JSON.stringify(get(layer,attr,[]),null,3)
+        //         return (
+        //           <div key={i} className='flex justify-between group'>
+        //             <div  className="flex-1 sm:grid sm:grid-cols-5 sm:gap-4 sm:px-6">
+        //               <dt className="text-sm font-medium text-gray-500 py-5">{attr}</dt>
+        //               <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-4">
+        //                 {editing === attr ?
+        //                   <div className='pt-3 pr-8'>
+        //                     <Edit
+        //                       startValue={val}
+        //                       attr={attr}
+        //                       viewId={activeViewId}
+        //                       parentData={get(activeView,`metadata`,{tiles:{}})}
+        //                       cancel={() => setEditing(null)}
+        //                     />
+        //                   </div> :
+        //                   <div className='py-3 pl-2 pr-8'>
+        //                     <pre className='bg-gray-100 tracking-tighter overflow-auto scrollbar-xs'>
+        //                       {val}
+        //                     </pre>
+        //                   </div>
+        //                 }
+        //               </dd>
+        //             </div>
 
-                  <div className='hidden group-hover:block text-blue-500 cursor-pointer' onClick={e => editing === attr ? setEditing(null): setEditing(attr)}>
-                    <i className="fad fa-pencil absolute -ml-12 mt-3 p-2.5 rounded hover:bg-blue-500 hover:text-white "/>
-                  </div>
-                </div>
-              )
-            })
-          }
-        </dl>
-        {/*<Symbology
-          layer={layer}
-          onChange={setTempSymbology}
-        />
-        <div className='flex'>
-          <div className='flex-1' />
-          <SaveSymbologyButton
-            metaData={metaData}
-            symbology={tempSymbology}
-            viewId={activeViewId}
-          />
-        </div>*/}
-      </div> : ''}
+        //             <div className='hidden group-hover:block text-blue-500 cursor-pointer' onClick={e => editing === attr ? setEditing(null): setEditing(attr)}>
+        //               <i className="fad fa-pencil absolute -ml-12 mt-3 p-2.5 rounded hover:bg-blue-500 hover:text-white "/>
+        //             </div>
+        //           </div>
+        //         )
+        //       })
+        //     }
+        //   </dl>
+        //   {/*<Symbology
+        //     layer={layer}
+        //     onChange={setTempSymbology}
+        //   />
+        //   <div className='flex'>
+        //     <div className='flex-1' />
+        //     <SaveSymbologyButton
+        //       metaData={metaData}
+        //       symbology={tempSymbology}
+        //       viewId={activeViewId}
+        //     />
+        //   </div>*/}
+        // </div> : ''
+      }
     </div>
   )
 }
