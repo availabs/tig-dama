@@ -24,9 +24,7 @@ const Overview = ({ searchParams, setSearchParams, source, views, activeViewId, 
     {name: 'Map', icon: 'fad fa-location-dot', to: `/source/${source.source_id}/map`},
     {name: 'Table', icon: 'fad fa-table', to: `/source/${source.source_id}/table`},
     {name: 'Chart', icon: 'fad fa-bar-chart', to: `/source/${source.source_id}/chart`},
-    {name: 'Watch', icon: 'fad fa-eye', authLevel: SOURCE_AUTH_CONFIG['VIEW'], to: `/source/${source.source_id}`},
-    {name: 'Edit Metadata', icon: 'fad fa-wrench', authLevel: SOURCE_AUTH_CONFIG['EDIT'], to: `/source/${source.source_id}/meta`},
-    {name: 'View Metadata', icon: 'fad fa-info-circle', to: `/source/${source.source_id}/meta`},
+    {name: 'Metadata', icon: 'fad fa-wrench', authLevel: SOURCE_AUTH_CONFIG['EDIT'], to: `/source/${source.source_id}/meta`},
     {name: 'Access Controls', icon: 'fad fa-gears',  authLevel: SOURCE_AUTH_CONFIG['ADMIN'], to: `/source/${source.source_id}/admin`},  
     {name: 'Delete', icon: 'fad fa-trash',  authLevel: SOURCE_AUTH_CONFIG['ADMIN'], to: `/delete/source/${source.source_id}`} 
   ];
