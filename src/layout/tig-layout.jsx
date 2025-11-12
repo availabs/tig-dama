@@ -74,7 +74,7 @@ const TigUserMenu = ({user}) => {
         {name:"Project Manangement", link: '/auth/project-management'},
         {name:"Agencies", link: '/auth/agencies'},
         // {name:"All Comments", link: '/'},
-        // {name:"All Uploads", link: '/'},
+        {name:"All Uploads", link: '/tasks'},
         // {name:"All Study Areas", link: '/'},
         // {name:"Data Recovery", link: '/'},
         // {name:"System Usage Report", link: '/'},
