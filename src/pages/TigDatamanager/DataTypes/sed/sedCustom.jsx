@@ -10,11 +10,13 @@ import * as d3scale from "d3-scale"
 import { range as d3range } from "d3-array"
 import download from "downloadjs"
 // import { download as shpDownload } from "~/pages/DataManager/utils/shp-write"
-
+const PIN_OUTLINE_LAYER_SUFFIX = '_pin_outline'
 import shpwrite from  '@mapbox/shp-write'
 
 import { regionalData } from "../constants/index";
-
+import { cloneDeep } from "lodash";
+const NO_FILTER_LAYER_SUFFIX = '_static'
+const SELECTED_BORDER_SUFFIX = '_selected_border'
 // [1112,1588,2112,2958,56390]
 const defaultRange = ['#ffffb2', '#fed976',  '#fd8d3c', '#fc4e2a', '#e31a1c', '#b10026']
 const defaultDomain = [0,872,2047,3649,6934,14119,28578]
@@ -99,6 +101,15 @@ const SedMapFilter = (props) => {
     attributes : attributes?.map(d => d.name))?.filter(d => !['wkb_geometry'].includes(d))
 
   const geomKeyName = getAttributes?.includes('taz') ? 'taz' : 'county';
+
+  const projectFilterOgcFid = useMemo(() => {
+    const formattedFilterValue = geomKeyName === "taz" ? parseInt(projectIdFilterValue) : projectIdFilterValue
+    return Object.keys(dataById).find(geoId => {
+      const curGeo = dataById[geoId]
+      return curGeo[geomKeyName] === formattedFilterValue
+    });
+  }, [projectIdFilterValue])
+
   const projectCalculatedBounds = useMemo(() => {
     if (projectIdFilterValue) {
       const formattedFilterValue = geomKeyName === "taz" ? parseInt(projectIdFilterValue) : projectIdFilterValue
@@ -134,7 +145,6 @@ const SedMapFilter = (props) => {
       return undefined;
     }
   }, [projectIdFilterValue, dataById]);
-
   useEffect(() => {
     const updateSymbology = () => {
       falcor.get(['dama',pgEnv, 'viewsbyId' ,activeViewId, 'data', 'length'])
@@ -143,7 +153,7 @@ const SedMapFilter = (props) => {
             ['json', 'dama', pgEnv, 'viewsbyId' ,activeViewId, 'data', 'length'],
           0)
 
-          return falcor.chunk([
+          falcor.get([
             'dama',
             pgEnv,
             'viewsbyId',
@@ -151,12 +161,10 @@ const SedMapFilter = (props) => {
             'databyIndex',
             [...Array(length).keys()],
             [activeVar, geomKeyName]
-          ])
-        }).then(() => {
-            const dataById = get(falcorCache,
-              ['dama', pgEnv, 'viewsbyId', activeViewId, 'databyId'],
+          ]).then((resp) => {
+            const dataById = get(resp,
+              ['json','dama', pgEnv, 'viewsbyId', activeViewId, 'databyIndex'],
             {})
-
             const varScale = varList[varType];
             const maxScaleLength =
               varScale.domain.length > varScale.range.length
@@ -170,14 +178,23 @@ const SedMapFilter = (props) => {
               .domain(colorDomain)
               .range(colorRange);
 
-            let colors = Object.keys(dataById).reduce((out, id) => {
+            let colors = Object.keys(dataById).filter(key => !key.includes("_")).reduce((out, id) => {
+              console.log({id, activeVar})
               out[+id] = colorScale(dataById[+id][activeVar]) || "#000"
               return out
             },{})
+
             let output = ["get",["to-string",["get","ogc_fid"]], ["literal", colors]]
 
-            const newSymbology = layer.layers.reduce((a, c) => {
-              a[c.id] = {
+            let highlightLayerInfo = {};
+            const newSymbology = cloneDeep(tempSymbology);
+            newSymbology.layers = layer.layers.map((c, i) => {
+              if(!c.id.includes(PIN_OUTLINE_LAYER_SUFFIX) && !c.id.includes(SELECTED_BORDER_SUFFIX)) {
+                highlightLayerInfo = {...c}
+              }
+
+              return {
+                ...c,
                 "fill-color": {
                   [activeVar]: {
                     type: 'threshold',
@@ -189,11 +206,36 @@ const SedMapFilter = (props) => {
                     value: output
                   }
                 },
-                
               };
-              return a;
-            }, {});
+            });
 
+            if (newSymbology.layers.some((l) => l.id.includes(SELECTED_BORDER_SUFFIX))) {
+              newSymbology.layers = newSymbology.layers.filter((l) => !l.id.includes(SELECTED_BORDER_SUFFIX));
+            }
+            const highlightLayerId = highlightLayerInfo.id.replace(NO_FILTER_LAYER_SUFFIX, "") + SELECTED_BORDER_SUFFIX;
+
+            newSymbology.layers.push({
+              id: highlightLayerId,
+              type: "line",
+              source: highlightLayerInfo.source,
+              "source-layer": highlightLayerInfo["source-layer"],
+              paint: {
+                "line-color": "black",
+                "line-width": 3,
+                "line-opacity": 0.75,
+              },
+              filter:[
+                "all",
+                [
+                  "==",
+                  ["to-string", ["get", "ogc_fid"]],
+                  projectFilterOgcFid || "-666666666",
+                ],
+              ],
+              layout: {
+                visibility: projectFilterOgcFid ? "visible" : 'none',
+              },
+            });
             if (projectCalculatedBounds) {
               newSymbology.fitToBounds = projectCalculatedBounds;
 
@@ -209,6 +251,7 @@ const SedMapFilter = (props) => {
               console.log("setting new newSymbology");
               setTempSymbology(newSymbology);
             }
+          })
         })
     }
     if(activeVar.length > 0){
@@ -558,6 +601,7 @@ const SedTableTransform = (tableData, attributes, filters, years, source) => {
 };
 
 const SedHoverComp = ({ data, layer }) => {
+  //console.log("sed hover, data layer", data, layer)
   const { pgEnv, falcor, falcorCache } = React.useContext(DamaContext);
   const { source: { type }, attributes, activeViewId, props: { filters, activeView: {metadata: { years } } }  } = layer
 

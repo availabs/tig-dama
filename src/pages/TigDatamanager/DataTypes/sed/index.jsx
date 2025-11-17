@@ -89,6 +89,7 @@ export const tig_sed_taz = {
         dataType="tig_sed_taz"
         customRules={customRules}
         databaseColumnNames={dbColsTaz}
+        useMbTiles={true}
         CustomAttributes={SedCustomAttribute}
       />
     ),
@@ -102,6 +103,7 @@ export const tig_sed_taz = {
         {...props}
         dataType="tig_sed_taz"
         customRules={customRules}
+        useMbTiles={true}
         databaseColumnNames={dbColsTaz}
         CustomAttributes={SedCustomAttribute}
       />
@@ -167,6 +169,7 @@ export const tig_sed_county = {
         {...props}
         dataType="tig_sed"
         customRules={customRules}
+        useMbTiles={true}
         databaseColumnNames={dbColsCounty}
         CustomAttributes={SedCustomAttribute}
       />
@@ -181,6 +184,7 @@ export const tig_sed_county = {
         {...props}
         dataType="tig_sed_county"
         customRules={customRules}
+        useMbTiles={true}
         databaseColumnNames={dbColsCounty}
         CustomAttributes={SedCustomAttribute}
       />

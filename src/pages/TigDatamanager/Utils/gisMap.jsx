@@ -4,7 +4,8 @@ import get from 'lodash/get'
 import cloneDeep from 'lodash/cloneDeep'
 import { useParams, useNavigate, useSearchParams } from 'react-router'
 import { AvlMap, ThemeProvider} from "~/modules/avl-map-2/src"
-import GISDatasetLayer from '~/pages/DataManager/DataTypes/gis_dataset/pages/Map/Layer2'
+//import GISDatasetLayer from '~/pages/DataManager/DataTypes/gis_dataset/pages/Map/Layer2'
+import GISDatasetLayer from "./Layer2";
 import mapTheme from '~/pages/DataManager/DataTypes/gis_dataset/pages/Map/map-theme'
 import { DamaContext } from "~/pages/DataManager/store"
 import { DAMA_HOST } from "~/config"
@@ -251,6 +252,7 @@ const MapPage = ({source,views, HoverComp, MapFilter=DefaultMapFilter, filterDat
       attributes = Array.isArray(attributes) ? attributes : []
 
       if(displayPinnedGeomBorder){
+        //onsole.log("pin border?")
         if (!layers.find((layer) => layer.id.includes(PIN_OUTLINE_LAYER_SUFFIX))) {
           const layerId = layers?.[0]?.id;
           const pinnedGeomLayer = {
@@ -484,8 +486,9 @@ const Map = ({ layers, layer, tempSymbology, setTempSymbology, source, filters, 
       }
       return out
     },{})
-  },[layers, layerData, tempSymbology, updateLegend, source.source_id, filters])
-
+  },[layers, layerData, tempSymbology, updateLegend, source.source_id, filters]);
+  console.log({layers})
+  console.log({layerProps})
   //console.log('mapTheme',mapTheme)
   return (
 
