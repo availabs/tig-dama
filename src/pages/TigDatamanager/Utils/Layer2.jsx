@@ -362,7 +362,6 @@ const GISDatasetRenderComponent = props => {
           }
           else{
             if (l.layout && l.layout.visibility !== undefined){
-              console.log("small use effect, layout update visibility, layer::", l)
               maplibreMap.setLayoutProperty(l.id, 'visibility', l.layout.visibility);
             }
           }
@@ -434,30 +433,6 @@ const GISDatasetRenderComponent = props => {
               createLegend(sym.settings)
             }
             // ----------- END TIG -----------
-
-          // --------- Old ------------
-
-          // if (sym.settings && sym.value) {
-          //   console.log("Here 1");
-          //   createLegend(sym.settings);
-          //   setLayerData({ layer_id, paintProperty, value: sym.value });
-          // }
-          // else if (sym.settings) {
-          //   console.log("Here 2");
-          //   createLegend(sym.settings);
-          //   setLayerData({ layer_id, paintProperty });
-          // }
-          // else if (sym.value) {
-          //   console.log("Here 3");
-          //   setLegend(null);
-          //   setLayerData({ layer_id, paintProperty, value: sym.value });
-          // }
-          // else {
-          //   console.log("Here 4");
-          //   setLegend(null);
-          //   setLayerData(null);
-          // }
-          // --------- Old ------------
         });
       });
   }, [maplibreMap, resourcesLoaded, symbology, activeVariable, createLegend]);
@@ -496,7 +471,6 @@ const GISDatasetRenderComponent = props => {
   //Listens for changes to `symbology` and repaints if needed
   React.useEffect(() => {
     symbology?.layers?.forEach((layer) => {
-      console.log("symbology change, layer::", layer)
       const mapLayer = maplibreMap.getLayer(layer.id);
       if (mapLayer) {
         if (layer.paint) {
@@ -512,26 +486,13 @@ const GISDatasetRenderComponent = props => {
           });
         }
         if(layer.filter) {
-          console.log(mapLayer.filter)
-          //maplibreMap.setFilter(lineLayerId, dataFilter);
-          console.log("use effeect symb change, layer filter::", layer.filter)
 
           if (!isEqual(layer.filter, mapLayer.filter)) {
             maplibreMap.setFilter(layer.id, layer.filter)
           }
         } else if (mapLayer.filter) {
-          console.log("REMOVE FILTER FROM LAYER")
           maplibreMap.setFilter(layer.id)
         }
-
-        // if(layer?.layout?.visibility) {
-        //   console.log("LISTEN FOR LAYOUT VIS CHANGES")
-        //   const mapVis = maplibreMap.getLayoutProperty(layer.id, "visibility");
-        //   console.log({mapVis})
-        //   if (!isEqual(layer?.layout?.visibility, mapVis)) {
-        //     maplibreMap.setLayoutProperty(layer.id, "visibility", layer?.layout?.visibility);
-        //   }
-        // } 
       }
     });
   }, [symbology]);
@@ -545,11 +506,10 @@ const GISDatasetRenderComponent = props => {
         zoom: symbology.fitZoom || 13
       });
   }, [maplibreMap, symbology]);
-      //console.log({symbology})
+
   //If symbology contains `filter`, filter to matching features
   React.useEffect(() => {
     if (maplibreMap && symbology.filter) {
-      console.log({symbology})
       const dataIdKey = symbology.filter?.dataKey ?? "ogc_fid";
       const idsToFilter = symbology.filter?.dataIds ?? symbology.filter;
       const dataFilter = [
@@ -559,12 +519,10 @@ const GISDatasetRenderComponent = props => {
         true,
         false,
       ];
-      console.log("layer filter maybe?", dataFilter)
       symbology?.layers?.forEach((layer) => {
         const mapLayer = maplibreMap.getLayer(layer.id);
 
         if (mapLayer && !layer.id.includes(NO_FILTER_LAYER_SUFFIX)) {
-          console.log("is static layer::", layer.id)
           if(!layer.filter){
             maplibreMap.setFilter(layer.id, dataFilter);
           }
