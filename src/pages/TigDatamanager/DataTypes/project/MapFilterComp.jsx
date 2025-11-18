@@ -10,6 +10,7 @@ import shpwrite from  '@mapbox/shp-write'
 import { range as d3range } from "d3-array"
 import { SOURCE_AUTH_CONFIG } from "~/pages/DataManager/Source/attributes";
 import { FilterControlContainer } from "../controls/FilterControlContainer";
+import { MultiLevelSelect } from '~/modules/avl-map-2/src';
 
 const ptypes_colors = {
   BIKE: "#38A800",
@@ -52,6 +53,9 @@ const images = [
   { id: "CAPITAL", url: "", color: "#DD22A8", type: "both" },
   { id: "BICYCLE AND PEDESTRIAN", color: "#38A800", url: "/mapIcons/bike.png", type: "both"}
 ];
+
+const NO_FILTER_LAYER_SUFFIX = '_static'
+const SELECTED_BORDER_SUFFIX = '_selected_border'
 
 const GEOM_TYPES = {
   Point: "Point",
@@ -99,6 +103,37 @@ const generateMapStyles = (typeKey) => {
     },
   }
 }
+const generateHighlightMapStyles = (typeKey, projectKey,  projectIdFilterValue) => {
+  return {
+    line: {
+      type: "line",
+      paint: {
+        "line-color": "black",
+        "line-width": 5,
+        "line-opacity": .8,
+        "line-offset": 2
+      },
+    },
+    fill: {
+      type: "line",
+      paint: {
+        "line-color": "black",
+        "line-width": 3,
+        "line-opacity": .8,
+        "line-offset": -3
+      },
+    },
+    circle: {
+      type: "line",
+      paint: {
+        "line-color": "black",
+        "line-width": 3,
+        "line-opacity": .8,
+        "line-offset": -3
+      },
+    },
+  }
+}
 
 const ProjectMapFilter = ({
   source,
@@ -127,7 +162,9 @@ const ProjectMapFilter = ({
   ).map((d) => d.name);
 
   //const metadataColumns = [{name: projectKey, desc: null, type: 'string'}, {name:'ptype', desc: null, type:'string'}, {name:'ogc_fid', desc: null, type:'integer'}, {name:'year', desc: null, type:'integer'}, {name:'cost', desc: null, type:'number'}, {name:'sponsor_id', desc: null, type:'string'}, {name:'county_id', desc: null, type:'string'}, {name:'description', desc: null, type:'string'}, {name:'plan_portion', desc: null, type:'string'}].map((d) => d.name)
-
+  React.useEffect(() => {
+    setFilters({activeVar: {value:"test"}})
+  }, [])
   React.useEffect(() => {
     const loadSourceData = async () => {
       const d = await falcor.get([
@@ -248,7 +285,7 @@ const ProjectMapFilter = ({
 
   //Determine which filters are active;
   const activeFilterKeys = Object.keys(filters).filter(
-    (filterKey) => filterKey !== "projectId" && !!filters[filterKey].value
+    (filterKey) => filterKey !== "projectId" && filterKey !== "activeVar" && !!filters[filterKey].value
   );
 
   filteredData = Object.values(dataById).filter((val) => {
@@ -259,13 +296,15 @@ const ProjectMapFilter = ({
   });
 
   const filteredIds = filteredData.map((d) => d.ogc_fid);
+  const projectIdFilterOgcFid = Object.values(dataById)?.find(d => d[projectKey] === projectIdFilterValue)?.ogc_fid
   if (!newSymbology?.source) {
     newSymbology.sources = metaData?.tiles?.sources || [];
     const source_id = newSymbology?.sources?.[0]?.id || "0";
     const source_layer = `s${source.source_id}_v${activeDataVersionId}`;
 
     const mapStyles = generateMapStyles(typeKey)
-    newSymbology.layers = ["line", "circle", "fill"].map((type) => {
+    const highlightMapStyles = generateHighlightMapStyles(typeKey, projectKey, projectIdFilterValue)
+    const normalLayers =  ["line", "circle", "fill"].map((type) => {
       return {
         id: `source_layer_${type}`,
         ...mapStyles[type],
@@ -273,13 +312,30 @@ const ProjectMapFilter = ({
         "source-layer": source_layer,
       };
     });
+
+    const highlightLayers = ["line", "circle", "fill"].map(type => {
+      return {
+        id: `source_layer_${type}${SELECTED_BORDER_SUFFIX}`,
+        ...highlightMapStyles[`${type}`],
+        source: source_id,
+        "source-layer": source_layer,
+        visibility: {
+          default: { value: projectIdFilterOgcFid ? "visible" : 'none' },
+          //default: {value: 'visible'},
+        }
+      };
+    })
+
+    newSymbology.layers = highlightLayers.concat(normalLayers)
   }
 
   if (!newSymbology.images) {
     newSymbology.images = images;
   }
 
-  if (activeFilterKeys.length) {
+  if (projectIdFilterOgcFid) {
+    newSymbology.filter = [projectIdFilterOgcFid];
+  } else if (activeFilterKeys.length) {
     newSymbology.filter = filteredIds;
   } else {
     newSymbology.filter = null;
@@ -328,22 +384,18 @@ const ProjectMapFilter = ({
     <div className="flex justify-start content-center flex-wrap p-1 gap-y-2">
       <FilterControlContainer 
         header={`${projectKey === "rtp_id" ? "RTP" : "TIP"} ID`}
-        input={({className}) => (
-          <select
-            className={className}
-            value={projectIdFilterValue || ""}
-            onChange={(e) => setFilters({ projectId: { value: e.target.value } })}
-          >
-            <option className="ml-2  truncate" value={""}>
-              None
-            </option>
-            {allProjectIds.map((v, i) => (
-              <option key={i} className="ml-2  truncate" value={v}>
-                {v}
-              </option>
-            ))}
-          </select>
-        )}
+        input={({className}) => <MultiLevelSelect
+          searchable={true}
+          isMulti={false}
+          placeholder={"Select a value..."}
+          options={allProjectIds}
+          displayAccessor={(s) => s}
+          valueAccessor={(s) => s}
+          value={projectIdFilterValue || ""}
+          onChange={(e) => setFilters({ projectId: { value: e } })}
+          zIndex={999}
+          inputContainer={FilterControlContainer}
+        />}
       />
       <FilterControlContainer 
         header={`Project Type`}
