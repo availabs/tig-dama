@@ -273,10 +273,7 @@ const MapPage = ({source,views, HoverComp, MapFilter=DefaultMapFilter, filterDat
         }
       }
 
-      console.log('sources', sources)
-
       if(sources?.[0]?.source?.tiles?.[0] && !sources[0].source.tiles[0].includes('?') ) {
-        
         sources[0].source.tiles[0] = sources[0].source.tiles[0] + '?cols=ogc_fid'
       }
       //console.log('sources after', sources[0].source.tiles[0])
@@ -487,8 +484,6 @@ const Map = ({ layers, layer, tempSymbology, setTempSymbology, source, filters, 
       return out
     },{})
   },[layers, layerData, tempSymbology, updateLegend, source.source_id, filters]);
-  console.log({layers})
-  console.log({layerProps})
   //console.log('mapTheme',mapTheme)
   return (
 

@@ -383,33 +383,41 @@ const GISDatasetRenderComponent = props => {
       setLayerData(null);
       return;
     }
-    (Object.keys(symbology || {}) || [])
-      .forEach((layer_id) => {
-        (
-          Object.keys(symbology[layer_id] || {})
-            .filter((paintProperty) => {
-            const value =
-              get(symbology, `[${paintProperty}][${activeVariable}]`, false) ||
-              get(symbology, `[${paintProperty}][default]`, false) ||
-              get(
-                symbology,
-                `[${layer_id}][${paintProperty}][${activeVariable}]`,
-                false
-              )
-              || get(symbology, `[${layer_id}][${paintProperty}][default]`, false);
-            return value;
-          }) || []
-        ).forEach((paintProperty) => {
+    if(!symbology.layers) {
+      return;
+    }
+
+    const symbLayers = symbology.layers.reduce((acc, curr) => {
+      acc[curr.id] = curr;
+      return acc;
+    }, {});
+    setMapPaint(symbLayers);
+  }, [maplibreMap, resourcesLoaded, symbology, activeVariable, createLegend]);
+
+
+  const setMapPaint = (symbLayers) => {
+    Object.keys(symbLayers).forEach((layer_id) => {
+        Object.keys(symbLayers[layer_id]).filter((paintProperty) => {
+          return (
+            get(symbLayers, `[${paintProperty}][${activeVariable}]`, false) ||
+            get(symbLayers, `[${paintProperty}][default]`, false) ||
+            get(
+              symbLayers,
+              `[${layer_id}][${paintProperty}][${activeVariable}]`,
+              false
+            )
+            || get(symbLayers, `[${layer_id}][${paintProperty}][default]`, false)
+          )
+        }).forEach((paintProperty) => {
           const sym =
-            get(symbology, `[${paintProperty}][${activeVariable}]`, "") ||
-            get(symbology, `[${paintProperty}][default]`, "") ||
-            get(symbology, `[${layer_id}][${paintProperty}][${activeVariable}]`, "")
-            || get(symbology, `[${layer_id}][${paintProperty}][default]`, "");
+            get(symbLayers, `[${paintProperty}][${activeVariable}]`, "") ||
+            get(symbLayers, `[${paintProperty}][default]`, "") ||
+            get(symbLayers, `[${layer_id}][${paintProperty}][${activeVariable}]`, "")
+            || get(symbLayers, `[${layer_id}][${paintProperty}][default]`, "");
 
 
             // ----------- TIG -----------
             let { value, settings } = sym;
-
             if (!value && settings) {
               const { type, domain, range, data } = settings;
               const scale = getScale(type, domain, range);
@@ -435,7 +443,7 @@ const GISDatasetRenderComponent = props => {
             // ----------- END TIG -----------
         });
       });
-  }, [maplibreMap, resourcesLoaded, symbology, activeVariable, createLegend]);
+  }
 
   React.useEffect(() => {
     if(symbology.legend){
@@ -468,36 +476,6 @@ const GISDatasetRenderComponent = props => {
     }
   }, [legend, layerData]);
 
-  //Listens for changes to `symbology` and repaints if needed
-  React.useEffect(() => {
-    symbology?.layers?.forEach((layer) => {
-      const mapLayer = maplibreMap.getLayer(layer.id);
-      if (mapLayer) {
-        if (layer.paint) {
-          Object.keys(layer.paint).forEach((paintKey) => {
-            const oldProp = maplibreMap.getPaintProperty(layer.id, paintKey);
-            if (!isEqual(oldProp, layer.paint[paintKey])) {
-              maplibreMap.setPaintProperty(
-                layer.id,
-                paintKey,
-                layer.paint[paintKey]
-              );
-            }
-          });
-        }
-        if(layer.filter) {
-
-          if (!isEqual(layer.filter, mapLayer.filter)) {
-            maplibreMap.setFilter(layer.id, layer.filter)
-          }
-        } else if (mapLayer.filter) {
-          maplibreMap.setFilter(layer.id)
-        }
-      }
-    });
-  }, [symbology]);
-
-
   //If symbology contains `fitToBounds`, zoom to that location.
   React.useEffect(() => {
     if (maplibreMap && symbology && symbology.fitToBounds)
@@ -512,9 +490,12 @@ const GISDatasetRenderComponent = props => {
     if (maplibreMap && symbology.filter) {
       const dataIdKey = symbology.filter?.dataKey ?? "ogc_fid";
       const idsToFilter = symbology.filter?.dataIds ?? symbology.filter;
+      //if ogc_fid, always coerce to string
+      const dataGetStatement = dataIdKey === "ogc_fid" ? ["to-string",["get","ogc_fid"]] : ["get", dataIdKey]
+
       const dataFilter = [
         "match",
-        ["get", dataIdKey],
+        dataGetStatement,
         idsToFilter,
         true,
         false,

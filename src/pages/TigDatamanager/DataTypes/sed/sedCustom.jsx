@@ -57,7 +57,24 @@ const GEOM_TYPES = {
   MultiPolygon: "MultiPolygon",
   Polygon: "Polygon"
 };
+const MAP_FILL_OPACITY = 0.75;
 //const years = ["10", "17", "20", "25", "30", "35", "40", "45", "50", "55"];
+export const rgb2hex=c=> {
+	if(!c || typeof c !== 'string'){
+		c =  defaultColors[generateRandom(0, defaultColors.length-1)]
+	}
+	// console.log('test', c)
+	let out = '#'+c.match(/\d+/g).map(x=>(+x).toString(16).padStart(2,0)).join``
+	return out
+}
+
+const toRGB = (color) => {
+    const { style } = new Option();
+    style.color = color;
+    return style.color;
+}
+
+export const toHex = (color) => rgb2hex(toRGB(color))
 
 const SedMapFilter = (props) => {
   const {
@@ -106,7 +123,7 @@ const SedMapFilter = (props) => {
     const formattedFilterValue = geomKeyName === "taz" ? parseInt(projectIdFilterValue) : projectIdFilterValue
     return Object.keys(dataById).find(geoId => {
       const curGeo = dataById[geoId]
-      return curGeo[geomKeyName] === formattedFilterValue
+      return (geomKeyName === "taz" ? parseInt(curGeo[geomKeyName]) : curGeo[geomKeyName]) === formattedFilterValue
     });
   }, [projectIdFilterValue])
 
@@ -114,7 +131,7 @@ const SedMapFilter = (props) => {
     if (projectIdFilterValue) {
       const formattedFilterValue = geomKeyName === "taz" ? parseInt(projectIdFilterValue) : projectIdFilterValue
 
-      const project = Object.values(dataById).find(geo => geo[geomKeyName] === formattedFilterValue);
+      const project = Object.values(dataById).find(geo => (geomKeyName === "taz" ? parseInt(geo[geomKeyName]) : geo[geomKeyName]) === formattedFilterValue);
 
       console.log("filtered to project::", project);
       const projectGeom = !!project?.wkb_geometry
@@ -172,14 +189,13 @@ const SedMapFilter = (props) => {
                 : varScale.domain.length;
 
             const colorDomain = varScale.domain.slice(0,maxScaleLength)
-            const colorRange = varScale.range.slice(0,maxScaleLength);
+            const colorRange = varScale.range.slice(0,maxScaleLength).map(c => toRGB(c).replace(")", `,${MAP_FILL_OPACITY})`).replace("rgb", "rgba"));
 
             const colorScale = d3scale.scaleThreshold()
               .domain(colorDomain)
               .range(colorRange);
 
             let colors = Object.keys(dataById).filter(key => !key.includes("_")).reduce((out, id) => {
-              console.log({id, activeVar})
               out[+id] = colorScale(dataById[+id][activeVar]) || "#000"
               return out
             },{})
@@ -195,6 +211,7 @@ const SedMapFilter = (props) => {
 
               return {
                 ...c,
+                id: c.id.includes(NO_FILTER_LAYER_SUFFIX) ? c.id : c.id + NO_FILTER_LAYER_SUFFIX,
                 "fill-color": {
                   [activeVar]: {
                     type: 'threshold',
@@ -206,6 +223,9 @@ const SedMapFilter = (props) => {
                     value: output
                   }
                 },
+                "fill-opacity":{
+                  default: { value: 1 },
+                }
               };
             });
 
@@ -219,23 +239,15 @@ const SedMapFilter = (props) => {
               type: "line",
               source: highlightLayerInfo.source,
               "source-layer": highlightLayerInfo["source-layer"],
-              paint: {
-                "line-color": "black",
-                "line-width": 3,
-                "line-opacity": 0.75,
-              },
-              filter:[
-                "all",
-                [
-                  "==",
-                  ["to-string", ["get", "ogc_fid"]],
-                  projectFilterOgcFid || "-666666666",
-                ],
-              ],
-              layout: {
-                visibility: projectFilterOgcFid ? "visible" : 'none',
+              "line-opacity": { default: { value: 0.75 }},
+              "line-color": { default: { value: "black" }},
+              "line-width": { default: { value: projectFilterOgcFid ? 3 : 0.25}},
+              visibility: {
+                //default: {value: projectFilterOgcFid ? "visible" : 'none'},
+                default: {value: 'visible'},
               },
             });
+ 
             if (projectCalculatedBounds) {
               newSymbology.fitToBounds = projectCalculatedBounds;
 
@@ -245,6 +257,17 @@ const SedMapFilter = (props) => {
             }
             else {
               newSymbology.fitToBounds = null;
+            }
+
+            if(projectFilterOgcFid) {
+              //set symbology.filter, controls whether or not the `selectedBorder` layer appears
+              const symbFilter = {
+                dataKey: "ogc_fid",
+                dataIds: [projectFilterOgcFid]
+              }
+              newSymbology.filter = symbFilter;
+            } else {
+              newSymbology.filter = null;
             }
 
             if (!isEqual(newSymbology, tempSymbology)) {
@@ -279,9 +302,9 @@ const SedMapFilter = (props) => {
 
   const idFilterOptions = Object.values(dataById)
     .sort((a, b) => {
-      if (a.taz < b.taz) {
+      if (parseInt(a.taz) < parseInt(b.taz)) {
         return -1;
-      } else if (b.taz < a.taz) {
+      } else if (parseInt(b.taz) < parseInt(a.taz)) {
         return 1;
       } else {
         if (a.county < b.county) {
@@ -297,7 +320,6 @@ const SedMapFilter = (props) => {
         geomKeyName === "taz"
           ? `TAZ ${optionValue} -- ${v.county} County`
           : `${v.county} County`;
-
       return (
         <option
           key={`sed_geom_filter_option_${i}`}
