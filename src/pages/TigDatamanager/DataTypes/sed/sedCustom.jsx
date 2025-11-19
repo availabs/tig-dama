@@ -12,7 +12,8 @@ import download from "downloadjs"
 // import { download as shpDownload } from "~/pages/DataManager/utils/shp-write"
 const PIN_OUTLINE_LAYER_SUFFIX = '_pin_outline'
 import shpwrite from  '@mapbox/shp-write'
-
+import { MultiLevelSelect } from '~/modules/avl-map-2/src';
+import { FilterControlContainer } from "../controls/FilterControlContainer";
 import { regionalData } from "../constants/index";
 import { cloneDeep } from "lodash";
 const NO_FILTER_LAYER_SUFFIX = '_static'
@@ -233,21 +234,29 @@ const SedMapFilter = (props) => {
               newSymbology.layers = newSymbology.layers.filter((l) => !l.id.includes(SELECTED_BORDER_SUFFIX));
             }
             const highlightLayerId = highlightLayerInfo.id.replace(NO_FILTER_LAYER_SUFFIX, "") + SELECTED_BORDER_SUFFIX;
-
+            const dataIds = Object.keys(dataById);
+            const featureBorderFilter = dataIds.reduce((acc, curr) => {
+              if(curr === projectFilterOgcFid) {
+                acc[curr] = 3
+              } else {
+                acc[curr] = 0.25
+              }
+              return acc;
+            }, {})
+            const activeFeatureBorderFilter = ["get", ["to-string", ["get", "ogc_fid"]], ["literal", featureBorderFilter]];
             newSymbology.layers.push({
               id: highlightLayerId,
               type: "line",
               source: highlightLayerInfo.source,
               "source-layer": highlightLayerInfo["source-layer"],
-              "line-opacity": { default: { value: 0.75 }},
+              "line-opacity": { default: { value: geomKeyName === "taz" ? 0.5 : 0.8 }},
               "line-color": { default: { value: "black" }},
-              "line-width": { default: { value: projectFilterOgcFid ? 3 : 0.25}},
+              "line-width": { default: { value: activeFeatureBorderFilter}},
               visibility: {
                 //default: {value: projectFilterOgcFid ? "visible" : 'none'},
                 default: {value: 'visible'},
               },
             });
- 
             if (projectCalculatedBounds) {
               newSymbology.fitToBounds = projectCalculatedBounds;
 
@@ -314,37 +323,28 @@ const SedMapFilter = (props) => {
         }
       }
     })
-    .map((v, i) => {
-      const optionValue = geomKeyName === "taz" ? v.taz : v.county;
-      const optionDisplay =
-        geomKeyName === "taz"
-          ? `TAZ ${optionValue} -- ${v.county} County`
-          : `${v.county} County`;
-      return (
-        <option
-          key={`sed_geom_filter_option_${i}`}
-          className="ml-2  truncate"
-          value={optionValue}
-        >
-          {optionDisplay}
-        </option>
-      );
-    });
 
   return (
     <div className="flex justify-start content-center flex-wrap mx-px my-2 w-full">
-      <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">ID :</div>
       <div className="flex">
-        <select
-          className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
+
+   <FilterControlContainer 
+          header={`${geomKeyName === "taz" ? "TAZ" : "County"}`}
+          input={({className}) => <MultiLevelSelect
+          searchable={true}
+          isMulti={false}
+          placeholder={`Select a ${geomKeyName === "taz" ? "TAZ..." : "County..."}`}
+          options={idFilterOptions}
+          displayAccessor={(s) => geomKeyName === "taz"
+            ? `TAZ ${s.taz} -- ${s.county} County`
+            : `${s.county} County`
+          }
+          valueAccessor={(s) => geomKeyName === "taz" ? s.taz : s.county}
           value={projectIdFilterValue || ""}
-          onChange={(e) => setFilters({ projectId: { value: e.target.value } })}
-        >
-          <option className="ml-2  truncate" value={""}>
-            None
-          </option>
-          {idFilterOptions}
-        </select>
+          onChange={(e) => setFilters({ projectId: { value: e } })}
+          zIndex={999}
+        />}
+      />
       </div>
       <div className="flex py-3.5 pl-2 pr-2 text-sm text-gray-400 capitalize">Year:</div>
         <div className="flex-1">
