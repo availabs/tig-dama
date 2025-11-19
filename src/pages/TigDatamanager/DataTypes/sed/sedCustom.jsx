@@ -133,8 +133,6 @@ const SedMapFilter = (props) => {
       const formattedFilterValue = geomKeyName === "taz" ? parseInt(projectIdFilterValue) : projectIdFilterValue
 
       const project = Object.values(dataById).find(geo => (geomKeyName === "taz" ? parseInt(geo[geomKeyName]) : geo[geomKeyName]) === formattedFilterValue);
-
-      console.log("filtered to project::", project);
       const projectGeom = !!project?.wkb_geometry
         ? JSON.parse(project.wkb_geometry)
         : null;

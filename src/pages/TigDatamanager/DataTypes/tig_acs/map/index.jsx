@@ -278,26 +278,8 @@ const ACSMapFilter = ({
       "id"
     );
     newSymbology["layers"] = uniqBy(flattenDeep(newSymbology["layers"]), "id");
-    if (!isEqual(tempSymbology, newSymbology)) {
-      setTempSymbology(newSymbology);
-    }
-  }, [falcorCache, pgEnv, activeViewId, activeView]);
-
-  useEffect(() => {
-    async function getACSData() {
-      const geoids = geometry === "county" ? counties : subGeoids;
-      if (geoids.length > 0) {
-        falcor.chunk(["dama", pgEnv, "acs", activeViewId, geoids, year, [...censusConfig, ...divisorKeys]]);
-      }
-    }
-    getACSData();
-  }, [counties, subGeoids, censusConfig, divisorKeys, year, geometry]);
-
-  const mappedValues = useMemo(() => {
+    // ---- start color stuff -----
     let geoids;
-    let activeLayer = (tempSymbology["layers"] || []).find(
-      (v) => v.id === activeLayerId
-    );
 
     if (geometry === "county") geoids = counties;
     else if (geometry === "tract") geoids = subGeoids;
@@ -386,54 +368,85 @@ const ACSMapFilter = ({
       ["get", ["to-string", ["get", "geoid"]], ["literal", colors]],
       "rgba(0,0,0,0.0)",
     ];
-
-    let newSymbology = Object.assign({}, cloneDeep(tempSymbology));
-    if (activeVar && activeLayer) {
-      (newSymbology?.layers || []).forEach((l) => {
-        unset(newSymbology, `${l?.id}`);
-        // set(newSymbology, `${l?.id}.visibility.default.value`, "none");
-        if(l.id !== activeLayerId){
-          //set(newSymbology, `${l?.id}.fill-color.default.value`, "rgba(0,0,0,0)");
-          set(l, 'paint.fill-color', "rgba(0,0,0,0)");
-        }
-        else{
-          set(l, 'paint.fill-color', {
-            [activeVar]: {
-              type: "threshold",
-              settings: {
-                range: range,
-                domain: domain,
-                title: activeVar,
-              },
-              value: output,
-            }
-          });
-        }
-      });
-
-      newSymbology = newSymbology?.layers.reduce((a, c) => {
-        if(c.id === activeLayerId){
-          a[c.id] = {
-            "fill-color": {
-              [activeVar]: {
-                type: "threshold",
-                settings: {
-                  range: range,
-                  domain: domain,
-                  title: activeVar,
-                },
-                value: output,
-              }
+    newSymbology["layers"] = newSymbology["layers"].map(l => {
+      return {
+        ...l,
+        "fill-color": {
+          [activeVar]: {
+            type: 'threshold',
+            settings: {
+              range: range,
+              domain: domain,
+              title: activeVar
             },
-          };
+            value: output
+          }
+        },
+        "fill-opacity":{
+          default: { value: 0.7 },
         }
-
-        return a;
-      }, newSymbology);
-    }
+      }
+    })
+    // ---- end color stuff -----
     if (!isEqual(tempSymbology, newSymbology)) {
       setTempSymbology(newSymbology);
     }
+  }, [falcorCache, pgEnv, activeViewId, activeView]);
+
+  useEffect(() => {
+    async function getACSData() {
+      const geoids = geometry === "county" ? counties : subGeoids;
+      if (geoids.length > 0) {
+        falcor.chunk(["dama", pgEnv, "acs", activeViewId, geoids, year, [...censusConfig, ...divisorKeys]]);
+      }
+    }
+    getACSData();
+  }, [counties, subGeoids, censusConfig, divisorKeys, year, geometry]);
+
+  const mappedValues = useMemo(() => {
+    let geoids;
+    if (geometry === "county") geoids = counties;
+    else if (geometry === "tract") geoids = subGeoids;
+
+    const valueMap = (geoids || []).reduce((a, c) => {
+      let censusVal = 0,
+        divisorVal = 0,
+        censusFlag = false,
+        divisorFalg = false;
+
+      (censusConfig || []).forEach((cc) => {
+        const tmpVal = get(falcorCache, ["dama", pgEnv, "acs", activeViewId, c, year, cc], null);
+        if (tmpVal !== null) {
+          censusFlag = true;
+          censusVal += tmpVal;
+        }
+      });
+
+      let tempFlag = Boolean(divisorKeys.length);
+
+      if (tempFlag) {
+        if (divisorKeys.length > 0) {
+          (divisorKeys || []).forEach((cc) => {
+            const tmpVal = get(falcorCache, ["dama", pgEnv, "acs", activeViewId, c, year, cc], null);
+            if (tmpVal !== null) {
+              divisorFalg = true;
+              divisorVal += tmpVal;
+            }
+          });
+        }
+      }
+
+      if (tempFlag) {
+        a[c] = divisorFalg
+          ? censusVal > 0
+            ? Math.round((censusVal / divisorVal) * 100)
+            : 0
+          : null;
+      } else {
+        a[c] = censusFlag ? censusVal : null;
+      }
+      return a;
+    }, {});
     return valueMap;
   }, [
     tempSymbology,
