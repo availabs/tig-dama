@@ -180,7 +180,7 @@ const DefaultMapFilter = ({ source, filters, setFilters, activeViewId, layer, se
   )
 }
 
-const MapPage = ({source,views, HoverComp, MapFilter=DefaultMapFilter, filterData = {}, showViewSelector=true, displayPinnedGeomBorder=false, mapStyles, userHighestAuth=0 }) => {
+const MapPage = ({source,views, HoverComp, MapFilter=DefaultMapFilter, filterData = {}, showViewSelector=true, displayPinnedGeomBorder=false, mapStyles, userHighestAuth=0, dataColumns=[] }) => {
   //console.log("in new copy of map page")
   const [searchParams] = useSearchParams();
   const urlVariable = searchParams.get("variable")
@@ -276,6 +276,12 @@ const MapPage = ({source,views, HoverComp, MapFilter=DefaultMapFilter, filterDat
       if(sources?.[0]?.source?.tiles?.[0] && !sources[0].source.tiles[0].includes('?') ) {
         sources[0].source.tiles[0] = sources[0].source.tiles[0] + '?cols=ogc_fid'
       }
+      if(sources && sources.length > 0 && sources?.[0]?.source?.tiles?.[0] && dataColumns && dataColumns.length > 0) {
+        const dataColString = dataColumns.join(",");
+        if(!sources?.[0]?.source?.tiles?.[0].includes(dataColString)){
+          sources[0].source.tiles[0] += "," + dataColString;
+        }
+      }
       //console.log('sources after', sources[0].source.tiles[0])
       
 
@@ -295,7 +301,7 @@ const MapPage = ({source,views, HoverComp, MapFilter=DefaultMapFilter, filterDat
       }
       // add tempSymbology as depen
   },[source, views, mapData, activeViewId,filters, symSources, symLayers, displayPinnedGeomBorder])
-
+  console.log({layer})
 
   return (
     <div>
@@ -332,7 +338,7 @@ const MapPage = ({source,views, HoverComp, MapFilter=DefaultMapFilter, filterDat
           mapStyles={mapStyles}/>
       </div>
 
-      {
+{
         // user.authLevel >= 5 ?
         // <div className="border-t border-gray-200 px-4 py-5 sm:p-0">
         //   <dl className="sm:divide-y sm:divide-gray-200">
@@ -410,8 +416,9 @@ const Map = ({ layers, layer, tempSymbology, setTempSymbology, source, filters, 
     setMounted(true);
     return () => setMounted(false);
   }, []);
-  const {falcor} = React.useContext(DamaContext)
+  const {falcor, user} = React.useContext(DamaContext)
   const [layerData, setLayerData] = React.useState([])
+    const [ editing, setEditing ] = React.useState(null);
   // const  currentLayerIds = React.useMemo(() => {
   //   return layers.filter(d => d).map(d => d.activeViewId)
   // },[layers])

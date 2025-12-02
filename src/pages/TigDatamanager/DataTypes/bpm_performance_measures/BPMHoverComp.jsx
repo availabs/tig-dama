@@ -3,16 +3,18 @@ import get from "lodash/get";
 import { fips2Name, } from "../constants";
 import { DamaContext } from "~/pages/DataManager/store"
 import { BPM_DISPLAY_DIVISOR, variableLabels, dataVariableNames, variableAccessors } from './BPMConstants';
+const name2fips = Object.fromEntries(Object.entries(fips2Name).map(([key, value]) => [value, key]));
 
 
 
 export const BPMHoverComp = (props) => {
     const { data: importData, layer, source } = props
-
+  //console.log("id::", props.data[0])
     const { pgEnv, falcor, falcorCache } = React.useContext(DamaContext);
     const { activeViewId, props: { filters }  } = layer
   
     const {geoid} = importData[2];
+    console.log({geoid})
     const countyName = fips2Name[geoid];
 
     React.useEffect(() => {
@@ -48,15 +50,15 @@ export const BPMHoverComp = (props) => {
 
     let filteredData = mapData;
     filterKeys.forEach((key, i) => {
-        if(key !== 'activeVar' && key !== 'projectId') {
-          filteredData = filteredData.reduce((acc, val) => {
-            if(filters[key].value == val[key]) {
-                acc.push(val);
-            } 
-            return acc;
-          }, []);
-        }
-      });
+      if(key !== 'activeVar' && key !== 'projectId') {
+        filteredData = filteredData.reduce((acc, val) => {
+          if(filters[key].value == val[key]) {
+              acc.push(val);
+          } 
+          return acc;
+        }, []);
+      }
+    });
 
     const sumAll = filteredData.reduce((sumAll, d) => {
         if(!sumAll[d?.area]){
@@ -72,12 +74,18 @@ export const BPMHoverComp = (props) => {
         sumAll[d?.area] = {
           VMT: Number(d?.[variableAccessors['VMT']]) + sumAll[d?.area].VMT || 0,
           VHT: Number(d?.[variableAccessors['VHT']]) + sumAll[d?.area].VHT || 0,
-          total_speed: d?.ave_speed + sumAll[d?.area].total_speed || 0,
+          total_speed: Number(d?.ave_speed) + sumAll[d?.area].total_speed || 0,
           count: 1+sumAll[d?.area]?.count || 0
         }
         return sumAll
     }, {});
-    
+
+    const testData = filteredData.filter(d => d.geoid.toString() === props.data[2].geoid.toString());
+    //console.log({testData})
+
+    //console.log("sum all hover::", sumAll)
+
+
 
     const formattedData = {};
 
@@ -91,8 +99,9 @@ export const BPMHoverComp = (props) => {
         }
     })
         
-
+    console.log({countyName})
     const renderData = formattedData[countyName];
+    console.log({renderData})
     //Otherwise, we get popups for counties that we don't have data for
     const shouldDisplay = renderData && dataVariableNames.every(dataVarName => renderData?.[dataVarName] !== undefined);
 
@@ -105,7 +114,7 @@ export const BPMHoverComp = (props) => {
                 dataVariableNames.map(dataVarName => (
                     <div className='flex border-b pt-1' key={`${countyName}_${dataVarName}`}>
                         <div className='flex-1 font-medium text-sm pl-1'>{variableLabels[dataVarName]}</div>
-                        <div className='flex-1 text-right font-thin pl-4 pr-1'>{dataVarName === 'AvgSpeed' ? (renderData?.[dataVarName]).toFixed(2).toLocaleString() : Math.round(renderData?.[dataVarName] / BPM_DISPLAY_DIVISOR )?.toLocaleString()}</div>
+                        <div className='flex-1 text-right font-thin pl-4 pr-1'>{dataVarName === 'AvgSpeed' ? (renderData?.[dataVarName]).toFixed(2).toLocaleString() : Math.round(renderData?.[dataVarName])?.toLocaleString()}</div>
                     </div>
                 ))
 

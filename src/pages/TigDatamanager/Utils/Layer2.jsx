@@ -85,14 +85,15 @@ const HoverComp = ({ data, layer }) => {
   );
 };
 
-const LegendCmp = ({ domain, range, title }) => {
+const LegendCmp = ({ domain, range, title, max }) => {
   const getDomainRanges = (domain) => {
     const ranges = [];
     if (!(domain && domain.length)) return range;
-    ranges.push(`0 - ${new Intl.NumberFormat().format(domain[0])}`);
+    if (!max) ranges.push(`0 - ${new Intl.NumberFormat().format(domain[0])}`);
     for (let i = 0; i < domain.length - 1; i++) {
       ranges.push(`${new Intl.NumberFormat().format(domain[i])} - ${new Intl.NumberFormat().format(domain[i + 1])}`);
     }
+    if(max) ranges.push(`${new Intl.NumberFormat().format(domain[domain.length-1])} - ${new Intl.NumberFormat().format(max)}`);
     return ranges;
   };
   const newRanges = getDomainRanges(domain);
@@ -230,7 +231,8 @@ const GISDatasetRenderComponent = props => {
       reverse = false,
       height = 3,
       direction = 'vertical',
-      customLegendScale
+      customLegendScale,
+      max
     } = settings;
 
     const legend = {
@@ -245,7 +247,8 @@ const GISDatasetRenderComponent = props => {
       reverse,
       height,
       direction,
-      customLegendScale
+      customLegendScale,
+      max
     };
 
     if (!domain.length) {
@@ -292,6 +295,7 @@ const GISDatasetRenderComponent = props => {
   }, [falcor, pgEnv, sourceId, legend, symbology, activeVar, layers]);
 
   React.useEffect(() => {
+    console.log({activePins})
     const pinnedIds = activePins?.map(pin => pin.ogc_fid);
     const pinnedGeomLineLayer = layers.find(layer => layer.id.includes(PIN_OUTLINE_LAYER_SUFFIX));
 
@@ -302,11 +306,12 @@ const GISDatasetRenderComponent = props => {
       }
       const dataFilter = [
         "match",
-        ["get", "ogc_fid"],
-        pinnedIds,
+        ["to-string", ["get", "ogc_fid"]],
+        pinnedIds.map(id => id.toString()),
         true,
         false,
       ];
+      console.log({pinnedIds})
       const mapLayer = maplibreMap.getLayer(lineLayerId);
       if (mapLayer) {
         maplibreMap.setFilter(lineLayerId, dataFilter);
@@ -433,6 +438,7 @@ const GISDatasetRenderComponent = props => {
               if(['visibility'].includes(paintProperty)) {
                 maplibreMap.setLayoutProperty(layer_id, paintProperty, value);
               } else if (!layer_id.includes(PIN_OUTLINE_LAYER_SUFFIX)) {
+                console.log({layer_id, paintProperty, value})
                 maplibreMap.setPaintProperty(layer_id, paintProperty, value);
               }
             }

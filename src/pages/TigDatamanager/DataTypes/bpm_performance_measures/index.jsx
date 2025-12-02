@@ -63,6 +63,7 @@ const config = {
          HoverComp={{Component: BPMHoverComp, isPinnable: true}}
          displayPinnedGeomBorder={true}
          mapStyles={[mapStyleConfig?.google_streets_style]}
+         dataColumns={['geoid']}
       />
     ),
   },

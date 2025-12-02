@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react'
+import React, {useEffect, useMemo} from 'react'
 import cloneDeep from 'lodash/cloneDeep'
 import isEqual from 'lodash/isEqual'
 import get from 'lodash/get'
@@ -9,8 +9,10 @@ import { SOURCE_AUTH_CONFIG } from "~/pages/DataManager/Source/attributes";
 
 import { DamaContext } from "~/pages/DataManager/store"
 import { fips2Name } from '../constants';
-import { variableAccessors } from "./BPMConstants";
-
+import { variableAccessors, variableLabels } from "./BPMConstants";
+const PIN_OUTLINE_LAYER_SUFFIX = '_pin_outline';
+const NO_FILTER_LAYER_SUFFIX = '_static';
+const SELECTED_BORDER_SUFFIX = '_selected_border';
 import { Button } from "~/modules/avl-components/src"
 import shpwrite from  '@mapbox/shp-write'
 const GEOM_TYPES = {
@@ -20,6 +22,9 @@ const GEOM_TYPES = {
 };
 
 const MAP_GEOM_VIEW_ID = 311; //prod value
+//const MAP_GEOM_VIEW_ID = 383;
+//1360?
+//const MAP_GEOM_VIEW_ID = 1360;
 // const MAP_GEOM_VIEW_ID = 1374; // replace with appropriate ${viewId} for environment
 
 const MapDataDownloader = ({ activeViewId, activeVar,functionalClass,timePeriod,mapData  }) => {
@@ -27,27 +32,6 @@ const MapDataDownloader = ({ activeViewId, activeVar,functionalClass,timePeriod,
   const { pgEnv, falcor, falcorCache  } = React.useContext(DamaContext);
 
   const [loading, setLoading] = React.useState(true);
-
-  React.useEffect(() => {
-    setLoading(true);
-
-    if (!pgEnv || !Object.keys(mapData).length ) return;
-    const geoids = Object.keys(mapData)
-    falcor.get([
-        "dama",
-        pgEnv,
-        "tiger",
-        [MAP_GEOM_VIEW_ID],
-        geoids,
-        ['2020'],
-        ['county'],
-        "attributes",
-        ["geoid", "wkb_geometry", "name"],
-      ])
-    .then((d) => {
-      setLoading(false)
-    })
-  }, [falcor, pgEnv, mapData])
 
   const downloadData = () => {
     const length = get(falcorCache, ['dama', pgEnv, 'viewsbyId', activeViewId, 'data', 'length'], 0);
@@ -196,12 +180,14 @@ export const BPMMapFilter = ({
     }
   });
 
-  //For a given area + period + functional_class, there may be more than 1 row of data
+  //For a given area + period + functional_class, there may be more than 1 row of data 
+  // 12/02/25 update 2010 data is 1 row per combo, BUT 2012 does have this issue
   //We need to sum or average the data together
   const sumAll = filteredData.reduce((sumAll, d) => {
     const countyName = name2fips[d?.area];
     if(!sumAll[countyName]){
       sumAll[countyName] = {
+        ...d,
         ogc_fid: d.ogc_fid,
         [variableAccessors.VMT]: 0,
         [variableAccessors.VHT]: 0,
@@ -211,15 +197,16 @@ export const BPMMapFilter = ({
     }
 
     sumAll[countyName] = {
+      ...d,
       [variableAccessors.VMT]: Number(d?.[variableAccessors.VMT]) + sumAll[countyName][variableAccessors.VMT] || 0,
       [variableAccessors.VHT]: Number(d?.[variableAccessors.VHT]) + sumAll[countyName][variableAccessors.VHT] || 0,
-      total_speed: d?.ave_speed + sumAll[countyName].total_speed || 0,
+      total_speed: Number(d?.ave_speed) + sumAll[countyName].total_speed || 0,
       count: 1+sumAll[countyName]?.count || 0
     }
     return sumAll
   }, {});
 
-  
+
   Object.values(sumAll).forEach(area => {
     area[variableAccessors.AvgSpeed] =  area.total_speed/area.count
   })
@@ -233,23 +220,6 @@ export const BPMMapFilter = ({
   const mapData = formattedData
 
   const geoids = Object.keys(mapData)
-  React.useEffect(() => {
-    const loadMapGeoms = async () => {
-     await falcor.get([
-        "dama",
-        pgEnv,
-        "tiger",
-        [MAP_GEOM_VIEW_ID],
-        geoids,
-        ['2020'],
-        ['county'],
-        "attributes",
-        ["geoid", "wkb_geometry", "name"],
-      ])
-    }
-
-    loadMapGeoms()
-  },[pgEnv, geoids]);
 
   const areaOptions = Object.keys(formattedData); 
 
@@ -259,19 +229,10 @@ export const BPMMapFilter = ({
    */
 
   const projectIdFilterValue = filters["projectId"]?.value || null;
-
+  console.log({projectIdFilterValue})
   const projectCalculatedBounds = React.useMemo(() => {
     if (projectIdFilterValue) {
-      const countyMetadata = get(falcorCache, [
-        "dama",
-        pgEnv,
-        "tiger",
-        MAP_GEOM_VIEW_ID,
-        projectIdFilterValue,
-        ['2020'],
-        ['county'],
-        "attributes"
-      ], "{}");
+      const countyMetadata = data.find(d => d.geoid === projectIdFilterValue);
 
       console.log("filtered to countyMetadata::", countyMetadata);
       const projectGeom = !!countyMetadata?.wkb_geometry
@@ -297,84 +258,168 @@ export const BPMMapFilter = ({
     }
   }, [projectIdFilterValue, data]);
 
+  const projectFilterOgcFid = useMemo(() => {
+    return data.find(d => d.geoid === projectIdFilterValue)?.ogc_fid
+  }, [projectIdFilterValue, data]);
+
   React.useEffect(() => {
-    // const CountyValues = Object.values(filteredData)
-     // filteredData should be shaped like
-    /*
-      {
-        '36001': 55.44,
-        '36036': 57.67
-        ...
-      }
-  
-    */
-    const ckmeansLen = Math.min((Object.values(mapData) || []).length, 5);
-    const values = Object.values(mapData || {});
-    let domain = [0, 10, 25, 50, 75, 100];
-    if (ckmeansLen <= values.length) {
-      domain = ckmeans(values, ckmeansLen) || [];
-    }
-
-    let range = getColorRange(5, "YlOrRd", false);
-    if (variable === "AvgSpeed") {
-      range = getColorRange(5, "RdYlGn", false);
-    }
-    if (!(domain && domain?.length > 5)) {
-      const n = domain?.length || 0;
-      for (let i = n; i < 5; i++) {
-        domain.push(domain[i - 1] || 0);
-      }
-    }
-
-    function colorScale(domain, areaValue) {
-      let color = range[0];//"rgba(0,0,0,0)";
-      (domain || []).forEach((domainValue, i) => {
-        if (areaValue >= domainValue && (!domain[i+1] || areaValue <= domain[i + 1])) {
-          color = range[i];
+    if(mapData && Object.keys(mapData).length > 0) {
+      // const CountyValues = Object.values(filteredData)
+      // filteredData should be shaped like
+      /*
+        {
+          '36001': 55.44,
+          '36036': 57.67
+          ...
         }
-      });
-      return color;
-    }
+    
+      */
+      const ckmeansLen = Math.min((Object.values(mapData) || []).length, 5);
+      const values = Object.values(mapData || {});
+      let domain = [0, 10, 25, 50, 75, 100];
+      if (ckmeansLen <= values.length) {
+        domain = ckmeans(values, ckmeansLen) || [];
+      }
 
-    const colors = {};
-    Object.keys({...alGeoIdColor, ...mapData}).forEach((geoid) => {
-      colors[geoid] = colorScale(domain, mapData[geoid]);
-    });
+      const max = Math.max(...Object.values(mapData));
+      //domain.push(max)
+      let range = getColorRange(5, "YlOrRd", false);
+      if (variable === "AvgSpeed") {
+        range = getColorRange(5, "RdYlGn", false);
+      }
+      if (!(domain && domain?.length > 5)) {
+        const n = domain?.length || 0;
+        for (let i = n; i < 5; i++) {
+          domain.push(domain[i - 1] || 0);
+        }
+      }
 
-    let output = ["coalesce", ["get",["to-string",["get","geoid"]], ["literal", colors]],"rgba(0,0,0,0)"]
-
-    newSymbology = (layer?.layers || []).reduce((a, c) => {
-      a[c.id] = {
-        "fill-color": {
-          [variable]: {
-            type: 'threshold',
-            settings: {
-              range: range,
-              domain: domain,
-              title: variable
-            },
-            value: output
+      function colorScale(domain, areaValue) {
+        let color = range[0];//"rgba(0,0,0,0)";
+        (domain || []).forEach((domainValue, i) => {
+          if (areaValue >= domainValue && (!domain[i+1] || areaValue <= domain[i + 1])) {
+            color = range[i];
           }
+        });
+        return color;
+      }
+
+      const colors = {};
+      Object.values(sumAll).forEach(geo => {
+        colors[geo.geoid] = colorScale(domain, geo[variableAccessors[variable]]);
+      })
+
+      // Object.keys({...alGeoIdColor, ...mapData}).forEach((geoid) => {
+      //   colors[geoid] = colorScale(domain, mapData[geoid]);
+      // });
+      //let output = ["get",["to-string",["get","ogc_fid"]], ["literal", colors]];
+      //let output = ["get",["get","ogc_fid"], ["literal", colors]];
+      let output = ["get",["to-string",["get","geoid"]], ["literal", colors]]
+      //let output = ["coalesce", ["get",["to-string",["get","geoid"]], ["literal", colors]],"rgba(0,0,0,0)"]
+      // console.log({layer})
+      // newSymbology.layers = (layer?.layers || []).map((c) => {
+      //   console.log({c})
+      //   return {
+      //     ...c,
+      //     "fill-color": {
+      //       [variable]: {
+      //         type: 'threshold',
+      //         settings: {
+      //           range: range,
+      //           domain: domain,
+      //           title: variable
+      //         },
+      //         value: output
+      //       }
+      //     }
+      //   };
+      // });
+      let highlightLayerInfo = {};
+
+      newSymbology.layers = layer.layers.map((c, i) => {
+        if(!c.id.includes(PIN_OUTLINE_LAYER_SUFFIX) && !c.id.includes(SELECTED_BORDER_SUFFIX)) {
+          highlightLayerInfo = {...c}
         }
-      };
-      return a;
-    }, {});
+        
+        return {
+          ...c,
+          id: c.id.includes(NO_FILTER_LAYER_SUFFIX) ? c.id : c.id + NO_FILTER_LAYER_SUFFIX,
+          "fill-color": {
+            [variable]: {
+              type: 'threshold',
+              settings: {
+                range: range,
+                domain: domain,
+                max,
+                data: Object.values(mapData).map(d => (({value: d}))),
+                title: variableLabels[variable]
+              },
+              value: output
+            }
+          },
+          "fill-opacity":{
+            default: { value: 1 },
+          },
+          visibility: {
+            //default: {value: projectFilterOgcFid ? "visible" : 'none'},
+            default: {value: 'visible'},
+          },
+        };
+      });
+      if (newSymbology.layers.some((l) => l.id.includes(SELECTED_BORDER_SUFFIX))) {
+        newSymbology.layers = newSymbology.layers.filter((l) => !l.id.includes(SELECTED_BORDER_SUFFIX));
+      }
+      const featureBorderFilter = areaOptions.reduce((acc, curr) => {
+        if(curr === projectIdFilterValue) {
+          acc[curr] = 3
+        } else {
+          acc[curr] = .5
+        }
+        return acc;
+      }, {});
+      console.log({featureBorderFilter})
 
-    if (projectCalculatedBounds) {
-      newSymbology.fitToBounds = projectCalculatedBounds;
-      newSymbology.fitZoom = 9.5;
+      const highlightLayerId = highlightLayerInfo.id.replace(NO_FILTER_LAYER_SUFFIX, "") + SELECTED_BORDER_SUFFIX;
+      const activeFeatureBorderFilter = ["get", ["to-string", ["get", "geoid"]], ["literal", featureBorderFilter]];
+      newSymbology.layers.push({
+        id: highlightLayerId,
+        type: "line",
+        source: highlightLayerInfo.source,
+        "source-layer": highlightLayerInfo["source-layer"],
+        "line-opacity": { default: { value: 0.8 }},
+        "line-color": { default: { value: "black" }},
+        "line-width": { default: { value: activeFeatureBorderFilter}},
+        visibility: {
+          //default: {value: projectFilterOgcFid ? "visible" : 'none'},
+          default: {value: 'visible'},
+        },
+      });
+      if (projectCalculatedBounds) {
+        newSymbology.fitToBounds = projectCalculatedBounds;
+        newSymbology.fitZoom = 9.5;
+      }
+      else {
+        newSymbology.fitToBounds = null;
+        newSymbology.fitZoom = null;
+      }
+      if(projectIdFilterValue) {
+        //set symbology.filter, controls whether or not the `selectedBorder` layer appears
+        const symbFilter = {
+          dataKey: "ogc_fid",
+          dataIds: [projectFilterOgcFid]
+        }
+
+        newSymbology.filter = symbFilter;
+      }  else {
+        newSymbology.filter = null;
+      }
+      if(!isEqual(newSymbology, tempSymbology)){
+        console.log("bpm new symbology::", newSymbology)
+        setTempSymbology(newSymbology)
+      }
     }
-    else {
-      newSymbology.fitToBounds = null;
-      newSymbology.fitZoom = null;
-    }
-
-
-    if(!isEqual(newSymbology, tempSymbology)){
-      setTempSymbology(newSymbology)
-    }
-
   },[mapData, filters, timePeriod, functionalClass, variable, projectCalculatedBounds]);
+
 
   const idFilterOptions = areaOptions.map(fips => ({name: fips2Name[fips], id: fips})).sort((a,b) => {
     if (a.name < b.name) {
