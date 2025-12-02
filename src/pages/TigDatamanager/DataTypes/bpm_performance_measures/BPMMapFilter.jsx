@@ -335,15 +335,18 @@ export const BPMMapFilter = ({
       //   };
       // });
       let highlightLayerInfo = {};
-
       newSymbology.layers = layer.layers.map((c, i) => {
         if(!c.id.includes(PIN_OUTLINE_LAYER_SUFFIX) && !c.id.includes(SELECTED_BORDER_SUFFIX)) {
           highlightLayerInfo = {...c}
         }
-        
-        return {
-          ...c,
-          id: c.id.includes(NO_FILTER_LAYER_SUFFIX) ? c.id : c.id + NO_FILTER_LAYER_SUFFIX,
+
+        const linePaint = {
+          "line-color": "black",
+          "line-width": 3,
+          "line-opacity":1
+        }
+
+        const fillStyles = {
           "fill-color": {
             [variable]: {
               type: 'threshold',
@@ -360,6 +363,13 @@ export const BPMMapFilter = ({
           "fill-opacity":{
             default: { value: 1 },
           },
+        }
+
+        return {
+          ...c,
+          paint: c.type === "line" ? linePaint : c.paint,
+          id: c.id.includes(NO_FILTER_LAYER_SUFFIX) ? c.id : c.id + NO_FILTER_LAYER_SUFFIX,
+          ...fillStyles,
           visibility: {
             //default: {value: projectFilterOgcFid ? "visible" : 'none'},
             default: {value: 'visible'},

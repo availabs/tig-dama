@@ -106,7 +106,11 @@ const fips2Name = {
   "09001": "Fairfield",
   "09005": "Litchfield",
   "09007": "Middlesex", //I removed `ct` from the end of this, if the app implodes, we know why.
-  "09009": "New Haven",
+  "9009": "New Haven",
+  "9001": "Fairfield",
+  "9005": "Litchfield",
+  "9007": "Middlesex", //I removed `ct` from the end of this, if the app implodes, we know why.
+  "9009": "New Haven",
 };
 
 export { regionalData, fips2Name };

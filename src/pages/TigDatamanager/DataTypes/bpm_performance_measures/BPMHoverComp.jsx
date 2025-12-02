@@ -14,7 +14,6 @@ export const BPMHoverComp = (props) => {
     const { activeViewId, props: { filters }  } = layer
   
     const {geoid} = importData[2];
-    console.log({geoid})
     const countyName = fips2Name[geoid];
 
     React.useEffect(() => {
@@ -80,13 +79,6 @@ export const BPMHoverComp = (props) => {
         return sumAll
     }, {});
 
-    const testData = filteredData.filter(d => d.geoid.toString() === props.data[2].geoid.toString());
-    //console.log({testData})
-
-    //console.log("sum all hover::", sumAll)
-
-
-
     const formattedData = {};
 
     Object.keys(sumAll).forEach(area => {
@@ -99,9 +91,7 @@ export const BPMHoverComp = (props) => {
         }
     })
         
-    console.log({countyName})
     const renderData = formattedData[countyName];
-    console.log({renderData})
     //Otherwise, we get popups for counties that we don't have data for
     const shouldDisplay = renderData && dataVariableNames.every(dataVarName => renderData?.[dataVarName] !== undefined);
 
