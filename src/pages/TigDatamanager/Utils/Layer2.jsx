@@ -93,7 +93,7 @@ const LegendCmp = ({ domain, range, title, max }) => {
     for (let i = 0; i < domain.length - 1; i++) {
       ranges.push(`${new Intl.NumberFormat().format(domain[i])} - ${new Intl.NumberFormat().format(domain[i + 1])}`);
     }
-    if(max) ranges.push(`${new Intl.NumberFormat().format(domain[domain.length-1])} - ${new Intl.NumberFormat().format(max)}`);
+    //if(max) ranges.push(`${new Intl.NumberFormat().format(domain[domain.length-1])} - ${new Intl.NumberFormat().format(max)}`);
     return ranges;
   };
   const newRanges = getDomainRanges(domain);

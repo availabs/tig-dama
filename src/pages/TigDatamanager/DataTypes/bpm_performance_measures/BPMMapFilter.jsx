@@ -274,6 +274,10 @@ export const BPMMapFilter = ({
         }
     
       */
+
+      /**
+       * a domain with length 5 means there are 4 buckets (5 fenceposts = 4 lengths of fence)
+       */
       const ckmeansLen = Math.min((Object.values(mapData) || []).length, 5);
       const values = Object.values(mapData || {});
       let domain = [0, 10, 25, 50, 75, 100];
@@ -283,13 +287,13 @@ export const BPMMapFilter = ({
 
       const max = Math.max(...Object.values(mapData));
       //domain.push(max)
-      let range = getColorRange(5, "YlOrRd", false);
+      let range = getColorRange(4, "YlOrRd", false);
       if (variable === "AvgSpeed") {
-        range = getColorRange(5, "RdYlGn", false);
+        range = getColorRange(4, "RdYlGn", false);
       }
-      if (!(domain && domain?.length > 5)) {
+      if (!(domain && domain?.length > 4)) {
         const n = domain?.length || 0;
-        for (let i = n; i < 5; i++) {
+        for (let i = n; i < 4; i++) {
           domain.push(domain[i - 1] || 0);
         }
       }
@@ -301,6 +305,9 @@ export const BPMMapFilter = ({
             color = range[i];
           }
         });
+        if(color === undefined) {
+          color = range[range.length - 1]
+        }
         return color;
       }
 
@@ -354,7 +361,6 @@ export const BPMMapFilter = ({
                 range: range,
                 domain: domain,
                 max,
-                data: Object.values(mapData).map(d => (({value: d}))),
                 title: variableLabels[variable]
               },
               value: output
