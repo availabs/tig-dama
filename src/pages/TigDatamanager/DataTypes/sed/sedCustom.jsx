@@ -385,9 +385,6 @@ const SedMapFilter = (props) => {
             })
           }
         >
-          <option className="ml-2  truncate" value={null}>
-            none
-          </option>
           {Object.keys(varList).map((k, i) => (
             <option key={i} className="ml-2  truncate" value={k}>
               {varList[k].name}
@@ -553,9 +550,6 @@ const SedTableFilter = ({ source, filters, setFilters, data, columns, userHighes
               setFilters({ ...filters, activeVar: { value: e.target.value } })
             }
           >
-            <option className="ml-2  truncate" value={""}>
-              none
-            </option>
             {Object.keys(varList).map((k, i) => (
               <option key={i} className="ml-2  truncate" value={k}>
                 {varList[k].name}

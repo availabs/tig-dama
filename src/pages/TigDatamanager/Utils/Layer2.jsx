@@ -290,7 +290,7 @@ const GISDatasetRenderComponent = props => {
       falcor.call(
         ["dama", "sources", "metadata", "update"],
         [pgEnv, sourceId, { symbology: toSave }]
-      ).then(res => console.log("SAVE RESPONSE:", res))
+      )
     }
   }, [falcor, pgEnv, sourceId, legend, symbology, activeVar, layers]);
 

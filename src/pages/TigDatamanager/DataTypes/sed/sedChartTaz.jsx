@@ -154,9 +154,6 @@ const SedChartFilter = ({ filters, setFilters, node, years, userHighestAuth }) =
               setFilters({ ...filters, activeVar: { value: e.target.value } })
             }
           >
-            <option className="ml-2  truncate" value={""}>
-              none
-            </option>
             {Object.keys(sedVars).map((k, i) => (
               <option key={i} className="ml-2  truncate" value={k}>
                 {sedVars[k].name}
