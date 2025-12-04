@@ -145,7 +145,11 @@ const npmrdsMapFilter = ({
 
   useEffect(() => {
     if (tmc && tmc !== "") {
-      const curZoomTmc = tmcData.find((tmcRow) => tmcRow.tmc === tmc);
+      const tmcs = Object.values(get(falcorCache, ["dama", pgEnv, "viewsbyId", metaLayerViewId, "databyId"], {})).filter(
+        (tmcRow) => direction === "All" || tmcRow["direction"]?.toLowerCase() === direction?.toLowerCase()
+      );
+      const curZoomTmc = tmcs.find((tmcRow) => tmcRow.tmc === tmc);
+      //const curZoomTmc = tmcData.find((tmcRow) => tmcRow.tmc === tmc);
       const { start_longitude, start_latitude, end_longitude, end_latitude } =
         curZoomTmc;
       const startCoord = [start_longitude, start_latitude];
@@ -160,6 +164,51 @@ const npmrdsMapFilter = ({
       setTmcBounds();
     }
   }, [tmc]);
+
+  const metaLayerViewId = useMemo(() => {
+    if(year && source) {
+      return source?.metadata?.npmrds_meta_layer_view_id[year] ?? source?.metadata?.npmrds_meta_layer_view_id?.[2017]; //TODO temp hardcode for testing data
+    }
+  }, [year, source]);
+
+  useEffect(() => {
+    const getTmcMetaData = async () => {
+      console.log("getting tmc metadata")
+      const tmcListLengthPath = [
+        "dama",
+        pgEnv,
+        "viewsbyId",
+        metaLayerViewId,
+        "data",
+        "length"
+      ];
+      const lenRes = await falcor.get(tmcListLengthPath)
+  
+      let len = get(lenRes, ["json", ...tmcListLengthPath], 0);
+ 
+      /**
+       * TODO
+       * if I switch to using the `options` route
+       * I could filter tmcs by direction here
+       */
+      const tmcListDataPath = [
+        "dama",
+        pgEnv,
+        "viewsbyId",
+        metaLayerViewId,
+        "databyIndex",
+        { from: 0, to: len - 1 },
+        ["tmc", "miles", "direction", "nhs", 'road', "avg_speedlimit", "start_latitude",	"start_longitude",	"end_latitude",	"end_longitude"],
+      ];
+      await falcor.get(tmcListDataPath);
+    }
+
+    if(metaLayerViewId) {
+      getTmcMetaData();
+    }
+
+  }, [metaLayerViewId]);
+
 
   const tmcDataReqKey = useMemo(() => {
     const startOfMonth = moment([year, month - 1]).startOf('month').format('YYYYMMDD');
