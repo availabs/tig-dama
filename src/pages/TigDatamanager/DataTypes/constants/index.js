@@ -105,7 +105,7 @@ const fips2Name = {
   "36119": "Westchester",
   "09001": "Fairfield",
   "09005": "Litchfield",
-  "09007": "Middlesex", //I removed `ct` from the end of this, if the app implodes, we know why.
+  "09007": "Middlesex, CT", //I removed `ct` from the end of this, if the app implodes, we know why. //I added it back, IDK why I removed it?
   "9009": "New Haven",
   "9001": "Fairfield",
   "9005": "Litchfield",

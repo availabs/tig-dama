@@ -278,7 +278,7 @@ export const BPMMapFilter = ({
       /**
        * a domain with length 5 means there are 4 buckets (5 fenceposts = 4 lengths of fence)
        */
-      const ckmeansLen = Math.min((Object.values(mapData) || []).length, 5);
+      const ckmeansLen = Math.min((Object.values(mapData) || []).length, 6);
       const values = Object.values(mapData || {});
       let domain = [0, 10, 25, 50, 75, 100];
       if (ckmeansLen <= values.length) {
@@ -291,13 +291,13 @@ export const BPMMapFilter = ({
         console.log("top of domain does not match max")
         domain[domain.length-1] = max;
       }
-      let range = getColorRange(4, "YlOrRd", false);
+      let range = getColorRange(5, "YlOrRd", false);
       if (variable === "AvgSpeed") {
-        range = getColorRange(4, "RdYlGn", false);
+        range = getColorRange(5, "RdYlGn", false);
       }
-      if (!(domain && domain?.length > 4)) {
+      if (!(domain && domain?.length > 5)) {
         const n = domain?.length || 0;
-        for (let i = n; i < 4; i++) {
+        for (let i = n; i < 5; i++) {
           domain.push(domain[i - 1] || 0);
         }
       }

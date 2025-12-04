@@ -324,13 +324,16 @@ const ACSMapFilter = ({
       return a;
     }, {});
 
-    const ckmeansLen = Math.min((Object.values(valueMap) || []).length, 5);
+    const ckmeansLen = Math.min((Object.values(valueMap) || []).length, 6);
     const values = Object.values(valueMap || {});
     let domain = [0, 10, 25, 50, 75, 100];
     if (ckmeansLen <= values.length) {
       domain = ckmeans(values, ckmeansLen) || [];
     }
-
+    const max = Math.max(...Object.values(valueMap));
+    if(domain[domain.length-1] !== max) {
+      domain[domain.length-1] = max;
+    }
     let range = DEFAULT_COLOR_SCALE;
 
     const fullActiveVar = activeView.metadata.variables.find(variable => variable.label === activeVar);
@@ -339,7 +342,9 @@ const ACSMapFilter = ({
         range = fullActiveVar.value.colorScale;
       }
     }
-
+    if(range.length > 5){
+      range = range.slice(0, 5)
+    }
     if (!(domain && domain?.length > 5)) {
       const n = domain?.length || 0;
       for (let i = n; i < 5; i++) {
@@ -348,12 +353,15 @@ const ACSMapFilter = ({
     }
 
     function colorScale(domain, areaValue) {
-      let color = range[0];
+      let color = range[0];//"rgba(0,0,0,0)";
       (domain || []).forEach((domainValue, i) => {
         if (areaValue >= domainValue && (!domain[i+1] || areaValue <= domain[i + 1])) {
           color = range[i];
         }
       });
+      if(color === undefined) {
+        color = range[range.length - 1]
+      }
       return color;
     }
 
@@ -377,6 +385,7 @@ const ACSMapFilter = ({
             settings: {
               range: range,
               domain: domain,
+              max,
               title: activeVar
             },
             value: output

@@ -117,7 +117,7 @@ const ACSHoverComp = (props) => {
         <div className="flex-1 text-right font-thin pl-4 pr-1">
           {isDivisor && divisorValue !== 0
             ? `${(value / divisorValue).toFixed(2) * 100}%`
-            : value}
+            : value.toLocaleString()}
         </div>
       </div>
     </div>
