@@ -1,6 +1,6 @@
 import React from "react";
 import {  Link  } from "react-router";
-import { dmsDataTypes } from "~/modules/dms/src"
+import { dmsColumnTypes } from "~/modules/dms/src"
 import { makeLexicalFormat } from "~/pages/DataManager/DataTypes/default/Overview";
 import { SOURCE_AUTH_CONFIG } from "~/pages/DataManager/Source/attributes";
 
@@ -28,7 +28,7 @@ const Overview = ({ searchParams, setSearchParams, source, views, activeViewId, 
     {name: 'Access Controls', icon: 'fad fa-gears',  authLevel: SOURCE_AUTH_CONFIG['ADMIN'], to: `/source/${source.source_id}/admin`},  
     {name: 'Delete', icon: 'fad fa-trash',  authLevel: SOURCE_AUTH_CONFIG['ADMIN'], to: `/delete/source/${source.source_id}`} 
   ];
-  const Lexical = dmsDataTypes.lexical.ViewComp;
+  const Lexical = dmsColumnTypes.lexical.ViewComp;
   const descValue = source.description // makeLexicalFormat(source.description);
 
   return (

@@ -287,6 +287,10 @@ export const BPMMapFilter = ({
 
       const max = Math.max(...Object.values(mapData));
       //domain.push(max)
+      if(domain[domain.length-1] !== max) {
+        console.log("top of domain does not match max")
+        domain[domain.length-1] = max;
+      }
       let range = getColorRange(4, "YlOrRd", false);
       if (variable === "AvgSpeed") {
         range = getColorRange(4, "RdYlGn", false);

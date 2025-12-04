@@ -347,8 +347,9 @@ const SedMapFilter = (props) => {
       <div className="flex py-3.5 pl-2 pr-2 text-sm text-gray-400 capitalize">Year:</div>
         <div className="flex-1">
           <div className='px-6'>
-          <input type="range" 
-              min="0" 
+            <input 
+              type="range" 
+              min="0"
               max={metaData?.years?.length-1} 
               id="my-range" 
               list="my-datalist"
@@ -357,14 +358,15 @@ const SedMapFilter = (props) => {
               onChange={(e) =>
               setFilters({
                 activeVar: { value: `${varType}_${e.target.value}` },
-              })
-            }/>
+              })}
+            />
           </div>
           <datalist id="my-datalist" className='w-full flex'>
             {(metaData?.years || ["2010"]).map((k, i) => (
               <option 
                 key={i} 
-                value={i} 
+                value={i}
+                label={k}
                 className={`flex-1 text-gray-500 text-center text-xs`}>
               {k}
             </option>

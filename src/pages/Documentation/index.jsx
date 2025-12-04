@@ -1,17 +1,6 @@
-//import { useFalcor } from "~/modules/avl-components/src"
-import { dmsPageFactory, registerDataType, Selector, registerComponents  } from "~/modules/dms/src"
+import { dmsPageFactory } from "~/modules/dms/src"
 import { withAuth } from "@availabs/ams" 
-import checkAuth  from "~/layout/checkAuth"
-//import {Logo} from '~/layout/ppdaf-layout'
-//import AuthMenu from "~/pages/Auth/AuthMenu"
-
 import pagesConfig from '~/modules/dms/src/patterns/page/siteConfig'
-//import ComponentRegistry from '~/component_registry'
-
-// import BuildingFootprintsDownload from "./buildings_download"
-
-//registerComponents(ComponentRegistry)
-registerDataType("selector", Selector)
 
 const theme = {
   page: {
@@ -121,19 +110,19 @@ sectionArray: {
   },
 }
 
-
 const Routes = [
   {
-    ...dmsPageFactory(
-      pagesConfig[0]({ 
+    ...dmsPageFactory({
+      dmsConfig: pagesConfig[0]({
         app: "tig-dama",
         type: "tig-docs2",
         baseUrl: "/docs",
-        themes: {default: theme},
+        themes: { default: theme },
         checkAuth: () => true
-      }), 
-      withAuth
-    ),
+      }),
+      
+      authWrapper: withAuth
+    }),
     authLevel: -1,
     name: "CMS",
     sideNav: {
