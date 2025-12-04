@@ -115,7 +115,7 @@ const LegendCmp = ({ domain, range, title, max }) => {
                   transition: "background-color 0.5s"
                 }} />
               </div>
-              <div className="flex-initial ml-6 w-32">
+              <div className="flex-initial ml-6 max-w-64">
                 {
                   <div className="h-6 w-2 ml-1 p-[2px] sm:w-full text-left">
                     {newRanges[i]}</div>
