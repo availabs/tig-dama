@@ -295,7 +295,6 @@ const GISDatasetRenderComponent = props => {
   }, [falcor, pgEnv, sourceId, legend, symbology, activeVar, layers]);
 
   React.useEffect(() => {
-    console.log({activePins})
     const pinnedIds = activePins?.map(pin => pin.ogc_fid);
     const pinnedGeomLineLayer = layers.find(layer => layer.id.includes(PIN_OUTLINE_LAYER_SUFFIX));
 
@@ -311,7 +310,6 @@ const GISDatasetRenderComponent = props => {
         true,
         false,
       ];
-      console.log({pinnedIds})
       const mapLayer = maplibreMap.getLayer(lineLayerId);
       if (mapLayer) {
         maplibreMap.setFilter(lineLayerId, dataFilter);
@@ -438,7 +436,6 @@ const GISDatasetRenderComponent = props => {
               if(['visibility'].includes(paintProperty)) {
                 maplibreMap.setLayoutProperty(layer_id, paintProperty, value);
               } else if (!layer_id.includes(PIN_OUTLINE_LAYER_SUFFIX)) {
-                console.log({layer_id, paintProperty, value})
                 maplibreMap.setPaintProperty(layer_id, paintProperty, value);
               }
             }
@@ -944,7 +941,6 @@ const TypeSelector = ({ type, updateLegend }) => {
 class GISDatasetLayer extends AvlLayer {
   onHover = {
     layers: this.layers?.map((d) =>{
-      console.log('on hover map', d.id)
       return d.id
     }),
     callback: (layerId, features, lngLat) => {

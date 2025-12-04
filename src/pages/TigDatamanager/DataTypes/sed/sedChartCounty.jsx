@@ -87,9 +87,10 @@ const SedChartFilterCounty = ({ years, filters, setFilters, node, userHighestAut
   const downloadImage = React.useCallback(() => {
     if (!node) return;
     const name = get(sedVars, [activeVar, "name"], null);
-    if (!name) return;
+    const activeYear = years[filters.year.value];
+    if (!name || !activeYear) return;
     toPng(node, { backgroundColor: "#fff" }).then((dataUrl) => {
-      download(dataUrl, `${name}.png`, "image/png");
+      download(dataUrl, `${name}_${activeYear}.png`, "image/png");
     });
   }, [node, activeVar]);
 

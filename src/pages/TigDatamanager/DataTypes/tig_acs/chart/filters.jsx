@@ -75,8 +75,9 @@ export const AcsChartFilters = ({
 
   const downloadImage = React.useCallback(() => {
     if (!node) return;
+    const activeYear = filters.year.value;
     toPng(node, { backgroundColor: "#fff" }).then((dataUrl) => {
-      download(dataUrl, `${activeVar}.png`, "image/png");
+      download(dataUrl, `${activeVar}_${activeYear}.png`, "image/png");
     });
   }, [node, activeVar]);
 
@@ -236,22 +237,27 @@ const getRegionalgeoids = (fips2Name, countyNames) => {
 };
 
 const getAreaToGeos = (regionalData, fips2Name) => {
+  const fixedFips2Name = Object.keys(fips2Name).filter(key => key.length === 5).reduce((acc, curr) => {
+    acc[curr] = fips2Name[curr];
+    return acc;
+  }, {})
+
   const temp = {};
   Object.keys(regionalData).forEach((cc) => {
     Object.keys(regionalData[`${cc}`]).forEach((c) => {
       temp[`${c}`] = getRegionalgeoids(
-        fips2Name,
+        fixedFips2Name,
         regionalData[`${cc}`][`${c}`] || []
       );
     });
   });
 
   temp.all =
-    Object.keys(fips2Name) ||
-    Object.values(fips2Name).reduce((a, c) => {
+    Object.keys(fixedFips2Name) ||
+    Object.values(fixedFips2Name).reduce((a, c) => {
       return {
         ...a,
-        [`${c}`]: getRegionalgeoids(fips2Name, [c]),
+        [`${c}`]: getRegionalgeoids(fixedFips2Name, [c]),
       };
     }, {});
   return temp;

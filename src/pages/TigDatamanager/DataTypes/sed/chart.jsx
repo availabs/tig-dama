@@ -7,7 +7,7 @@ import { DamaContext } from "~/pages/DataManager/store";
 
 // import { useFalcor } from "~/modules/avl-components/src";
 import { LineGraph } from "~/modules/avl-graph/src";
-import { ResponsivePieCanvas } from "@nivo/pie";
+import { ResponsivePie } from "@nivo/pie";
 import { ResponsiveLine } from "@nivo/line";
 import { ResponsiveBar } from "@nivo/bar";
 
@@ -66,12 +66,17 @@ const identityMap = (tableData, attributes) => {
 };
 
 const Title = (props) => {
-  let { width, height, filters, sourceType } = props;
+  let { width, height, filters, sourceType, dataWithArc } = props;
   if (props.bars) {
     filters = props.bars[0].data.data.filters;
     sourceType = props.bars[0].data.data.sourceType;
   }
-
+  let year;
+  if(dataWithArc) {
+    filters = dataWithArc[0].data.filters
+    sourceType = dataWithArc[0].data.sourceType
+    year = dataWithArc[0].data.year
+  }
   const style = { fontWeight: "bold" };
 
   const isSedCountyTitle = sourceType === "tig_sed_county"
@@ -96,12 +101,20 @@ const Title = (props) => {
 
   const dataType = isSedCountyTitle ? 'Counties' : 'TAZ'
 
+  let firstElementOffset = [5, -55]
+  let titleRowOffsetVal = 20;
+  if(dataWithArc){
+    firstElementOffset[1] = -15
+  }
   return (
     <>
-      <text x={5} y={-35} style={style}>
-        {varList[activeVar]?.name} by Year {summarize === 'county' && isSedCountyTitle ? `by ${summarizeVars[summarize].name}` : ''}
+      {year && <text x={firstElementOffset[0]} y={firstElementOffset[1]} style={style}>
+        Year: {year}
+      </text>}
+      <text x={firstElementOffset[0]} y={firstElementOffset[1] + titleRowOffsetVal} style={style}>
+        {varList[activeVar]?.name} {!dataWithArc ? "by Year" : ""} {summarize === 'county' && isSedCountyTitle ? `by ${summarizeVars[summarize].name}` : ''}
       </text>
-      <text x={5} y={-15} style={style}>
+      <text x={firstElementOffset[0]} y={firstElementOffset[1] + titleRowOffsetVal * 2} style={style}>
         {area === "all" ? "All Areas" : capitalizeFirstLetter(area)} {summarize !== 'county' || !isSedCountyTitle ? `| ${transformAggFunc[aggFunc]} of ${dataType} within ${summarizeVars[summarize].name}` :''}
       </text>
     </>
@@ -109,8 +122,9 @@ const Title = (props) => {
 };
 
 const PieChart = ({ pieData, year, filters, sourceType }) => {
+  //layers
   return (
-    <ResponsivePieCanvas
+    <ResponsivePie
       data={
         (pieData || []).map((p) => {
           return {
@@ -119,6 +133,9 @@ const PieChart = ({ pieData, year, filters, sourceType }) => {
             value: ((p?.data || []).find(
               (f) => Number(f.x) === Number(year)
             ) || {})["y"],
+            year,
+            filters,
+            sourceType
           };
         }) || []
       }
@@ -159,9 +176,10 @@ const PieChart = ({ pieData, year, filters, sourceType }) => {
         },
       ]}
       // fill={}
+      layers={['arcs', 'arcLinkLabels', 'arcLabels', 'legends', Title]}
       legends={[
         {
-          anchor: "right",
+          anchor: "top-right",
           direction: "column",
           justify: false,
           translateX: 100,
