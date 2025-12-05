@@ -70,7 +70,7 @@ const ChartPage = ({
 
   const activeViewId = useMemo(() => {
     return get(
-      views.filter((d) => d.view_id === viewId),
+      views.filter((d) => d.view_id.toString() === viewId),
       "[0]",
       views[0]
     )?.view_id;
@@ -153,6 +153,7 @@ const ChartPage = ({
           source={source}
           activeViewId={activeViewId}
           node={ref}
+          views={views}
         />
         
       </div>

@@ -6,7 +6,7 @@ import mapboxgl from "maplibre-gl";
 import ckmeans from "~/pages/DataManager/utils/ckmeans";
 import { getColorRange } from "~/modules/avl-components/src";
 import { SOURCE_AUTH_CONFIG } from "~/pages/DataManager/Source/attributes";
-
+import { FilterControlContainer } from "../controls/FilterControlContainer";
 import { DamaContext } from "~/pages/DataManager/store"
 import { fips2Name } from '../constants';
 import { variableAccessors, variableLabels } from "./BPMConstants";
@@ -81,15 +81,21 @@ const MapDataDownloader = ({ activeViewId, activeVar,functionalClass,timePeriod,
   };
 
   return (
-    <div>
-      <Button themeOptions={{size:'sm', color: 'primary'}}
-        onClick={ downloadData }
-        disabled={ loading }
-      >
-        Download
-      </Button>
-    </div>
-  )
+    <FilterControlContainer
+      header={""}
+      input={({ className }) => (
+        <div>
+          <Button
+            themeOptions={{ size: "sm", color: "primary" }}
+            onClick={downloadData}
+            disabled={loading}
+          >
+            Download
+          </Button>
+        </div>
+      )}
+    />
+  );
 }
 
 
@@ -456,52 +462,59 @@ export const BPMMapFilter = ({
 
 
   return (
-    <div className='flex justify-start content-center flex-wrap w-[85%] p-1'>
-        <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">ID :</div>
-        <div className="flex">
-          <select
-            className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
-            value={projectIdFilterValue || ""}
-            onChange={(e) => setFilters({ projectId: { value: e.target.value } })}
-          >
-            <option className="ml-2  truncate" value={""}>
-              None
-            </option>
-            {idFilterOptions}
-          </select>
-        </div>
-        <div className='flex py-3.5 px-2 text-sm text-gray-400 capitalize'>Variable : </div>
-        <div className='flex'>
-          <select
-              className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
-              value={variable || ''}
-              onChange={(e) => setFilters({'activeVar' :{ value: e.target.value}})}
+    <div className='flex justify-start content-center flex-wrap  p-1 w-[90%]'>
+        <FilterControlContainer 
+          header={'County:'}
+          input={({className}) => (
+            <select
+                          className={className}
+              value={projectIdFilterValue || ""}
+              onChange={(e) => setFilters({ projectId: { value: e.target.value } })}
             >
-              {variableClasses?.filter(d => d).map((v,i) => (
-                <option key={i} className="ml-2  truncate" value={v}>
-                  {v}
-                </option>
-              ))}
-          </select>
-        </div>
-        <div className='flex py-3.5 px-2 text-sm text-gray-400 capitalize'>Time period : </div>
-        <div className='flex'>
+              <option className="ml-2  truncate" value={""}>
+                None
+              </option>
+              {idFilterOptions}
+            </select>
+          )}
+        />
+        <FilterControlContainer 
+          header={'Variable:'}
+          input={({className}) => (
+            <select
+                            className={className}
+                value={variable || ''}
+                onChange={(e) => setFilters({'activeVar' :{ value: e.target.value}})}
+              >
+                {variableClasses?.filter(d => d).map((v,i) => (
+                  <option key={i} className="ml-2  truncate" value={v}>
+                    {v}
+                  </option>
+                ))}
+            </select>
+          )}
+        />
+        <FilterControlContainer 
+          header={'Time period:'}
+          input={({className}) => (
+            <select
+                            className={className}
+                value={timePeriod || ''}
+                onChange={(e) => setFilters({'period' :{ value: e.target.value}})}
+              >
+                {allTimePeriods?.filter(d => d && d !== 'null').map((v,i) => (
+                  <option key={i} className="ml-2  truncate" value={v}>
+                    {v?.replace("_"," ")}
+                  </option>
+                ))}
+            </select>
+          )}
+        />
+        <FilterControlContainer 
+          header={'Functional class:'}
+          input={({className}) => (
           <select
-              className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
-              value={timePeriod || ''}
-              onChange={(e) => setFilters({'period' :{ value: e.target.value}})}
-            >
-              {allTimePeriods?.filter(d => d && d !== 'null').map((v,i) => (
-                <option key={i} className="ml-2  truncate" value={v}>
-                  {v?.replace("_"," ")}
-                </option>
-              ))}
-          </select>
-        </div>
-        <div className='flex py-3.5 px-2 text-sm text-gray-400 capitalize'>Functional class : </div>
-        <div className='flex'>
-          <select
-              className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
+                          className={className}
               value={functionalClass || ''}
               onChange={(e) => setFilters({'functional_class' :{ value: e.target.value}})}
             >
@@ -511,8 +524,9 @@ export const BPMMapFilter = ({
                 </option>
               ))}
           </select>
-        </div>
-        {userHighestAuth >= SOURCE_AUTH_CONFIG['DOWNLOAD'] && <div className="flex px-2 ml-auto">
+          )}
+        />
+        {userHighestAuth >= SOURCE_AUTH_CONFIG['DOWNLOAD'] && <div className="px-2 ml-auto">
           <MapDataDownloader
             timePeriod={timePeriod}
             functionalClass={functionalClass}

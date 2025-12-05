@@ -10,6 +10,7 @@ import mapTheme from '~/pages/DataManager/DataTypes/gis_dataset/pages/Map/map-th
 import { DamaContext } from "~/pages/DataManager/store"
 import { DAMA_HOST } from "~/config"
 import {Protocol, PMTiles} from '~/pages/DataManager/utils/pmtiles/index.ts'
+import { FilterControlContainer } from "../DataTypes/controls/FilterControlContainer"
 const PIN_OUTLINE_LAYER_SUFFIX = '_pin_outline'
 
 const DEFAULT_MAP_STYLES = [
@@ -25,32 +26,34 @@ const getTilehost = (DAMA_HOST) =>
 
 const TILEHOST = getTilehost(DAMA_HOST)
 
-const ViewSelector = ({views}) => {
-  const { viewId, sourceId, page } = useParams()
-  const navigate = useNavigate()
-  const {baseUrl} = React.useContext(DamaContext)
+const ViewSelector = ({ views }) => {
+  const { viewId, sourceId, page } = useParams();
+  const navigate = useNavigate();
+  const { baseUrl } = React.useContext(DamaContext);
 
   return (
-    <div className='flex'>
-      <div className='py-3.5 px-2 text-sm text-gray-400'>Version : </div>
-      <div className='flex-1'>
+    <FilterControlContainer
+      header={"Version: "}
+      input={({ className }) => (
         <select
-          className="pl-3 pr-4 py-2.5 border border-blue-100 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
+          className={className}
           value={viewId}
-          onChange={(e) => navigate(`${baseUrl}/source/${sourceId}/${page}/${e.target.value}`)}
+          onChange={(e) =>
+            navigate(`${baseUrl}/source/${sourceId}/${page}/${e.target.value}`)
+          }
         >
           {views
-            .sort((a,b) => b.view_id - a.view_id)
-            .map((v,i) => (
-            <option key={i} className="ml-2  truncate" value={v.view_id}>
-              {v.version ? v.version : v.view_id}
-            </option>
-          ))}
+            .sort((a, b) => b.view_id - a.view_id)
+            .map((v, i) => (
+              <option key={i} className="ml-2  truncate" value={v.view_id}>
+                {v.version ? v.version : v.view_id}
+              </option>
+            ))}
         </select>
-      </div>
-    </div>
-  )
-}
+      )}
+    />
+  );
+};
 
 // import { getAttributes } from '~/pages/DataManager/Source/attributes'
 const DefaultMapFilter = ({ source, filters, setFilters, activeViewId, layer, setTempSymbology }) => {
@@ -309,7 +312,7 @@ const MapPage = ({source,views, HoverComp, MapFilter=DefaultMapFilter, filterDat
           Map View { viewId }
         </div>
       </div>*/}
-      <div className='flex'>
+      <div className='flex content-center flex-wrap items-center'>
 
         <MapFilter
             source={source}
