@@ -11,6 +11,7 @@ import {
   uniq,
 } from "lodash";
 import { SOURCE_AUTH_CONFIG } from "~/pages/DataManager/Source/attributes";
+import { FilterControlContainer } from "../../controls/FilterControlContainer";
 
 // import { download as shpDownload } from "~/pages/DataManager/utils/shp-write";
 import shpwrite from  '@mapbox/shp-write';
@@ -108,12 +109,19 @@ const MapDataDownloader = ({
   }, [falcorCache, pgEnv, tempViewId, activeVar, year]);
 
   return (
-    <Button
-      themeOptions={{ size: "sm", color: "primary" }}
-      onClick={downloadData}
-    >
-      Download
-    </Button>
+    <FilterControlContainer
+      header={""}
+      input={({ className }) => (
+        <div>
+          <Button
+            themeOptions={{ size: "sm", color: "primary" }}
+            onClick={downloadData}
+          >
+            Download
+          </Button>
+        </div>
+      )}
+    />
   );
 };
 
@@ -476,69 +484,73 @@ const ACSMapFilter = ({
 
   return (
     <div className="flex justify-start content-center flex-wrap w-full p-1">
-      <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">Variable: </div>
-      <div className="flex">
-        <select
-          className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
-          value={activeVar}
-          onChange={(e) => {
-            setFilters({
-              ...filters,
-              activeVar: { value: `${e.target.value}` },
-            });
-          }}
-        >
-          {(variables || []).map((k, i) => (
-            <option key={i} className="ml-2 truncate" value={k?.label}>
-              {k?.label}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">Type: </div>
-      <div className="flex">
-        <select
-          className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
-          value={geometry}
-          onChange={(e) => {
-            setFilters({
-              ...filters,
-              geometry: {
-                value: `${e.target.value}`,
-              },
-            });
-          }}
-        >
-          {["tract", "county"].map((v, i) => (
-            <option key={i} className="ml-2 truncate" value={v}>
-              {v?.toUpperCase()}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">Year:</div>
-      <div className="flex">
-        <select
-          className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
-          value={year}
-          onChange={(e) => {
-            setFilters({
-              ...filters,
-              year: {
-                value: `${e.target.value}`,
-              },
-            });
-          }}
-        >
-          {(metaYears || []).map((k, i) => (
-            <option key={i} className="ml-2 truncate" value={k}>
-              {`${k}`}
-            </option>
-          ))}
-        </select>
-      </div>
-
+      <FilterControlContainer 
+        header={'Variable:'}
+        input={({className}) => (
+          <select
+            className={className}
+            value={activeVar}
+            onChange={(e) => {
+              setFilters({
+                ...filters,
+                activeVar: { value: `${e.target.value}` },
+              });
+            }}
+          >
+            {(variables || []).map((k, i) => (
+              <option key={i} className="ml-2 truncate" value={k?.label}>
+                {k?.label}
+              </option>
+            ))}
+          </select>
+        )}
+      />
+      <FilterControlContainer 
+        header={'Type:'}
+        input={({className}) => (
+          <select
+            className={className}
+            value={geometry}
+            onChange={(e) => {
+              setFilters({
+                ...filters,
+                geometry: {
+                  value: `${e.target.value}`,
+                },
+              });
+            }}
+          >
+            {["tract", "county"].map((v, i) => (
+              <option key={i} className="ml-2 truncate" value={v}>
+                {v?.toUpperCase()}
+              </option>
+            ))}
+          </select>
+        )}
+      />
+      <FilterControlContainer 
+        header={'Year:'}
+        input={({className}) => (
+          <select
+            className={className}
+            value={year}
+            onChange={(e) => {
+              setFilters({
+                ...filters,
+                year: {
+                  value: `${e.target.value}`,
+                },
+              });
+            }}
+          >
+            {(metaYears || []).map((k, i) => (
+              <option key={i} className="ml-2 truncate" value={k}>
+                {`${k}`}
+              </option>
+            ))}
+          </select>
+        )}
+      />
      {userHighestAuth >= SOURCE_AUTH_CONFIG['DOWNLOAD'] && <div className=" flex px-2 ml-auto">
         <MapDataDownloader
           activeViewId={activeViewId}

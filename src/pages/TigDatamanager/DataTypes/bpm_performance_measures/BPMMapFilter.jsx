@@ -516,7 +516,7 @@ export const BPMMapFilter = ({
           header={'Functional class:'}
           input={({className}) => (
           <select
-                          className={className}
+              className={className}
               value={functionalClass || ''}
               onChange={(e) => setFilters({'functional_class' :{ value: e.target.value}})}
             >
