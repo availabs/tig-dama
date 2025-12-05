@@ -75,6 +75,7 @@ const TigAcsConfig = {
         {...props}
         transform={AcsTableTransform}
         TableFilter={AcsTableFilter}
+        fullWidth={true}
       />
     ),
   },

@@ -149,7 +149,7 @@ const TablePage = ({
   if (fullWidth) {
     containerStyle = {
       width: "96vw",
-      position: "relative",
+      position: "absolute",
       left: "calc(-50vw + 50%)",
     };
     containerClassName = "mt-2 mx-12";

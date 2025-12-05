@@ -169,7 +169,7 @@ const TablePage = ({
   console.log('sort', sortBy, columns)
 
   const [tableContainerStyle, tableContainerClassName] = React.useMemo(() => {
-    const fullWidthStyle = {width:"96vw", position:"relative", left:"calc(-50vw + 50%)"};
+    const fullWidthStyle = {width:"96vw", position:"absolute", left:"calc(-50vw + 50%)"};
     const fullWidthClass = "mt-2 mx-12";
     const defaultWidthStyle = {};
     const defaultWidthClass = "max-w-6xl";
