@@ -1,4 +1,6 @@
 import { MultiLevelSelect } from '~/modules/avl-map-2/src';
+import { FilterControlContainer } from "../controls/FilterControlContainer";
+
 export const NpmrdsFilters = ({filterSettings, filterType, filters, setFilters}) => {
   return (
     <div className="flex flex-wrap flex-1 border-blue-100 pt-1 pb-1 justify-start gap-y-2">
@@ -38,55 +40,61 @@ const FilterInput = ({ attribute, name, value, setFilters, filters, inputType })
   let inputComp;
   if(inputType === "multi") {
     inputComp = (
-      <div className='bg-blue-100'>
-        <MultiLevelSelect
-          placeholder="Select TMC to zoom"
-          searchable={true}
-          isMulti={false}
-          options={values}
-          // displayAccessor={(s) =>
-          //   geomKeyName === "taz"
-          //     ? `TAZ ${s.taz} -- ${s.county} County`
-          //     : `${s.county} County`
-          // }
-          // valueAccessor={(s) => (geomKeyName === "taz" ? s.taz : s.county)}
-          value={value || ""}
-            onChange={(e) =>
-              setFilters({
-                ...filters,
-                [name]: { value: e },
-              })
-            }
-          zIndex={999}
-          InputContainer={MultiInputContainer}
-        />
-      </div>
-
+      <FilterControlContainer 
+        header={''}
+        input={({className}) => (
+          <div className="border m-1 rounded-md">
+            <MultiLevelSelect
+              placeholder="Select TMC to zoom"
+              searchable={true}
+              isMulti={false}
+              options={values}
+              // displayAccessor={(s) =>
+              //   geomKeyName === "taz"
+              //     ? `TAZ ${s.taz} -- ${s.county} County`
+              //     : `${s.county} County`
+              // }
+              // valueAccessor={(s) => (geomKeyName === "taz" ? s.taz : s.county)}
+              value={value || ""}
+                onChange={(e) =>
+                  setFilters({
+                    ...filters,
+                    [name]: { value: e },
+                  })
+                }
+              zIndex={999}
+            />
+          </div>
+        )}
+      />
     );
   } else {
+ 
     inputComp = (
-      <select
-        className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
-        value={inputValue}
-        onChange={(e) =>
-          setFilters({
-            ...filters,
-            [name]: { value: e.target.value },
-          })
-        }
-      >
-        {values?.map((k, i) => (
-          <OptionComp key={i} val={k} />
-        ))}
-      </select>
+           <FilterControlContainer 
+              header={displayName}
+              input={({className}) => (
+                <select
+                  className={className}
+                  value={inputValue}
+                  onChange={(e) =>
+                    setFilters({
+                      ...filters,
+                      [name]: { value: e.target.value },
+                    })
+                  }
+                >
+                  {values?.map((k, i) => (
+                    <OptionComp key={i} val={k} />
+                  ))}
+                </select>
+              )}
+            />
     );
   }
 
   return (
     <div className="flex justify-start content-center flex-wrap">
-      {displayName && <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">
-        {displayName}:
-      </div>}
       <div className="flex">
         {inputComp}
       </div>
