@@ -411,7 +411,7 @@ const ACSMapFilter = ({
     if (!isEqual(tempSymbology, newSymbology)) {
       setTempSymbology(newSymbology);
     }
-  }, [falcorCache, pgEnv, activeViewId, activeView]);
+  }, [falcorCache, pgEnv, activeViewId, activeView, filters]);
 
   useEffect(() => {
     async function getACSData() {

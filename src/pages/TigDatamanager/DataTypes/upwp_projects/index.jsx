@@ -28,6 +28,7 @@ const config = {
         {...props}
         transform={UPWPTableTransform}
         TableFilter={HBTableFilter}
+        fullWidth={true}
       />
     ),
   },
