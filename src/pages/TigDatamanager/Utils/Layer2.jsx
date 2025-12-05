@@ -543,7 +543,7 @@ const GISDatasetRenderComponent = props => {
   useClickOutside(ref, close);
 
   return !legend ? null : (
-    <div ref={ setRef } className="absolute top-0 left-0 w-96 grid grid-cols-1 gap-4">
+    <div ref={ setRef } className="absolute top-0 left-0 max-w-96 grid grid-cols-1 gap-4">
       <div className="z-10">
         {
           legend?.type === 'custom' ? 
