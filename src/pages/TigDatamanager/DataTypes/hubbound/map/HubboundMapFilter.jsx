@@ -201,11 +201,10 @@ export const HubboundMapFilter = (props) => {
       newSymbology.sources = [newSource];
   
       const layer_layer_id = `${source_layer_id}_${"circle"}`;
-  
       const newLayer = {
         id: layer_layer_id,
         ...mapStyle["circle"],
-        source: source_layer_id
+        source: source_layer_id,
       };
   
       newSymbology.layers = [newLayer];
@@ -224,7 +223,6 @@ export const HubboundMapFilter = (props) => {
         };
         newSymbology.sources.push(countySource);
       }
-  
       if(!newSymbology.layers.find(layer => layer.id === 'counties_layer_static')){
         console.log("adding county layer")
         const countyLayer = {
@@ -243,6 +241,21 @@ export const HubboundMapFilter = (props) => {
       
       newSymbology.fitToBounds = projectCalculatedBounds;
       newSymbology.fitZoom = 12;
+
+      const customLegend = Object.keys(colors).reduce((acc, curr) => {
+        acc[curr] = {id: curr, color: colors[curr]}
+        return acc;
+      }, {})
+
+      newSymbology.legend = {
+        type: "custom",
+        customLegendScale: customLegend,
+        name: 'Sector (Inbound)',
+        isActive: false,
+        format: "",
+        height: 6
+      };
+
       if (!isEqual(newSymbology, tempSymbology)) {
         console.log("setting new newSymbology, locationsData useEffect");
         setTempSymbology(newSymbology);
