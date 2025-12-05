@@ -159,7 +159,7 @@ export const BPMChartFilters = ({
 
   return (
     <div className="flex w-full p-1">
-      <div className="flex flex-wrap">
+      <div className='flex justify-start content-center flex-wrap  p-1 w-[90%]'>
         <FilterControlContainer 
           header={"Area: "}
           input={({className}) => (<select
@@ -275,15 +275,22 @@ export const BPMChartFilters = ({
             </select>
           )}
         />
+        {userHighestAuth >= SOURCE_AUTH_CONFIG['DOWNLOAD'] &&
+          <div className="ml-auto px-2">
+            <FilterControlContainer
+              header={""}
+              input={({ className }) => (
+                <Button
+                  themeOptions={{ size: "sm", color: "primary" }}
+                  onClick={downloadImage}
+                >
+                  Download
+                </Button>
+              )}
+            />
+          </div>
+        }
       </div>
-      {userHighestAuth >= SOURCE_AUTH_CONFIG['DOWNLOAD'] && <div className="ml-auto mt-5 mr-1">
-        <Button
-          themeOptions={{ size: "sm", color: "primary" }}
-          onClick={downloadImage}
-        >
-          Download
-        </Button>
-      </div>}
       <ViewSelector views={views} />
     </div>
   );
