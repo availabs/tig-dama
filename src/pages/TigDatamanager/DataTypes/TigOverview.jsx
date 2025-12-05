@@ -6,7 +6,7 @@ import { SOURCE_AUTH_CONFIG } from "~/pages/DataManager/Source/attributes";
 
 
 
-const Overview = ({ searchParams, setSearchParams, source, views, activeViewId, getVariables, filterButtons=[], userHighestAuth }) => {
+const Overview = ({ searchParams, setSearchParams, source, views, activeViewId, getVariables, filterButtons=[], userHighestAuth, hideVariables }) => {
   const [variables,setVariables] = React.useState([])
 
   const activeVariable = React.useMemo(() => {
@@ -34,20 +34,25 @@ const Overview = ({ searchParams, setSearchParams, source, views, activeViewId, 
   return (
     <div className='flex md:flex-row flex-col '>
       <div className="w-full md:w-[600px] border-b-2 border-tigGreen-100 pb-4" >
-        <div className="border-b border-gray-800 p-4 text-sm">
+        {hideVariables && <div className='pl-2 text-lg font-semibold'>{source.name}</div>}
+        <div className={`${!hideVariables ? 'border-b' : ""} border-gray-800 p-4 text-sm`}>
           {
             source.description ? <Lexical value={makeLexicalFormat(descValue)}/> :
                 <div className={'min-h-10'}>No Description</div>
           }</div>
-        <div className='pl-2 text-lg font-semibold'>{source.name}</div>
-        { variables.map(({ key, name }) => (
-            <Variable 
-              key={ key }
-              variable={ key } name={ name }
-              isActive={ activeVariable === ''+key }
-              setSearchParams={ setSearchParams }/>
-          ))
-        }
+        {!hideVariables && (
+          <> 
+            <div className='pl-2 text-lg font-semibold'>{source.name}</div>
+            { variables.map(({ key, name }) => (
+                <Variable 
+                  key={ key }
+                  variable={ key } name={ name }
+                  isActive={ activeVariable === ''+key }
+                  setSearchParams={ setSearchParams }/>
+              ))
+            }
+          </>
+        )}
       </div>
       <div className='flex-1' />
       <div className='w-full md:w-[300px]'>
