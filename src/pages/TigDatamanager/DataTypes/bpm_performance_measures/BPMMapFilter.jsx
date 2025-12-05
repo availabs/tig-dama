@@ -15,6 +15,8 @@ const NO_FILTER_LAYER_SUFFIX = '_static';
 const SELECTED_BORDER_SUFFIX = '_selected_border';
 import { Button } from "~/modules/avl-components/src"
 import shpwrite from  '@mapbox/shp-write'
+import { MultiLevelSelect } from '~/modules/avl-map-2/src';
+
 const GEOM_TYPES = {
   Point: "Point",
   MultiLineString: "MultiLineString",
@@ -460,22 +462,22 @@ export const BPMMapFilter = ({
     </option>
   ))
 
-
+  console.log({areaOptions, projectIdFilterValue})
   return (
     <div className='flex justify-start content-center flex-wrap  p-1 w-[90%]'>
         <FilterControlContainer 
           header={'County:'}
           input={({className}) => (
-            <select
-                          className={className}
+            <MultiLevelSelect
+              searchable={true}
+              isMulti={false}
+              placeholder={`Select a County...`}
+              options={areaOptions}
+              displayAccessor={(s) => fips2Name[s] + " County"}
               value={projectIdFilterValue || ""}
-              onChange={(e) => setFilters({ projectId: { value: e.target.value } })}
-            >
-              <option className="ml-2  truncate" value={""}>
-                None
-              </option>
-              {idFilterOptions}
-            </select>
+              onChange={(e) => setFilters({ projectId: { value: e } })}
+              zIndex={999}
+            />
           )}
         />
         <FilterControlContainer 
