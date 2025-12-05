@@ -221,14 +221,22 @@ const SedChartFilter = ({ filters, setFilters, node, years, userHighestAuth }) =
           />) : null
         }
       </div>
-      {userHighestAuth >= SOURCE_AUTH_CONFIG['DOWNLOAD'] && <div className="ml-auto mt-5 mr-1">
-        <Button
-          themeOptions={{ size: "sm", color: "tig" }}
-          onClick={downloadImage}
-        >
-          Download
-        </Button>
-      </div>}
+      {userHighestAuth >= SOURCE_AUTH_CONFIG['DOWNLOAD'] && <div className="px-2 ml-auto">
+        <FilterControlContainer
+          header={""}
+          input={({ className }) => (
+            <div>
+              <Button
+                themeOptions={{ size: "sm", color: "primary" }}
+                onClick={downloadImage}
+              >
+                Download
+              </Button>
+            </div>
+          )}
+        />
+        </div>
+    }
     </div>
   );
 };

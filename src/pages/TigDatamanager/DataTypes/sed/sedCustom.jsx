@@ -324,79 +324,87 @@ const SedMapFilter = (props) => {
 
   return (
     <div className="flex justify-start content-center flex-wrap mx-px my-2 w-full">
-      <div className="flex">
 
-   <FilterControlContainer 
-          header={`${geomKeyName === "taz" ? "TAZ" : "County"}`}
-          input={({className}) => <MultiLevelSelect
-          searchable={true}
-          isMulti={false}
-          placeholder={`Select a ${geomKeyName === "taz" ? "TAZ..." : "County..."}`}
-          options={idFilterOptions}
-          displayAccessor={(s) => geomKeyName === "taz"
-            ? `TAZ ${s.taz} -- ${s.county} County`
-            : `${s.county} County`
-          }
-          valueAccessor={(s) => geomKeyName === "taz" ? s.taz : s.county}
-          value={projectIdFilterValue || ""}
-          onChange={(e) => setFilters({ projectId: { value: e } })}
-          zIndex={999}
-        />}
-      />
-      </div>
-      <div className="flex py-3.5 pl-2 pr-2 text-sm text-gray-400 capitalize">Year:</div>
-        <div className="flex-1">
-          <div className='px-6'>
-            <input 
-              type="range" 
-              min="0"
-              max={metaData?.years?.length-1} 
-              id="my-range" 
-              list="my-datalist"
-              className='w-full'
-              value={year}
+        <FilterControlContainer 
+            header={`${geomKeyName === "taz" ? "TAZ" : "County"}`}
+            input={({className}) => <MultiLevelSelect
+            searchable={true}
+            isMulti={false}
+            placeholder={`Select a ${geomKeyName === "taz" ? "TAZ..." : "County..."}`}
+            options={idFilterOptions}
+            displayAccessor={(s) => geomKeyName === "taz"
+              ? `TAZ ${s.taz} -- ${s.county} County`
+              : `${s.county} County`
+            }
+            valueAccessor={(s) => geomKeyName === "taz" ? s.taz : s.county}
+            value={projectIdFilterValue || ""}
+            onChange={(e) => setFilters({ projectId: { value: e } })}
+            zIndex={999}
+          />}
+        />
+        <FilterControlContainer 
+          header={'Variable:'}
+          input={({className}) => (
+            <select
+              className={className}
+              value={varType}
               onChange={(e) =>
-              setFilters({
-                activeVar: { value: `${varType}_${e.target.value}` },
-              })}
-            />
+                setFilters({
+                  activeVar: { value: `${e.target.value}_${year}` },
+                })
+              }
+            >
+              {Object.keys(varList).map((k, i) => (
+                <option key={i} className="ml-2  truncate" value={k}>
+                  {varList[k].name}
+                </option>
+              ))}
+            </select>
+          )}
+        />
+        <div className="flex mt-2 w-[40%]">
+          <div className="flex py-3.5 pl-2 text-sm text-gray-400 capitalize">Year:</div>
+          <div className="flex-1">
+            <div className='px-4'>
+              <input 
+                type="range" 
+                min="0"
+                max={metaData?.years?.length-1} 
+                id="my-range" 
+                list="my-datalist"
+                className='w-full'
+                value={year}
+                onChange={(e) =>
+                setFilters({
+                  activeVar: { value: `${varType}_${e.target.value}` },
+                })}
+              />
+            </div>
+            <datalist id="my-datalist" className='w-full flex'>
+              {(metaData?.years || ["2010"]).map((k, i) => (
+                <option 
+                  key={i} 
+                  value={i}
+                  label={k}
+                  className={`flex-1 text-gray-500 text-center text-xs`}>
+                {k}
+              </option>
+              ))}
+            </datalist>
           </div>
-          <datalist id="my-datalist" className='w-full flex'>
-            {(metaData?.years || ["2010"]).map((k, i) => (
-              <option 
-                key={i} 
-                value={i}
-                label={k}
-                className={`flex-1 text-gray-500 text-center text-xs`}>
-              {k}
-            </option>
-            ))}
-          </datalist>
-        
         </div>
-      <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">Variable: </div>
-      <div className="flex">
-        <select
-          className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
-          value={varType}
-          onChange={(e) =>
-            setFilters({
-              activeVar: { value: `${e.target.value}_${year}` },
-            })
-          }
-        >
-          {Object.keys(varList).map((k, i) => (
-            <option key={i} className="ml-2  truncate" value={k}>
-              {varList[k].name}
-            </option>
-          ))}
-        </select>
-      </div>
-      {userHighestAuth >= SOURCE_AUTH_CONFIG['DOWNLOAD'] && <MapDataDownloader
+
+
+
+
+      {userHighestAuth >= SOURCE_AUTH_CONFIG['DOWNLOAD'] && <div className="px-2 ml-auto">
+        <MapDataDownloader
         variable={ get(varList, [varType, "name"]) }
         activeViewId={ activeViewId }
         activeVar={ activeVar }
-        year={ get(metaData, ["years", year]) }/>}
+        year={ get(metaData, ["years", year]) }/>
+        </div>
+      }
     </div>
   );
 };
@@ -463,14 +471,20 @@ const MapDataDownloader = ({ activeViewId, activeVar, variable, year }) => {
   }, [falcorCache, pgEnv, activeViewId, variable, activeVar, year]);
 
   return (
-
-      <Button themeOptions={{size:'sm', color: 'tig'}}
-        onClick={ downloadData }
-        disabled={ loading }
-      >
-        Download
-      </Button>
-
+    <FilterControlContainer
+      header={""}
+      input={({ className }) => (
+        <div>
+          <Button
+            themeOptions={{ size: "sm", color: "primary" }}
+            onClick={downloadData}
+            disabled={loading}
+          >
+            Download
+          </Button>
+        </div>
+      )}
+    />
   )
 }
 
@@ -517,54 +531,66 @@ const SedTableFilter = ({ source, filters, setFilters, data, columns, userHighes
 
   return (
     <div className="flex flex-1 border-blue-100">
-      <div className='flex flex-1'>
-        <div className='flex-1' /> 
-        <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">Area: </div>
-      <div className="flex">
-        <select
-          className="w-full bg-blue-100 rounded mr-2 mt-1 px-1 flex text-sm capitalize"
-          value={area}
-          onChange={(e) =>
-            setFilters({
-              ...filters,
-              area: { value: e.target.value },
-            })
-          }
-        >
-          <option className="ml-2  truncate" value={"all"}>
-            All
-          </option>
-          {(areas || []).map((area, i) => (
-            <option key={i} className="ml-2  truncate" value={area}>
-              {area}
-            </option>
-          ))}
-        </select>
-        </div>
-        <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">Variable: </div>
-        <div className="flex my-1">
-          <select
-            className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
-            value={activeVar}
-            onChange={(e) =>
-              setFilters({ ...filters, activeVar: { value: e.target.value } })
-            }
-          >
-            {Object.keys(varList).map((k, i) => (
-              <option key={i} className="ml-2  truncate" value={k}>
-                {varList[k].name}
+      <div className='flex justify-start content-center flex-wrap  p-1 w-[90%]'>
+
+        <FilterControlContainer 
+          header={'Area:'}
+          input={({className}) => (
+            <select
+              className={className}
+              value={area}
+              onChange={(e) =>
+                setFilters({
+                  ...filters,
+                  area: { value: e.target.value },
+                })
+              }
+            >
+              <option className="ml-2  truncate" value={"all"}>
+                All
               </option>
-            ))}
-          </select>
-        </div>
+              {(areas || []).map((area, i) => (
+                <option key={i} className="ml-2  truncate" value={area}>
+                  {area}
+                </option>
+              ))}
+            </select>
+          )}
+        />
+        <FilterControlContainer 
+          header={'Variable:'}
+          input={({className}) => (
+            <select
+              className={className}
+              value={activeVar}
+              onChange={(e) =>
+                setFilters({ ...filters, activeVar: { value: e.target.value } })
+              }
+            >
+              {Object.keys(varList).map((k, i) => (
+                <option key={i} className="ml-2  truncate" value={k}>
+                  {varList[k].name}
+                </option>
+              ))}
+            </select>
+          )}
+        />
       </div>
-      {userHighestAuth >= SOURCE_AUTH_CONFIG['DOWNLOAD'] && <div className="px-2 m-2">
-        <Button themeOptions={{size:'sm', color: 'tig'}}
-          onClick={ downloadData }
-        >
-          Download
-        </Button>
-      </div>}
+      {userHighestAuth >= SOURCE_AUTH_CONFIG['DOWNLOAD'] && 
+        <FilterControlContainer
+          header={""}
+          input={({ className }) => (
+            <div>
+              <Button
+                themeOptions={{ size: "sm", color: "primary" }}
+                onClick={downloadData}
+              >
+                Download
+              </Button>
+            </div>
+          )}
+        />
+      }
     </div>
   );
 };
