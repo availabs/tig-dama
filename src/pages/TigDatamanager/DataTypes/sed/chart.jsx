@@ -280,22 +280,24 @@ const LineChart = ({ lineData, filters, sourceType }) => {
     ]}
     sliceTooltip={(data) => {
       return (
-        <div key={data?.slice?.id} className="bg-white rounded p-2 opacity-85">
-          <b>{data.slice.points[0].data.x}</b>
-          {
-            data.slice.points.map(point => {
-              const isMaxVal = data.slice.points.every(iPoint => iPoint.data.y  <= point.data.y);
-              return (
-                <div key={`${point.seriesId}_slicetooltip_${point.data.yFormatted}`} className={`flex items-center rounded px-1 border-2  ${isMaxVal ? 'border-2 border-black' : 'border-white/85'}`}>
-                  <div
-                    style={{background:point.seriesColor}}
-                    className={`w-[35px] h-[15px] mr-2`}
-                  />
-                  <div>{point.seriesId} {point.data.yFormatted}</div>
-                </div>
-              )
-            })
-          }
+        <div className="w-full">
+          <div className="flex w-full ml-auto opacity-90 justify-center bg-white rounded"><b>{data.slice.points[0].data.x}</b></div>
+          <div key={data?.slice?.id} className="flex flex-col flex-wrap bg-white rounded p-2 opacity-90 max-h-[55vh]">
+            {
+              data.slice.points.map(point => {
+                const isMaxVal = data.slice.points.every(iPoint => iPoint.data.y  <= point.data.y);
+                return (
+                  <div key={`${point.seriesId}_slicetooltip_${point.data.yFormatted}`} className={`flex items-center bg-white rounded opacity-90 px-1 border-2  ${isMaxVal ? 'border-2 border-black' : 'border-white/85'}`}>
+                    <div
+                      style={{background:point.seriesColor}}
+                      className={`w-[35px] h-[15px] mr-2`}
+                    />
+                    <div>{point.seriesId} {point.data.yFormatted}</div>
+                  </div>
+                )
+              })
+            }
+          </div>
         </div>
       )
     }}

@@ -368,6 +368,11 @@ const SedChartTransformCounty = (
       }));
     }
   }
+
+  //Sort the data by name, so that the colors are consistent across different charts
+  finalGraphData.sort((a,b) => {
+    return a.name < b.name ? 1 : -1;
+  })
   return {
     data: finalGraphData,
     columns,
