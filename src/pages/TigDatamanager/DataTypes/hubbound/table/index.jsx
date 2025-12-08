@@ -168,10 +168,9 @@ const TablePage = ({
     mapped.unshift(columns.map(c => c.Header).join(","));
     download(mapped.join("\n"), `hubbound_${year}_${direction}.csv`, "text/csv");
   }, [data, columns]);
-
   return (
     <div className={containerClassName} style={containerStyle}>
-    {userHighestAuth >= SOURCE_AUTH_CONFIG['DOWNLOAD'] && <div className="px-2 ml-auto">
+    {userHighestAuth >= SOURCE_AUTH_CONFIG['DOWNLOAD'] && data && data.length > 1 && <div className="px-2 ml-auto">
       <FilterControlContainer
         header={""}
         input={({ className }) => (

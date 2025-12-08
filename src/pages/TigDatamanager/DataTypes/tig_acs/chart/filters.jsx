@@ -263,10 +263,12 @@ const getAreaToGeos = (regionalData, fips2Name) => {
 };
 
 export const ACSChartTransform = ({ valueMap, filters, isDivisor }) => {
-  let summarize = get(filters, "summarize.value", "county");
-  let area = get(filters, "area.value", "all");
-  let aggFunc = get(filters, "aggregate.value", "");
-
+  const summarize = get(filters, "summarize.value", "county");
+  const area = get(filters, "area.value", "all");
+  const aggFunc = get(filters, "aggregate.value", "");
+  const activeVar = get(filters, "activeVar.value", "");
+  const year = get(filters, "year.value", "");
+  const chartType = get(filters, "chartType.value", "");
   const areaToGeos = getAreaToGeos(regionalData, fips2Name);
 
   let finalchartData = [];
@@ -276,6 +278,8 @@ export const ACSChartTransform = ({ valueMap, filters, isDivisor }) => {
     keys = areaToGeos?.[`${area}`];
     finalchartData = keys.map((key) => ({
       id: fips2Name[`${key}`],
+      variable: activeVar,
+      year,
       name: fips2Name[`${key}`],
       value: valueMap[`${key}`],
     }));
@@ -289,6 +293,8 @@ export const ACSChartTransform = ({ valueMap, filters, isDivisor }) => {
     finalchartData = keys.map((key) => ({
       id: key,
       name: key,
+      variable: activeVar,
+      year,
       value: isDivisor || aggFunc === 'avg'
         ? `${
             Math.round(
@@ -305,6 +311,13 @@ export const ACSChartTransform = ({ valueMap, filters, isDivisor }) => {
               .filter(Boolean) || []
           ),
     }));
+  }
+
+  finalchartData.sort((a,b) => {
+    return a.name < b.name ? 1 : -1;
+  });
+  if(chartType === "pie") {
+    finalchartData.reverse();
   }
 
   return {

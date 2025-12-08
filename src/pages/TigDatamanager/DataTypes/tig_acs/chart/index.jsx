@@ -130,6 +130,23 @@ const BarChart = ({ barData, activeVar, filters }) => {
         }}
         isInteractive={true}
         legends={[]}
+        tooltip={({ value, color, data } ) => {
+          return <div
+              className="w-[250px]"
+              style={{
+                  padding: 12,
+                  color,
+                  background: '#FFFFFF',
+                  border: '1px solid black'
+              }}
+          >
+              {data?.id} | {data?.year}
+              <br />
+              <strong>
+                {data?.variable}: {value?.toLocaleString()}
+              </strong>
+          </div>
+        }}
       />
     </>
   );
