@@ -1,4 +1,5 @@
 import React, { useContext, useMemo, useEffect, useState } from "react";
+import { useSearchParams } from "react-router";
 import {
   get,
   cloneDeep,
@@ -134,6 +135,7 @@ const ACSMapFilter = ({
   activeViewId,
   userHighestAuth
 }) => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const { pgEnv } = useContext(DamaContext);
   const { falcor, falcorCache } = useFalcor();
   const [subGeoids, setSubGeoIds] = useState([]);
@@ -196,6 +198,19 @@ const ACSMapFilter = ({
     setFilters(updatedFilters);
   }, [geometry, activeVar, counties, subGeoids]);
 
+  const searchVar = searchParams.get("variable")
+  React.useEffect(() => {
+    if (searchVar) {
+      setFilters({
+        activeVar: { value: `${ searchVar }` },
+      });
+    }
+    else {
+      setFilters({
+        activeVar: { value: "Total Population" },
+      });
+    }
+  }, [activeVar, setFilters, searchVar]);
   useEffect(() => {
     async function getViewData() {
       await falcor.get([
@@ -491,10 +506,11 @@ const ACSMapFilter = ({
             className={className}
             value={activeVar}
             onChange={(e) => {
-              setFilters({
-                ...filters,
-                activeVar: { value: `${e.target.value}` },
-              });
+              setSearchParams(`variable=${ e.target.value }`);
+              // setFilters({
+              //   ...filters,
+              //   activeVar: { value: `${e.target.value}` },
+              // });
             }}
           >
             {(variables || []).map((k, i) => (

@@ -37,19 +37,17 @@ export const AcsChartFilters = ({
     [filters]
   );
 
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const searchVar = searchParams.get("variable");
   React.useEffect(() => {
-    if (!activeVar) {
-      if (searchVar) {
-        setFilters({
-          activeVar: { value: `${searchVar}` },
-        });
-      } else {
-        setFilters({
-          activeVar: { value: variables[0].label },
-        });
-      }
+    if (searchVar) {
+      setFilters({
+        activeVar: { value: `${searchVar}` },
+      });
+    } else {
+      setFilters({
+        activeVar: { value: variables[0].label },
+      });
     }
   }, [activeVar, setFilters, searchVar, variables]);
 
@@ -159,9 +157,10 @@ export const AcsChartFilters = ({
             <select
               className={className}
               value={activeVar}
-              onChange={(e) =>
-                setFilters({ ...filters, activeVar: { value: e.target.value } })
-              }
+              onChange={(e) =>{
+                setSearchParams(`variable=${ e.target.value }`);
+                //setFilters({ ...filters, activeVar: { value: e.target.value } })
+              }}
             >
               {(variables.filter((v) => {
                 const hasNoDivisorKey = !v?.value?.divisorKeys || v?.value?.divisorKeys === "" || v?.value?.divisorKeys?.length === 0;
