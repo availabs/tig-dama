@@ -44,19 +44,17 @@ const SedChartFilterCounty = ({ years, filters, setFilters, node, userHighestAut
     [filters]
   );
 
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const searchVar = searchParams.get("variable");
   React.useEffect(() => {
-    if (!activeVar) {
-      if (searchVar) {
-        setFilters({
-          activeVar: { value: `${searchVar}` },
-        });
-      } else {
-        setFilters({
-          activeVar: { value: "tot_pop" },
-        });
-      }
+    if (searchVar) {
+      setFilters({
+        activeVar: { value: `${searchVar}` },
+      });
+    } else {
+      setFilters({
+        activeVar: { value: "tot_pop" },
+      });
     }
   }, [activeVar, setFilters, searchVar]);
 
@@ -191,9 +189,10 @@ const SedChartFilterCounty = ({ years, filters, setFilters, node, userHighestAut
         input={({className}) => (<select
           className={className}
           value={activeVar}
-          onChange={(e) =>
-            setFilters({ ...filters, activeVar: { value: e.target.value } })
-          }
+          onChange={(e) =>{
+            //setFilters({ ...filters, activeVar: { value: e.target.value } })
+            setSearchParams(`variable=${ e.target.value }`);
+          }}
         >
           {Object.keys(sedVars).map((k, i) => (
             <option key={i} className="ml-2  truncate" value={k}>

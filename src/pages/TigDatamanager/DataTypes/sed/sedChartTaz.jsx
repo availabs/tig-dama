@@ -31,19 +31,17 @@ const SedChartFilter = ({ filters, setFilters, node, years, userHighestAuth }) =
     [filters]
   );
 
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const searchVar = searchParams.get("variable");
   useEffect(() => {
-    if (!activeVar) {
-      if (searchVar) {
-        setFilters({
-          activeVar: { value: `${searchVar}` },
-        });
-      } else {
-        setFilters({
-          activeVar: { value: "totpop" },
-        });
-      }
+    if (searchVar) {
+      setFilters({
+        activeVar: { value: `${searchVar}` },
+      });
+    } else {
+      setFilters({
+        activeVar: { value: "totpop" },
+      });
     }
   }, [activeVar, setFilters, searchVar]);
 
@@ -150,9 +148,10 @@ const SedChartFilter = ({ filters, setFilters, node, years, userHighestAuth }) =
           input={({className}) => (<select
             className={className}
             value={activeVar}
-            onChange={(e) =>
-              setFilters({ ...filters, activeVar: { value: e.target.value } })
-            }
+            onChange={(e) =>{
+              setSearchParams(`variable=${ e.target.value }`);
+              //setFilters({ ...filters, activeVar: { value: e.target.value } })
+            }}
           >
             {Object.keys(sedVars).map((k, i) => (
               <option key={i} className="ml-2  truncate" value={k}>

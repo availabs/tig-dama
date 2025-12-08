@@ -89,6 +89,7 @@ const SedMapFilter = (props) => {
     layer,
     userHighestAuth
   } = props;
+  const [searchParams, setSearchParams] = useSearchParams();
   const { falcor, falcorCache, pgEnv } = React.useContext(DamaContext)
   let activeVar = useMemo(() => get(filters, "activeVar.value", ""), [filters]);
   let varType = useMemo(
@@ -289,7 +290,6 @@ const SedMapFilter = (props) => {
     }
   },[activeVar, varType, year,falcorCache, projectCalculatedBounds])
 
-  const [searchParams] = useSearchParams();
   const searchVar = searchParams.get("variable")
   React.useEffect(() => {
     //console.log("SedMapFilter", activeVar);
@@ -348,11 +348,12 @@ const SedMapFilter = (props) => {
             <select
               className={className}
               value={varType}
-              onChange={(e) =>
+              onChange={(e) =>{
+                setSearchParams(`variable=${ e.target.value }`);
                 setFilters({
                   activeVar: { value: `${e.target.value}_${year}` },
                 })
-              }
+              }}
             >
               {Object.keys(varList).map((k, i) => (
                 <option key={i} className="ml-2  truncate" value={k}>
@@ -492,7 +493,7 @@ const SedTableFilter = ({ source, filters, setFilters, data, columns, userHighes
   let activeVar = useMemo(() => get(filters, "activeVar.value", ""), [filters]);
   let area = useMemo(() => get(filters, "area.value", ""), [filters]);
 
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const searchVar = searchParams.get("variable");
 
   const areas = [
@@ -563,9 +564,10 @@ const SedTableFilter = ({ source, filters, setFilters, data, columns, userHighes
             <select
               className={className}
               value={activeVar}
-              onChange={(e) =>
+              onChange={(e) =>{
+                setSearchParams(`variable=${ e.target.value }`);
                 setFilters({ ...filters, activeVar: { value: e.target.value } })
-              }
+              }}
             >
               {Object.keys(varList).map((k, i) => (
                 <option key={i} className="ml-2  truncate" value={k}>
