@@ -183,7 +183,7 @@ const DefaultMapFilter = ({ source, filters, setFilters, activeViewId, layer, se
   )
 }
 
-const MapPage = ({source,views, HoverComp, MapFilter=DefaultMapFilter, filterData = {}, showViewSelector=true, displayPinnedGeomBorder=false, mapStyles, userHighestAuth=0, dataColumns=[] }) => {
+const MapPage = ({source,views, HoverComp, MapFilter=DefaultMapFilter, filterData = {}, showViewSelector=true, displayPinnedGeomBorder=false, mapStyles, userHighestAuth=0, dataColumns=[], alwaysRedrawLayers=false }) => {
   //console.log("in new copy of map page")
   const [searchParams] = useSearchParams();
   const urlVariable = searchParams.get("variable")
@@ -241,8 +241,6 @@ const MapPage = ({source,views, HoverComp, MapFilter=DefaultMapFilter, filterDat
   const [ tempSymbology, setTempSymbology] = React.useState(get(mapData,'symbology',{}));
 
   const { sources: symSources, layers: symLayers } = tempSymbology;
-
-  //console.log("Symbology:", tempSymbology)
 
   const layer = React.useMemo(() => {
       const sources = symSources || get(mapData,'sources',[]);
@@ -303,7 +301,7 @@ const MapPage = ({source,views, HoverComp, MapFilter=DefaultMapFilter, filterDat
             symbology: get(mapData, `symbology`, {})//{... get(mapData, `symbology`, {}), ...tempSymbology}
       }
       // add tempSymbology as depen
-  },[source, views, mapData, activeViewId,filters, symSources, symLayers, displayPinnedGeomBorder])
+  },[source, views, mapData, activeViewId,filters, symSources, symLayers, displayPinnedGeomBorder, tempSymbology])
 
   return (
     <div>
@@ -337,11 +335,13 @@ const MapPage = ({source,views, HoverComp, MapFilter=DefaultMapFilter, filterDat
           tempSymbology={ tempSymbology }
           setTempSymbology={ setTempSymbology }
           filters={filters}
-          mapStyles={mapStyles}/>
+          mapStyles={mapStyles}
+          alwaysRedrawLayers={alwaysRedrawLayers}
+          />
       </div>
 
 {
-        // user.authLevel >= 5 ?
+ // user.authLevel >= 5 ?
         // <div className="border-t border-gray-200 px-4 py-5 sm:p-0">
         //   <dl className="sm:divide-y sm:divide-gray-200">
         //     {['sources','layers']
@@ -412,7 +412,7 @@ const PMTilesProtocol = {
   }
 }
 
-const Map = ({ layers, layer, tempSymbology, setTempSymbology, source, filters, mapStyles }) => {
+const Map = ({ layers, layer, tempSymbology, setTempSymbology, source, filters, mapStyles, alwaysRedrawLayers }) => {
   const [mounted, setMounted] = React.useState(false);
   React.useEffect(() => {
     setMounted(true);
@@ -430,25 +430,24 @@ const Map = ({ layers, layer, tempSymbology, setTempSymbology, source, filters, 
 
     setLayerData(l => {
       // use functional setState
-      // to get info about previous layerData (l)
-      let activeLayerIds = l?.map(d => d.activeViewId)?.filter(Boolean);
+      // to get info about existing/current layerData (l)
+      const activeLayerViewIds = l?.map(d => d.activeViewId)?.filter(Boolean);
       //console.log('updatelayers', currentLayerIds, l, layers)
 
+      //Add new layers, from new layers that get passed in
       let output = layers?.filter(Boolean)
-          .filter(d => !activeLayerIds.includes(d.activeViewId))
+          //Don't add a layer if its viewId is already on the map
+          .filter(d => !activeLayerViewIds.includes(d.activeViewId) || alwaysRedrawLayers)
           .map(l => GISDatasetLayer(l));
-
-      //console.log('updatelayers2', output)
 
       return [
         // remove layers not in list anymore
-        ...l?.filter(d => activeLayerIds.includes(d.activeViewId)),
+        ...l?.filter(d => activeLayerViewIds.includes(d.activeViewId) && !alwaysRedrawLayers),
         // add newly initialized layers
         ...output
       ]
     });
   }, [mounted, layers]);
-
   const activeVar = get(filters, ["activeVar", "value"], "");
 
   const styles = React.useMemo(() => {
@@ -493,7 +492,7 @@ const Map = ({ layers, layer, tempSymbology, setTempSymbology, source, filters, 
       return out
     },{})
   },[layers, layerData, tempSymbology, updateLegend, source.source_id, filters]);
-  //console.log('mapTheme',mapTheme)
+
   return (
 
       <div className='w-full h-full'>

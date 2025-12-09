@@ -46,6 +46,7 @@ const GisDatasetConfig = {
         MapFilter={ProjectMapFilter}
         HoverComp={{Component: ProjectHoverComp, isPinnable: true}}
         mapStyles={[config?.google_streets_style]}
+        alwaysRedrawLayers={true}
       />
     ),
   },

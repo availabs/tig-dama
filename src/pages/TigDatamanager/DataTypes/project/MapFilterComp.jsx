@@ -113,6 +113,9 @@ const generateHighlightMapStyles = (typeKey, projectKey,  projectIdFilterValue) 
         "line-opacity": .8,
         "line-offset": 2
       },
+      layout: {
+        visibility: projectIdFilterValue ? "visible": "none"
+      }
     },
     fill: {
       type: "line",
@@ -122,6 +125,9 @@ const generateHighlightMapStyles = (typeKey, projectKey,  projectIdFilterValue) 
         "line-opacity": .8,
         "line-offset": -3
       },
+      layout: {
+        visibility: projectIdFilterValue ? "visible": "none"
+      }
     },
     circle: {
       type: "line",
@@ -131,6 +137,9 @@ const generateHighlightMapStyles = (typeKey, projectKey,  projectIdFilterValue) 
         "line-opacity": .8,
         "line-offset": -3
       },
+      layout: {
+        visibility: projectIdFilterValue ? "visible": "none"
+      }
     },
   }
 }
@@ -150,7 +159,7 @@ const ProjectMapFilter = ({
   const [searchParams] = useSearchParams();
   
   //the `activeViewId` is optionally set by a URL search param
-  const activeDataVersionId = parseInt(searchParams.get("variable")) || activeViewId;
+  const activeDataVersionId = activeViewId;
 
   let projectKey = source?.name.toLowerCase().includes("rtp") ? "rtp_id" : "tip_id";
   let newSymbology = cloneDeep(tempSymbology);
@@ -162,9 +171,7 @@ const ProjectMapFilter = ({
   ).map((d) => d.name);
 
   //const metadataColumns = [{name: projectKey, desc: null, type: 'string'}, {name:'ptype', desc: null, type:'string'}, {name:'ogc_fid', desc: null, type:'integer'}, {name:'year', desc: null, type:'integer'}, {name:'cost', desc: null, type:'number'}, {name:'sponsor_id', desc: null, type:'string'}, {name:'county_id', desc: null, type:'string'}, {name:'description', desc: null, type:'string'}, {name:'plan_portion', desc: null, type:'string'}].map((d) => d.name)
-  React.useEffect(() => {
-    setFilters({activeVar: {value:"test"}})
-  }, [])
+
   React.useEffect(() => {
     const loadSourceData = async () => {
       const d = await falcor.get([
@@ -195,11 +202,11 @@ const ProjectMapFilter = ({
     loadSourceData();
   }, [pgEnv, activeDataVersionId, source]);
 
-  const dataById = get(
+  const dataById = React.useMemo(() => get(
     falcorCache,
     ["dama", pgEnv, "viewsbyId", activeDataVersionId, "databyId"],
     {}
-  );
+  ), [falcorCache, activeDataVersionId]);
 
   const dataIds = React.useMemo(() => {
     return {
@@ -212,7 +219,7 @@ const ProjectMapFilter = ({
         ),
       ],
     };
-  }, [falcorCache]);
+  }, [dataById, activeDataVersionId]);
 
   const allProjectIds = dataIds[projectKey]
     .filter(onlyUnique)

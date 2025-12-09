@@ -199,7 +199,6 @@ const GISDatasetRenderComponent = props => {
     maplibreMap,
     activeLayers
   } = props;
-
   const {
     filters,
     activeViewId,
@@ -416,7 +415,6 @@ const GISDatasetRenderComponent = props => {
             get(symbLayers, `[${paintProperty}][default]`, "") ||
             get(symbLayers, `[${layer_id}][${paintProperty}][${activeVariable}]`, "")
             || get(symbLayers, `[${layer_id}][${paintProperty}][default]`, "");
-
 
             // ----------- TIG -----------
             let { value, settings } = sym;

@@ -1,5 +1,5 @@
 import React from "react";
-import {  Link  } from "react-router";
+import {  Link, useNavigate  } from "react-router";
 import { dmsColumnTypes } from "~/modules/dms/src"
 import { makeLexicalFormat } from "~/pages/DataManager/DataTypes/default/Overview";
 import { SOURCE_AUTH_CONFIG } from "~/pages/DataManager/Source/attributes";
@@ -8,7 +8,6 @@ import { SOURCE_AUTH_CONFIG } from "~/pages/DataManager/Source/attributes";
 
 const Overview = ({ searchParams, setSearchParams, source, views, activeViewId, getVariables, filterButtons=[], userHighestAuth, hideVariables }) => {
   const [variables,setVariables] = React.useState([])
-
   const activeVariable = React.useMemo(() => {
     return searchParams.get("variable") || variables[0]?.key;
   }, [searchParams, variables]);
@@ -31,6 +30,8 @@ const Overview = ({ searchParams, setSearchParams, source, views, activeViewId, 
   const Lexical = dmsColumnTypes.lexical.ViewComp;
   const descValue = source.description // makeLexicalFormat(source.description);
 
+  const toPath = variables[0]?.type === "view" ? `/${activeVariable}`: `?variable=${activeVariable}`
+
   return (
     <div className='flex md:flex-row flex-col '>
       <div className="w-full md:w-[600px] border-b-2 border-tigGreen-100 pb-4" >
@@ -43,9 +44,11 @@ const Overview = ({ searchParams, setSearchParams, source, views, activeViewId, 
         {!hideVariables && (
           <> 
             <div className='pl-2 text-lg font-semibold'>{source.name}</div>
-            { variables.map(({ key, name }) => (
-                <Variable 
+            { variables.map(({ key, name, type }) => (
+                <Variable
+                  sourceId={source.source_id}
                   key={ key }
+                  type={type}
                   variable={ key } name={ name }
                   isActive={ activeVariable === ''+key }
                   setSearchParams={ setSearchParams }/>
@@ -67,7 +70,7 @@ const Overview = ({ searchParams, setSearchParams, source, views, activeViewId, 
             .map(b => {
             return (
               <Link 
-                to={`${b.to}${activeVariable ? `?variable=${activeVariable}` : ''}`} 
+                to={`${b.to}${toPath}`} 
                 className='w-full mx-2 font-light hover:font-medium rounded text-gray-700 bg-tigGreen-50 hover:bg-tigGreen-100 px-5 py-1 block text-center my-2 '>
                 <div><i className={`${b.icon} px-2`}/>{b.name}</div>
               </Link>
@@ -82,10 +85,14 @@ const Overview = ({ searchParams, setSearchParams, source, views, activeViewId, 
 }
 export default Overview
 
-const Variable = ({ name, variable, type, isActive, setSearchParams }) => {
+const Variable = ({ name, variable, type, isActive, setSearchParams, sourceId }) => {
+  const navigate = useNavigate();
   const onClick = React.useCallback(() => {
-
-    setSearchParams(`variable=${ variable }`);
+    if(type !== "view") {
+      setSearchParams(`variable=${ variable }`);
+    } else {
+      navigate(`/source/${sourceId}/overview/${variable}`)
+    }
   }, [setSearchParams, variable]);
   return (
     <div onClick={ onClick }
