@@ -1,11 +1,8 @@
 import React from "react";
-<<<<<<< HEAD
-import {  Link  } from "react-router";
+
+import {  Link, useNavigate } from "react-router";
 import  UI from "~/modules/dms/src/ui/index.js"
-=======
-import {  Link, useNavigate  } from "react-router";
-import { dmsColumnTypes } from "~/modules/dms/src"
->>>>>>> ecb8cc4db71f4acc63b80974094baa717d991b32
+
 import { makeLexicalFormat } from "~/pages/DataManager/DataTypes/default/Overview";
 import { SOURCE_AUTH_CONFIG } from "~/pages/DataManager/Source/attributes";
 
@@ -32,11 +29,9 @@ const Overview = ({ searchParams, setSearchParams, source, views, activeViewId, 
     {name: 'Access Controls', icon: 'fad fa-gears',  authLevel: SOURCE_AUTH_CONFIG['ADMIN'], to: `/source/${source.source_id}/admin`},
     {name: 'Delete', icon: 'fad fa-trash',  authLevel: SOURCE_AUTH_CONFIG['ADMIN'], to: `/delete/source/${source.source_id}`}
   ];
-<<<<<<< HEAD
+
   const Lexical = UI.ColumnTypes.lexical.ViewComp;
-=======
-  const Lexical = dmsColumnTypes.lexical.ViewComp;
->>>>>>> ecb8cc4db71f4acc63b80974094baa717d991b32
+
   const descValue = source.description // makeLexicalFormat(source.description);
 
   const toPath = variables[0]?.type === "view" ? `/${activeVariable}`: `?variable=${activeVariable}`
@@ -50,19 +45,9 @@ const Overview = ({ searchParams, setSearchParams, source, views, activeViewId, 
             source.description ? <Lexical value={makeLexicalFormat(descValue)}/> :
                 <div className={'min-h-10'}>No Description</div>
           }</div>
-<<<<<<< HEAD
-        <div className='pl-2 text-lg font-semibold'>{source.name}</div>
-        { variables.map(({ key, name }) => (
-            <Variable
-              key={ key }
-              variable={ key } name={ name }
-              isActive={ activeVariable === ''+key }
-              setSearchParams={ setSearchParams }/>
-          ))
-        }
-=======
+
         {!hideVariables && (
-          <> 
+          <>
             <div className='pl-2 text-lg font-semibold'>{source.name}</div>
             { variables.map(({ key, name, type }) => (
                 <Variable
@@ -76,7 +61,7 @@ const Overview = ({ searchParams, setSearchParams, source, views, activeViewId, 
             }
           </>
         )}
->>>>>>> ecb8cc4db71f4acc63b80974094baa717d991b32
+
       </div>
       <div className='flex-1' />
       <div className='w-full md:w-[300px]'>
@@ -90,13 +75,9 @@ const Overview = ({ searchParams, setSearchParams, source, views, activeViewId, 
             })
             .map(b => {
             return (
-<<<<<<< HEAD
+
               <Link
-                to={`${b.to}${activeVariable ? `?variable=${activeVariable}` : ''}`}
-=======
-              <Link 
-                to={`${b.to}${toPath}`} 
->>>>>>> ecb8cc4db71f4acc63b80974094baa717d991b32
+                to={`${b.to}${toPath}`}
                 className='w-full mx-2 font-light hover:font-medium rounded text-gray-700 bg-tigGreen-50 hover:bg-tigGreen-100 px-5 py-1 block text-center my-2 '>
                 <div><i className={`${b.icon} px-2`}/>{b.name}</div>
               </Link>

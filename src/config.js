@@ -1,9 +1,9 @@
 export const PROJECT_NAME = "TIG";
 
-let API_HOST = "https://tig.nymtc.org/graph";
-let AUTH_HOST = "https://tig.nymtc.org/graph";
-let CLIENT_HOST = "tig.nymtc.org";
-let DAMA_HOST = "https://tig.nymtc.org/graph";
+let API_HOST = "https://tig22.nymtc.org/graph";
+let AUTH_HOST = "https://tig22.nymtc.org/graph";
+let CLIENT_HOST = "tig22.nymtc.org";
+let DAMA_HOST = "https://tig22.nymtc.org/graph";
 let PG_ENV = 'tig_dama_dev'
 
 if (process.env.NODE_ENV === "development") {
