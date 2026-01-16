@@ -48,7 +48,7 @@ const SourceThumb = ({ source }) => {
         </Link>*/}
       </div>
 
-      
+
     </div>
   );
 };
@@ -61,7 +61,7 @@ const SourcesList = () => {
 
 
   const {pgEnv, baseUrl, user, falcor, falcorCache} = React.useContext(DamaContext);
-  const userAuthLevel = user.authLevel;
+  const userAuthLevel = user?.authLevel || 0;
 
   useEffect(() => {
     async function fetchData() {
@@ -99,7 +99,7 @@ const SourcesList = () => {
               />
             </div>
           </div>
-          
+
           {
             sources
               .filter(source => {

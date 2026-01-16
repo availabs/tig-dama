@@ -1,6 +1,6 @@
 import React from "react";
 import {  Link  } from "react-router";
-import { dmsDataTypes } from "~/modules/dms/src"
+import  UI from "~/modules/dms/src/ui/index.js"
 import { makeLexicalFormat } from "~/pages/DataManager/DataTypes/default/Overview";
 import { SOURCE_AUTH_CONFIG } from "~/pages/DataManager/Source/attributes";
 
@@ -25,10 +25,10 @@ const Overview = ({ searchParams, setSearchParams, source, views, activeViewId, 
     {name: 'Table', icon: 'fad fa-table', to: `/source/${source.source_id}/table`},
     {name: 'Chart', icon: 'fad fa-bar-chart', to: `/source/${source.source_id}/chart`},
     {name: 'Metadata', icon: 'fad fa-wrench', authLevel: SOURCE_AUTH_CONFIG['EDIT'], to: `/source/${source.source_id}/meta`},
-    {name: 'Access Controls', icon: 'fad fa-gears',  authLevel: SOURCE_AUTH_CONFIG['ADMIN'], to: `/source/${source.source_id}/admin`},  
-    {name: 'Delete', icon: 'fad fa-trash',  authLevel: SOURCE_AUTH_CONFIG['ADMIN'], to: `/delete/source/${source.source_id}`} 
+    {name: 'Access Controls', icon: 'fad fa-gears',  authLevel: SOURCE_AUTH_CONFIG['ADMIN'], to: `/source/${source.source_id}/admin`},
+    {name: 'Delete', icon: 'fad fa-trash',  authLevel: SOURCE_AUTH_CONFIG['ADMIN'], to: `/delete/source/${source.source_id}`}
   ];
-  const Lexical = dmsDataTypes.lexical.ViewComp;
+  const Lexical = UI.ColumnTypes.lexical.ViewComp;
   const descValue = source.description // makeLexicalFormat(source.description);
 
   return (
@@ -41,7 +41,7 @@ const Overview = ({ searchParams, setSearchParams, source, views, activeViewId, 
           }</div>
         <div className='pl-2 text-lg font-semibold'>{source.name}</div>
         { variables.map(({ key, name }) => (
-            <Variable 
+            <Variable
               key={ key }
               variable={ key } name={ name }
               isActive={ activeVariable === ''+key }
@@ -61,8 +61,8 @@ const Overview = ({ searchParams, setSearchParams, source, views, activeViewId, 
             })
             .map(b => {
             return (
-              <Link 
-                to={`${b.to}${activeVariable ? `?variable=${activeVariable}` : ''}`} 
+              <Link
+                to={`${b.to}${activeVariable ? `?variable=${activeVariable}` : ''}`}
                 className='w-full mx-2 font-light hover:font-medium rounded text-gray-700 bg-tigGreen-50 hover:bg-tigGreen-100 px-5 py-1 block text-center my-2 '>
                 <div><i className={`${b.icon} px-2`}/>{b.name}</div>
               </Link>
