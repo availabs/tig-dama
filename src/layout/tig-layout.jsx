@@ -61,7 +61,7 @@ const TigUserMenu = ({user}) => {
 
     const userMenu = (
         <TigDropDown
-            buttonText={<span>Welcome, - {user.email}</span>}
+            buttonText={<span>Welcome, {user.email}</span>}
             items={userItems}
         />
     )

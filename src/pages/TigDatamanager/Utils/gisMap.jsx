@@ -10,6 +10,7 @@ import mapTheme from '~/pages/DataManager/DataTypes/gis_dataset/pages/Map/map-th
 import { DamaContext } from "~/pages/DataManager/store"
 import { DAMA_HOST } from "~/config"
 import {Protocol, PMTiles} from '~/pages/DataManager/utils/pmtiles/index.ts'
+import { FilterControlContainer } from "../DataTypes/controls/FilterControlContainer"
 const PIN_OUTLINE_LAYER_SUFFIX = '_pin_outline'
 
 const DEFAULT_MAP_STYLES = [
@@ -25,32 +26,34 @@ const getTilehost = (DAMA_HOST) =>
 
 const TILEHOST = getTilehost(DAMA_HOST)
 
-const ViewSelector = ({views}) => {
-  const { viewId, sourceId, page } = useParams()
-  const navigate = useNavigate()
-  const {baseUrl} = React.useContext(DamaContext)
+const ViewSelector = ({ views }) => {
+  const { viewId, sourceId, page } = useParams();
+  const navigate = useNavigate();
+  const { baseUrl } = React.useContext(DamaContext);
 
   return (
-    <div className='flex'>
-      <div className='py-3.5 px-2 text-sm text-gray-400'>Version : </div>
-      <div className='flex-1'>
+    <FilterControlContainer
+      header={"Version: "}
+      input={({ className }) => (
         <select
-          className="pl-3 pr-4 py-2.5 border border-blue-100 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
+          className={className}
           value={viewId}
-          onChange={(e) => navigate(`${baseUrl}/source/${sourceId}/${page}/${e.target.value}`)}
+          onChange={(e) =>
+            navigate(`${baseUrl}/source/${sourceId}/${page}/${e.target.value}`)
+          }
         >
           {views
-            .sort((a,b) => b.view_id - a.view_id)
-            .map((v,i) => (
-            <option key={i} className="ml-2  truncate" value={v.view_id}>
-              {v.version ? v.version : v.view_id}
-            </option>
-          ))}
+            .sort((a, b) => b.view_id - a.view_id)
+            .map((v, i) => (
+              <option key={i} className="ml-2  truncate" value={v.view_id}>
+                {v.version ? v.version : v.view_id}
+              </option>
+            ))}
         </select>
-      </div>
-    </div>
-  )
-}
+      )}
+    />
+  );
+};
 
 // import { getAttributes } from '~/pages/DataManager/Source/attributes'
 const DefaultMapFilter = ({ source, filters, setFilters, activeViewId, layer, setTempSymbology }) => {
@@ -180,7 +183,7 @@ const DefaultMapFilter = ({ source, filters, setFilters, activeViewId, layer, se
   )
 }
 
-const MapPage = ({source,views, HoverComp, MapFilter=DefaultMapFilter, filterData = {}, showViewSelector=true, displayPinnedGeomBorder=false, mapStyles, userHighestAuth=0, dataColumns=[] }) => {
+const MapPage = ({source,views, HoverComp, MapFilter=DefaultMapFilter, filterData = {}, showViewSelector=true, displayPinnedGeomBorder=false, mapStyles, userHighestAuth=0, dataColumns=[], alwaysRedrawLayers=false }) => {
   //console.log("in new copy of map page")
   const [searchParams] = useSearchParams();
   const urlVariable = searchParams.get("variable")
@@ -238,8 +241,6 @@ const MapPage = ({source,views, HoverComp, MapFilter=DefaultMapFilter, filterDat
   const [ tempSymbology, setTempSymbology] = React.useState(get(mapData,'symbology',{}));
 
   const { sources: symSources, layers: symLayers } = tempSymbology;
-
-  //console.log("Symbology:", tempSymbology)
 
   const layer = React.useMemo(() => {
       const sources = symSources || get(mapData,'sources',[]);
@@ -300,8 +301,7 @@ const MapPage = ({source,views, HoverComp, MapFilter=DefaultMapFilter, filterDat
             symbology: get(mapData, `symbology`, {})//{... get(mapData, `symbology`, {}), ...tempSymbology}
       }
       // add tempSymbology as depen
-  },[source, views, mapData, activeViewId,filters, symSources, symLayers, displayPinnedGeomBorder])
-  console.log({layer})
+  },[source, views, mapData, activeViewId,filters, symSources, symLayers, displayPinnedGeomBorder, tempSymbology])
 
   return (
     <div>
@@ -310,7 +310,7 @@ const MapPage = ({source,views, HoverComp, MapFilter=DefaultMapFilter, filterDat
           Map View { viewId }
         </div>
       </div>*/}
-      <div className='flex'>
+      <div className='flex content-center flex-wrap items-center'>
 
         <MapFilter
             source={source}
@@ -335,11 +335,13 @@ const MapPage = ({source,views, HoverComp, MapFilter=DefaultMapFilter, filterDat
           tempSymbology={ tempSymbology }
           setTempSymbology={ setTempSymbology }
           filters={filters}
-          mapStyles={mapStyles}/>
+          mapStyles={mapStyles}
+          alwaysRedrawLayers={alwaysRedrawLayers}
+          />
       </div>
 
 {
-        // user.authLevel >= 5 ?
+ // user.authLevel >= 5 ?
         // <div className="border-t border-gray-200 px-4 py-5 sm:p-0">
         //   <dl className="sm:divide-y sm:divide-gray-200">
         //     {['sources','layers']
@@ -410,7 +412,7 @@ const PMTilesProtocol = {
   }
 }
 
-const Map = ({ layers, layer, tempSymbology, setTempSymbology, source, filters, mapStyles }) => {
+const Map = ({ layers, layer, tempSymbology, setTempSymbology, source, filters, mapStyles, alwaysRedrawLayers }) => {
   const [mounted, setMounted] = React.useState(false);
   React.useEffect(() => {
     setMounted(true);
@@ -428,25 +430,24 @@ const Map = ({ layers, layer, tempSymbology, setTempSymbology, source, filters, 
 
     setLayerData(l => {
       // use functional setState
-      // to get info about previous layerData (l)
-      let activeLayerIds = l?.map(d => d.activeViewId)?.filter(Boolean);
+      // to get info about existing/current layerData (l)
+      const activeLayerViewIds = l?.map(d => d.activeViewId)?.filter(Boolean);
       //console.log('updatelayers', currentLayerIds, l, layers)
 
+      //Add new layers, from new layers that get passed in
       let output = layers?.filter(Boolean)
-          .filter(d => !activeLayerIds.includes(d.activeViewId))
+          //Don't add a layer if its viewId is already on the map
+          .filter(d => !activeLayerViewIds.includes(d.activeViewId) || alwaysRedrawLayers)
           .map(l => GISDatasetLayer(l));
-
-      //console.log('updatelayers2', output)
 
       return [
         // remove layers not in list anymore
-        ...l?.filter(d => activeLayerIds.includes(d.activeViewId)),
+        ...l?.filter(d => activeLayerViewIds.includes(d.activeViewId) && !alwaysRedrawLayers),
         // add newly initialized layers
         ...output
       ]
     });
   }, [mounted, layers]);
-
   const activeVar = get(filters, ["activeVar", "value"], "");
 
   const styles = React.useMemo(() => {
@@ -491,7 +492,7 @@ const Map = ({ layers, layer, tempSymbology, setTempSymbology, source, filters, 
       return out
     },{})
   },[layers, layerData, tempSymbology, updateLegend, source.source_id, filters]);
-  //console.log('mapTheme',mapTheme)
+
   return (
 
       <div className='w-full h-full'>

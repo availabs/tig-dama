@@ -21,7 +21,7 @@ const npmrdsConfig = {
     path: "",
     tag: "test",
     component: (props) => (
-      <TigOverview {...props} getVariables={getVariables} />
+      <TigOverview {...props} getVariables={getVariables} hideVariables={true}/>
     ),
   },
   meta: {

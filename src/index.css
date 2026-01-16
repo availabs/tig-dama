@@ -61,3 +61,27 @@
 .scrollbar-xs.scrollbar-blue::-webkit-scrollbar-thumb {
   background-color: rgb(96 165 250);
 }
+
+input[type="range"] {
+  background: #ddd;
+  accent-color: blue;
+  border-radius: 4px;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+  background: #ddd;
+  border-radius: 4px;
+  accent-color: blue;
+}
+
+input[type="range"]::-moz-range-track {
+  background: #ddd;
+  border-radius: 4px;
+  accent-color: blue;
+}
+
+datalist {
+  display: flex;
+  justify-content: space-between;
+  list-style-image: none;
+}

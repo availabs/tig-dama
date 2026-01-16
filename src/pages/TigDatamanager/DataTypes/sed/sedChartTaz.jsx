@@ -31,19 +31,17 @@ const SedChartFilter = ({ filters, setFilters, node, years, userHighestAuth }) =
     [filters]
   );
 
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const searchVar = searchParams.get("variable");
   useEffect(() => {
-    if (!activeVar) {
-      if (searchVar) {
-        setFilters({
-          activeVar: { value: `${searchVar}` },
-        });
-      } else {
-        setFilters({
-          activeVar: { value: "totpop" },
-        });
-      }
+    if (searchVar) {
+      setFilters({
+        activeVar: { value: `${searchVar}` },
+      });
+    } else {
+      setFilters({
+        activeVar: { value: "totpop" },
+      });
     }
   }, [activeVar, setFilters, searchVar]);
 
@@ -150,13 +148,11 @@ const SedChartFilter = ({ filters, setFilters, node, years, userHighestAuth }) =
           input={({className}) => (<select
             className={className}
             value={activeVar}
-            onChange={(e) =>
-              setFilters({ ...filters, activeVar: { value: e.target.value } })
-            }
+            onChange={(e) =>{
+              setSearchParams(`variable=${ e.target.value }`);
+              //setFilters({ ...filters, activeVar: { value: e.target.value } })
+            }}
           >
-            <option className="ml-2  truncate" value={""}>
-              none
-            </option>
             {Object.keys(sedVars).map((k, i) => (
               <option key={i} className="ml-2  truncate" value={k}>
                 {sedVars[k].name}
@@ -224,14 +220,22 @@ const SedChartFilter = ({ filters, setFilters, node, years, userHighestAuth }) =
           />) : null
         }
       </div>
-      {userHighestAuth >= SOURCE_AUTH_CONFIG['DOWNLOAD'] && <div className="ml-auto mt-5 mr-1">
-        <Button
-          themeOptions={{ size: "sm", color: "tig" }}
-          onClick={downloadImage}
-        >
-          Download
-        </Button>
-      </div>}
+      {userHighestAuth >= SOURCE_AUTH_CONFIG['DOWNLOAD'] && <div className="px-2 ml-auto">
+        <FilterControlContainer
+          header={""}
+          input={({ className }) => (
+            <div>
+              <Button
+                themeOptions={{ size: "sm", color: "primary" }}
+                onClick={downloadImage}
+              >
+                Download
+              </Button>
+            </div>
+          )}
+        />
+        </div>
+    }
     </div>
   );
 };

@@ -4,7 +4,7 @@ import { get } from "lodash";
 
 import { DamaContext } from "~/pages/DataManager/store";
 import { ResponsiveBar } from "@nivo/bar";
-import { ResponsivePieCanvas } from "@nivo/pie";
+import { ResponsivePie } from "@nivo/pie";
 import { fips2Name } from "./../../constants/index";
 
 const ViewSelector = ({ views }) => {
@@ -38,12 +38,15 @@ const summarizeVars = {
 };
 
 const Title = (props) => {
-  let { width, height, filters, sourceType } = props;
+  let { width, height, filters, dataWithArc } = props;
   if (props.bars) {
     filters = props.bars[0].data.data.filters;
-    sourceType = props.bars[0].data.data.sourceType;
   }
-
+  let year;
+  if(dataWithArc) {
+    filters = dataWithArc[0].data.filters
+    year = dataWithArc[0].data.year
+  }
   const style = { fontWeight: "bold", textTransform: "capitalize" };
 
   const activeVar = filters?.activeVar?.value || "";
@@ -55,12 +58,21 @@ const Title = (props) => {
     'avg' : "Average",
     'sum' : "Sum"
   }
+  let firstElementOffset = [5, -55]
+  let titleRowOffsetVal = 20;
+  if(dataWithArc){
+    firstElementOffset[1] = -15
+  }
+
   return (
     <>
-      <text x={5} y={-35} style={style}>
+      {year && <text x={firstElementOffset[0]} y={firstElementOffset[1]} style={style}>
+        Year: {year}
+      </text>}
+      <text x={firstElementOffset[0]} y={firstElementOffset[1] + titleRowOffsetVal} style={style}>
         {activeVar} by Year {`by ${summarizeVars[summarize].name}`}
       </text>
-      <text x={5} y={-15} style={style}>
+      <text x={firstElementOffset[0]} y={firstElementOffset[1] + titleRowOffsetVal * 2} style={style}>
         {area === "all" ? "All Areas" : area} {summarize !== 'county' ? `| ${transformAggFunc[aggregate]} of Counties within ${summarizeVars[summarize]?.name}` : ''}
       </text>
     </>
@@ -118,27 +130,47 @@ const BarChart = ({ barData, activeVar, filters }) => {
         }}
         isInteractive={true}
         legends={[]}
+        tooltip={({ value, color, data } ) => {
+          return <div
+              className="w-[250px]"
+              style={{
+                  padding: 12,
+                  color,
+                  background: '#FFFFFF',
+                  border: '1px solid black'
+              }}
+          >
+              {data?.id} | {data?.year}
+              <br />
+              <strong>
+                {data?.variable}: {value?.toLocaleString()}
+              </strong>
+          </div>
+        }}
       />
     </>
   );
 };
-const PieChart = ({ pieData }) => {
+const PieChart = ({ pieData, filters, year }) => {
   const totalVal = pieData.reduce((acc, curr) => {
     return acc + curr.value
   }, 0)
 
   return (
     <>
-      <ResponsivePieCanvas
+      <ResponsivePie
         data={
           (pieData || []).map((p) => {
             return {
               id: p?.id || "",
               label: p?.name || "",
               value: p?.value / totalVal,
+              filters,
+              year
             };
           }) || []
         }
+        layers={['arcs', 'arcLinkLabels', 'arcLabels', 'legends', Title]}
         margin={{ top: 40, right: 200, bottom: 40, left: 80 }}
         padAngle={0.7}
         cornerRadius={3}
@@ -177,7 +209,7 @@ const PieChart = ({ pieData }) => {
         ]}
         legends={[
           {
-            anchor: "right",
+            anchor: "top-right",
             direction: "column",
             justify: false,
             translateX: 140,
@@ -346,7 +378,7 @@ const ChartPage = ({
               <BarChart barData={data} activeVar={filters?.activeVar?.value} filters={filters}/>
             ) : null}
             {chartType === "pie" ? (
-              <PieChart pieData={data} year={years[Number(year)]} />
+              <PieChart pieData={data} year={year} filters={filters}/>
             ) : null}
           </>
         ) : (

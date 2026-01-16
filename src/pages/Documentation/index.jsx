@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 //import { useFalcor } from "~/modules/avl-components/src"
 import { dmsPageFactory  } from "~/modules/dms/src"
 import { withAuth } from "@availabs/ams"
@@ -12,6 +13,11 @@ import pagesConfig from '~/modules/dms/src/patterns/page/siteConfig'
 
 //registerComponents(ComponentRegistry)
 //registerDataType("selector", Selector)
+=======
+import { dmsPageFactory } from "~/modules/dms/src"
+import { withAuth } from "@availabs/ams" 
+import pagesConfig from '~/modules/dms/src/patterns/page/siteConfig'
+>>>>>>> ecb8cc4db71f4acc63b80974094baa717d991b32
 
 const theme = {
   layout: {
@@ -263,7 +269,6 @@ const theme = {
 //   },
 //}
 
-
 const Routes = [
   {
     ...dmsPageFactory({
@@ -272,6 +277,7 @@ const Routes = [
         type: "tig-docs2",
         baseUrl: "/docs",
         themes: { default: theme },
+<<<<<<< HEAD
         pattern: {theme: theme},
         checkAuth: () => true
       }),
@@ -279,6 +285,13 @@ const Routes = [
       authWrapper: withAuth
     }
     ),
+=======
+        checkAuth: () => true
+      }),
+      
+      authWrapper: withAuth
+    }),
+>>>>>>> ecb8cc4db71f4acc63b80974094baa717d991b32
     authLevel: -1,
     name: "CMS",
     sideNav: {

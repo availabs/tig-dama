@@ -1,6 +1,6 @@
 import React, { useMemo, useEffect } from "react";
 import { get, sum, mean } from "lodash";
-import { useSearchParams } from "react-router";
+import { useSearchParams, useParams, useNavigate } from "react-router";
 import { toPng } from "html-to-image";
 import download from "downloadjs";
 import { SOURCE_AUTH_CONFIG } from "~/pages/DataManager/Source/attributes";
@@ -21,12 +21,43 @@ const areas = [
   ...Object.keys(regionalData?.sub_regions || {}),
 ];
 
+const ViewSelector = ({ views }) => {
+  const { viewId, sourceId, page } = useParams();
+  const navigate = useNavigate();
+  const { baseUrl } = React.useContext(DamaContext);
+
+  return (
+    <FilterControlContainer
+      header={"Version: "}
+      input={({ className }) => (
+        <select
+          className={className}
+          value={viewId}
+          onChange={(e) =>
+            navigate(`${baseUrl}/source/${sourceId}/${page}/${e.target.value}`)
+          }
+        >
+          {views
+            .sort((a, b) => b.view_id - a.view_id)
+            .map((v, i) => (
+              <option key={i} className="ml-2  truncate" value={v.view_id}>
+                {v.version ? v.version : v.view_id}
+              </option>
+            ))}
+        </select>
+      )}
+    />
+  );
+};
+
+
 export const BPMChartFilters = ({
   filters,
   source,
   setFilters,
   variables,
   years,
+  views,
   node,
   activeViewId,
   userHighestAuth
@@ -128,7 +159,7 @@ export const BPMChartFilters = ({
 
   return (
     <div className="flex w-full p-1">
-      <div className="flex flex-wrap">
+      <div className='flex justify-start content-center flex-wrap  p-1 w-[90%]'>
         <FilterControlContainer 
           header={"Area: "}
           input={({className}) => (<select
@@ -244,15 +275,23 @@ export const BPMChartFilters = ({
             </select>
           )}
         />
+        {userHighestAuth >= SOURCE_AUTH_CONFIG['DOWNLOAD'] &&
+          <div className="ml-auto px-2">
+            <FilterControlContainer
+              header={""}
+              input={({ className }) => (
+                <Button
+                  themeOptions={{ size: "sm", color: "primary" }}
+                  onClick={downloadImage}
+                >
+                  Download
+                </Button>
+              )}
+            />
+          </div>
+        }
       </div>
-      {userHighestAuth >= SOURCE_AUTH_CONFIG['DOWNLOAD'] && <div className="ml-auto mt-5 mr-1">
-        <Button
-          themeOptions={{ size: "sm", color: "primary" }}
-          onClick={downloadImage}
-        >
-          Download
-        </Button>
-      </div>}
+      <ViewSelector views={views} />
     </div>
   );
 };

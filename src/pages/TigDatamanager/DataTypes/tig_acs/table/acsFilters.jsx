@@ -4,6 +4,8 @@ import { Button } from "~/modules/avl-components/src";
 import download from "downloadjs"
 import makeAnimated from "react-select/animated";
 import { SOURCE_AUTH_CONFIG } from "~/pages/DataManager/Source/attributes";
+import { FilterControlContainer } from "../../controls/FilterControlContainer";
+import { MultiLevelSelect } from '~/modules/avl-map-2/src';
 
 const Option = (props) => {
   return (
@@ -106,69 +108,86 @@ const AcsTableFilter = ({
     mapped.unshift(columns.map(c => c.Header).join(","));
     download(mapped.join("\n"), `${geometry}_${year}.csv`, "text/csv");
   }, [data, columns]);
-
   return (
     <div className="flex flex-1 border-blue-100">
-      
-      <div className="w-[180px]">
-        <MultiSelect
-          value={(tableColumns || []).map((prod) => ({
-            label: prod,
-            value: prod,
-          }))}
-          options={variableOptions || []}
-          onChange={(value) => {
-            setTableColumns(value.map((v) => v.value));
-          }}
+      <div className="w-[70%] border m-1 rounded-md">
+        <FilterControlContainer 
+          header="Variables:"
+          input={({className}) => (
+            <MultiLevelSelect
+              searchable={true}
+              isMulti={true}
+              placeholder={`Select variables...`}
+              options={variableOptions}
+              value={tableColumns}
+              displayAccessor={(s) => s.label}
+              valueAccessor={(s) => s.value}
+              onChange={(v) => setTableColumns(v)}
+              zIndex={999}
+            />
+          )}
         />
       </div>
-      <div className="py-3.5 px-2 text-sm text-gray-400">Year:</div>
-      <div className="flex-1">
-        <select
-          className="pl-3 pr-4 py-2.5 border border-blue-100 bg-blue-50 w-[90px] bg-white mr-2 flex items-center justify-between text-sm"
-          value={year}
-          onChange={(e) => {
-            setFilters({
-              ...filters,
-              year: {
-                value: e.target.value,
-              },
-            });
-          }}
-        >
-          {(years || []).map((k, i) => (
-            <option key={i} className="ml-2 truncate" value={k}>
-              {`${k}`}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div className="py-3.5 px-2 text-sm text-gray-400">Type: </div>
-      <div className="flex-1">
-        <select
-          className="pl-3 pr-4 py-2.5 border border-blue-100 bg-blue-50 w-[120px] bg-white mr-2 flex items-center justify-between text-sm"
-          value={geometry}
-          onChange={(e) => {
-            setFilters({
-              ...filters,
-              geometry: {
-                value: `${e.target.value}`,
-              },
-            });
-          }}
-        >
-          {geometries.map((v, i) => (
-            <option key={i} className="ml-2 truncate" value={v}>
-              {v?.toUpperCase()}
-            </option>
-          ))}
-        </select>
-      </div>
-      {userHighestAuth >= SOURCE_AUTH_CONFIG['DOWNLOAD'] && <Button themeOptions={{size:'sm', color: 'primary'}}
-          onClick={ downloadData }
-        >
-          Download
-        </Button>}
+      <FilterControlContainer 
+        header={'Year:'}
+        input={({className}) => (
+          <select
+            className={className}
+            value={year}
+            onChange={(e) => {
+              setFilters({
+                ...filters,
+                year: {
+                  value: e.target.value,
+                },
+              });
+            }}
+          >
+            {(years || []).map((k, i) => (
+              <option key={i} className="ml-2 truncate" value={k}>
+                {`${k}`}
+              </option>
+            ))}
+          </select>
+        )}
+      />
+      <FilterControlContainer 
+        header={'Type:'}
+        input={({className}) => (
+          <select
+            className={className}
+            value={geometry}
+            onChange={(e) => {
+              setFilters({
+                ...filters,
+                geometry: {
+                  value: `${e.target.value}`,
+                },
+              });
+            }}
+          >
+            {geometries.map((v, i) => (
+              <option key={i} className="ml-2 truncate" value={v}>
+                {v?.toUpperCase()}
+              </option>
+            ))}
+          </select>
+        )}
+      />
+      {userHighestAuth >= SOURCE_AUTH_CONFIG['DOWNLOAD'] && <div className="px-2 ml-auto">
+        <FilterControlContainer
+          header={""}
+          input={({ className }) => (
+            <div>
+            <Button themeOptions={{size:'sm', color: 'primary'}}
+              onClick={ downloadData }
+            >
+              Download
+            </Button>
+            </div>
+          )}
+        />
+      </div>}
     </div>
   );
 };

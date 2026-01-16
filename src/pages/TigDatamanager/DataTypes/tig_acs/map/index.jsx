@@ -1,4 +1,5 @@
 import React, { useContext, useMemo, useEffect, useState } from "react";
+import { useSearchParams } from "react-router";
 import {
   get,
   cloneDeep,
@@ -11,6 +12,7 @@ import {
   uniq,
 } from "lodash";
 import { SOURCE_AUTH_CONFIG } from "~/pages/DataManager/Source/attributes";
+import { FilterControlContainer } from "../../controls/FilterControlContainer";
 
 // import { download as shpDownload } from "~/pages/DataManager/utils/shp-write";
 import shpwrite from  '@mapbox/shp-write';
@@ -108,12 +110,19 @@ const MapDataDownloader = ({
   }, [falcorCache, pgEnv, tempViewId, activeVar, year]);
 
   return (
-    <Button
-      themeOptions={{ size: "sm", color: "primary" }}
-      onClick={downloadData}
-    >
-      Download
-    </Button>
+    <FilterControlContainer
+      header={""}
+      input={({ className }) => (
+        <div>
+          <Button
+            themeOptions={{ size: "sm", color: "primary" }}
+            onClick={downloadData}
+          >
+            Download
+          </Button>
+        </div>
+      )}
+    />
   );
 };
 
@@ -126,6 +135,7 @@ const ACSMapFilter = ({
   activeViewId,
   userHighestAuth
 }) => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const { pgEnv } = useContext(DamaContext);
   const { falcor, falcorCache } = useFalcor();
   const [subGeoids, setSubGeoIds] = useState([]);
@@ -188,6 +198,19 @@ const ACSMapFilter = ({
     setFilters(updatedFilters);
   }, [geometry, activeVar, counties, subGeoids]);
 
+  const searchVar = searchParams.get("variable")
+  React.useEffect(() => {
+    if (searchVar) {
+      setFilters({
+        activeVar: { value: `${ searchVar }` },
+      });
+    }
+    else {
+      setFilters({
+        activeVar: { value: "Total Population" },
+      });
+    }
+  }, [activeVar, setFilters, searchVar]);
   useEffect(() => {
     async function getViewData() {
       await falcor.get([
@@ -324,13 +347,16 @@ const ACSMapFilter = ({
       return a;
     }, {});
 
-    const ckmeansLen = Math.min((Object.values(valueMap) || []).length, 5);
+    const ckmeansLen = Math.min((Object.values(valueMap) || []).length, 6);
     const values = Object.values(valueMap || {});
     let domain = [0, 10, 25, 50, 75, 100];
     if (ckmeansLen <= values.length) {
       domain = ckmeans(values, ckmeansLen) || [];
     }
-
+    const max = Math.max(...Object.values(valueMap));
+    if(domain[domain.length-1] !== max) {
+      domain[domain.length-1] = max;
+    }
     let range = DEFAULT_COLOR_SCALE;
 
     const fullActiveVar = activeView.metadata.variables.find(variable => variable.label === activeVar);
@@ -339,7 +365,9 @@ const ACSMapFilter = ({
         range = fullActiveVar.value.colorScale;
       }
     }
-
+    if(range.length > 5){
+      range = range.slice(0, 5)
+    }
     if (!(domain && domain?.length > 5)) {
       const n = domain?.length || 0;
       for (let i = n; i < 5; i++) {
@@ -347,13 +375,19 @@ const ACSMapFilter = ({
       }
     }
 
+    if(domain[0] === -Infinity) {
+      return;
+    }
     function colorScale(domain, areaValue) {
-      let color = range[0];
+      let color = range[0];//"rgba(0,0,0,0)";
       (domain || []).forEach((domainValue, i) => {
         if (areaValue >= domainValue && (!domain[i+1] || areaValue <= domain[i + 1])) {
           color = range[i];
         }
       });
+      if(color === undefined) {
+        color = range[range.length - 1]
+      }
       return color;
     }
 
@@ -377,6 +411,7 @@ const ACSMapFilter = ({
             settings: {
               range: range,
               domain: domain,
+              max,
               title: activeVar
             },
             value: output
@@ -391,7 +426,7 @@ const ACSMapFilter = ({
     if (!isEqual(tempSymbology, newSymbology)) {
       setTempSymbology(newSymbology);
     }
-  }, [falcorCache, pgEnv, activeViewId, activeView]);
+  }, [falcorCache, pgEnv, activeViewId, activeView, filters]);
 
   useEffect(() => {
     async function getACSData() {
@@ -464,69 +499,74 @@ const ACSMapFilter = ({
 
   return (
     <div className="flex justify-start content-center flex-wrap w-full p-1">
-      <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">Variable: </div>
-      <div className="flex">
-        <select
-          className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
-          value={activeVar}
-          onChange={(e) => {
-            setFilters({
-              ...filters,
-              activeVar: { value: `${e.target.value}` },
-            });
-          }}
-        >
-          {(variables || []).map((k, i) => (
-            <option key={i} className="ml-2 truncate" value={k?.label}>
-              {k?.label}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">Type: </div>
-      <div className="flex">
-        <select
-          className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
-          value={geometry}
-          onChange={(e) => {
-            setFilters({
-              ...filters,
-              geometry: {
-                value: `${e.target.value}`,
-              },
-            });
-          }}
-        >
-          {["tract", "county"].map((v, i) => (
-            <option key={i} className="ml-2 truncate" value={v}>
-              {v?.toUpperCase()}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div className="flex py-3.5 px-2 text-sm text-gray-400 capitalize">Year:</div>
-      <div className="flex">
-        <select
-          className="w-full bg-blue-100 rounded mr-2 px-1 flex text-sm capitalize"
-          value={year}
-          onChange={(e) => {
-            setFilters({
-              ...filters,
-              year: {
-                value: `${e.target.value}`,
-              },
-            });
-          }}
-        >
-          {(metaYears || []).map((k, i) => (
-            <option key={i} className="ml-2 truncate" value={k}>
-              {`${k}`}
-            </option>
-          ))}
-        </select>
-      </div>
-
+      <FilterControlContainer 
+        header={'Variable:'}
+        input={({className}) => (
+          <select
+            className={className}
+            value={activeVar}
+            onChange={(e) => {
+              setSearchParams(`variable=${ e.target.value }`);
+              // setFilters({
+              //   ...filters,
+              //   activeVar: { value: `${e.target.value}` },
+              // });
+            }}
+          >
+            {(variables || []).map((k, i) => (
+              <option key={i} className="ml-2 truncate" value={k?.label}>
+                {k?.label}
+              </option>
+            ))}
+          </select>
+        )}
+      />
+      <FilterControlContainer 
+        header={'Type:'}
+        input={({className}) => (
+          <select
+            className={className}
+            value={geometry}
+            onChange={(e) => {
+              setFilters({
+                ...filters,
+                geometry: {
+                  value: `${e.target.value}`,
+                },
+              });
+            }}
+          >
+            {["tract", "county"].map((v, i) => (
+              <option key={i} className="ml-2 truncate" value={v}>
+                {v?.toUpperCase()}
+              </option>
+            ))}
+          </select>
+        )}
+      />
+      <FilterControlContainer 
+        header={'Year:'}
+        input={({className}) => (
+          <select
+            className={className}
+            value={year}
+            onChange={(e) => {
+              setFilters({
+                ...filters,
+                year: {
+                  value: `${e.target.value}`,
+                },
+              });
+            }}
+          >
+            {(metaYears || []).map((k, i) => (
+              <option key={i} className="ml-2 truncate" value={k}>
+                {`${k}`}
+              </option>
+            ))}
+          </select>
+        )}
+      />
      {userHighestAuth >= SOURCE_AUTH_CONFIG['DOWNLOAD'] && <div className=" flex px-2 ml-auto">
         <MapDataDownloader
           activeViewId={activeViewId}

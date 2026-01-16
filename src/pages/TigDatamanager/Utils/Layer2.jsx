@@ -115,7 +115,7 @@ const LegendCmp = ({ domain, range, title, max }) => {
                   transition: "background-color 0.5s"
                 }} />
               </div>
-              <div className="flex-initial ml-6 w-32">
+              <div className="flex-initial ml-6 max-w-64">
                 {
                   <div className="h-6 w-2 ml-1 p-[2px] sm:w-full text-left">
                     {newRanges[i]}</div>
@@ -199,7 +199,6 @@ const GISDatasetRenderComponent = props => {
     maplibreMap,
     activeLayers
   } = props;
-
   const {
     filters,
     activeViewId,
@@ -290,12 +289,11 @@ const GISDatasetRenderComponent = props => {
       falcor.call(
         ["dama", "sources", "metadata", "update"],
         [pgEnv, sourceId, { symbology: toSave }]
-      ).then(res => console.log("SAVE RESPONSE:", res))
+      )
     }
   }, [falcor, pgEnv, sourceId, legend, symbology, activeVar, layers]);
 
   React.useEffect(() => {
-    console.log({activePins})
     const pinnedIds = activePins?.map(pin => pin.ogc_fid);
     const pinnedGeomLineLayer = layers.find(layer => layer.id.includes(PIN_OUTLINE_LAYER_SUFFIX));
 
@@ -311,7 +309,6 @@ const GISDatasetRenderComponent = props => {
         true,
         false,
       ];
-      console.log({pinnedIds})
       const mapLayer = maplibreMap.getLayer(lineLayerId);
       if (mapLayer) {
         maplibreMap.setFilter(lineLayerId, dataFilter);
@@ -419,7 +416,6 @@ const GISDatasetRenderComponent = props => {
             get(symbLayers, `[${layer_id}][${paintProperty}][${activeVariable}]`, "")
             || get(symbLayers, `[${layer_id}][${paintProperty}][default]`, "");
 
-
             // ----------- TIG -----------
             let { value, settings } = sym;
             if (!value && settings) {
@@ -438,7 +434,6 @@ const GISDatasetRenderComponent = props => {
               if(['visibility'].includes(paintProperty)) {
                 maplibreMap.setLayoutProperty(layer_id, paintProperty, value);
               } else if (!layer_id.includes(PIN_OUTLINE_LAYER_SUFFIX)) {
-                console.log({layer_id, paintProperty, value})
                 maplibreMap.setPaintProperty(layer_id, paintProperty, value);
               }
             }
@@ -546,7 +541,7 @@ const GISDatasetRenderComponent = props => {
   useClickOutside(ref, close);
 
   return !legend ? null : (
-    <div ref={ setRef } className="absolute top-0 left-0 w-96 grid grid-cols-1 gap-4">
+    <div ref={ setRef } className="absolute top-0 left-0 max-w-96 grid grid-cols-1 gap-4">
       <div className="z-10">
         {
           legend?.type === 'custom' ? 
@@ -944,7 +939,6 @@ const TypeSelector = ({ type, updateLegend }) => {
 class GISDatasetLayer extends AvlLayer {
   onHover = {
     layers: this.layers?.map((d) =>{
-      console.log('on hover map', d.id)
       return d.id
     }),
     callback: (layerId, features, lngLat) => {

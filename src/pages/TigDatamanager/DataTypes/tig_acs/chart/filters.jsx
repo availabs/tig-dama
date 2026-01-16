@@ -37,19 +37,17 @@ export const AcsChartFilters = ({
     [filters]
   );
 
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const searchVar = searchParams.get("variable");
   React.useEffect(() => {
-    if (!activeVar) {
-      if (searchVar) {
-        setFilters({
-          activeVar: { value: `${searchVar}` },
-        });
-      } else {
-        setFilters({
-          activeVar: { value: variables[0].label },
-        });
-      }
+    if (searchVar) {
+      setFilters({
+        activeVar: { value: `${searchVar}` },
+      });
+    } else {
+      setFilters({
+        activeVar: { value: variables[0].label },
+      });
     }
   }, [activeVar, setFilters, searchVar, variables]);
 
@@ -75,8 +73,9 @@ export const AcsChartFilters = ({
 
   const downloadImage = React.useCallback(() => {
     if (!node) return;
+    const activeYear = filters.year.value;
     toPng(node, { backgroundColor: "#fff" }).then((dataUrl) => {
-      download(dataUrl, `${activeVar}.png`, "image/png");
+      download(dataUrl, `${activeVar}_${activeYear}.png`, "image/png");
     });
   }, [node, activeVar]);
 
@@ -158,9 +157,10 @@ export const AcsChartFilters = ({
             <select
               className={className}
               value={activeVar}
-              onChange={(e) =>
-                setFilters({ ...filters, activeVar: { value: e.target.value } })
-              }
+              onChange={(e) =>{
+                setSearchParams(`variable=${ e.target.value }`);
+                //setFilters({ ...filters, activeVar: { value: e.target.value } })
+              }}
             >
               {(variables.filter((v) => {
                 const hasNoDivisorKey = !v?.value?.divisorKeys || v?.value?.divisorKeys === "" || v?.value?.divisorKeys?.length === 0;
@@ -236,32 +236,39 @@ const getRegionalgeoids = (fips2Name, countyNames) => {
 };
 
 const getAreaToGeos = (regionalData, fips2Name) => {
+  const fixedFips2Name = Object.keys(fips2Name).filter(key => key.length === 5).reduce((acc, curr) => {
+    acc[curr] = fips2Name[curr];
+    return acc;
+  }, {})
+
   const temp = {};
   Object.keys(regionalData).forEach((cc) => {
     Object.keys(regionalData[`${cc}`]).forEach((c) => {
       temp[`${c}`] = getRegionalgeoids(
-        fips2Name,
+        fixedFips2Name,
         regionalData[`${cc}`][`${c}`] || []
       );
     });
   });
 
   temp.all =
-    Object.keys(fips2Name) ||
-    Object.values(fips2Name).reduce((a, c) => {
+    Object.keys(fixedFips2Name) ||
+    Object.values(fixedFips2Name).reduce((a, c) => {
       return {
         ...a,
-        [`${c}`]: getRegionalgeoids(fips2Name, [c]),
+        [`${c}`]: getRegionalgeoids(fixedFips2Name, [c]),
       };
     }, {});
   return temp;
 };
 
 export const ACSChartTransform = ({ valueMap, filters, isDivisor }) => {
-  let summarize = get(filters, "summarize.value", "county");
-  let area = get(filters, "area.value", "all");
-  let aggFunc = get(filters, "aggregate.value", "");
-
+  const summarize = get(filters, "summarize.value", "county");
+  const area = get(filters, "area.value", "all");
+  const aggFunc = get(filters, "aggregate.value", "");
+  const activeVar = get(filters, "activeVar.value", "");
+  const year = get(filters, "year.value", "");
+  const chartType = get(filters, "chartType.value", "");
   const areaToGeos = getAreaToGeos(regionalData, fips2Name);
 
   let finalchartData = [];
@@ -271,6 +278,8 @@ export const ACSChartTransform = ({ valueMap, filters, isDivisor }) => {
     keys = areaToGeos?.[`${area}`];
     finalchartData = keys.map((key) => ({
       id: fips2Name[`${key}`],
+      variable: activeVar,
+      year,
       name: fips2Name[`${key}`],
       value: valueMap[`${key}`],
     }));
@@ -284,6 +293,8 @@ export const ACSChartTransform = ({ valueMap, filters, isDivisor }) => {
     finalchartData = keys.map((key) => ({
       id: key,
       name: key,
+      variable: activeVar,
+      year,
       value: isDivisor || aggFunc === 'avg'
         ? `${
             Math.round(
@@ -300,6 +311,13 @@ export const ACSChartTransform = ({ valueMap, filters, isDivisor }) => {
               .filter(Boolean) || []
           ),
     }));
+  }
+
+  finalchartData.sort((a,b) => {
+    return a.name < b.name ? 1 : -1;
+  });
+  if(chartType === "pie") {
+    finalchartData.reverse();
   }
 
   return {

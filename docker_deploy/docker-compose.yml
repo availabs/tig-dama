@@ -1,0 +1,84 @@
+version: '3.8'
+
+services:
+  falcor:
+    container_name: falcor-container
+    build:
+      context: /home/deploy/gateway2/avail-falcor
+    restart: always
+    ports:
+      - "127.0.0.1:4446:4446"
+    volumes:
+      - /home/deploy/gateway2/avail-falcor/var:/app/var
+    networks:
+      - tig-network
+    #command: sh -c "while true; do sleep 3600; done"
+    depends_on:
+      # This ensures 'auth' starts before 'falcor'
+      - auth
+      # You should probably also depend on 'db' and 'clickhouse-server'
+      - db
+      - clickhouse-server
+
+  auth:
+    image: postgis/postgis:16-3.4
+    restart: always
+    container_name: avail_auth
+    ports:
+      - "5757:5432"
+    volumes:
+#     - ./docker_volumes/avail_auth:/pg_data
+      - /home/deploy/gateway2/avail_auth_db/docker_volumes/avail_auth:/pg_data
+    env_file: "./postgres.avail_auth.env"
+    environment:
+      - PGDATA=/pg_data
+    shm_size: 32g
+    networks:
+      - tig-network
+
+  db:
+    image: postgis/postgis:16-3.4
+    restart: always
+    container_name: tig_dama_dev_db 
+    ports:
+      - "5438:5432"
+    volumes:
+      - ./docker_volumes/tig_dama_dev:/pg_data
+      - ./sqlScripts/:/sqlScripts/
+    
+    # This file must exist on your disk for this to work
+    env_file: "./postgres.tig_dama_dev.env"
+    
+    environment:
+      - PGDATA=/pg_data
+    shm_size: 32g
+    
+    networks:
+      - tig-network
+
+  clickhouse-server:
+    image: clickhouse/clickhouse-server
+    container_name: clickhouse-server
+    ports:
+      - "9000:9000"  # Native Protocol (TCP)
+      - "8123:8123"  # HTTP Protocol
+    volumes:
+      - clickhouse_data:/var/lib/clickhouse
+      - clickhouse_config:/etc/clickhouse-server
+    # This file must exist on your disk for this to work
+    env_file: "./clickhouse.env"
+    ulimits:
+      nofile:
+        soft: 262144
+        hard: 262144
+    networks:
+      - tig-network
+
+networks:
+  tig-network:
+    driver: bridge
+
+volumes:
+  pgdata:
+  clickhouse_data:
+  clickhouse_config:

@@ -5,6 +5,8 @@ import React, {
   useCallback,
   useContext,
 } from "react";
+import download from "downloadjs"
+import { Button } from "~/modules/avl-components/src"
 import { get } from "lodash";
 import { Table } from "~/modules/avl-components/src";
 import { useParams } from "react-router";
@@ -13,7 +15,8 @@ import { DamaContext } from "~/pages/DataManager/store";
 
 import { HUBBOUND_ATTRIBUTES } from "../constants";
 import { createHubboundFilterClause } from "../utils";
-
+import { SOURCE_AUTH_CONFIG } from "~/pages/DataManager/Source/attributes";
+import { FilterControlContainer } from "../../controls/FilterControlContainer";
 var geometries = ["county", "tracts"];
 
 const DefaultTableFilter = () => <div />;
@@ -34,7 +37,8 @@ const TablePage = ({
   transform = identityMap,
   filterData = {},
   TableFilter = DefaultTableFilter,
-  fullWidth = false
+  fullWidth = false,
+  userHighestAuth
 }) => {
   const { viewId, sourceId } = useParams();
   const [filters, _setFilters] = useState(filterData);
@@ -149,14 +153,38 @@ const TablePage = ({
   if (fullWidth) {
     containerStyle = {
       width: "96vw",
-      position: "relative",
+      position: "absolute",
       left: "calc(-50vw + 50%)",
     };
     containerClassName = "mt-2 mx-12";
   }
 
+  const downloadData = React.useCallback(() => {
+    const mapped = data.map(d => {
+      return columns.map(c => {
+        return d[c.accessor];
+      }).join(",")
+    })
+    mapped.unshift(columns.map(c => c.Header).join(","));
+    download(mapped.join("\n"), `hubbound_${year}_${direction}.csv`, "text/csv");
+  }, [data, columns]);
   return (
     <div className={containerClassName} style={containerStyle}>
+    {userHighestAuth >= SOURCE_AUTH_CONFIG['DOWNLOAD'] && data && data.length > 1 && <div className="px-2 ml-auto">
+      <FilterControlContainer
+        header={""}
+        input={({ className }) => (
+          <div>
+            <Button
+              themeOptions={{ size: "sm", color: "primary" }}
+              onClick={downloadData}
+            >
+              Download
+            </Button>
+          </div>
+        )}
+      />
+      </div>}
       <Table data={data} columns={columns} pageSize={15} striped={true}/>
     </div>
   );

@@ -5,36 +5,36 @@ import get from 'lodash/get'
 import { useParams, useNavigate, useSearchParams } from 'react-router'
 
 import { DamaContext } from "~/pages/DataManager/store";
+import { FilterControlContainer } from "../DataTypes/controls/FilterControlContainer"
+
 // import { SymbologyControls } from '~/pages/DataManager/components/SymbologyControls'
 
-const ViewSelector = ({views}) => {
-  const { viewId, sourceId, page } = useParams()
-  const [searchParams] = useSearchParams();
-  const variable = searchParams.get("variable")
-  const navigate = useNavigate()
-  const { baseUrl  } = React.useContext(DamaContext)
-
-  const activeViewId = variable && !viewId ? variable : viewId;//TODO ryan this  could ahve some breaking changes elsewhere
+const ViewSelector = ({ views }) => {
+  const { viewId, sourceId, page } = useParams();
+  const navigate = useNavigate();
+  const { baseUrl } = React.useContext(DamaContext);
 
   return (
-    <div className="flex">
-      <div className="py-3.5 px-2 text-sm text-gray-400">Version:</div>
-      <div className="flex-1">
+    <FilterControlContainer
+      header={"Version: "}
+      input={({ className }) => (
         <select
-          className="pl-3 pr-4 py-2.5 border border-blue-100 bg-blue-50 w-full bg-white mr-2 flex items-center justify-between text-sm"
-          value={activeViewId}
-          onChange={(e) => navigate(`${baseUrl}/source/${sourceId}/${page}/${e.target.value}`)}
+          className={className}
+          value={viewId}
+          onChange={(e) =>
+            navigate(`${baseUrl}/source/${sourceId}/${page}/${e.target.value}`)
+          }
         >
           {views
-            ?.sort((a, b) => b.view_id - a.view_id)
+            .sort((a, b) => b.view_id - a.view_id)
             .map((v, i) => (
               <option key={i} className="ml-2  truncate" value={v.view_id}>
                 {v.version ? v.version : v.view_id}
               </option>
             ))}
         </select>
-      </div>
-    </div>
+      )}
+    />
   );
 };
 
@@ -169,7 +169,7 @@ const TablePage = ({
   console.log('sort', sortBy, columns)
 
   const [tableContainerStyle, tableContainerClassName] = React.useMemo(() => {
-    const fullWidthStyle = {width:"96vw", position:"relative", left:"calc(-50vw + 50%)"};
+    const fullWidthStyle = {width:"96vw", position:"absolute", left:"calc(-50vw + 50%)"};
     const fullWidthClass = "mt-2 mx-12";
     const defaultWidthStyle = {};
     const defaultWidthClass = "max-w-6xl";
@@ -180,7 +180,7 @@ const TablePage = ({
 
   return (
     <div>
-      <div className="flex">
+      <div className='flex content-center flex-wrap items-center'>
         {/*<div className="flex-1 pl-3 pr-4 py-2">Table View</div>*/}
         <TableFilter filters={filters} setFilters={setFilters} source={source}
           data={tableData} columns={columns} userHighestAuth={userHighestAuth}/>
