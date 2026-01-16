@@ -22,7 +22,7 @@ const computeAuth = ({sourceAuth, user}) => {
   const userGroupAuth = Object.keys(authGroups).reduce((a, curGroupName) => {
     let max = a;
 
-    if(user.groups.includes(curGroupName) || curGroupName === PUBLIC_GROUP) {
+    if((user?.groups || []).includes(curGroupName) || curGroupName === PUBLIC_GROUP) {
       //user is a member. take this authLevel if it is higher
       if(parseInt(authGroups[curGroupName]) > max) {
         max = parseInt(authGroups[curGroupName]);
@@ -31,7 +31,7 @@ const computeAuth = ({sourceAuth, user}) => {
     return max;
   }, -1);
 
-  const userSourceAuth = authUsers[user.id] ?? -1;
+  const userSourceAuth = authUsers[user?.id] ?? -1;
   return Math.max(userGroupAuth, userSourceAuth)
 }
 
@@ -157,7 +157,7 @@ const Source = ({}) => {
   }, [falcorCache])
   const doesUserPassPagePermission = sourceLoaded ? (Pages[page]?.authLevel ?? 1) <= userHighestAuth : false;
 
-  if (!sourceLoaded || user.isAuthenticating) {
+  if (!sourceLoaded || user?.isAuthenticating) {
     //todo loading spinner?
     return <></>;
   } else if (
@@ -167,13 +167,13 @@ const Source = ({}) => {
   }
 
   return (
-     
+
         <SourcesLayout baseUrl={baseUrl}>
           <TopNav
             menuItems={Object.values(pages)
               .filter(d => {
                 const pageAuthLevel = d?.authLevel || -1
-                const userAuth = user.authLevel || -1
+                const userAuth = user?.authLevel || -1
                 return !d.hidden && (pageAuthLevel <= userAuth) && (pageAuthLevel <= userHighestAuth)
               })
               .sort((a,b) => (a?.authLevel || -1)  - (b?.authLevel|| -1))
@@ -199,7 +199,7 @@ const Source = ({}) => {
             />
           </div>
         </SourcesLayout>
-      
+
     )
 };
 
