@@ -7,6 +7,7 @@ import Chart from "./chart";
 import Overview from "~/pages/DataManager/DataTypes/default/Overview";
 import { ACSHoverComp } from "./map/hover";
 import Table from "./table";
+import Admin from "../default/Admin"
 import { AcsTableFilter, AcsTableTransform } from "./table/acsFilters";
 import { AcsChartFilters, ACSChartTransform } from "./chart/filters";
 
@@ -79,6 +80,12 @@ const TigAcsConfig = {
       />
     ),
   },
+  admin: {
+    name: "Admin",
+    path: "/admin",
+    authLevel: 10,
+    component: Admin
+  }
 };
 
 export default TigAcsConfig;

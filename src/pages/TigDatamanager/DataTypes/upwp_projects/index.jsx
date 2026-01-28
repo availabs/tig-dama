@@ -3,7 +3,7 @@ import CreatePage from "~/pages/DataManager/DataTypes/gis_dataset/pages/Create";
 import Table from "~/pages/TigDatamanager/Utils/gisTable";
 import Overview from "~/pages/DataManager/DataTypes/default/Overview";
 import {UPWPTableTransform, HBTableFilter} from './TableFilters.jsx'
-
+import Admin from "../default/Admin"
 
 import TigOverview from '../TigOverview'
 
@@ -41,6 +41,12 @@ const config = {
   sourceCreate: {
     name: "Create",
     component: CreatePage
+  },
+  admin: {
+    name: "Admin",
+    path: "/admin",
+    authLevel: 10,
+    component: Admin
   }
   
 };

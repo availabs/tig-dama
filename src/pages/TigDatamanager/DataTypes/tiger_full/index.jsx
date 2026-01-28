@@ -3,7 +3,7 @@ import Table from "~/pages/TigDatamanager/Utils/gisTable";
 import Map from "~/pages/TigDatamanager/Utils/gisMap";
 import { TigerMapFilter } from "./TigerMapFilter";
 import { TigerTableFilter, TigerTableTransform } from "./TigerTableFilter";
-
+import Admin from "../default/Admin"
 const tigerFull2017Config = {
   sourceCreate: {
     name: "Create",
@@ -31,8 +31,13 @@ const tigerFull2017Config = {
         MapFilter={TigerMapFilter}
       />
     ),
-    
   },
+  admin: {
+    name: "Admin",
+    path: "/admin",
+    authLevel: 10,
+    component: Admin
+  }
 };
 
 export default tigerFull2017Config;

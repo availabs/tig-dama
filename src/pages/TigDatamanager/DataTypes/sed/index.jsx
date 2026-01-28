@@ -4,6 +4,7 @@ import Overview from "~/pages/DataManager/DataTypes/default/Overview";
 import CreatePage from "~/pages/DataManager/DataTypes/gis_dataset/pages/Create";
 import Table from "~/pages/TigDatamanager/Utils/gisTable";
 import Chart from "./chart";
+import Admin from "../default/Admin"
 
 import { SedMapFilter, SedTableFilter, SedTableTransform, SedHoverComp } from "./sedCustom";
 import { SedChartFilter, SedChartTransform } from "./sedChartTaz";
@@ -108,6 +109,12 @@ export const tig_sed_taz = {
       />
     ),
   },
+  admin: {
+    name: "Admin",
+    path: "/admin",
+    authLevel: 10,
+    component: Admin
+  }
 };
 
 
@@ -176,7 +183,7 @@ export const tig_sed_county = {
   add_version: {
     name: "Add Version",
     path: "/add_version",
-    hidden:true,
+    hidden: true,
     component: (props) => (
       <CreatePage
         {...props}
@@ -188,4 +195,10 @@ export const tig_sed_county = {
       />
     ),
   },
+  admin: {
+    name: "Admin",
+    path: "/admin",
+    authLevel: 10,
+    component: Admin
+  }
 };

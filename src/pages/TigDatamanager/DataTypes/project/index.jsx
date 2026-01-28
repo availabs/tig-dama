@@ -6,7 +6,7 @@ import ProjectHoverComp from './MapHoverComp'
 import ProjectMapFilter from './MapFilterComp'
 import { ProjectTableTransform } from './TableFilterComp'
 import Overview from "~/pages/DataManager/DataTypes/default/Overview";
-
+import Admin from "../default/Admin"
 import TigOverview from '../TigOverview'
 
 import config from "~/config.json"
@@ -75,6 +75,12 @@ const GisDatasetConfig = {
       />
     )
   },
+  admin: {
+    name: "Admin",
+    path: "/admin",
+    authLevel: 10,
+    component: Admin
+  }
   
 };
 

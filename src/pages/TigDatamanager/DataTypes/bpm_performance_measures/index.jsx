@@ -8,7 +8,7 @@ import Overview from "~/pages/DataManager/DataTypes/default/Overview";
 import {BPMTableTransform, HBTableFilter} from './BPMTableFilter'
 import {BPMMapFilter} from './BPMMapFilter'
 import {BPMHoverComp} from './BPMHoverComp'
-
+import Admin from "../default/Admin"
 import mapStyleConfig from "~/config.json"
 
 import {BPMChartFilters, BPMChartTransform } from './BPMChartFilters'
@@ -81,6 +81,12 @@ const config = {
   sourceCreate: {
     name: "Create",
     component: CreatePage
+  },
+  admin: {
+    name: "Admin",
+    path: "/admin",
+    authLevel: 10,
+    component: Admin
   }
   
 };

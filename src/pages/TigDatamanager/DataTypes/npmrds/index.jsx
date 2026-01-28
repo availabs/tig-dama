@@ -6,6 +6,7 @@ import CreatePage from "./pages/Create";
 import ManagePage from "./pages/manage";
 import TigOverview from "../TigOverview";
 import Overview from "~/pages/DataManager/DataTypes/default/Overview";
+import Admin from "../default/Admin"
 import { npmrdsTableTransform } from "./table/npmrdsTableTransform";
 import config from "~/config.json"
 const getVariables = (source, views, activeViewId) =>
@@ -63,6 +64,12 @@ const npmrdsConfig = {
       />
     ),
   },
+  admin: {
+    name: "Admin",
+    path: "/admin",
+    authLevel: 10,
+    component: Admin
+  }
 };
 
 export default npmrdsConfig;

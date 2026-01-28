@@ -5,7 +5,7 @@ import tig_acs from './tig_acs'
 import tig_bpm_perfomance_measures from './bpm_performance_measures'
 import upwp_projects from './upwp_projects';
 import tig_project from './project'
-
+import csv_dataset from "./csv_dataset"
 import hubbound from './hubbound';
 import npmrds from './npmrds';
 import npmrds_meta from './npmrds_meta';
@@ -28,7 +28,8 @@ const tigDataTypes = {
   npmrds_meta,
   npmrds_raw,
   //ACS
-  tiger_full
+  tiger_full,
+  csv_dataset
 
 };
 

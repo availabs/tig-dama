@@ -12,7 +12,7 @@ import {
   HubboundChartFilters,
 } from "./chart/chartFilters";
 import Chart from "./chart";
-
+import Admin from "../default/Admin"
 import config from "~/config.json"
 
 const getVariables = (source, views, activeViewId) =>
@@ -77,6 +77,12 @@ const hubboundConfig = {
       />
     ),
   },
+  admin: {
+    name: "Admin",
+    path: "/admin",
+    authLevel: 10,
+    component: Admin
+  }
 };
 
 export default hubboundConfig;
