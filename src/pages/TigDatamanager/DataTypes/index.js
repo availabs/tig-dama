@@ -30,7 +30,6 @@ const tigDataTypes = {
   //ACS
   tiger_full,
   csv_dataset
-
 };
 
 export default tigDataTypes
