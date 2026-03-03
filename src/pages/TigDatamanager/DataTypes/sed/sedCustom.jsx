@@ -25,8 +25,8 @@ const defaultDomain = [0,872,2047,3649,6934,14119,28578]
 //Default `displayPrecision` is 0 (no digits after decimal)
 export const sedVars = {
   totpop: { name: "Total Population", domain: [872,2047,3649,6934,14119,28578], range: defaultRange},
-  hhpop: { name: "Households", domain: [1112,1588,2112,2958,20000, 56390], range: defaultRange},
-  hhnum: { name: "Household Population", domain: [2995,4270,5680,7883,64124,177720], range: defaultRange},
+  hhpop: { name: "Household Population", domain: [1112,1588,2112,2958,20000, 56390], range: defaultRange},
+  hhnum: { name: "Households", domain: [2995,4270,5680,7883,64124,177720], range: defaultRange},
   hhsize: { name: "Household Size", domain: [2.3,2.62,2.83,3.08,7], range: defaultRange, aggFunc: 'avg', displayPrecision: 2},
   hhincx: { name: "Household Income", domain: [44787,61304,80355,113880,1109731], range: defaultRange},
   elf: { name: "Employed Labor Force", domain: [1351,2054,2782,3910,78160], range: defaultRange},
@@ -38,8 +38,8 @@ export const sedVars = {
   k12etot: { name: "School Enrollment", domain: [489,791,1119,1632,42294,81583], range: defaultRange},
   gqpop: { name: "Group Quarters Population", domain: [11,40,200,12050], range: defaultRange},
   gqpopins: { name: "Group Quarters Institutional Population", domain: [22,118,253,5613,12050], range: defaultRange},
-  gqpopstr: { name: "Group Quarters Other Population", domain: [7,16,56,5613,10503], range: defaultRange},
-  gqpopoth: { name: "Group Quarters Homeless Population", domain: [3,11,50,635,1201], range: defaultRange}
+  gqpopstr: { name: "Group Quarters Homeless Population", domain: [7,16,56,5613,10503], range: defaultRange},
+  gqpopoth: { name: "Group Quarters Other Population", domain: [3,11,50,635,1201], range: defaultRange}
 };
 export const sedVarsCounty = {
     "tot_pop": {name: 'Total Population (in 000s)', domain: [79,213,481,750,1134,2801], range: defaultRange},
