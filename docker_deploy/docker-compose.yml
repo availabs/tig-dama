@@ -65,6 +65,7 @@ services:
     volumes:
       - clickhouse_data:/var/lib/clickhouse
       - clickhouse_config:/etc/clickhouse-server
+      - ./log_retention.xml:/etc/clickhouse-server/config.d/log_retention.xml
     # This file must exist on your disk for this to work
     env_file: "./clickhouse.env"
     ulimits:

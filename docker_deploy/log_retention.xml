@@ -1,0 +1,10 @@
+<clickhouse>
+    <system_log_list>
+        <query_log>
+            <engine>ENGINE = MergeTree PARTITION BY toYYYYMM(event_date) ORDER BY (event_date, event_time) TTL event_date + INTERVAL 1 MONTH DELETE</engine>
+        </query_log>
+        <trace_log>
+            <engine>ENGINE = MergeTree PARTITION BY toYYYYMM(event_date) ORDER BY (event_date, event_time) TTL event_date + INTERVAL 1 MONTH DELETE</engine>
+        </trace_log>
+        </system_log_list>
+</clickhouse>
