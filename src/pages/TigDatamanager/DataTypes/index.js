@@ -11,6 +11,7 @@ import npmrds from './npmrds';
 import npmrds_meta from './npmrds_meta';
 import npmrds_raw from './npmrds_raw';
 import tiger_full from './tiger_full';
+import npmrds_raw_tmc_identification from './npmrds_raw_tmc_identification'
 
 
 const tigDataTypes = {
@@ -27,6 +28,7 @@ const tigDataTypes = {
   npmrds,
   npmrds_meta,
   npmrds_raw,
+  npmrds_raw_tmc_identification,
   //ACS
   tiger_full,
   csv_dataset
