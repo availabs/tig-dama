@@ -1,7 +1,7 @@
 import Admin from "../default/Admin"
 import TigOverview from "../TigOverview";
 import Overview from "~/pages/DataManager/DataTypes/default/Overview";
-
+import CreatePage from "~/pages/DataManager/DataTypes/gis_dataset/pages/Create";
 const getVariables = (source, views, activeViewId) =>
   views.map((d) => ({
     key: d.view_id,
