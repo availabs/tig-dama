@@ -124,7 +124,7 @@ const SourcesList = () => {
                 const sourceAuthLevel = baseUserViewAccess(source?.statistics?.access || {});
                 return (sourceAuthLevel <= userAuthLevel);
               })
-              .sort((a,b) => a.name.localeCompare(b.name))
+              .sort((a,b) => a?.name?.localeCompare(b?.name))
               .map((s, i) => <SourceThumb key={i} source={s} baseUrl={baseUrl} />)
           }
         </div>
