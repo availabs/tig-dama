@@ -82,7 +82,7 @@ const SourcesList = () => {
     return Object.values(get(falcorCache, ["dama", pgEnv, "sources", "byIndex"], {}))
       .map(v => getAttributes(get(falcorCache, v.value, { "attributes": {} })["attributes"]));
   }, [falcorCache, pgEnv]);
-
+  console.log({sources})
   return (
 
     <SourcesLayout baseUrl={baseUrl}>
