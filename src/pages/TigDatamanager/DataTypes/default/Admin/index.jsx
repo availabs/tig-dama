@@ -9,7 +9,7 @@ const amsReduxWrapper = wrappers["ams-redux"];
 const PUBLIC_GROUP = 'Public';
 const noop = () => false;
 const ReduxedAdminPage = amsReduxWrapper((props) => {
-  console.log("admin page props::", props)
+  //console.log("admin page props::", props)
 
     const [users, setUsers] = useState(props?.users || []);
     const [groups, setGroups] = useState(props?.groups || []);

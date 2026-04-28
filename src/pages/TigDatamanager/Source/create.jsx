@@ -54,7 +54,6 @@ const SourceCreate = ({baseUrl}) => {
         acc[dt] = damaDataTypes[dt];
         return acc;
       }, {});
-      //console.log('testing',filteredDataTypes)
       setDataTypes(filteredDataTypes);
     })();
   }, [pgEnv]);

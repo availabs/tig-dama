@@ -115,6 +115,15 @@ export default function PublishButton({ state, dispatch }) {
       getAttributes(get(falcorCache, v.value, { attributes: {} })["attributes"])
     );
   }, [falcorCache, existingHubboundSourceId, pgEnv]);
+  console.log({views})
+
+  useEffect(() => {
+    if(views && views.length > 0) {
+      //we have views for this source, set the viewId to append to.
+      dispatch({ type: "update", payload: { existingHubboundViewId: views[0].view_id } });
+    }
+  }, [views]);
+
   if (!gisUploadId || uploadErrMsg || lyrAnlysErrMsg) {
     return "";
   }
@@ -198,7 +207,7 @@ export default function PublishButton({ state, dispatch }) {
         </div>
         {state.publishState !== "ERROR" && existingHubboundSources?.length ? 
           <div>
-            Append to Existing Hubbound Source?
+            Append to Existing Hub Bound Source?
             <FilterControlContainer 
               header={'Source:'}
               input={({className}) => {
@@ -222,31 +231,6 @@ export default function PublishButton({ state, dispatch }) {
                 )
               }}
             />
-            {existingHubboundSourceId && (
-              <FilterControlContainer 
-                header={'View:'}
-                input={({className}) => {
-                  return (
-                    <div className="flex">
-                      <select
-                        className={className}
-                        value={existingHubboundViewId}
-                        onChange={(e) => {
-                          dispatch({ type: "update", payload: { existingHubboundViewId: e.target.value } })}
-                        }
-                      >
-                        <option value={''}></option>
-                        {views?.map((existingView, i) => (
-                          <option key={`${i}_existing_hub_view`} className="ml-2  truncate" value={existingView.view_id}>
-                            {existingView?.version ?? existingView.view_id}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  )
-                }}
-              />
-            )}
           </div> : <></>
       }
       </div>
