@@ -12,7 +12,7 @@ import npmrds_meta from './npmrds_meta';
 import npmrds_raw from './npmrds_raw';
 import tiger_full from './tiger_full';
 import npmrds_raw_tmc_identification from './npmrds_raw_tmc_identification'
-
+import gis_dataset from './gis_dataset'
 
 const tigDataTypes = {
   hubbound,
@@ -31,7 +31,8 @@ const tigDataTypes = {
   npmrds_raw_tmc_identification,
   //ACS
   tiger_full,
-  csv_dataset
+  csv_dataset,
+  gis_dataset
 };
 
 export default tigDataTypes
