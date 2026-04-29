@@ -380,7 +380,7 @@ export default function NpmrdsManage({
   const updateNpmrds = async () => {
     const publishData = {
       source_id: source?.source_id || null,
-      view_id: activeView?.view_id,
+      view_id: activeView?.view_id || activeViewId,
       user_id: ctxUser?.id,
       email: ctxUser?.email,
       npmrds_raw_view_ids: [selectedView?.props?.value?.value],
