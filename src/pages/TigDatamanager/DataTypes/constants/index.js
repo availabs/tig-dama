@@ -103,14 +103,23 @@ const fips2Name = {
   "36087": "Rockland",
   "36103": "Suffolk",
   "36119": "Westchester",
-  "09001": "Fairfield",
-  "09005": "Litchfield",
-  "09007": "Middlesex, CT", //I removed `ct` from the end of this, if the app implodes, we know why. //I added it back, IDK why I removed it?
-  "09009": "New Haven",
-  "9001": "Fairfield",
-  "9005": "Litchfield",
-  "9007": "Middlesex", //I removed `ct` from the end of this, if the app implodes, we know why.
-  "9009": "New Haven",
-};
+  //RITIS finally switched off of CT counties. We want: 
+  // [
+  //   "Western Connecticut",
+  //   "Greater Bridgeport",
+  //   "Northwest Hills",
+  //   "Naugatuck Valley",
+  //   "South Central Connecticut",
+  //   "Lower Connecticut River Valley"
+  // ]
+  // "09001": "Fairfield",
+  // "09005": "Litchfield",
+  // "09007": "Middlesex, CT", //I removed `ct` from the end of this, if the app implodes, we know why. //I added it back, IDK why I removed it?
+  // "09009": "New Haven",
+  // "9001": "Fairfield",
+  // "9005": "Litchfield",
+  // "9007": "Middlesex", //I removed `ct` from the end of this, if the app implodes, we know why.
+  // "9009": "New Haven",
+}; 
 
 export { regionalData, fips2Name };
