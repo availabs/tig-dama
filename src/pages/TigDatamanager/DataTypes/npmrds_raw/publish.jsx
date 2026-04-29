@@ -36,6 +36,14 @@ const submitUpload = ({props, navigate, pgEnv, baseUrl}) => {
       CT: [],
     }
   );
+  npmrdsRequestAreas.CT = [
+    "Western Connecticut",
+    "Greater Bridgeport",
+    "Northwest Hills",
+    "Naugatuck Valley",
+    "South Central Connecticut",
+    "Lower Connecticut River Valley"
+  ];
 
   const runPublishNpmrdsRaw = async () => {
     try {
