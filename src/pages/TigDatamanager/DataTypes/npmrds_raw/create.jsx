@@ -15,8 +15,10 @@ import PublishNpmrdsRaw from "./publish";
 export const MAX_NPMRDS_SOURCE_NAME_LENGTH = 9;
 
 const Create = ({ source }) => {
-  const [startDate, setStartDate] = useState(new Date());
-  const [endDate, setEndDate] = useState(new Date());
+  const threeWeeksAgo = new Date();
+  threeWeeksAgo.setDate(threeWeeksAgo.getDate() - 21);
+  const [startDate, setStartDate] = useState(threeWeeksAgo);
+  const [endDate, setEndDate] = useState(threeWeeksAgo);
   const [loading, setLoading] = useState(false);
 
   const { pgEnv, user } = React.useContext(DamaContext);
@@ -50,7 +52,7 @@ const Create = ({ source }) => {
                   toggleCalendarOnIconClick
                   selected={startDate}
                   onChange={(date) => setStartDate(date)}
-                  maxDate={endDate}
+                  maxDate={threeWeeksAgo}
                   isClearable
                 />
               </div>
@@ -71,6 +73,7 @@ const Create = ({ source }) => {
                   selected={endDate}
                   onChange={(date) => setEndDate(date)}
                   minDate={startDate}
+                  maxDate={threeWeeksAgo}
                   isClearable
                 />
               </div>
