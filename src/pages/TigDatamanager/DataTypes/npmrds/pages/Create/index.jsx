@@ -60,18 +60,6 @@ export default function NpmrdsCreate({
         </p>
       )}
       <div className="md:flex md:items-center gap-4">
-        <div className="flex flex-col gap-4">
-          <SelectSpeedLimitSource
-            dispatch={dispatch}
-            selectedViewId={state.selectedViewId}
-            selectedSourceId={state.selectedSourceId}
-          />
-          <SelectMpoBoundariesSource
-            dispatch={dispatch}
-            selectedMpoBoundariesViewId={state.selectedMpoBoundariesViewId}
-            selectedMpoBoundariesSourceId={state.selectedMpoBoundariesSourceId}
-          />
-        </div>
         <PublishNpmrds
           loading={loading}
           setLoading={setLoading}
