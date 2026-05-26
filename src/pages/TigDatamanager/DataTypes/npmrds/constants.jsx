@@ -1,5 +1,5 @@
 import moment from "moment";
-const finishYear = 2025;
+const finishYear = new Date().getFullYear();
 const startYear = 2016;
 
 export const NPMRDS_ATTRIBUTES = {
