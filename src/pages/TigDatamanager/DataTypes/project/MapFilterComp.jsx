@@ -43,6 +43,7 @@ const images = [
   { id: "STATIONS", url: "/mapIcons/rail_new.png", color: "#fff", type: "none" },
   { id: "TRUCK", url: "/mapIcons/truck.png", color: "#fff", type: "both" },
   { id: "PEDESTRIAN", url: "/mapIcons/pedestrian.png", color: "#B1FF00", type: "both" },
+  { id: "PED", url: "/mapIcons/pedestrian.png", color: "#B1FF00", type: "both" },
   { id: "ITS", url: "/mapIcons/its.png", color: "#FF00C5", type: "both" },
   { id: "PARKING", url: "/mapIcons/parking_new.png", color: "#496bff", type: "both" },
   { id: "FREIGHT", url: "/mapIcons/truck.png", color: "#fff", type: "both" },
